@@ -456,7 +456,7 @@ export default function LandingPage() {
       </section>
 
       {/* Social proof / problem statement */}
-      <section className="py-20 bg-gradient-to-r from-indigo-900/20 via-violet-900/10 to-purple-900/20 border-y border-white/5">
+      <section id="about" className="py-20 bg-gradient-to-r from-indigo-900/20 via-violet-900/10 to-purple-900/20 border-y border-white/5">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <motion.div
@@ -522,7 +522,7 @@ export default function LandingPage() {
       </section>
 
       {/* Testimonials */}
-      <section className="py-28">
+      <section id="careers" className="py-28">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial={{ opacity: 0, y: 20 }}

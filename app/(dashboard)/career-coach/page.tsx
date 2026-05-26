@@ -207,8 +207,9 @@ export default function CareerCoachPage() {
 
       const decoder = new TextDecoder();
       let buffer = "";
+      let streamDone = false;
 
-      while (true) {
+      while (!streamDone) {
         const { done, value } = await reader.read();
         if (done) break;
 
@@ -219,21 +220,25 @@ export default function CareerCoachPage() {
         for (const line of lines) {
           if (!line.startsWith("data: ")) continue;
           const raw = line.slice(6).trim();
-          if (raw === "[DONE]") break;
+          if (raw === "[DONE]") { streamDone = true; break; }
+
+          // Parse JSON separately from error/delta handling so real errors propagate
+          let parsed: { delta?: string; error?: string } | null = null;
           try {
-            const parsed = JSON.parse(raw);
-            if (parsed.error) throw new Error(parsed.error);
-            if (parsed.delta) {
-              setMessages((prev) =>
-                prev.map((m) =>
-                  m.id === assistantId
-                    ? { ...m, content: m.content + parsed.delta }
-                    : m
-                )
-              );
-            }
+            parsed = JSON.parse(raw);
           } catch {
-            // malformed chunk — ignore and continue
+            continue; // skip malformed chunk
+          }
+
+          if (parsed?.error) throw new Error(parsed.error); // surfaces to outer catch
+          if (parsed?.delta) {
+            setMessages((prev) =>
+              prev.map((m) =>
+                m.id === assistantId
+                  ? { ...m, content: m.content + parsed!.delta }
+                  : m
+              )
+            );
           }
         }
       }

@@ -361,7 +361,6 @@ export const SA_CAREERS: CareerDemandData[] = [
     nqfLevel: 7,
     relatedCareers: ["EIA Specialist", "Water Scientist", "Climate Analyst", "ESG Consultant"],
   },
-];
 
   // --- Trades & Artisans ---
   {

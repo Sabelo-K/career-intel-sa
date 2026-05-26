@@ -1,10 +1,11 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Target, CheckCircle2, Clock, BookOpen, TrendingUp,
-  Zap, AlertCircle, ChevronRight, Sparkles, Search,
+  Zap, AlertCircle, ChevronRight, Sparkles, Search, Plus, X,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -45,10 +46,14 @@ const PRIORITY_COLOR: Record<string, string> = {
 };
 
 export default function SkillsGapPage() {
+  const router = useRouter();
   const [targetRole, setTargetRole] = useState("");
   const [analyzing, setAnalyzing] = useState(false);
   const [result, setResult] = useState<typeof MOCK_GAP_RESULT | null>(null);
   const [activeStep, setActiveStep] = useState<number | null>(null);
+  const [showSkillInput, setShowSkillInput] = useState(false);
+  const [newSkill, setNewSkill] = useState("");
+  const [currentSkills, setCurrentSkills] = useState(CURRENT_SKILLS);
 
   const analyse = async () => {
     if (!targetRole.trim()) return;
@@ -74,14 +79,55 @@ export default function SkillsGapPage() {
       <div className="bg-card border border-border rounded-xl p-5">
         <div className="flex items-center justify-between mb-3">
           <h2 className="text-sm font-semibold text-foreground">Your Current Skills</h2>
-          <Button variant="ghost" size="sm" className="text-xs text-indigo-400">+ Add Skills</Button>
+          <Button variant="ghost" size="sm" className="text-xs text-indigo-400" onClick={() => setShowSkillInput(true)}>+ Add Skills</Button>
         </div>
         <div className="flex flex-wrap gap-2">
-          {CURRENT_SKILLS.map((skill) => (
-            <Badge key={skill} variant="success">{skill}</Badge>
+          {currentSkills.map((skill) => (
+            <Badge key={skill} variant="success" className="flex items-center gap-1 pr-1">
+              {skill}
+              <button onClick={() => setCurrentSkills(currentSkills.filter(s => s !== skill))} className="ml-1 hover:text-red-400 transition-colors">
+                <X className="w-3 h-3" />
+              </button>
+            </Badge>
           ))}
-          <Badge variant="secondary" className="cursor-pointer hover:bg-indigo-500/15 transition-colors">+ Add more</Badge>
         </div>
+        {showSkillInput && (
+          <div className="flex gap-2 mt-3">
+            <Input
+              value={newSkill}
+              onChange={(e) => setNewSkill(e.target.value)}
+              placeholder="e.g. SQL, Tableau, Leadership..."
+              className="text-sm"
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && newSkill.trim()) {
+                  if (!currentSkills.includes(newSkill.trim())) {
+                    setCurrentSkills([...currentSkills, newSkill.trim()]);
+                  }
+                  setNewSkill("");
+                  setShowSkillInput(false);
+                }
+                if (e.key === "Escape") { setShowSkillInput(false); setNewSkill(""); }
+              }}
+              autoFocus
+            />
+            <Button
+              size="sm"
+              variant="indigo"
+              onClick={() => {
+                if (newSkill.trim() && !currentSkills.includes(newSkill.trim())) {
+                  setCurrentSkills([...currentSkills, newSkill.trim()]);
+                }
+                setNewSkill("");
+                setShowSkillInput(false);
+              }}
+            >
+              <Plus className="w-4 h-4" />
+            </Button>
+            <Button size="sm" variant="ghost" onClick={() => { setShowSkillInput(false); setNewSkill(""); }}>
+              <X className="w-4 h-4" />
+            </Button>
+          </div>
+        )}
       </div>
 
       {/* Target role input */}
@@ -159,8 +205,8 @@ export default function SkillsGapPage() {
               </div>
               <Progress value={result.matchPercentage} className="h-3" indicatorClassName="bg-gradient-to-r from-amber-500 to-orange-500" />
               <div className="flex items-center justify-between mt-2 text-xs text-muted-foreground">
-                <span>Current: {CURRENT_SKILLS.length} skills</span>
-                <span>Target: {CURRENT_SKILLS.length + result.missingSkills.length} skills needed</span>
+                <span>Current: {currentSkills.length} skills</span>
+                <span>Target: {currentSkills.length + result.missingSkills.length} skills needed</span>
               </div>
               <div className="mt-3 p-3 rounded-lg bg-emerald-500/8 border border-emerald-500/20 text-xs text-emerald-200/80">
                 <TrendingUp className="w-3.5 h-3.5 inline mr-1.5" />
@@ -252,11 +298,11 @@ export default function SkillsGapPage() {
                 ))}
               </div>
               <div className="mt-4 flex gap-3">
-                <Button variant="indigo" size="sm" className="gap-2">
+                <Button variant="indigo" size="sm" className="gap-2" onClick={() => router.push('/career-coach')}>
                   <Sparkles className="w-3.5 h-3.5" />
                   Get Detailed Learning Plan
                 </Button>
-                <Button variant="outline" size="sm" className="gap-2">
+                <Button variant="outline" size="sm" className="gap-2" onClick={() => router.push('/courses')}>
                   <BookOpen className="w-3.5 h-3.5" />
                   Browse Courses
                 </Button>

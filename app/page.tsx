@@ -23,14 +23,16 @@ const FEATURES = [
     color: "indigo",
     gradient: "from-indigo-500/20 to-violet-500/10",
     border: "border-indigo-500/30",
+    href: "/cv-builder",
   },
   {
     icon: TrendingUp,
     title: "Career Demand Engine",
-    description: "See real-time demand scores, salary ranges in ZAR, and growth trends for 120+ careers across SA provinces.",
+    description: "See real-time demand scores, salary ranges in ZAR, and growth trends for 200+ careers across SA provinces.",
     color: "emerald",
     gradient: "from-emerald-500/20 to-teal-500/10",
     border: "border-emerald-500/30",
+    href: "/job-market",
   },
   {
     icon: Target,
@@ -39,6 +41,7 @@ const FEATURES = [
     color: "violet",
     gradient: "from-violet-500/20 to-purple-500/10",
     border: "border-violet-500/30",
+    href: "/skills-gap",
   },
   {
     icon: Zap,
@@ -47,6 +50,7 @@ const FEATURES = [
     color: "amber",
     gradient: "from-amber-500/20 to-orange-500/10",
     border: "border-amber-500/30",
+    href: "/career-coach",
   },
   {
     icon: BarChart3,
@@ -55,6 +59,7 @@ const FEATURES = [
     color: "blue",
     gradient: "from-blue-500/20 to-cyan-500/10",
     border: "border-blue-500/30",
+    href: "/career-paths",
   },
   {
     icon: BookOpen,
@@ -63,6 +68,7 @@ const FEATURES = [
     color: "pink",
     gradient: "from-pink-500/20 to-rose-500/10",
     border: "border-pink-500/30",
+    href: "/courses",
   },
 ];
 
@@ -428,28 +434,29 @@ export default function LandingPage() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
             {FEATURES.map((feature, i) => (
-              <motion.div
-                key={feature.title}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.08 }}
-                className={`relative group rounded-2xl border ${feature.border} bg-gradient-to-br ${feature.gradient} p-6 overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-xl cursor-pointer`}
-              >
-                <div className="absolute inset-0 bg-gradient-to-br from-white/0 to-white/[0.02] opacity-0 group-hover:opacity-100 transition-opacity" />
-                <feature.icon className={`w-10 h-10 mb-4 ${
-                  feature.color === "indigo" ? "text-indigo-400" :
-                  feature.color === "emerald" ? "text-emerald-400" :
-                  feature.color === "violet" ? "text-violet-400" :
-                  feature.color === "amber" ? "text-amber-400" :
-                  feature.color === "blue" ? "text-blue-400" : "text-pink-400"
-                }`} />
-                <h3 className="text-lg font-semibold text-white mb-2">{feature.title}</h3>
-                <p className="text-sm text-white/55 leading-relaxed">{feature.description}</p>
-                <div className="mt-4 flex items-center gap-1 text-xs font-medium text-indigo-400 opacity-0 group-hover:opacity-100 transition-opacity">
-                  Learn more <ChevronRight className="w-3 h-3" />
-                </div>
-              </motion.div>
+              <Link key={feature.title} href={feature.href}>
+                <motion.div
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: i * 0.08 }}
+                  className={`relative group rounded-2xl border ${feature.border} bg-gradient-to-br ${feature.gradient} p-6 overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-xl cursor-pointer h-full`}
+                >
+                  <div className="absolute inset-0 bg-gradient-to-br from-white/0 to-white/[0.02] opacity-0 group-hover:opacity-100 transition-opacity" />
+                  <feature.icon className={`w-10 h-10 mb-4 ${
+                    feature.color === "indigo" ? "text-indigo-400" :
+                    feature.color === "emerald" ? "text-emerald-400" :
+                    feature.color === "violet" ? "text-violet-400" :
+                    feature.color === "amber" ? "text-amber-400" :
+                    feature.color === "blue" ? "text-blue-400" : "text-pink-400"
+                  }`} />
+                  <h3 className="text-lg font-semibold text-white mb-2">{feature.title}</h3>
+                  <p className="text-sm text-white/55 leading-relaxed">{feature.description}</p>
+                  <div className="mt-4 flex items-center gap-1 text-xs font-medium text-indigo-400 opacity-0 group-hover:opacity-100 transition-opacity">
+                    Try it free <ChevronRight className="w-3 h-3" />
+                  </div>
+                </motion.div>
+              </Link>
             ))}
           </div>
         </div>
@@ -681,18 +688,42 @@ export default function LandingPage() {
               </p>
             </div>
             {[
-              { heading: "Platform", links: ["CV Builder", "Career Coach", "Skills Gap", "Job Market"] },
-              { heading: "Resources", links: ["Blog", "Career Guides", "Salary Reports", "SETA Learnerships"] },
-              { heading: "Company", links: ["About", "Careers", "Privacy Policy", "Terms of Service"] },
+              {
+                heading: "Platform",
+                links: [
+                  { label: "CV Builder", href: "/cv-builder" },
+                  { label: "Career Coach", href: "/career-coach" },
+                  { label: "Skills Gap", href: "/skills-gap" },
+                  { label: "Job Market", href: "/job-market" },
+                ],
+              },
+              {
+                heading: "Resources",
+                links: [
+                  { label: "Career Guides", href: "/#features" },
+                  { label: "Salary Reports", href: "/job-market" },
+                  { label: "SETA Learnerships", href: "/courses" },
+                  { label: "Interview Prep", href: "/interview-prep" },
+                ],
+              },
+              {
+                heading: "Company",
+                links: [
+                  { label: "About", href: "/#about" },
+                  { label: "Pricing", href: "/#pricing" },
+                  { label: "Privacy Policy", href: "/#about" },
+                  { label: "Terms of Service", href: "/#about" },
+                ],
+              },
             ].map((section) => (
               <div key={section.heading}>
                 <h4 className="text-sm font-semibold text-white/80 mb-4">{section.heading}</h4>
                 <ul className="space-y-2">
                   {section.links.map((link) => (
-                    <li key={link}>
-                      <a href="#" className="text-sm text-white/40 hover:text-white/70 transition-colors">
-                        {link}
-                      </a>
+                    <li key={link.label}>
+                      <Link href={link.href} className="text-sm text-white/40 hover:text-white/70 transition-colors">
+                        {link.label}
+                      </Link>
                     </li>
                   ))}
                 </ul>

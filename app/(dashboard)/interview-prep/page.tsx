@@ -87,6 +87,8 @@ export default function InterviewPrepPage() {
   const [questions, setQuestions] = useState<Question[]>(MOCK_QUESTIONS);
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [filter, setFilter] = useState("all");
+  const [practiceId, setPracticeId] = useState<string | null>(null);
+  const [practiceText, setPracticeText] = useState<Record<string, string>>({});
 
   const generate = async () => {
     if (!role) return;
@@ -240,12 +242,46 @@ export default function InterviewPrepPage() {
                         ))}
                       </div>
                     </div>
+                    {practiceId === q.id && (
+                      <div className="space-y-2">
+                        <div className="text-xs font-semibold text-amber-400 uppercase tracking-wide">Your Practice Answer</div>
+                        <textarea
+                          value={practiceText[q.id] || ""}
+                          onChange={(e) => setPracticeText({ ...practiceText, [q.id]: e.target.value })}
+                          placeholder="Type your answer here — try to follow the framework above..."
+                          rows={5}
+                          className="w-full rounded-lg border border-input bg-input px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring resize-none"
+                          autoFocus
+                        />
+                        {practiceText[q.id] && (
+                          <div className="text-xs text-muted-foreground">
+                            {practiceText[q.id].split(/\s+/).filter(Boolean).length} words · Keep practicing for best results
+                          </div>
+                        )}
+                      </div>
+                    )}
                     <div className="flex gap-2 pt-1">
-                      <Button variant="outline" size="sm" className="gap-2 text-xs">
+                      <Button
+                        variant={practiceId === q.id ? "indigo" : "outline"}
+                        size="sm"
+                        className="gap-2 text-xs"
+                        onClick={(e) => { e.stopPropagation(); setPracticeId(practiceId === q.id ? null : q.id); }}
+                      >
                         <Mic className="w-3 h-3" />
-                        Practice Answer
+                        {practiceId === q.id ? "Hide Practice" : "Practice Answer"}
                       </Button>
-                      <Button variant="ghost" size="sm" className="gap-2 text-xs text-muted-foreground">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="gap-2 text-xs text-muted-foreground"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          const idx = filtered.findIndex((fq) => fq.id === q.id);
+                          const next = filtered[idx + 1];
+                          if (next) { setExpandedId(next.id); setPracticeId(null); }
+                        }}
+                        disabled={filtered.findIndex((fq) => fq.id === q.id) === filtered.length - 1}
+                      >
                         <ArrowRight className="w-3 h-3" />
                         Next Question
                       </Button>

@@ -1,0 +1,157 @@
+"use client";
+
+import { useState } from "react";
+import { motion } from "framer-motion";
+import { BookOpen, Star, Clock, Globe, GraduationCap, ExternalLink, Filter, Search } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { SA_COURSES, COURSE_PLATFORMS } from "@/lib/data/sa-courses";
+
+const CATEGORIES = ["All", "Data Science", "Cloud", "Software Dev", "Cybersecurity", "Business", "Project Management"];
+
+export default function CoursesPage() {
+  const [search, setSearch] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("All");
+  const [selectedPlatform, setSelectedPlatform] = useState("all");
+  const [freeOnly, setFreeOnly] = useState(false);
+
+  const filtered = SA_COURSES.filter((c) => {
+    const matchSearch = c.title.toLowerCase().includes(search.toLowerCase()) ||
+      c.provider.toLowerCase().includes(search.toLowerCase()) ||
+      c.skills.some((s) => s.toLowerCase().includes(search.toLowerCase()));
+    const matchFree = freeOnly ? c.price === "free" || c.price === 0 : true;
+    const matchPlatform = selectedPlatform === "all" ? true : c.platform.toLowerCase().includes(selectedPlatform.toLowerCase());
+    return matchSearch && matchFree && matchPlatform;
+  });
+
+  return (
+    <div className="space-y-6">
+      <div>
+        <h1 className="text-2xl font-bold text-foreground">Course Intelligence</h1>
+        <p className="text-muted-foreground text-sm mt-1">
+          Curated courses from SA universities, SETAs, Coursera, Udemy and more — matched to SA demand.
+        </p>
+      </div>
+
+      {/* Platform chips */}
+      <div className="bg-card border border-border rounded-xl p-4">
+        <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-3">Learning Platforms</div>
+        <div className="flex flex-wrap gap-2">
+          {COURSE_PLATFORMS.map((p) => (
+            <button
+              key={p.id}
+              onClick={() => setSelectedPlatform(p.id === selectedPlatform ? "all" : p.id)}
+              className={`flex items-center gap-2 px-3 py-2 rounded-lg border text-xs font-medium transition-all ${
+                selectedPlatform === p.id
+                  ? "border-indigo-500/50 bg-indigo-500/15 text-indigo-300"
+                  : "border-border text-muted-foreground hover:text-foreground hover:bg-secondary"
+              }`}
+            >
+              <span>{p.logo}</span>
+              {p.name}
+              {p.local && <Badge variant="success" className="text-xs py-0 px-1">SA</Badge>}
+              {p.freeOptions && <Badge variant="indigo" className="text-xs py-0 px-1">Free</Badge>}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Filters */}
+      <div className="flex items-center gap-3 flex-wrap">
+        <div className="relative flex-1 max-w-xs">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+          <Input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search courses or skills..." className="pl-9" />
+        </div>
+        <button
+          onClick={() => setFreeOnly(!freeOnly)}
+          className={`flex items-center gap-2 px-3 py-2 rounded-lg border text-xs font-medium transition-all ${
+            freeOnly ? "border-emerald-500/50 bg-emerald-500/15 text-emerald-300" : "border-border text-muted-foreground hover:bg-secondary"
+          }`}
+        >
+          Free / Subsidised Only
+        </button>
+      </div>
+
+      {/* Results */}
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+        {filtered.map((course, i) => (
+          <motion.div
+            key={course.id}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: i * 0.04 }}
+            className="bg-card border border-border rounded-xl p-5 hover:border-indigo-500/30 transition-all hover:-translate-y-0.5 group"
+          >
+            <div className="flex items-start justify-between mb-3">
+              <div className="flex-1 min-w-0">
+                <h3 className="text-sm font-semibold text-foreground line-clamp-2 leading-snug">{course.title}</h3>
+                <p className="text-xs text-muted-foreground mt-1">{course.provider}</p>
+              </div>
+              <span className={`text-xs font-bold px-2 py-1 rounded-lg ml-3 flex-shrink-0 ${
+                course.price === "free" || course.price === 0
+                  ? "bg-emerald-500/15 text-emerald-300 border border-emerald-500/25"
+                  : "bg-indigo-500/15 text-indigo-300 border border-indigo-500/25"
+              }`}>
+                {course.price === "free" || course.price === 0
+                  ? "Free"
+                  : `R${(course.price as number).toLocaleString()}`}
+              </span>
+            </div>
+
+            <div className="flex items-center gap-3 text-xs text-muted-foreground mb-3">
+              <span className="flex items-center gap-1">
+                <Star className="w-3 h-3 text-amber-400 fill-amber-400" />
+                {course.rating}
+              </span>
+              <span className="flex items-center gap-1">
+                <Clock className="w-3 h-3" />
+                {course.durationHours}h
+              </span>
+              <span className="flex items-center gap-1">
+                <Globe className="w-3 h-3" />
+                {course.platform}
+              </span>
+              {course.nqfLevel && (
+                <Badge variant="indigo" className="text-xs">NQF {course.nqfLevel}</Badge>
+              )}
+            </div>
+
+            <div className="flex flex-wrap gap-1.5 mb-4">
+              {course.skills.slice(0, 4).map((skill) => (
+                <span key={skill} className="text-xs bg-secondary text-muted-foreground px-2 py-0.5 rounded">{skill}</span>
+              ))}
+              {course.skills.length > 4 && <span className="text-xs text-muted-foreground">+{course.skills.length - 4}</span>}
+            </div>
+
+            <a
+              href={course.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center justify-center gap-2 w-full py-2 rounded-lg border border-border hover:border-indigo-500/40 hover:bg-indigo-500/8 text-xs font-medium text-muted-foreground hover:text-indigo-300 transition-all"
+            >
+              <BookOpen className="w-3.5 h-3.5" />
+              View Course
+              <ExternalLink className="w-3 h-3" />
+            </a>
+          </motion.div>
+        ))}
+      </div>
+
+      {/* SA-specific note */}
+      <div className="bg-card border border-amber-500/20 rounded-xl p-5">
+        <div className="flex items-start gap-3">
+          <GraduationCap className="w-5 h-5 text-amber-400 flex-shrink-0 mt-0.5" />
+          <div>
+            <h3 className="text-sm font-semibold text-foreground mb-1">SA Funding Options</h3>
+            <p className="text-xs text-muted-foreground leading-relaxed">
+              South African learners can access funding through: <strong className="text-foreground">NSFAS</strong> (university students),
+              <strong className="text-foreground"> SETA Learnerships</strong> (sector-specific skills), <strong className="text-foreground">B-BBEE Skills Development</strong> (employer-funded),
+              and <strong className="text-foreground">Harambee Youth Employment Accelerator</strong>. Many skills programmes are fully subsidised for South African citizens.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}

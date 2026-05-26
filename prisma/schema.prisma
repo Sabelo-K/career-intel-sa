@@ -1,0 +1,230 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String   @id @default(cuid())
+  clerkId       String   @unique
+  email         String   @unique
+  name          String?
+  avatarUrl     String?
+  plan          Plan     @default(FREE)
+  onboarded     Boolean  @default(false)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  profile       Profile?
+  cvs           CV[]
+  chatSessions  ChatSession[]
+  careerPaths   CareerPath[]
+  skillsGaps    SkillsGap[]
+  jobAlerts     JobAlert[]
+  courseProgress CourseProgress[]
+
+  @@map("users")
+}
+
+model Profile {
+  id                  String    @id @default(cuid())
+  userId              String    @unique
+  user                User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  currentRole         String?
+  targetRole          String?
+  province            Province?
+  yearsExperience     Int?
+  educationLevel      EducationLevel?
+  industry            String?
+  skills              String[]
+  employabilityScore  Int?
+  salaryExpectation   Int?
+  isOpenToWork        Boolean   @default(false)
+  linkedinUrl         String?
+  githubUrl           String?
+  portfolioUrl        String?
+  bio                 String?
+  updatedAt           DateTime  @updatedAt
+
+  @@map("profiles")
+}
+
+model CV {
+  id              String    @id @default(cuid())
+  userId          String
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name            String
+  originalUrl     String?
+  parsedData      Json?
+  atsScore        Int?
+  recruiterScore  Int?
+  improvedContent Json?
+  version         Int       @default(1)
+  isActive        Boolean   @default(false)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  @@map("cvs")
+}
+
+model ChatSession {
+  id        String        @id @default(cuid())
+  userId    String
+  user      User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title     String?
+  context   String?
+  messages  ChatMessage[]
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+
+  @@map("chat_sessions")
+}
+
+model ChatMessage {
+  id        String      @id @default(cuid())
+  sessionId String
+  session   ChatSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  role      MessageRole
+  content   String
+  createdAt DateTime    @default(now())
+
+  @@map("chat_messages")
+}
+
+model CareerPath {
+  id              String    @id @default(cuid())
+  userId          String
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title           String
+  currentRole     String
+  targetRole      String
+  timeframeYears  Int
+  simulation      Json
+  salaryProjection Json
+  createdAt       DateTime  @default(now())
+
+  @@map("career_paths")
+}
+
+model SkillsGap {
+  id              String    @id @default(cuid())
+  userId          String
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  currentSkills   String[]
+  targetRole      String
+  missingSkills   Json
+  learningPath    Json
+  completionPct   Int       @default(0)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  @@map("skills_gaps")
+}
+
+model CareerDemand {
+  id                    String   @id @default(cuid())
+  title                 String   @unique
+  sector                String
+  demandScore           Int
+  growthTrend           GrowthTrend
+  futureOutlook         FutureOutlook
+  automationRisk        Int
+  remoteFriendly        Boolean  @default(false)
+  internationalDemand   Boolean  @default(false)
+  minSalaryZar          Int
+  maxSalaryZar          Int
+  avgSalaryZar          Int
+  topSkills             String[]
+  topProvinces          String[]
+  nqfLevel              Int?
+  relatedCareers        String[]
+  updatedAt             DateTime @updatedAt
+
+  @@map("career_demand")
+}
+
+model JobAlert {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  keywords    String[]
+  province    Province?
+  minSalary   Int?
+  remote      Boolean?
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+
+  @@map("job_alerts")
+}
+
+model CourseProgress {
+  id         String   @id @default(cuid())
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  courseId   String
+  platform   String
+  title      String
+  progress   Int      @default(0)
+  completed  Boolean  @default(false)
+  startedAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@map("course_progress")
+}
+
+enum Plan {
+  FREE
+  PREMIUM
+  RECRUITER
+  ENTERPRISE
+}
+
+enum Province {
+  GAUTENG
+  WESTERN_CAPE
+  KWAZULU_NATAL
+  EASTERN_CAPE
+  FREE_STATE
+  LIMPOPO
+  MPUMALANGA
+  NORTH_WEST
+  NORTHERN_CAPE
+}
+
+enum EducationLevel {
+  GRADE_10
+  GRADE_11
+  GRADE_12_MATRIC
+  CERTIFICATE
+  DIPLOMA
+  ADVANCED_DIPLOMA
+  DEGREE
+  HONOURS
+  MASTERS
+  PHD
+}
+
+enum MessageRole {
+  USER
+  ASSISTANT
+  SYSTEM
+}
+
+enum GrowthTrend {
+  DECLINING
+  STABLE
+  GROWING
+  STRONG_GROWTH
+  EXPLOSIVE_GROWTH
+}
+
+enum FutureOutlook {
+  POOR
+  FAIR
+  GOOD
+  EXCELLENT
+  EXCEPTIONAL
+}

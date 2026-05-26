@@ -1,6 +1,7 @@
 import { SignIn } from "@clerk/nextjs";
 import Link from "next/link";
 import { Brain } from "lucide-react";
+import { clerkDarkAppearance } from "@/lib/clerk-appearance";
 
 export default function SignInPage() {
   return (
@@ -22,7 +23,7 @@ export default function SignInPage() {
           <h1 className="text-2xl font-bold text-white mb-1">Welcome back</h1>
           <p className="text-white/50 text-sm">Sign in to your career intelligence dashboard</p>
         </div>
-        <SignIn />
+        <SignIn appearance={clerkDarkAppearance} />
       </div>
     </div>
   );

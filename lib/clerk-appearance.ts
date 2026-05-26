@@ -1,0 +1,53 @@
+export const clerkDarkAppearance = {
+  variables: {
+    colorBackground: "#0d1624",
+    colorText: "#ffffff",
+    colorTextSecondary: "rgba(255,255,255,0.6)",
+    colorInputBackground: "#1a2235",
+    colorInputText: "#ffffff",
+    colorPrimary: "#6366f1",
+    colorNeutral: "#ffffff",
+    fontFamily: "inherit",
+  },
+  elements: {
+    card: {
+      backgroundColor: "#0d1624",
+      border: "1px solid rgba(255,255,255,0.08)",
+      boxShadow: "0 0 40px rgba(99,102,241,0.08)",
+    },
+    headerTitle: { color: "#ffffff" },
+    headerSubtitle: { color: "rgba(255,255,255,0.55)" },
+    socialButtonsBlockButton: {
+      backgroundColor: "#1a2235",
+      border: "1px solid rgba(255,255,255,0.12)",
+      color: "#ffffff",
+    },
+    socialButtonsBlockButtonText: { color: "#ffffff" },
+    dividerLine: { backgroundColor: "rgba(255,255,255,0.1)" },
+    dividerText: { color: "rgba(255,255,255,0.4)" },
+    formFieldLabel: { color: "rgba(255,255,255,0.7)" },
+    formFieldInput: {
+      backgroundColor: "#1a2235",
+      border: "1px solid rgba(255,255,255,0.12)",
+      color: "#ffffff",
+    },
+    formFieldInputShowPasswordButton: { color: "rgba(255,255,255,0.5)" },
+    formButtonPrimary: {
+      backgroundColor: "#6366f1",
+      color: "#ffffff",
+    },
+    footerActionLink: { color: "#818cf8" },
+    footerActionText: { color: "rgba(255,255,255,0.5)" },
+    footer: { backgroundColor: "#0d1624" },
+    identityPreviewText: { color: "#ffffff" },
+    identityPreviewEditButton: { color: "#818cf8" },
+    alertText: { color: "#ffffff" },
+    formFieldErrorText: { color: "#f87171" },
+    formFieldSuccessText: { color: "#34d399" },
+    otpCodeFieldInput: {
+      backgroundColor: "#1a2235",
+      border: "1px solid rgba(255,255,255,0.12)",
+      color: "#ffffff",
+    },
+  },
+};

@@ -1,6 +1,7 @@
 import { SignUp } from "@clerk/nextjs";
 import Link from "next/link";
 import { Brain, CheckCircle } from "lucide-react";
+import { clerkDarkAppearance } from "@/lib/clerk-appearance";
 
 const PERKS = [
   "Free forever — no credit card needed",
@@ -54,7 +55,7 @@ export default function SignUpPage() {
               <span className="font-bold text-lg text-white">CareerIntel SA</span>
             </Link>
           </div>
-          <SignUp />
+          <SignUp appearance={clerkDarkAppearance} />
         </div>
       </div>
     </div>

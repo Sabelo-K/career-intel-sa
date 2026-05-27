@@ -4,7 +4,7 @@
 
 - **GitHub:** [Sabelo-K/career-intel-sa](https://github.com/Sabelo-K/career-intel-sa)
 - **Hosting:** Vercel (frontend) + Supabase (database)
-- **AI Model:** Anthropic Claude claude-sonnet-4-6
+- **AI Model:** Groq `llama-3.3-70b-versatile` (free tier — no credit card required)
 
 ---
 
@@ -58,7 +58,7 @@ Open [http://localhost:3000](http://localhost:3000)
 South Africa has a 32%+ unemployment rate, with graduates facing a severe mismatch between their skills and what employers actually need. CareerIntel SA addresses this by providing:
 
 - **Real SA labour market data** — not generic global stats, but actual demand, salaries, and growth trends for SA careers
-- **AI-powered personalisation** — every recommendation is tailored via Claude AI to the user's specific background
+- **AI-powered personalisation** — every recommendation is tailored to the user's specific background
 - **Inclusivity** — covers trades and artisan careers (Electricians, Plumbers, Welders) alongside knowledge-worker roles, reflecting the true SA economy
 - **Affordability** — tiered pricing starting at R0 so no one is excluded
 
@@ -69,24 +69,35 @@ South Africa has a 32%+ unemployment rate, with graduates facing a severe mismat
 All 8 feature pages live under the authenticated `/dashboard` route.
 
 ### 1. AI CV Builder (`/cv-builder`)
-Two-mode builder:
+Two-mode builder with game-changing AI revamp capability:
 
-**Analyse Existing CV**
-- Upload PDF or paste plain text
-- Claude parses structure and scores against SA ATS criteria
-- Returns ATS score, recruiter score, strengths, weaknesses, missing keywords, and an improved summary
+**Analyse & Revamp Existing CV**
+- Upload PDF, DOCX, or plain text CV
+- AI (`parseAndRevampCV`) performs two operations simultaneously:
+  1. **Extracts** all data: name, contact info, every job, education, skills, certifications
+  2. **Rewrites** the entire CV: optimised professional summary, experience bullets with action verbs and quantified outcomes, high-demand SA keywords added to skills
+- Returns ATS score + recruiter score (scored against the *original* to show actual improvement)
+- After revamp: extracted data preview shows name, job count, qualification count, skill count
+- Select from 4 premium templates and download a fully-populated, print-ready PDF
+- No placeholders — the downloaded CV contains the user's actual data
+
+**Premium CV Templates (4 styles, all with real user data):**
+- **Modern Pro** — Two-column, deep indigo (#1e1b4b) sidebar with animated skill bars, clean white main area. SA corporate staple.
+- **Executive** — Full-width dark (#0f172a) header, Georgia serif font, gold/amber accents. For senior/management roles (R80k+).
+- **Tech Focus** — Dark header, `$ whoami` terminal-style role line, monospace skill tags, cyan (#22d3ee) accents. Developer-optimised.
+- **Graduate** — Blue gradient header, card-based sections, clean ATS-friendly layout with references section.
 
 **Build from Scratch (5-step wizard)**
 1. Personal Info — name, contact, province, professional summary
 2. Work Experience — company, role, dates, description (unlimited entries)
 3. Education — institution, qualification, NQF level, year
 4. Skills — add/remove skills with badge UI
-5. Preview — printable white-background CV document, print via `window.print()`
+5. Preview + Download — premium Modern Pro template auto-populated with form data, print-to-PDF
 
 SA-specific touches: NQF level selector (1–10), province dropdown (all 9 provinces), SETA/PSIRA certification hints, completeness progress bar.
 
 ### 2. AI Career Coach (`/career-coach`)
-- Real-time streaming chat powered by Claude claude-sonnet-4-6
+- Real-time streaming chat powered by Groq (llama-3.3-70b-versatile)
 - Word-by-word response rendering with blinking cursor animation
 - SA-specific system prompt: knows SA industries, SETA, B-BBEE, ZAR salaries, load shedding context
 - Message limit UI: amber warning at ≤3 messages remaining, hard limit message at 0
@@ -111,10 +122,11 @@ SA-specific touches: NQF level selector (1–10), province dropdown (all 9 provi
 - Sector breakdown charts
 - Fast-growing careers for 2025 including Solar PV Installer and Electrician Artisan
 - Filter by sector, province, salary range
+- Chart tooltips styled with white text on dark background (Recharts `contentStyle` override)
 
 ### 5. Career Path Simulator (`/career-paths`)
 - Input current role → target role → timeframe (1–10 years)
-- Claude generates a year-by-year career trajectory
+- AI generates a year-by-year career trajectory
 - Salary projection curve over time
 - Skill acquisition milestones
 - Province-aware (Gauteng tech salaries vs Western Cape, etc.)
@@ -131,7 +143,7 @@ SA-specific touches: NQF level selector (1–10), province dropdown (all 9 provi
 - Expandable per-question guidance with "How to Answer" framework and Pro Tips
 - **Practice Answer**: toggles an inline textarea per question with live word count
 - **Next Question**: advances to next question in the currently filtered list (disabled on last)
-- AI question generation: enter role + seniority level → Claude generates 10 tailored questions
+- AI question generation: enter role + seniority level → AI generates 10 tailored questions
 - SA-specific tips panel (NQF levels, SAICA/ECSA/HPCSA, B-BBEE awareness)
 
 ### 8. Main Dashboard (`/dashboard`)
@@ -162,23 +174,39 @@ SA-specific touches: NQF level selector (1–10), province dropdown (all 9 provi
 │       ├── courses, interview-prep, profile                      │
 │       └── /(admin)/admin                                        │
 ├─────────────────────────────────────────────────────────────────┤
-│  API Routes (Next.js Route Handlers)                            │
+│  API Routes (Next.js Route Handlers — all runtime: "nodejs")    │
 │  ├── POST /api/chat              → SSE streaming career coach   │
 │  ├── POST /api/cv/analyze        → CV parse + ATS scoring       │
+│  ├── POST /api/cv/revamp         → Full AI revamp (extract +    │
+│  │                                  rewrite all CV sections)    │
 │  ├── GET  /api/career/demand     → Demand data lookup           │
 │  ├── POST /api/career/paths      → Path simulation              │
 │  ├── POST /api/skills/gap        → Gap analysis                 │
 │  └── GET  /api/analytics         → Market analytics             │
 ├─────────────────────────────────────────────────────────────────┤
-│  AI Layer  (lib/ai/)                                            │
-│  ├── streamCareerCoach()    → streaming SSE for chat            │
-│  ├── chatWithCareerCoach()  → non-streaming fallback            │
-│  ├── parseCV()              → extract structure from CV text    │
-│  ├── analyzeCV()            → ATS + recruiter scoring           │
-│  ├── analyzeSkillsGap()     → gap + roadmap JSON                │
-│  ├── simulateCareerPath()   → trajectory + salary projection    │
+│  AI Layer  (lib/ai/claude.ts — Groq SDK)                        │
+│  ├── streamCareerCoach()         → streaming SSE for chat       │
+│  ├── chatWithCareerCoach()       → non-streaming fallback       │
+│  ├── parseCV()                   → extract structure from text  │
+│  ├── analyzeCV()                 → ATS + recruiter scoring      │
+│  ├── parseAndRevampCV()          → extract AND rewrite entire   │
+│  │                                  CV in one Groq call         │
+│  ├── analyzeSkillsGap()          → gap + roadmap JSON           │
+│  ├── simulateCareerPath()        → trajectory + salary proj.    │
 │  ├── calculateEmployabilityScore() → composite score           │
 │  └── generateInterviewQuestions()  → SA-specific questions      │
+├─────────────────────────────────────────────────────────────────┤
+│  CV Templates (lib/cv-templates.ts)                             │
+│  ├── generateModernPro()         → placeholder (analysis tab)  │
+│  ├── generateExecutive()         → placeholder (analysis tab)  │
+│  ├── generateTechFocus()         → placeholder (analysis tab)  │
+│  ├── generateGraduate()          → placeholder (analysis tab)  │
+│  ├── generateBuiltCV()           → real data (build scratch)   │
+│  ├── generateExecutiveFull()     → real data + exec style      │
+│  ├── generateTechFull()          → real data + tech style      │
+│  ├── generateGraduateFull()      → real data + grad style      │
+│  └── generateRevampedCV()        → dispatcher for all 4 with   │
+│                                     real extracted data         │
 ├─────────────────────────────────────────────────────────────────┤
 │  Data Layer                                                     │
 │  ├── PostgreSQL via Supabase  (users, CVs, chats, paths)        │
@@ -194,26 +222,28 @@ SA-specific touches: NQF level selector (1–10), province dropdown (all 9 provi
 
 **Streaming flow:** `/api/chat` returns a `ReadableStream` with `Content-Type: text/event-stream`. The frontend reads it with a `reader.read()` loop, parsing `data: {"delta":"..."}` lines and appending each chunk to the message in real time.
 
+**CV Revamp flow:** User uploads file → `/api/cv/revamp` extracts text (pdf-parse for PDF, mammoth for DOCX) → single Groq call extracts and rewrites the entire CV → response includes real personal data + experience + education + analysis scores → frontend generates premium HTML template with no placeholders → user saves as PDF.
+
 ---
 
 ## Tech Stack
 
-| Layer        | Technology                                        |
-|-------------|---------------------------------------------------|
-| Framework    | Next.js 15 (App Router)                          |
-| Language     | TypeScript                                        |
-| Styling      | TailwindCSS + tailwindcss-animate                 |
-| Components   | Custom design system (Button, Badge, Card, etc.)  |
-| Animations   | Framer Motion                                     |
-| Charts       | Recharts                                          |
-| Auth         | Clerk (`@clerk/nextjs` v5)                        |
-| Database     | PostgreSQL via Supabase                           |
-| ORM          | Prisma v5                                         |
-| AI           | Google Gemini 2.0 Flash (`@google/generative-ai`) — free tier |
-| PDF Parsing  | pdf-parse                                         |
-| Validation   | Zod                                               |
-| Icons        | Lucide React                                      |
-| Hosting      | Vercel (frontend + API) + Supabase (DB)           |
+| Layer        | Technology                                                          |
+|-------------|---------------------------------------------------------------------|
+| Framework    | Next.js 15 (App Router)                                            |
+| Language     | TypeScript                                                          |
+| Styling      | TailwindCSS + tailwindcss-animate                                   |
+| Components   | Custom design system (Button, Badge, Card, etc.)                    |
+| Animations   | Framer Motion                                                       |
+| Charts       | Recharts                                                            |
+| Auth         | Clerk (`@clerk/nextjs` v5)                                         |
+| Database     | PostgreSQL via Supabase                                             |
+| ORM          | Prisma v5                                                           |
+| AI           | Groq (`groq-sdk`) — `llama-3.3-70b-versatile`, free tier           |
+| PDF Parsing  | `pdf-parse` (PDF) + `mammoth` (DOCX)                               |
+| Validation   | Zod                                                                 |
+| Icons        | Lucide React                                                        |
+| Hosting      | Vercel (frontend + API) + Supabase (DB)                             |
 
 ---
 
@@ -228,7 +258,7 @@ career-intel/
 │   ├── (dashboard)/
 │   │   ├── layout.tsx            # Sidebar layout wrapper
 │   │   ├── dashboard/page.tsx
-│   │   ├── cv-builder/page.tsx
+│   │   ├── cv-builder/page.tsx   # AI CV analyse + revamp + build from scratch
 │   │   ├── career-coach/page.tsx
 │   │   ├── career-paths/page.tsx
 │   │   ├── skills-gap/page.tsx
@@ -239,8 +269,10 @@ career-intel/
 │   ├── (admin)/
 │   │   └── admin/page.tsx
 │   ├── api/
-│   │   ├── chat/route.ts
-│   │   ├── cv/analyze/route.ts
+│   │   ├── chat/route.ts              # SSE streaming career coach
+│   │   ├── cv/
+│   │   │   ├── analyze/route.ts       # CV parse + ATS scoring
+│   │   │   └── revamp/route.ts        # Full AI revamp (pdf-parse + mammoth + Groq)
 │   │   ├── career/demand/route.ts
 │   │   ├── career/paths/route.ts
 │   │   ├── skills/gap/route.ts
@@ -260,10 +292,12 @@ career-intel/
 │       └── sidebar.tsx           # Dashboard sidebar nav
 ├── lib/
 │   ├── ai/
-│   │   ├── claude.ts             # All Anthropic API calls
-│   │   └── prompts.ts            # System prompts for each AI feature
+│   │   ├── claude.ts             # All Groq API calls (function names kept for compatibility)
+│   │   └── prompts.ts            # SA-specific system prompts for each feature
+│   ├── cv-templates.ts           # Premium HTML/CSS CV template generators
+│   │                             # (4 styles × 2 modes = 8 generators + dispatcher)
 │   ├── data/
-│   │   ├── sa-careers.ts         # 35+ SA careers with demand/salary data
+│   │   ├── sa-careers.ts         # 35+ SA careers with demand/salary/NQF data
 │   │   ├── sa-provinces.ts       # 9 provinces with regional data
 │   │   └── sa-courses.ts         # Curated course catalogue
 │   ├── db.ts                     # Prisma client singleton
@@ -273,7 +307,7 @@ career-intel/
 │   ├── schema.prisma             # Database schema
 │   └── seed.ts                   # Seed SA career demand data
 ├── middleware.ts                  # Clerk auth middleware
-├── next.config.mjs               # Next.js config
+├── next.config.mjs               # Next.js config (serverExternalPackages)
 ├── tailwind.config.ts
 ├── postcss.config.mjs
 ├── tsconfig.json
@@ -319,8 +353,15 @@ NEXT_PUBLIC_CLERK_SIGN_UP_URL=/sign-up
 NEXT_PUBLIC_CLERK_AFTER_SIGN_IN_URL=/dashboard
 NEXT_PUBLIC_CLERK_AFTER_SIGN_UP_URL=/onboarding
 
-# Anthropic Claude API
-ANTHROPIC_API_KEY=sk-ant-...
+# AI — Groq (PRIMARY — free tier, no credit card required)
+# Get your free key at: https://console.groq.com
+GROQ_API_KEY=gsk_...
+
+# AI — Google Gemini (optional, kept for reference)
+# GOOGLE_AI_API_KEY=AIza...
+
+# AI — Anthropic Claude (optional, requires paid credits)
+# ANTHROPIC_API_KEY=sk-ant-...
 
 # App
 NEXT_PUBLIC_APP_URL=http://localhost:3000
@@ -338,7 +379,12 @@ NEXT_PUBLIC_APP_NAME="CareerIntel SA"
 1. Push to GitHub (already connected at `Sabelo-K/career-intel-sa`)
 2. Vercel auto-deploys on every push to `master`
 3. Set all environment variables in **Vercel Dashboard → Settings → Environment Variables**
-4. Required Vercel env vars: `DATABASE_URL`, `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`, `CLERK_SECRET_KEY`, `ANTHROPIC_API_KEY`, `NEXT_PUBLIC_APP_URL`
+4. Required Vercel env vars:
+   - `DATABASE_URL`
+   - `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`
+   - `CLERK_SECRET_KEY`
+   - `GROQ_API_KEY` ← primary AI key
+   - `NEXT_PUBLIC_APP_URL`
 
 **`next.config.mjs` must include:**
 ```js
@@ -376,19 +422,20 @@ const nextConfig = {
    - After sign-up: `/onboarding`
 4. Add your production Vercel URL to **Allowed redirect URLs**
 
-### Anthropic API Key
+### Groq API Key (Free AI Tier)
 
-1. Generate key at [console.anthropic.com](https://console.anthropic.com) → API Keys → Create Key
-2. Add to `ANTHROPIC_API_KEY` in Vercel env vars
-3. Redeploy after updating the key
-
-> **Security note:** API keys shared in chat or committed to git are auto-revoked by Anthropic. Always generate a fresh key and add it directly in the Vercel dashboard.
+1. Sign up at [console.groq.com](https://console.groq.com) — no credit card required
+2. Go to **API Keys → Create API Key**
+3. Add as `GROQ_API_KEY` in Vercel environment variables
+4. Free tier: 14,400 requests/day, 500,000 tokens/minute
 
 ---
 
 ## AI Integration
 
-All AI calls go through `lib/ai/claude.ts`. The model is pinned to `claude-sonnet-4-6`.
+All AI calls go through `lib/ai/claude.ts`. The file is named `claude.ts` for historical reasons (originally Anthropic) but now uses the Groq SDK. All function signatures are preserved — no changes required in API routes or pages.
+
+**Model:** `llama-3.3-70b-versatile` via Groq
 
 | Function | Max Tokens | Use |
 |---|---|---|
@@ -396,6 +443,7 @@ All AI calls go through `lib/ai/claude.ts`. The model is pinned to `claude-sonne
 | `chatWithCareerCoach()` | 1024 | Non-streaming fallback |
 | `parseCV()` | 2048 | Extracts structured JSON from raw CV text |
 | `analyzeCV()` | 2048 | ATS + recruiter scoring with improvement suggestions |
+| `parseAndRevampCV()` | 3500 | **Game-changer** — extracts ALL CV data AND rewrites every section in one call. Returns personal info, rewritten experience (action verbs + quantified outcomes), optimised summary, enhanced skills, plus ATS/recruiter scores |
 | `analyzeSkillsGap()` | 2048 | Gap analysis with prioritised learning roadmap |
 | `simulateCareerPath()` | 2048 | Year-by-year trajectory + salary projections |
 | `calculateEmployabilityScore()` | 1024 | Composite employability score |
@@ -463,7 +511,7 @@ Four tiers designed for maximum SA inclusivity:
 
 1. **South African First** — All data, salaries (ZAR), qualifications (NQF), and language reflect SA reality
 2. **Inclusive** — Covers matric leavers, artisans, and graduates equally; pricing starts at R0
-3. **AI-Native** — Every feature is meaningfully enhanced by Claude AI, not just decorated with it
+3. **AI-Native** — Every feature is meaningfully enhanced by AI, not just decorated with it
 4. **Mobile First** — Responsive down to small Android screens (South Africa's dominant device)
 5. **POPIA Compliant** — SA data privacy law adherence built into data handling
 6. **No Dead Ends** — Every button and link navigates somewhere; no placeholder UI
@@ -477,7 +525,9 @@ Four tiers designed for maximum SA inclusivity:
 - [x] Clerk authentication (sign-in / sign-up)
 - [x] Main dashboard
 - [x] AI CV Builder (analyse existing + build from scratch)
-- [x] AI Career Coach with real-time streaming
+- [x] **AI CV Revamp** — upload a CV, AI extracts and rewrites it, download premium PDF with real data
+- [x] **4 Premium CV Templates** — Modern Pro, Executive, Tech Focus, Graduate (all with real data)
+- [x] AI Career Coach with real-time streaming (Groq, truly free)
 - [x] Career Demand Engine with SA market data
 - [x] Skills Gap Analysis with interactive skill management
 - [x] Career Path Simulator
@@ -492,7 +542,6 @@ Four tiers designed for maximum SA inclusivity:
 - [ ] Real SA job board integration (PNet API, CareerJunction, LinkedIn)
 - [ ] Premium subscription payments (PayFast)
 - [ ] Email notifications (Resend)
-- [ ] CV PDF generation/download (React PDF)
 - [ ] LinkedIn profile optimiser
 - [ ] Advanced salary prediction model
 - [ ] PWA / mobile-optimised experience
@@ -528,7 +577,7 @@ This section documents every significant change made to the platform in chronolo
 - Built all 8 feature pages with mock UI
 - Set up Prisma schema with all models
 - Created `lib/data/sa-careers.ts` with 20+ careers and SA-specific data
-- Integrated Anthropic Claude claude-sonnet-4-6 via `@anthropic-ai/sdk`
+- Integrated Anthropic Claude via `@anthropic-ai/sdk`
 - Wrote SA-specific system prompts in `lib/ai/prompts.ts`
 - Created all API routes (`/api/chat`, `/api/cv/analyze`, etc.)
 - Deployed to Vercel with GitHub auto-deploy
@@ -604,8 +653,6 @@ This section documents every significant change made to the platform in chronolo
   - Retry button on error messages
   - Live message counter with amber warning at ≤3 remaining
 
-**Required action:** Generate new Anthropic API key at `console.anthropic.com` → update `ANTHROPIC_API_KEY` in Vercel environment variables → redeploy.
-
 ---
 
 ### v0.7.0 — Clerk Middleware Fix
@@ -651,12 +698,166 @@ auth().protect()
 
 ---
 
+### v1.0.0 — Switch AI Provider: Anthropic → Google Gemini
+**Motivation:** Anthropic API requires paid credits (ran out). Google Gemini 2.0 Flash has a free tier.
+
+**Changes:**
+- Rewrote `lib/ai/claude.ts` to use `@google/generative-ai` SDK
+- Model: `gemini-2.0-flash`, then downgraded to `gemini-1.5-flash` (2.0 not on free tier)
+- Added `GOOGLE_AI_API_KEY` to `.env.example`
+
+**Issues encountered:**
+- `gemini-2.0-flash`: free tier limit was 0 — not available on free tier
+- `gemini-1.5-flash` on v1beta endpoint: returned 404 — model path incorrect
+- Both Gemini versions abandoned due to availability issues
+
+---
+
+### v1.0.1 — Career Coach History & Error Handling Fixes
+**Motivation:** Chat was sending the static welcome message as the first history entry, causing the API to reject the request since conversations must start with a user message. Error messages were misleading.
+
+**Changes:**
+- Filtered welcome message, error bubbles, and empty streaming placeholders from chat history before sending to AI
+- Fixed HTTP error classification — now attaches `.status` to thrown errors for reliable status checking
+- Error messages now show the actual failure reason instead of generic "Connection issue"
+
+---
+
+### v1.0.2 — Switch AI Provider: Gemini → Groq (llama-3.3-70b-versatile)
+**Motivation:** Both Gemini 2.0 Flash (quota limit: 0) and Gemini 1.5 Flash (404 not found) failed. Groq is genuinely free with no credit card required.
+
+**Changes:**
+- Rewrote `lib/ai/claude.ts` to use `groq-sdk`
+- Model: `llama-3.3-70b-versatile` (Groq's fastest and most capable free model)
+- Free tier: 14,400 requests/day, 500,000 tokens/minute
+- Added `GROQ_API_KEY` to `.env.example` as the primary AI key
+- Kept `@google/generative-ai` and `@anthropic-ai/sdk` in `package.json` as optional fallbacks
+- All function signatures preserved — zero changes to API routes or feature pages
+
+**Key implementation detail:** Groq uses OpenAI-compatible API. System prompt is prepended as `{ role: "system", content }` as the first message. Streaming uses `groq.chat.completions.create({ stream: true })` with chunks via `chunk.choices[0]?.delta?.content`.
+
+**New env var required in Vercel:**
+```
+GROQ_API_KEY=gsk_...
+```
+
+---
+
+### v1.0.3 — Chart Tooltip Text Fix
+**Motivation:** When hovering over bar charts on the Job Market page, the tooltip text was black-on-dark — completely unreadable.
+
+**Root cause:** Recharts `<Tooltip>` defaults to black text (`color: "#000"`) regardless of background colour. The `contentStyle` prop sets the container background but not the text colour.
+
+**Fix in `app/(dashboard)/job-market/page.tsx`:**
+```typescript
+const TOOLTIP_STYLE = {
+  contentStyle: {
+    background: "rgba(13,21,38,0.97)",
+    border: "1px solid rgba(99,102,241,0.25)",
+    borderRadius: 8,
+    fontSize: 12,
+    color: "#f1f5f9",   // ← explicit white text
+  },
+  labelStyle: { color: "#cbd5e1", marginBottom: 4, fontWeight: 600 },
+  itemStyle: { color: "#f1f5f9" },
+  cursor: { fill: "rgba(99,102,241,0.08)" },
+};
+```
+Applied `{...TOOLTIP_STYLE}` to all 3 `<Tooltip>` components on the page.
+
+---
+
+### v1.0.4 — Premium CV Templates
+**Motivation:** The initial "Download Optimised CV" output was a plain HTML checklist with `[placeholder]` text — not usable by real job seekers.
+
+**New file: `lib/cv-templates.ts`**
+
+Created 4 premium HTML/CSS CV template generators. Each returns a complete, print-ready HTML document (saves as PDF via browser print dialog):
+
+- **`generateModernPro(data)`** — Two-column layout, deep indigo (#1e1b4b) sidebar with skill progress bars, clean white main content, indigo accent elements. Standard SA corporate style.
+- **`generateExecutive(data)`** — Full-width dark (#0f172a) header, Georgia serif font, gold/amber (#f59e0b) accent rule, elegant single-column body. For senior roles.
+- **`generateTechFocus(data)`** — Dark header, `$ whoami → [role]` terminal style, left sidebar with monospace `tech-pill` tags, cyan (#22d3ee) `// section` headings. Developer-optimised.
+- **`generateGraduate(data)`** — Blue gradient header, card-based sections, clean ATS-friendly layout, references section. For entry-level and internship applications.
+- **`generateBuiltCV(data: CVBuiltData)`** — Modern Pro style but with REAL form data (Build from Scratch flow).
+- **`generateCV(templateId, data)`** — Dispatcher for the 4 placeholder-based templates.
+
+**All templates include:**
+- `print-color-adjust: exact` + `-webkit-print-color-adjust: exact` so colours survive printing
+- `@page { size: A4; margin: 0 }` for correct PDF paper size
+- `box-shadow: none` in `@media print`
+- `<script>window.onload = function(){ window.print(); }</script>` — auto-triggers print dialog
+
+**Changes to `app/(dashboard)/cv-builder/page.tsx`:**
+- Import `generateCV` and `generateBuiltCV` from `lib/cv-templates`
+- `handleDownloadCV()` now calls `generateCV(selectedTemplate, analysisData)` instead of inline HTML
+- `BuildFromScratch` component: "Download CV" buttons now call `generateBuiltCV(cv)` with real form data
+- Removed `Printer` icon import (replaced with `Download`)
+
+---
+
+### v1.0.5 — AI CV Revamp (Game-Changer Feature)
+**Motivation:** After downloading a premium template, users still had `[Your Full Name]` and other placeholder text because templates didn't have access to the user's real CV data. The platform needed to actually read the CV, extract the user's information, and pre-fill the template with it.
+
+**What it does:** User uploads their CV → AI reads it → AI rewrites it → user downloads a fully-populated premium CV with their real data. No manual editing required.
+
+**New: `parseAndRevampCV(cvText)` in `lib/ai/claude.ts`**
+- Single Groq call (temperature: 0.2 for accuracy) that does two things simultaneously:
+  1. Extracts: name, email, phone, city, SA province, LinkedIn, every job entry, every qualification, all skills and certifications
+  2. Rewrites: professional summary (2-3 SA-optimised sentences), each experience entry (action verbs + inferred quantified outcomes, one point per line), NQF levels estimated where missing, 3-5 high-demand SA keywords added to skills
+- Returns a normalised object with `improvedSummary` and `extractedSkills` fields for backwards compatibility with the existing analysis UI
+- Adds `id` fields to experience and education arrays for type compatibility
+
+**New: `app/api/cv/revamp/route.ts`**
+- `POST /api/cv/revamp` — accepts multipart `FormData` with `file` field
+- Text extraction:
+  - `.pdf` → `pdf-parse` (already in `serverExternalPackages`)
+  - `.docx` / `.doc` → `mammoth` (newly installed)
+  - `.txt` / other → `file.text()` fallback
+- Calls `parseAndRevampCV()` with extracted text
+- Returns full revamped CV JSON
+- Auth-gated (Clerk `auth()`)
+
+**New full-data template generators in `lib/cv-templates.ts`:**
+- `generateExecutiveFull(data: CVBuiltData)` — Executive style with real data
+- `generateTechFull(data: CVBuiltData)` — Tech Focus style with real data
+- `generateGraduateFull(data: CVBuiltData)` — Graduate style with real data
+- Shared helpers: `buildExpSection()`, `buildEduSection()` — reused across all templates
+- `generateRevampedCV(templateId, data: CVBuiltData)` — master dispatcher: routes to the correct full-data template based on selected template
+
+**Changes to `app/(dashboard)/cv-builder/page.tsx`:**
+- New `RevampedCV` interface: extends `CVAnalysisResult` with `personal`, `experience`, `education`, `skills`, `certifications`, `summary` fields
+- `handleFile()` rewritten: POSTs to `/api/cv/revamp` instead of 3-second mock timeout
+- New error state (`"error"`) with friendly message and retry button
+- Results view: **Extracted CV Data banner** shows user's name (with initials avatar), job count, qualification count, skill count — confirms to user that their data was read correctly
+- `handleDownloadCV()`: if real data present → `generateRevampedCV(selectedTemplate, builtData)` with no placeholders; if not → falls back to placeholder `generateCV()`
+- "Download Revamped CV" button label
+- Analysing steps updated: "Extracting text → Parsing details → Rewriting for ATS → Scoring"
+- Note added: "This takes 15–30 seconds — AI is rewriting your content"
+
+**New dependency:**
+```json
+"mammoth": "^1.x.x"   // Word document (.docx/.doc) text extraction
+```
+
+---
+
+## Security Notes
+
+- Never commit `.env` to git
+- Anthropic API keys shared in any public channel are auto-revoked by Anthropic security
+- Groq and Google AI API keys should also be kept private
+- Supabase database passwords should be rotated if ever exposed
+- All dashboard routes are protected by Clerk middleware
+- User data is scoped by `userId` (Clerk user ID) in all Prisma queries
+
+---
+
 ## Known Issues & Pending Work
 
 ### Must Do Before Launch
 - [ ] **Run database migrations** — `npx prisma db push` against Supabase (may not have been run yet)
 - [ ] **Seed career data** — `npm run db:seed` to populate `CareerDemand` table
-- [ ] **New Anthropic API key** — generate at console.anthropic.com and update in Vercel env vars
+- [ ] **Add GROQ_API_KEY to Vercel** — required for all AI features in production
 - [ ] **Clerk allowed redirect URLs** — add production Vercel URL in Clerk dashboard
 - [ ] **Supabase password** — reset if it was ever shared or exposed
 
@@ -671,54 +872,6 @@ auth().protect()
 - Persist chat sessions to database (currently in-memory in the component)
 - Profile page save functionality
 - Onboarding flow after sign-up
-
----
-
-### v1.0.0 — Switch AI Provider from Anthropic to Google Gemini
-**Motivation:** Anthropic API requires paid credits. Google Gemini 2.0 Flash has a free tier of 1 million tokens/day — more than sufficient for development and early-stage production.
-
-**Changes:**
-- Rewrote `lib/ai/claude.ts` to use `@google/generative-ai` SDK
-- Installed `@google/generative-ai@^0.24.1` (added to `dependencies`)
-- All function signatures preserved — no changes needed to API routes or feature pages
-- Model: `gemini-2.0-flash` (latest stable, fast, free tier)
-- Key format change: Anthropic uses `role: "assistant"`, Gemini uses `role: "model"` — handled by `toGeminiHistory()` converter
-- System instructions moved to `getGenerativeModel({ systemInstruction })` (Gemini native)
-- Chat history uses `model.startChat({ history })` + `chat.sendMessageStream()` for streaming
-- Added `GOOGLE_AI_API_KEY` to `.env.example`
-
-**New environment variable required:**
-```
-GOOGLE_AI_API_KEY=AIza...   # Get free key at aistudio.google.com
-```
-
-**Free tier limits (Gemini 2.0 Flash):**
-- 15 requests per minute
-- 1,000,000 tokens per day
-- No credit card required
-
-**To switch back to Anthropic** (if credits are added): revert `lib/ai/claude.ts` to use `@anthropic-ai/sdk` (still installed, just unused).
-
----
-
-### v1.0.1 — Career Coach History & Error Handling Fixes
-**Motivation:** Chat was sending the static welcome message as the first history entry, causing Anthropic (and Gemini) to reject the request since conversations must start with a user message. Error messages were also misleading.
-
-**Changes:**
-- Filtered welcome message, error bubbles, and empty streaming placeholders from chat history before sending to AI
-- Fixed HTTP error classification — now attaches `.status` to thrown errors for reliable status checking
-- Error messages now show the actual failure reason (visible in red bubble) instead of generic "Connection issue"
-
----
-
-## Security Notes
-
-- Never commit `.env` to git
-- Anthropic API keys shared in any public channel are auto-revoked by Anthropic security
-- Google AI API keys should also be kept private (not committed to git)
-- Supabase database passwords should be rotated if ever exposed
-- All dashboard routes are protected by Clerk middleware
-- User data is scoped by `userId` (Clerk user ID) in all Prisma queries
 
 ---
 

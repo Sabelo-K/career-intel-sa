@@ -15,7 +15,20 @@ import { SA_CAREERS, SA_SECTORS, SCARCE_SKILLS } from "@/lib/data/sa-careers";
 import { SA_MARKET_STATS } from "@/lib/data/sa-provinces";
 import { formatSalaryRange, getDemandBadgeColor, getTrendLabel, getAutomationRiskLabel } from "@/lib/utils";
 
-// Fix import
+// Shared tooltip style — dark background with white text for all charts
+const TOOLTIP_STYLE = {
+  contentStyle: {
+    background: "rgba(13,21,38,0.97)",
+    border: "1px solid rgba(99,102,241,0.25)",
+    borderRadius: 8,
+    fontSize: 12,
+    color: "#f1f5f9",
+  },
+  labelStyle: { color: "#cbd5e1", marginBottom: 4, fontWeight: 600 },
+  itemStyle: { color: "#f1f5f9" },
+  cursor: { fill: "rgba(99,102,241,0.08)" },
+};
+
 const PROVINCE_DATA = [
   { province: "WESTERN_CAPE", score: 78, label: "Western Cape", topOpportunity: "Tech Hub" },
   { province: "GAUTENG", score: 85, label: "Gauteng", topOpportunity: "Financial Centre" },
@@ -234,7 +247,7 @@ export default function JobMarketPage() {
                   </Pie>
                   <Tooltip
                     formatter={(val) => [`${val}%`, "Share"]}
-                    contentStyle={{ background: "rgba(13,21,38,0.95)", border: "1px solid rgba(99,102,241,0.2)", borderRadius: 8, fontSize: 12 }}
+                    {...TOOLTIP_STYLE}
                   />
                 </PieChart>
               </ResponsiveContainer>
@@ -256,7 +269,7 @@ export default function JobMarketPage() {
                   <YAxis type="category" dataKey="label" tick={{ fontSize: 10, fill: "#6b7280" }} axisLine={false} tickLine={false} width={120} />
                   <Tooltip
                     formatter={(val) => [`${val}%`, "Growth"]}
-                    contentStyle={{ background: "rgba(13,21,38,0.95)", border: "1px solid rgba(99,102,241,0.2)", borderRadius: 8, fontSize: 12 }}
+                    {...TOOLTIP_STYLE}
                   />
                   <Bar dataKey="growth" radius={4}>
                     {SA_SECTORS.map((entry, i) => (
@@ -278,7 +291,8 @@ export default function JobMarketPage() {
                   <XAxis dataKey="label" tick={{ fontSize: 9, fill: "#6b7280" }} axisLine={false} tickLine={false} angle={-25} textAnchor="end" height={50} />
                   <YAxis tick={{ fontSize: 10, fill: "#6b7280" }} axisLine={false} tickLine={false} domain={[0, 100]} />
                   <Tooltip
-                    contentStyle={{ background: "rgba(13,21,38,0.95)", border: "1px solid rgba(99,102,241,0.2)", borderRadius: 8, fontSize: 12 }}
+                    formatter={(val, name) => [val, "Opportunity Score"]}
+                    {...TOOLTIP_STYLE}
                   />
                   <Bar dataKey="score" radius={[4, 4, 0, 0]}>
                     {PROVINCE_DATA.map((entry, i) => (

@@ -47,6 +47,9 @@ model Profile {
   githubUrl           String?
   portfolioUrl        String?
   bio                 String?
+  institution         String?
+  fieldOfStudy        String?
+  yearCompleted       Int?
   updatedAt           DateTime  @updatedAt
 
   @@map("profiles")

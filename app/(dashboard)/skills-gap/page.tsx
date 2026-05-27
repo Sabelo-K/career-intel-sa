@@ -4,40 +4,41 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  Target, CheckCircle2, Clock, BookOpen, TrendingUp,
+  Target, CheckCircle2, BookOpen, TrendingUp,
   Zap, AlertCircle, ChevronRight, Sparkles, Search, Plus, X,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { SA_CAREERS } from "@/lib/data/sa-careers";
 
 const CURRENT_SKILLS = ["Excel", "PowerPoint", "Communication", "Project Coordination", "Basic Python"];
 
-const MOCK_GAP_RESULT = {
-  targetRole: "Data Scientist",
-  matchPercentage: 28,
-  missingSkills: [
-    { skill: "Advanced Python", priority: "HIGH", demandScore: 94, timeToLearnWeeks: 8, reason: "Core tool for data science — used in 95% of SA DS job specs" },
-    { skill: "Machine Learning", priority: "HIGH", demandScore: 95, timeToLearnWeeks: 16, reason: "Fundamental requirement — scikit-learn, TensorFlow knowledge essential" },
-    { skill: "SQL & Databases", priority: "HIGH", demandScore: 88, timeToLearnWeeks: 4, reason: "Every SA data role requires strong SQL — immediate impact on employability" },
-    { skill: "Statistics & Probability", priority: "HIGH", demandScore: 86, timeToLearnWeeks: 10, reason: "Core foundation for ML — hypothesis testing, distributions, inference" },
-    { skill: "Data Visualization", priority: "MEDIUM", demandScore: 80, timeToLearnWeeks: 3, reason: "Tableau, Power BI, Matplotlib — communicate insights to SA business stakeholders" },
-    { skill: "Cloud Platforms (AWS/Azure)", priority: "MEDIUM", demandScore: 85, timeToLearnWeeks: 6, reason: "Growing requirement — SA companies migrating to cloud, remote ML deployment" },
-    { skill: "Big Data (Spark)", priority: "LOW", demandScore: 72, timeToLearnWeeks: 8, reason: "Useful for senior roles but not required at entry level" },
-  ],
-  learningPath: [
-    { order: 1, title: "Python Mastery", description: "Level up from basic to advanced Python including OOP, pandas, numpy", skills: ["Python", "Pandas", "NumPy"], resources: ["Python Data Science Handbook", "Google Data Analytics Cert"], estimatedWeeks: 8 },
-    { order: 2, title: "SQL & Data Engineering", description: "Master querying, window functions, and data pipelines", skills: ["SQL", "PostgreSQL", "Data Pipelines"], resources: ["Mode SQL Tutorial", "Udemy SQL Bootcamp"], estimatedWeeks: 4 },
-    { order: 3, title: "Statistics Foundation", description: "Probability, hypothesis testing, regression, and distributions", skills: ["Statistics", "R basics", "A/B Testing"], resources: ["StatQuest YouTube", "Think Stats book"], estimatedWeeks: 10 },
-    { order: 4, title: "Machine Learning", description: "Scikit-learn, model evaluation, feature engineering, deployment", skills: ["ML", "Scikit-learn", "Model Deploy"], resources: ["IBM ML Cert on Coursera", "Hands-On ML book"], estimatedWeeks: 16 },
-    { order: 5, title: "Visualisation & Communication", description: "Tableau, Matplotlib, Seaborn, storytelling with data", skills: ["Tableau", "Matplotlib", "Data Storytelling"], resources: ["Tableau Public", "Storytelling with Data book"], estimatedWeeks: 3 },
-  ],
-  estimatedMonths: 11,
-  quickWins: ["SQL", "Data Visualization", "Basic Statistics"],
-  salaryImpact: "Completing this path could increase your earning potential from ~R22k to R38k–R72k/month as a Data Scientist in SA.",
-};
+// ─── Types returned by the AI ────────────────────────────────────────────────
+interface MissingSkill {
+  skill: string;
+  priority: string;
+  demandScore: number;
+  timeToLearnWeeks: number;
+  reason: string;
+}
+interface LearningStep {
+  order: number;
+  title: string;
+  description: string;
+  skills: string[];
+  resources: string[];
+  estimatedWeeks: number;
+}
+interface GapResult {
+  targetRole: string;
+  matchPercentage: number;
+  missingSkills: MissingSkill[];
+  learningPath: LearningStep[];
+  estimatedMonths: number;
+  quickWins: string[];
+  salaryImpact: string;
+}
 
 const PRIORITY_COLOR: Record<string, string> = {
   HIGH: "text-red-400 bg-red-500/15 border-red-500/30",
@@ -49,18 +50,54 @@ export default function SkillsGapPage() {
   const router = useRouter();
   const [targetRole, setTargetRole] = useState("");
   const [analyzing, setAnalyzing] = useState(false);
-  const [result, setResult] = useState<typeof MOCK_GAP_RESULT | null>(null);
+  const [result, setResult] = useState<GapResult | null>(null);
+  const [error, setError] = useState<string | null>(null);
   const [activeStep, setActiveStep] = useState<number | null>(null);
   const [showSkillInput, setShowSkillInput] = useState(false);
   const [newSkill, setNewSkill] = useState("");
   const [currentSkills, setCurrentSkills] = useState(CURRENT_SKILLS);
 
   const analyse = async () => {
-    if (!targetRole.trim()) return;
+    if (!targetRole.trim() || currentSkills.length === 0) return;
     setAnalyzing(true);
-    await new Promise((r) => setTimeout(r, 2500));
-    setResult({ ...MOCK_GAP_RESULT, targetRole });
-    setAnalyzing(false);
+    setError(null);
+    setResult(null);
+
+    try {
+      const res = await fetch("/api/skills/gap", {
+        method:  "POST",
+        headers: { "Content-Type": "application/json" },
+        body:    JSON.stringify({
+          currentSkills,
+          targetRole: targetRole.trim(),
+          yearsExperience: 0,
+          education: "Not specified",
+        }),
+      });
+
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data.error || `Error ${res.status}`);
+      }
+
+      const data = await res.json();
+
+      // Normalise — Groq occasionally wraps the result differently
+      const normalised: GapResult = {
+        targetRole:       targetRole.trim(),
+        matchPercentage:  Number(data.matchPercentage ?? 0),
+        missingSkills:    Array.isArray(data.missingSkills) ? data.missingSkills : [],
+        learningPath:     Array.isArray(data.learningPath)  ? data.learningPath  : [],
+        estimatedMonths:  Number(data.estimatedMonths ?? 0),
+        quickWins:        Array.isArray(data.quickWins)     ? data.quickWins     : [],
+        salaryImpact:     String(data.salaryImpact ?? ""),
+      };
+      setResult(normalised);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Analysis failed. Please try again.");
+    } finally {
+      setAnalyzing(false);
+    }
   };
 
   const totalWeeks = result?.missingSkills.reduce((acc, s) => acc + s.timeToLearnWeeks, 0) || 0;
@@ -173,6 +210,17 @@ export default function SkillsGapPage() {
           ))}
         </div>
       </div>
+
+      {/* Error state */}
+      {error && (
+        <div className="flex items-center gap-3 p-4 rounded-xl bg-red-500/10 border border-red-500/20 text-sm text-red-300">
+          <AlertCircle className="w-4 h-4 flex-shrink-0" />
+          <span>{error}</span>
+          <button onClick={() => setError(null)} className="ml-auto text-red-400 hover:text-red-200">
+            <X className="w-4 h-4" />
+          </button>
+        </div>
+      )}
 
       <AnimatePresence>
         {result && (

@@ -7,7 +7,7 @@ import {
 } from "recharts";
 import {
   GitBranch, TrendingUp, Award, Zap, ChevronRight,
-  Clock, Target, Sparkles, Star, ArrowRight,
+  Clock, Target, Sparkles, Star, ArrowRight, AlertCircle, X,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -74,13 +74,56 @@ export default function CareerPathsPage() {
   const [simulating, setSimulating] = useState(false);
   const [result, setResult] = useState<typeof MOCK_SIMULATION | null>(null);
   const [activeYear, setActiveYear] = useState<number | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   const simulate = async () => {
-    if (!currentRole || !targetRole) return;
+    if (!currentRole.trim() || !targetRole.trim()) return;
     setSimulating(true);
-    await new Promise((r) => setTimeout(r, 3000));
-    setResult({ ...MOCK_SIMULATION, currentRole, targetRole, timeframeYears: years });
-    setSimulating(false);
+    setError(null);
+    setResult(null);
+
+    try {
+      const res = await fetch("/api/career/paths", {
+        method:  "POST",
+        headers: { "Content-Type": "application/json" },
+        body:    JSON.stringify({
+          currentRole:     currentRole.trim(),
+          targetRole:      targetRole.trim(),
+          yearsExperience: 0,
+          currentSkills:   [],
+          province:        "GAUTENG",
+          timeframeYears:  years,
+        }),
+      });
+
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data.error || `Error ${res.status}`);
+      }
+
+      const data = await res.json();
+
+      // Normalise and fall back to MOCK_SIMULATION shape where AI omits fields
+      const normalised = {
+        ...MOCK_SIMULATION,          // sensible defaults
+        ...data,                     // AI values override
+        currentRole:    currentRole.trim(),
+        targetRole:     targetRole.trim(),
+        timeframeYears: years,
+        milestones:     Array.isArray(data.milestones)             ? data.milestones             : MOCK_SIMULATION.milestones,
+        salaryProjection: Array.isArray(data.salaryProjection)     ? data.salaryProjection       : MOCK_SIMULATION.salaryProjection,
+        requiredCertifications: Array.isArray(data.requiredCertifications) ? data.requiredCertifications : MOCK_SIMULATION.requiredCertifications,
+        alternativePaths: Array.isArray(data.alternativePaths)     ? data.alternativePaths       : MOCK_SIMULATION.alternativePaths,
+        keyRisks:         Array.isArray(data.keyRisks)             ? data.keyRisks               : MOCK_SIMULATION.keyRisks,
+        promotionProbability: Number(data.promotionProbability ?? MOCK_SIMULATION.promotionProbability),
+        summary:          String(data.summary ?? MOCK_SIMULATION.summary),
+      };
+      setResult(normalised);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Simulation failed. Please try again.");
+    } finally {
+      setSimulating(false);
+    }
   };
 
   const maxSalary = result ? Math.max(...result.salaryProjection.map((s) => s.salary)) : 0;
@@ -151,6 +194,17 @@ export default function CareerPathsPage() {
           </div>
         </div>
       </div>
+
+      {/* Error state */}
+      {error && (
+        <div className="flex items-center gap-3 p-4 rounded-xl bg-red-500/10 border border-red-500/20 text-sm text-red-300">
+          <AlertCircle className="w-4 h-4 flex-shrink-0" />
+          <span>{error}</span>
+          <button onClick={() => setError(null)} className="ml-auto hover:text-red-200">
+            <X className="w-4 h-4" />
+          </button>
+        </div>
+      )}
 
       <AnimatePresence>
         {result && (

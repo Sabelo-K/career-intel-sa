@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Mic, ChevronDown, ChevronUp, Zap, CheckCircle2, Star, Brain, Target, Clock, ArrowRight } from "lucide-react";
+import { Mic, ChevronDown, ChevronUp, Zap, CheckCircle2, Star, Brain, Target, Clock, ArrowRight, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
@@ -83,18 +83,55 @@ const DIFFICULTY_COLORS: Record<string, string> = {
 export default function InterviewPrepPage() {
   const [role, setRole] = useState("");
   const [level, setLevel] = useState("mid");
+  const [industry, setIndustry] = useState("");
   const [generating, setGenerating] = useState(false);
   const [questions, setQuestions] = useState<Question[]>(MOCK_QUESTIONS);
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [filter, setFilter] = useState("all");
   const [practiceId, setPracticeId] = useState<string | null>(null);
   const [practiceText, setPracticeText] = useState<Record<string, string>>({});
+  const [error, setError] = useState<string | null>(null);
 
   const generate = async () => {
-    if (!role) return;
+    if (!role.trim()) return;
     setGenerating(true);
-    await new Promise((r) => setTimeout(r, 2000));
-    setGenerating(false);
+    setError(null);
+
+    try {
+      const res = await fetch("/api/interview/questions", {
+        method:  "POST",
+        headers: { "Content-Type": "application/json" },
+        body:    JSON.stringify({
+          role:     role.trim(),
+          level,
+          industry: industry.trim() || "general",
+        }),
+      });
+
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data.error || `Error ${res.status}`);
+      }
+
+      const data = await res.json();
+      const qs: Question[] = Array.isArray(data.questions)
+        ? data.questions.map((q: Record<string, unknown>, i: number) => ({
+            id:           String(q.id ?? i + 1),
+            question:     String(q.question ?? ""),
+            type:         (q.type as Question["type"]) ?? "behavioral",
+            difficulty:   (q.difficulty as Question["difficulty"]) ?? "medium",
+            sampleAnswer: String(q.sampleAnswer ?? ""),
+            tips:         Array.isArray(q.tips) ? (q.tips as string[]) : [],
+          }))
+        : [];
+
+      if (qs.length > 0) setQuestions(qs);
+      else throw new Error("No questions returned — please try again.");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to generate questions.");
+    } finally {
+      setGenerating(false);
+    }
   };
 
   const filtered = filter === "all" ? questions : questions.filter((q) => q.type === filter);
@@ -132,7 +169,11 @@ export default function InterviewPrepPage() {
           </div>
           <div>
             <label className="text-xs font-medium text-muted-foreground mb-1.5 block">Industry (optional)</label>
-            <Input placeholder="e.g. Finance, Tech, Healthcare" />
+            <Input
+              value={industry}
+              onChange={(e) => setIndustry(e.target.value)}
+              placeholder="e.g. Finance, Tech, Healthcare"
+            />
           </div>
           <div className="flex items-end">
             <Button onClick={generate} disabled={!role || generating} variant="indigo" className="w-full gap-2">
@@ -148,6 +189,15 @@ export default function InterviewPrepPage() {
           </div>
         </div>
       </div>
+
+      {/* Error banner */}
+      {error && (
+        <div className="flex items-center gap-3 p-4 rounded-xl bg-red-500/10 border border-red-500/20 text-sm text-red-300">
+          <AlertCircle className="w-4 h-4 flex-shrink-0" />
+          <span>{error}</span>
+          <button onClick={() => setError(null)} className="ml-auto hover:text-red-200">✕</button>
+        </div>
+      )}
 
       {/* Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">

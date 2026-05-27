@@ -1,13 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
-import { auth } from "@clerk/nextjs/server";
+import { auth, currentUser } from "@clerk/nextjs/server";
 import { analyzeSkillsGap } from "@/lib/ai/claude";
+import { getOrCreateUser } from "@/lib/db-helpers";
+import { db } from "@/lib/db";
 import { z } from "zod";
 
 const SkillsGapSchema = z.object({
-  currentSkills: z.array(z.string()).min(1),
-  targetRole: z.string().min(2),
+  currentSkills:   z.array(z.string()).min(1),
+  targetRole:      z.string().min(2),
   yearsExperience: z.number().min(0).max(50).default(0),
-  education: z.string().default("Not specified"),
+  education:       z.string().default("Not specified"),
 });
 
 export async function POST(req: NextRequest) {
@@ -15,10 +17,34 @@ export async function POST(req: NextRequest) {
     const { userId } = await auth();
     if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-    const body = await req.json();
+    const body   = await req.json();
     const params = SkillsGapSchema.parse(body);
 
+    // Run AI analysis
     const result = await analyzeSkillsGap(params);
+
+    // Persist to DB (non-blocking — user gets response immediately)
+    try {
+      const clerkUser = await currentUser();
+      const dbUser = await getOrCreateUser(
+        userId,
+        clerkUser?.primaryEmailAddress?.emailAddress,
+        clerkUser?.fullName
+      );
+
+      await db.skillsGap.create({
+        data: {
+          userId:        dbUser.id,
+          currentSkills: params.currentSkills,
+          targetRole:    params.targetRole,
+          missingSkills: (result.missingSkills ?? []) as never,
+          learningPath:  (result.learningPath  ?? []) as never,
+        },
+      });
+    } catch (dbErr) {
+      // DB failure must not break the AI response
+      console.error("Skills gap DB save error:", dbErr);
+    }
 
     return NextResponse.json(result);
   } catch (error) {

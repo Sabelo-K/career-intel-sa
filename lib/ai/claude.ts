@@ -14,7 +14,7 @@ import {
 
 const genAI = new GoogleGenerativeAI(process.env.GOOGLE_AI_API_KEY!);
 
-const MODEL = "gemini-2.0-flash";
+const MODEL = "gemini-1.5-flash";
 
 /** Create a model instance with an optional system instruction. */
 function getModel(systemInstruction?: string, maxOutputTokens = 1024) {

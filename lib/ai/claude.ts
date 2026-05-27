@@ -286,7 +286,7 @@ Respond with valid JSON ONLY — no markdown, no text outside the JSON block.`,
 INSTRUCTIONS:
 1. Extract ALL information: full name, email, phone, city/town, SA province, LinkedIn URL, website
 2. Rewrite the professional summary to 2–3 powerful sentences — specific, ATS-optimised, SA-relevant
-3. For each job: rewrite the description with strong action verbs + inferred quantified outcomes. Separate each point with \\n (literal backslash-n in the JSON string)
+3. For each job: write EXACTLY 5 to 7 bullet points. Each point must use a strong action verb and include a quantified outcome (numbers, percentages, rand values, team sizes, timeframes). Separate each point with \\n (literal backslash-n in the JSON string). Never write fewer than 5 points per job — expand and infer reasonable metrics if the original CV is thin on detail.
 4. Estimate NQF level if not stated (Matric=4, Higher Cert=5, Diploma/ND=6, Degree=7, Honours/PGDip=8, Masters=9, PhD=10)
 5. Extract all skills from the CV and add up to 5 high-demand SA market keywords that match their background
 6. Score the ORIGINAL CV honestly before improvements (be realistic)
@@ -315,7 +315,7 @@ Return ONLY valid JSON in this exact structure:
       "startDate": "Month YYYY",
       "endDate": "Month YYYY",
       "current": false,
-      "description": "Achievement 1 with quantified result\\nAchievement 2 with impact\\nKey responsibility with scope"
+      "description": "Led X initiative that achieved Y, resulting in Z quantified outcome\\nDeveloped and implemented A, improving B by X%\\nManaged team of X people to deliver C within D timeframe\\nCollaborated with E stakeholders to design and roll out F, increasing G by H%\\nOptimised I process, reducing J by K% and saving RX per year"
     }
   ],
   "education": [

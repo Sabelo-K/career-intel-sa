@@ -296,7 +296,7 @@ export default function CareerCoachPage() {
   const remainingMessages = maxFree - userMessageCount;
 
   return (
-    <div className="flex flex-col h-[calc(100svh-11rem)] md:h-[calc(100vh-8rem)]">
+    <div className="flex flex-col h-[calc(100svh-11rem)] md:h-[calc(100vh-8rem)] overflow-hidden">
       {/* Header */}
       <div className="flex items-start sm:items-center justify-between mb-3 md:mb-5 gap-3">
         <div className="min-w-0">
@@ -328,9 +328,9 @@ export default function CareerCoachPage() {
 
       <div className="flex gap-4 flex-1 min-h-0">
         {/* Chat area */}
-        <div className="flex-1 flex flex-col bg-card border border-border rounded-2xl overflow-hidden">
+        <div className="flex-1 min-h-0 flex flex-col bg-card border border-border rounded-2xl overflow-hidden">
           {/* Messages */}
-          <div className="flex-1 overflow-y-auto p-3 md:p-5 space-y-4">
+          <div className="flex-1 min-h-0 overflow-y-auto overscroll-contain p-3 md:p-5 space-y-4">
             <AnimatePresence initial={false}>
               {messages.map((msg) => (
                 <MessageBubble

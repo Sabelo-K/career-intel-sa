@@ -1,4 +1,9 @@
-import Anthropic from "@anthropic-ai/sdk";
+/**
+ * AI layer — powered by Google Gemini 2.0 Flash (free tier)
+ * Previously used Anthropic Claude; function signatures are preserved
+ * so the rest of the codebase requires no changes.
+ */
+import { GoogleGenerativeAI, type Content } from "@google/generative-ai";
 import {
   SYSTEM_PROMPT_CAREER_COACH,
   SYSTEM_PROMPT_CV_PARSER,
@@ -7,83 +12,107 @@ import {
   buildEmployabilityPrompt,
 } from "./prompts";
 
-const anthropic = new Anthropic({
-  apiKey: process.env.ANTHROPIC_API_KEY,
-});
+const genAI = new GoogleGenerativeAI(process.env.GOOGLE_AI_API_KEY!);
 
-const MODEL = "claude-sonnet-4-6";
+const MODEL = "gemini-2.0-flash";
 
-export async function chatWithCareerCoach(
-  messages: Array<{ role: "user" | "assistant"; content: string }>,
-  systemContext?: string
-) {
-  const response = await anthropic.messages.create({
+/** Create a model instance with an optional system instruction. */
+function getModel(systemInstruction?: string, maxOutputTokens = 1024) {
+  return genAI.getGenerativeModel({
     model: MODEL,
-    max_tokens: 1024,
-    system: systemContext
-      ? `${SYSTEM_PROMPT_CAREER_COACH}\n\nAdditional context: ${systemContext}`
-      : SYSTEM_PROMPT_CAREER_COACH,
-    messages,
+    ...(systemInstruction ? { systemInstruction } : {}),
+    generationConfig: { maxOutputTokens },
   });
-
-  return response.content[0].type === "text" ? response.content[0].text : "";
 }
 
-export async function* streamCareerCoach(
-  messages: Array<{ role: "user" | "assistant"; content: string }>,
-  systemContext?: string
-) {
-  const stream = anthropic.messages.stream({
-    model: MODEL,
-    max_tokens: 1024,
-    system: systemContext
-      ? `${SYSTEM_PROMPT_CAREER_COACH}\n\nAdditional context: ${systemContext}`
-      : SYSTEM_PROMPT_CAREER_COACH,
-    messages,
-  });
-
-  for await (const chunk of stream) {
-    if (
-      chunk.type === "content_block_delta" &&
-      chunk.delta.type === "text_delta"
-    ) {
-      yield chunk.delta.text;
-    }
-  }
+/**
+ * Convert our internal message format to Gemini's Content format.
+ * Anthropic uses "assistant"; Gemini uses "model".
+ */
+function toGeminiHistory(
+  messages: Array<{ role: "user" | "assistant"; content: string }>
+): Content[] {
+  return messages.map((m) => ({
+    role: m.role === "assistant" ? "model" : "user",
+    parts: [{ text: m.content }],
+  }));
 }
 
-export async function parseCV(cvText: string) {
-  const response = await anthropic.messages.create({
-    model: MODEL,
-    max_tokens: 2048,
-    system: SYSTEM_PROMPT_CV_PARSER,
-    messages: [
-      {
-        role: "user",
-        content: `Parse this CV and return structured JSON:\n\n${cvText}`,
-      },
-    ],
-  });
-
-  const text = response.content[0].type === "text" ? response.content[0].text : "{}";
-
+/** Extract and parse the first JSON object from a text response. */
+function extractJSON(text: string): Record<string, unknown> {
   try {
-    const jsonMatch = text.match(/\{[\s\S]*\}/);
-    return jsonMatch ? JSON.parse(jsonMatch[0]) : {};
+    const match = text.match(/\{[\s\S]*\}/);
+    return match ? JSON.parse(match[0]) : {};
   } catch {
     return {};
   }
 }
 
+// ─── Career Coach (streaming) ────────────────────────────────────────────────
+
+export async function* streamCareerCoach(
+  messages: Array<{ role: "user" | "assistant"; content: string }>,
+  systemContext?: string
+) {
+  const systemInstruction = systemContext
+    ? `${SYSTEM_PROMPT_CAREER_COACH}\n\nAdditional context: ${systemContext}`
+    : SYSTEM_PROMPT_CAREER_COACH;
+
+  const model = getModel(systemInstruction, 1024);
+
+  // All messages except the last become chat history
+  const history = toGeminiHistory(messages.slice(0, -1));
+  const lastMessage = messages[messages.length - 1];
+
+  const chat = model.startChat({ history });
+  const result = await chat.sendMessageStream(lastMessage.content);
+
+  for await (const chunk of result.stream) {
+    const text = chunk.text();
+    if (text) yield text;
+  }
+}
+
+// ─── Career Coach (non-streaming fallback) ───────────────────────────────────
+
+export async function chatWithCareerCoach(
+  messages: Array<{ role: "user" | "assistant"; content: string }>,
+  systemContext?: string
+) {
+  const systemInstruction = systemContext
+    ? `${SYSTEM_PROMPT_CAREER_COACH}\n\nAdditional context: ${systemContext}`
+    : SYSTEM_PROMPT_CAREER_COACH;
+
+  const model = getModel(systemInstruction, 1024);
+  const history = toGeminiHistory(messages.slice(0, -1));
+  const lastMessage = messages[messages.length - 1];
+
+  const chat = model.startChat({ history });
+  const result = await chat.sendMessage(lastMessage.content);
+  return result.response.text();
+}
+
+// ─── CV Parser ───────────────────────────────────────────────────────────────
+
+export async function parseCV(cvText: string) {
+  const model = getModel(SYSTEM_PROMPT_CV_PARSER, 2048);
+  const result = await model.generateContent(
+    `Parse this CV and return structured JSON:\n\n${cvText}`
+  );
+  return extractJSON(result.response.text());
+}
+
+// ─── CV Analyser ─────────────────────────────────────────────────────────────
+
 export async function analyzeCV(cvData: Record<string, unknown>) {
-  const response = await anthropic.messages.create({
-    model: MODEL,
-    max_tokens: 2048,
-    system: `You are an expert ATS optimization specialist and SA recruiter. Analyze CVs and provide detailed improvement recommendations.`,
-    messages: [
-      {
-        role: "user",
-        content: `Analyze this CV for the South African job market and provide:
+  const model = getModel(
+    `You are an expert ATS optimisation specialist and SA recruiter.
+Analyse CVs and provide detailed improvement recommendations.
+Always respond with valid JSON only — no markdown, no explanation outside the JSON.`,
+    2048
+  );
+
+  const result = await model.generateContent(`Analyse this CV for the South African job market and provide:
 1. ATS score (0-100) — how well it passes applicant tracking systems
 2. Recruiter score (0-100) — how compelling it is to SA recruiters
 3. Specific improvements needed
@@ -103,19 +132,12 @@ Return as JSON:
   "weaknesses": ["weakness1", ...],
   "improvedSummary": "text",
   "missingKeywords": ["keyword1", ...]
-}`,
-      },
-    ],
-  });
+}`);
 
-  const text = response.content[0].type === "text" ? response.content[0].text : "{}";
-  try {
-    const jsonMatch = text.match(/\{[\s\S]*\}/);
-    return jsonMatch ? JSON.parse(jsonMatch[0]) : {};
-  } catch {
-    return {};
-  }
+  return extractJSON(result.response.text());
 }
+
+// ─── Skills Gap Analysis ──────────────────────────────────────────────────────
 
 export async function analyzeSkillsGap(params: {
   currentSkills: string[];
@@ -123,14 +145,9 @@ export async function analyzeSkillsGap(params: {
   yearsExperience: number;
   education: string;
 }) {
-  const response = await anthropic.messages.create({
-    model: MODEL,
-    max_tokens: 2048,
-    system: SYSTEM_PROMPT_SKILLS_GAP,
-    messages: [
-      {
-        role: "user",
-        content: `Analyze the skills gap for this South African professional:
+  const model = getModel(SYSTEM_PROMPT_SKILLS_GAP, 2048);
+
+  const result = await model.generateContent(`Analyse the skills gap for this South African professional:
 
 Current Skills: ${params.currentSkills.join(", ")}
 Target Role: ${params.targetRole}
@@ -140,24 +157,17 @@ Education: ${params.education}
 Provide detailed gap analysis. Return as JSON:
 {
   "matchPercentage": number,
-  "missingSkills": [{ "skill", "priority", "demandScore", "timeToLearnWeeks", "reason" }],
-  "learningPath": [{ "order", "title", "description", "skills", "resources", "estimatedWeeks" }],
+  "missingSkills": [{ "skill": "", "priority": "HIGH|MEDIUM|LOW", "demandScore": number, "timeToLearnWeeks": number, "reason": "" }],
+  "learningPath": [{ "order": number, "title": "", "description": "", "skills": [], "resources": [], "estimatedWeeks": number }],
   "estimatedMonths": number,
   "quickWins": ["skill1", ...],
   "salaryImpact": "string"
-}`,
-      },
-    ],
-  });
+}`);
 
-  const text = response.content[0].type === "text" ? response.content[0].text : "{}";
-  try {
-    const jsonMatch = text.match(/\{[\s\S]*\}/);
-    return jsonMatch ? JSON.parse(jsonMatch[0]) : {};
-  } catch {
-    return {};
-  }
+  return extractJSON(result.response.text());
 }
+
+// ─── Career Path Simulator ────────────────────────────────────────────────────
 
 export async function simulateCareerPath(params: {
   currentRole: string;
@@ -167,25 +177,12 @@ export async function simulateCareerPath(params: {
   province: string;
   timeframeYears: number;
 }) {
-  const response = await anthropic.messages.create({
-    model: MODEL,
-    max_tokens: 2048,
-    messages: [
-      {
-        role: "user",
-        content: buildCareerPathPrompt(params),
-      },
-    ],
-  });
-
-  const text = response.content[0].type === "text" ? response.content[0].text : "{}";
-  try {
-    const jsonMatch = text.match(/\{[\s\S]*\}/);
-    return jsonMatch ? JSON.parse(jsonMatch[0]) : {};
-  } catch {
-    return {};
-  }
+  const model = getModel(undefined, 2048);
+  const result = await model.generateContent(buildCareerPathPrompt(params));
+  return extractJSON(result.response.text());
 }
+
+// ─── Employability Score ──────────────────────────────────────────────────────
 
 export async function calculateEmployabilityScore(profile: {
   currentRole?: string;
@@ -195,41 +192,25 @@ export async function calculateEmployabilityScore(profile: {
   yearsExperience?: number;
   province?: string;
 }) {
-  const response = await anthropic.messages.create({
-    model: MODEL,
-    max_tokens: 1024,
-    messages: [
-      {
-        role: "user",
-        content: buildEmployabilityPrompt(profile),
-      },
-    ],
-  });
-
-  const text = response.content[0].type === "text" ? response.content[0].text : "{}";
-  try {
-    const jsonMatch = text.match(/\{[\s\S]*\}/);
-    return jsonMatch ? JSON.parse(jsonMatch[0]) : {};
-  } catch {
-    return {};
-  }
+  const model = getModel(undefined, 1024);
+  const result = await model.generateContent(buildEmployabilityPrompt(profile));
+  return extractJSON(result.response.text());
 }
+
+// ─── Interview Question Generator ────────────────────────────────────────────
 
 export async function generateInterviewQuestions(params: {
   role: string;
   level: string;
   industry: string;
 }) {
-  const response = await anthropic.messages.create({
-    model: MODEL,
-    max_tokens: 2048,
-    messages: [
-      {
-        role: "user",
-        content: `Generate 10 realistic interview questions for a ${params.level} ${params.role} position in the South African ${params.industry} industry.
+  const model = getModel(undefined, 2048);
+
+  const result = await model.generateContent(
+    `Generate 10 realistic interview questions for a ${params.level} ${params.role} position in the South African ${params.industry} industry.
 
 Include a mix of:
-- Behavioral questions (STAR method)
+- Behavioural questions (STAR method)
 - Technical questions
 - Situational questions
 - SA-specific questions (load shedding resilience, team diversity, local market knowledge)
@@ -244,16 +225,11 @@ Return as JSON:
     "sampleAnswer": "brief guide",
     "tips": ["tip1", "tip2"]
   }]
-}`,
-      },
-    ],
-  });
+}`
+  );
 
-  const text = response.content[0].type === "text" ? response.content[0].text : "{}";
-  try {
-    const jsonMatch = text.match(/\{[\s\S]*\}/);
-    return jsonMatch ? JSON.parse(jsonMatch[0]) : { questions: [] };
-  } catch {
-    return { questions: [] };
-  }
+  const parsed = extractJSON(result.response.text());
+  return (parsed as { questions?: unknown[] }).questions
+    ? parsed
+    : { questions: [] };
 }

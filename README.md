@@ -209,7 +209,7 @@ SA-specific touches: NQF level selector (1–10), province dropdown (all 9 provi
 | Auth         | Clerk (`@clerk/nextjs` v5)                        |
 | Database     | PostgreSQL via Supabase                           |
 | ORM          | Prisma v5                                         |
-| AI           | Anthropic Claude claude-sonnet-4-6 (`@anthropic-ai/sdk`) |
+| AI           | Google Gemini 2.0 Flash (`@google/generative-ai`) — free tier |
 | PDF Parsing  | pdf-parse                                         |
 | Validation   | Zod                                               |
 | Icons        | Lucide React                                      |
@@ -674,10 +674,48 @@ auth().protect()
 
 ---
 
+### v1.0.0 — Switch AI Provider from Anthropic to Google Gemini
+**Motivation:** Anthropic API requires paid credits. Google Gemini 2.0 Flash has a free tier of 1 million tokens/day — more than sufficient for development and early-stage production.
+
+**Changes:**
+- Rewrote `lib/ai/claude.ts` to use `@google/generative-ai` SDK
+- Installed `@google/generative-ai@^0.24.1` (added to `dependencies`)
+- All function signatures preserved — no changes needed to API routes or feature pages
+- Model: `gemini-2.0-flash` (latest stable, fast, free tier)
+- Key format change: Anthropic uses `role: "assistant"`, Gemini uses `role: "model"` — handled by `toGeminiHistory()` converter
+- System instructions moved to `getGenerativeModel({ systemInstruction })` (Gemini native)
+- Chat history uses `model.startChat({ history })` + `chat.sendMessageStream()` for streaming
+- Added `GOOGLE_AI_API_KEY` to `.env.example`
+
+**New environment variable required:**
+```
+GOOGLE_AI_API_KEY=AIza...   # Get free key at aistudio.google.com
+```
+
+**Free tier limits (Gemini 2.0 Flash):**
+- 15 requests per minute
+- 1,000,000 tokens per day
+- No credit card required
+
+**To switch back to Anthropic** (if credits are added): revert `lib/ai/claude.ts` to use `@anthropic-ai/sdk` (still installed, just unused).
+
+---
+
+### v1.0.1 — Career Coach History & Error Handling Fixes
+**Motivation:** Chat was sending the static welcome message as the first history entry, causing Anthropic (and Gemini) to reject the request since conversations must start with a user message. Error messages were also misleading.
+
+**Changes:**
+- Filtered welcome message, error bubbles, and empty streaming placeholders from chat history before sending to AI
+- Fixed HTTP error classification — now attaches `.status` to thrown errors for reliable status checking
+- Error messages now show the actual failure reason (visible in red bubble) instead of generic "Connection issue"
+
+---
+
 ## Security Notes
 
 - Never commit `.env` to git
 - Anthropic API keys shared in any public channel are auto-revoked by Anthropic security
+- Google AI API keys should also be kept private (not committed to git)
 - Supabase database passwords should be rotated if ever exposed
 - All dashboard routes are protected by Clerk middleware
 - User data is scoped by `userId` (Clerk user ID) in all Prisma queries

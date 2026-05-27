@@ -52,6 +52,44 @@ const SECTOR_PIE_DATA = [
   { name: "Other", value: 12, fill: "#6b7280" },
 ];
 
+const CAREER_DESCRIPTIONS: Record<string, string> = {
+  "data-scientist":            "Data Scientists uncover patterns in large datasets to drive business decisions, building predictive models and dashboards that turn raw data into strategic insight. They work closely with engineering and product teams to deploy models that create real business value.",
+  "software-engineer":         "Software Engineers design, build, and maintain the applications and systems that power modern businesses — from web platforms and mobile apps to APIs and backend services. They write clean, tested code and collaborate across teams to ship reliable products.",
+  "cloud-architect":           "Cloud Architects design an organisation's cloud infrastructure, choosing the right mix of AWS, Azure, or GCP services to ensure systems are scalable, secure, and cost-efficient. They set standards for how teams build and operate in the cloud.",
+  "cybersecurity-analyst":     "Cybersecurity Analysts protect organisations from digital threats by monitoring networks, investigating incidents, and implementing security controls. They stay ahead of attackers to safeguard sensitive data and maintain compliance.",
+  "data-analyst":              "Data Analysts transform raw data into clear reports and visualisations that help business teams make smarter decisions. They use SQL, Excel, and tools like Power BI or Tableau to track performance, spot trends, and answer key business questions.",
+  "ai-ml-engineer":            "AI / ML Engineers build the pipelines and infrastructure that take machine learning models from research into production. They bridge data science and software engineering to deliver AI-powered features — recommendation engines, NLP tools, and computer vision systems — at scale.",
+  "devops-engineer":           "DevOps Engineers keep software delivery fast and reliable by automating build, test, and deployment pipelines using tools like Docker, Kubernetes, and CI/CD platforms. They reduce downtime, shorten release cycles, and help teams ship with confidence.",
+  "product-manager":           "Product Managers define the vision and roadmap for a product, prioritising features based on user research, data, and business strategy. They act as the connective tissue between engineering, design, and stakeholders — translating problems into shipped solutions.",
+  "ux-designer":               "UX Designers research user behaviour and craft intuitive digital experiences — wireframes, prototypes, and interfaces that are both visually compelling and easy to use. They advocate for the user at every stage of the product development process.",
+  "financial-analyst":         "Financial Analysts evaluate investment opportunities, build financial models, and produce forecasts and recommendations that guide executive and investor decisions. They work across banking, corporate finance, and asset management.",
+  "chartered-accountant":      "Chartered Accountants (CA(SA)) manage the full financial health of organisations — from auditing and tax compliance to financial reporting and advisory. Holding one of SA's most respected professional designations, they operate across every sector of the economy.",
+  "civil-engineer":            "Civil Engineers plan, design, and oversee the construction of infrastructure — roads, bridges, water systems, and buildings — that underpins communities and drives economic growth. They manage projects from feasibility through to handover.",
+  "electrical-engineer":       "Electrical Engineers design power generation, distribution, and control systems for buildings, infrastructure, and industrial plants. They ensure systems are safe, efficient, and compliant with SANS electrical standards.",
+  "nurse-professional":        "Professional Nurses provide frontline patient care in hospitals, clinics, and community settings — assessing patient conditions, administering treatment, and coordinating with doctors and allied health professionals. They are registered with the SANC and are the backbone of SA's healthcare system.",
+  "renewable-energy-engineer": "Renewable Energy Engineers design and optimise solar, wind, and other clean-energy systems as South Africa accelerates its energy transition away from coal. They work on projects ranging from rooftop solar installations to utility-scale renewable power plants.",
+  "supply-chain-manager":      "Supply Chain Managers oversee the end-to-end flow of goods — from suppliers through warehouses to customers — ensuring products arrive on time, at the right cost, and in the right condition. They combine logistics, procurement, and operational expertise.",
+  "digital-marketing-specialist": "Digital Marketing Specialists plan and execute online campaigns across SEO, social media, paid advertising, and email to grow brand awareness and drive revenue. They analyse performance data continuously and optimise campaigns to maximise return on spend.",
+  "teacher":                   "Teachers educate learners from Grade R through Grade 12, designing lessons, assessing progress, and inspiring curiosity across core and elective subjects. SACE-registered and qualified teachers are the foundation of SA's public and private education system.",
+  "blockchain-developer":      "Blockchain Developers build decentralised applications and smart contracts on platforms like Ethereum and Solana. They combine knowledge of cryptography, distributed systems, and software engineering to create trustless digital systems for finance, logistics, and identity.",
+  "environmental-scientist":   "Environmental Scientists study the impact of human activity on ecosystems and design solutions to reduce pollution, manage natural resources, and meet SA's growing ESG and regulatory compliance requirements. They work across mining, agriculture, government, and consulting.",
+  "electrician-artisan":       "Electrician Artisans install, maintain, and repair electrical wiring and systems in homes, commercial buildings, and industrial facilities. Requiring a trade certificate and registration, they ensure compliance with SANS electrical standards — and demand far outstrips supply.",
+  "plumber":                   "Plumbers install and maintain water, drainage, gas, and heating systems in residential and commercial properties. A regulated trade requiring a Certificate of Competence — constant demand is driven by new construction, ageing infrastructure, and geyser replacements.",
+  "solar-pv-installer":        "Solar PV Installers fit rooftop and ground-mount photovoltaic systems — panels, inverters, batteries, and wiring — for homes and businesses looking to reduce their dependence on Eskom. One of South Africa's fastest-growing trades.",
+  "motor-mechanic":            "Motor Mechanics diagnose and repair vehicle mechanical and electrical faults, from engines and gearboxes to modern onboard diagnostic systems. The trade covers petrol, diesel, and increasingly electric and hybrid vehicles.",
+  "welder":                    "Welders join metal components for construction, manufacturing, pipeline, and fabrication projects using MIG, TIG, or arc welding techniques. Skilled coded welders command premium rates and are in constant demand on mines, petrochemical plants, and construction sites.",
+  "carpenter":                 "Carpenters construct and install timber structures — frameworks, roofs, built-in cupboards, and fittings — for residential and commercial projects. The trade combines precision craftsmanship with a working knowledge of building regulations.",
+  "hvac-technician":           "HVAC Technicians install and service heating, ventilation, and air conditioning systems in commercial buildings, hospitals, and data centres. Load-shedding has driven increased demand for standby cooling solutions and generator integration.",
+  "chef":                      "Chefs plan menus, prepare food to a high standard, and manage kitchen operations in restaurants, hotels, lodges, and catering companies. Senior chefs lead kitchen teams, control food costs, and drive the culinary identity of the establishment.",
+  "security-officer":          "Security Officers protect people, property, and assets at sites ranging from retail centres to mining operations and residential estates. PSIRA-registered officers work within South Africa's large private security industry — one of the biggest in the world.",
+  "social-worker":             "Social Workers support vulnerable individuals, families, and communities — from child protection and poverty alleviation to mental health, substance abuse, and disability services. Registered with the SACSSP, they operate across government, NGOs, and the private sector.",
+  "ecd-practitioner":          "ECD Practitioners provide early childhood development education and care to children from birth to age six, building the cognitive, emotional, and social foundations children need before entering formal schooling. Demand is growing rapidly as government expands the ECD subsidy programme.",
+  "bookkeeper":                "Bookkeepers record day-to-day financial transactions, reconcile accounts, and prepare reports that keep small and medium businesses compliant and financially healthy. Cloud accounting tools like Xero, Sage, and QuickBooks have made the role more strategic and less manual.",
+  "agricultural-technician":   "Agricultural Technicians apply science and technology to improve farming productivity — advising on soil health, crop management, precision irrigation, and pest control. They support SA's significant agricultural and agri-processing sector across all nine provinces.",
+  "retail-manager":            "Retail Managers run the daily operations of a store — managing staff, stock levels, merchandising, and customer experience to hit sales targets. Strong commercial acumen and people management skills are essential.",
+  "truck-driver":              "Truck Drivers transport goods across South Africa's road network in heavy-duty Code 14 vehicles on long-haul and regional routes. Road freight is SA's primary logistics mode, making experienced drivers with a clean record consistently in demand.",
+};
+
 const PROVINCE_LABELS: Record<string, string> = {
   GAUTENG: "Gauteng", WESTERN_CAPE: "Western Cape", KWAZULU_NATAL: "KwaZulu-Natal",
   EASTERN_CAPE: "Eastern Cape", FREE_STATE: "Free State", LIMPOPO: "Limpopo",
@@ -72,8 +110,8 @@ function CareerDetailDrawer({ career, onClose }: { career: (typeof SA_CAREERS)[0
   const outlook = OUTLOOK_LABEL[career.futureOutlook] ?? { label: career.futureOutlook, color: "text-foreground" };
   const avgK = Math.round(career.avgSalaryZar / 1000);
 
-  // Construct a natural blurb from structured data
-  const blurb = `${career.title}s are in ${career.demandScore >= 85 ? "extremely high" : career.demandScore >= 70 ? "strong" : "steady"} demand across South Africa, particularly in ${(career.topProvinces.slice(0, 2).map(p => PROVINCE_LABELS[p] ?? p)).join(" and ")}. The role falls within the ${career.sector} sector and ${career.remoteFriendly ? "is well-suited to remote or hybrid work" : "typically requires on-site presence"}. ${career.internationalDemand ? "Skills transfer globally, opening doors to international opportunities." : ""} ${career.automationRisk < 25 ? "AI automation poses very little threat to this career." : career.automationRisk < 50 ? "Some tasks may be automated, but core expertise remains highly valued." : "Parts of this role are at risk of automation — continuous upskilling is key."}`;
+  const description = CAREER_DESCRIPTIONS[career.id];
+  const marketContext = `${career.demandScore >= 85 ? "Extremely high demand" : career.demandScore >= 70 ? "Strong demand" : "Steady demand"} across SA${career.topProvinces.length > 0 ? `, particularly in ${career.topProvinces.slice(0, 2).map(p => PROVINCE_LABELS[p] ?? p).join(" and ")}` : ""}. ${career.internationalDemand ? "Skills are valued internationally." : "Primarily SA-based demand."}`;
 
   return (
     <motion.div
@@ -112,8 +150,16 @@ function CareerDetailDrawer({ career, onClose }: { career: (typeof SA_CAREERS)[0
         </div>
 
         <div className="p-5 space-y-5">
-          {/* Blurb */}
-          <p className="text-sm text-muted-foreground leading-relaxed">{blurb}</p>
+          {/* Role description */}
+          {description && (
+            <p className="text-sm text-foreground/90 leading-relaxed">{description}</p>
+          )}
+
+          {/* Market context pill */}
+          <div className="flex items-start gap-2 bg-indigo-500/10 border border-indigo-500/20 rounded-xl px-3.5 py-2.5">
+            <TrendingUp className="w-3.5 h-3.5 text-indigo-400 mt-0.5 flex-shrink-0" />
+            <p className="text-xs text-indigo-300 leading-relaxed">{marketContext}</p>
+          </div>
 
           {/* Key stats row */}
           <div className="grid grid-cols-3 gap-3">

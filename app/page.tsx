@@ -715,8 +715,8 @@ export default function LandingPage() {
                 links: [
                   { label: "About", href: "/#about" },
                   { label: "Pricing", href: "/#pricing" },
-                  { label: "Privacy Policy", href: "/#about" },
-                  { label: "Terms of Service", href: "/#about" },
+                  { label: "Privacy Policy", href: "/privacy" },
+                  { label: "Terms of Service", href: "/terms" },
                 ],
               },
             ].map((section) => (

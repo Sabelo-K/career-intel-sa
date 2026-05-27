@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import { useUser } from "@clerk/nextjs";
+import { useEffect, useState } from "react";
 import {
   TrendingUp, Target, Zap, ArrowRight, Brain,
   FileText, MessageCircle, BarChart3, Sparkles,
@@ -18,6 +19,20 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { SA_CAREERS, TOP_GROWING_CAREERS_2025 } from "@/lib/data/sa-careers";
 import { formatSalaryRange, getDemandBadgeColor, getTrendLabel } from "@/lib/utils";
+
+interface DashboardStats {
+  employabilityScore: number;
+  profileStrength: number;
+  skillsCount: number;
+  targetRole: string | null;
+  currentRole: string | null;
+  chatSessionsCount: number;
+  skillsGapCount: number;
+  careerPathCount: number;
+  hasCV: boolean;
+  plan: string;
+  onboarded: boolean;
+}
 
 const DEMAND_TREND_DATA = [
   { month: "Jan", tech: 72, finance: 58, healthcare: 65, energy: 55 },
@@ -103,9 +118,44 @@ const fadeUp = {
 export default function DashboardPage() {
   const { user } = useUser();
   const firstName = user?.firstName || "there";
-  const employabilityScore = 72;
-  const profileStrength = 55;
   const topCareers = SA_CAREERS.slice(0, 5);
+
+  const [stats, setStats] = useState<DashboardStats>({
+    employabilityScore: 0,
+    profileStrength: 0,
+    skillsCount: 0,
+    targetRole: null,
+    currentRole: null,
+    chatSessionsCount: 0,
+    skillsGapCount: 0,
+    careerPathCount: 0,
+    hasCV: false,
+    plan: "FREE",
+    onboarded: true,
+  });
+  const [statsLoaded, setStatsLoaded] = useState(false);
+
+  useEffect(() => {
+    fetch("/api/dashboard")
+      .then((r) => r.json())
+      .then((d) => {
+        if (d.employabilityScore !== undefined) {
+          setStats(d);
+          setStatsLoaded(true);
+        }
+      })
+      .catch(() => setStatsLoaded(true));
+  }, []);
+
+  const employabilityScore = stats.employabilityScore;
+  const profileStrength    = stats.profileStrength;
+
+  // Redirect new users to onboarding
+  useEffect(() => {
+    if (statsLoaded && !stats.onboarded) {
+      window.location.href = "/onboarding";
+    }
+  }, [statsLoaded, stats.onboarded]);
 
   return (
     <div className="space-y-6">
@@ -136,10 +186,10 @@ export default function DashboardPage() {
         className="grid grid-cols-2 lg:grid-cols-4 gap-4"
       >
         {[
-          { label: "Employability Score", value: "72/100", change: "+4 this week", icon: Award, color: "indigo" },
-          { label: "Career Match", value: "88%", change: "Data Scientist", icon: Target, color: "emerald" },
-          { label: "Skills Completed", value: "14/21", change: "7 gaps remaining", icon: CheckCircle2, color: "violet" },
-          { label: "Avg SA Salary Match", value: "R58k", change: "vs R72k target", icon: TrendingUp, color: "amber" },
+          { label: "Employability Score", value: statsLoaded ? `${employabilityScore}/100` : "—", change: employabilityScore >= 70 ? "Keep it up!" : "Complete profile to improve", icon: Award, color: "indigo" },
+          { label: "Target Role", value: statsLoaded ? (stats.targetRole || "Not set") : "—", change: stats.currentRole || "Set in profile", icon: Target, color: "emerald" },
+          { label: "Skills Added", value: statsLoaded ? String(stats.skillsCount) : "—", change: stats.skillsCount === 0 ? "Add skills in profile" : `${stats.skillsCount} skills tracked`, icon: CheckCircle2, color: "violet" },
+          { label: "AI Sessions", value: statsLoaded ? String(stats.chatSessionsCount + stats.skillsGapCount) : "—", change: `${stats.chatSessionsCount} chats · ${stats.skillsGapCount} gap analyses`, icon: TrendingUp, color: "amber" },
         ].map((stat, i) => (
           <motion.div
             key={stat.label}

@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
-import { auth } from "@clerk/nextjs/server";
+import { auth, currentUser } from "@clerk/nextjs/server";
 import { parseAndRevampCV } from "@/lib/ai/claude";
+import { db } from "@/lib/db";
+import { getOrCreateUser } from "@/lib/db-helpers";
 
 export const runtime = "nodejs";
 
@@ -51,6 +53,40 @@ export async function POST(req: NextRequest) {
 
     // ── AI parse + revamp ─────────────────────────────────────────────────────
     const revamped = await parseAndRevampCV(text);
+
+    // ── Save to DB (non-blocking) ─────────────────────────────────────────────
+    try {
+      const clerkUser = await currentUser();
+      const dbUser = await getOrCreateUser(
+        userId,
+        clerkUser?.primaryEmailAddress?.emailAddress,
+        clerkUser?.fullName
+      );
+
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const revampedAny = revamped as any;
+      const atsScore       = typeof revampedAny.atsScore      === "number" ? revampedAny.atsScore      as number : null;
+      const recruiterScore = typeof revampedAny.recruiterScore === "number" ? revampedAny.recruiterScore as number : null;
+
+      const existingCV = await db.cV.findFirst({
+        where: { userId: dbUser.id },
+        orderBy: { updatedAt: "desc" },
+      });
+
+      if (existingCV) {
+        await db.cV.update({
+          where: { id: existingCV.id },
+          data: { name: file.name, parsedData: revampedAny, atsScore, recruiterScore, improvedContent: revampedAny, isActive: true },
+        });
+      } else {
+        await db.cV.create({
+          data: { userId: dbUser.id, name: file.name, parsedData: revampedAny, atsScore, recruiterScore, improvedContent: revampedAny, isActive: true, version: 1 },
+        });
+      }
+    } catch (dbErr) {
+      console.error("CV DB save error (non-fatal):", dbErr);
+    }
+
     return NextResponse.json(revamped);
   } catch (err) {
     console.error("CV revamp error:", err);

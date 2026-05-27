@@ -496,7 +496,7 @@ export default function SettingsPage() {
                   third parties, and only used to improve your career intelligence experience.
                 </p>
                 <a
-                  href="/#about"
+                  href="/privacy"
                   className="inline-flex items-center gap-1 text-xs text-emerald-400 hover:text-emerald-300 mt-2 underline underline-offset-2"
                 >
                   Read our Privacy Policy <ExternalLink className="w-3 h-3" />

@@ -1,12 +1,13 @@
 "use client";
 
+import { generateCV, generateBuiltCV, CVTemplateData } from "@/lib/cv-templates";
 import { useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Upload, FileText, Zap, Download, CheckCircle2, AlertCircle,
   Star, RefreshCw, Sparkles, Target, Award,
   ChevronDown, ChevronUp, Plus, Trash2, ChevronRight, ChevronLeft,
-  Printer, User, Briefcase, GraduationCap, Wrench,
+  User, Briefcase, GraduationCap, Wrench,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -296,6 +297,20 @@ function BuildFromScratch() {
     setCertInput("");
   };
 
+  const handleDownload = () => {
+    const html = generateBuiltCV(cv);
+    const blob = new Blob([html], { type: "text/html" });
+    const url = URL.createObjectURL(blob);
+    const win = window.open(url, "_blank");
+    if (!win) {
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "My_CV_CareerIntel.html";
+      a.click();
+    }
+    setTimeout(() => URL.revokeObjectURL(url), 10000);
+  };
+
   const inputCls = "w-full bg-secondary border border-border rounded-lg px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500";
   const labelCls = "block text-xs font-medium text-muted-foreground mb-1";
 
@@ -575,11 +590,11 @@ function BuildFromScratch() {
                   <div className="flex items-center justify-between">
                     <div>
                       <h3 className="text-sm font-semibold text-foreground">CV Preview</h3>
-                      <p className="text-xs text-muted-foreground mt-0.5">Use your browser&apos;s Print function (Ctrl+P / Cmd+P) to save as PDF</p>
+                      <p className="text-xs text-muted-foreground mt-0.5">Click Download CV to open a premium print-ready version, then save as PDF</p>
                     </div>
-                    <Button variant="indigo" size="sm" className="gap-2" onClick={() => window.print()}>
-                      <Printer className="w-3.5 h-3.5" />
-                      Print / Save PDF
+                    <Button variant="indigo" size="sm" className="gap-2" onClick={handleDownload}>
+                      <Download className="w-3.5 h-3.5" />
+                      Download CV
                     </Button>
                   </div>
                   <CVPreview data={cv} />
@@ -622,8 +637,8 @@ function BuildFromScratch() {
                 "Language skills matter in SA — add Zulu, Sotho, Afrikaans if applicable",
               ].map((tip, i) => <div key={i} className="flex items-start gap-2"><CheckCircle2 className="w-3 h-3 text-amber-400 flex-shrink-0 mt-0.5" />{tip}</div>)}
               {step === 5 && [
-                "Press Ctrl+P (Windows) or Cmd+P (Mac) to save as PDF",
-                "Choose 'Save as PDF' in the print dialog",
+                "Click 'Download CV' — a premium branded version opens in a new tab",
+                "The print dialog launches automatically — choose 'Save as PDF'",
                 "File name suggestion: FirstName_Surname_CV_2025.pdf",
                 "Always send your CV as a PDF — never a Word doc",
               ].map((tip, i) => <div key={i} className="flex items-start gap-2"><CheckCircle2 className="w-3 h-3 text-amber-400 flex-shrink-0 mt-0.5" />{tip}</div>)}
@@ -684,8 +699,8 @@ function BuildFromScratch() {
             Next <ChevronRight className="w-3.5 h-3.5" />
           </Button>
         ) : (
-          <Button variant="indigo" size="sm" className="gap-2" onClick={() => window.print()}>
-            <Printer className="w-3.5 h-3.5" /> Save PDF
+          <Button variant="indigo" size="sm" className="gap-2" onClick={handleDownload}>
+            <Download className="w-3.5 h-3.5" /> Download CV
           </Button>
         )}
       </div>
@@ -716,74 +731,17 @@ export default function CVBuilderPage() {
 
   const handleDownloadCV = () => {
     if (!analysis) return;
-
-    const templateName = CV_TEMPLATES.find((t) => t.id === selectedTemplate)?.name ?? "Modern Pro";
-    const allSkills = [...analysis.extractedSkills, ...analysis.missingKeywords];
-
-    const html = `<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <title>Optimised CV — CareerIntel SA</title>
-  <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: Arial, Helvetica, sans-serif; color: #111827; background: #fff; padding: 48px 56px; max-width: 860px; margin: 0 auto; font-size: 13px; line-height: 1.6; }
-    .header { border-bottom: 2.5px solid #6366f1; padding-bottom: 14px; margin-bottom: 18px; }
-    .name { font-size: 26px; font-weight: 700; color: #111827; }
-    .contact { color: #6b7280; font-size: 11.5px; margin-top: 4px; }
-    h2 { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; color: #6366f1; margin: 18px 0 8px; }
-    .summary { color: #374151; line-height: 1.7; }
-    .skills { display: flex; flex-wrap: wrap; gap: 6px; }
-    .skill { background: #ede9fe; color: #4f46e5; padding: 3px 10px; border-radius: 20px; font-size: 11.5px; }
-    .skill.missing { background: #fef3c7; color: #92400e; }
-    .improvements { margin-top: 6px; }
-    .improvements li { color: #374151; margin-bottom: 6px; padding-left: 4px; }
-    .footer { margin-top: 32px; padding-top: 12px; border-top: 1px solid #e5e7eb; font-size: 10px; color: #9ca3af; text-align: center; }
-    @media print {
-      body { padding: 20px; }
-      .no-print { display: none; }
-    }
-  </style>
-</head>
-<body>
-  <div class="header">
-    <div class="name">[Your Full Name]</div>
-    <div class="contact">[your.email@example.com] · [071 234 5678] · [City, Province] · [linkedin.com/in/yourprofile]</div>
-  </div>
-
-  <h2>Professional Summary (AI-Optimised)</h2>
-  <p class="summary">${analysis.improvedSummary}</p>
-
-  <h2>Current Skills</h2>
-  <div class="skills">
-    ${analysis.extractedSkills.map((s) => `<span class="skill">${s}</span>`).join("")}
-  </div>
-
-  <h2>High-Demand Keywords to Add</h2>
-  <div class="skills">
-    ${analysis.missingKeywords.map((k) => `<span class="skill missing">${k}</span>`).join("")}
-  </div>
-
-  <h2>AI Improvement Checklist</h2>
-  <div class="improvements">
-    <ul>
-      ${analysis.suggestions.map((s) => `<li>☐ ${s}</li>`).join("")}
-    </ul>
-  </div>
-
-  <div class="footer">
-    Generated by CareerIntel SA · Template: ${templateName} · Replace all [placeholder text] with your actual details
-  </div>
-
-  <script>window.onload = function() { window.print(); }<\/script>
-</body>
-</html>`;
-
+    const data: CVTemplateData = {
+      improvedSummary: analysis.improvedSummary,
+      extractedSkills: analysis.extractedSkills,
+      missingKeywords: analysis.missingKeywords,
+      suggestions: analysis.suggestions,
+    };
+    const html = generateCV(selectedTemplate, data);
     const blob = new Blob([html], { type: "text/html" });
     const url = URL.createObjectURL(blob);
     const win = window.open(url, "_blank");
     if (!win) {
-      // Fallback: direct download if popup blocked
       const a = document.createElement("a");
       a.href = url;
       a.download = "CareerIntel_Optimised_CV.html";

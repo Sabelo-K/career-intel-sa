@@ -82,7 +82,7 @@ function MessageBubble({ message, onRetry }: { message: Message; onRetry?: (id: 
       <div className={`w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0 mt-0.5 ${isUser ? "bg-indigo-600" : "bg-gradient-to-br from-violet-600 to-indigo-600"}`}>
         {isUser ? <User className="w-4 h-4 text-white" /> : <Bot className="w-4 h-4 text-white" />}
       </div>
-      <div className={`max-w-[75%] ${isUser ? "items-end" : "items-start"} flex flex-col gap-1`}>
+      <div className={`max-w-[88%] sm:max-w-[78%] md:max-w-[75%] ${isUser ? "items-end" : "items-start"} flex flex-col gap-1`}>
         <div
           className={`px-4 py-3 rounded-2xl text-sm leading-relaxed ${
             message.error
@@ -296,41 +296,41 @@ export default function CareerCoachPage() {
   const remainingMessages = maxFree - userMessageCount;
 
   return (
-    <div className="flex flex-col h-[calc(100vh-8rem)]">
+    <div className="flex flex-col h-[calc(100svh-11rem)] md:h-[calc(100vh-8rem)]">
       {/* Header */}
-      <div className="flex items-center justify-between mb-5">
-        <div>
-          <h1 className="text-2xl font-bold text-foreground">AI Career Coach</h1>
-          <p className="text-muted-foreground text-sm mt-1">
-            Powered by Claude · Specialised for South Africa&apos;s job market
+      <div className="flex items-start sm:items-center justify-between mb-3 md:mb-5 gap-3">
+        <div className="min-w-0">
+          <h1 className="text-xl md:text-2xl font-bold text-foreground">AI Career Coach</h1>
+          <p className="text-muted-foreground text-xs md:text-sm mt-0.5 hidden sm:block">
+            Powered by Groq · Specialised for South Africa&apos;s job market
           </p>
         </div>
-        <div className="flex items-center gap-3">
-          <div className="text-xs text-muted-foreground">
+        <div className="flex items-center gap-2 flex-shrink-0">
+          <div className="text-xs text-muted-foreground hidden sm:block">
             <span className={`font-medium ${remainingMessages <= 3 ? "text-amber-400" : "text-foreground"}`}>
               {remainingMessages}
-            </span>/{maxFree} free messages
+            </span>/{maxFree}
           </div>
           <Button
             variant="outline"
             size="sm"
-            className="gap-2"
+            className="gap-1.5 text-xs"
             onClick={() => {
               setMessages([INITIAL_MESSAGE]);
               setUserMessageCount(0);
             }}
           >
             <RefreshCw className="w-3.5 h-3.5" />
-            New Chat
+            <span className="hidden sm:inline">New Chat</span>
           </Button>
         </div>
       </div>
 
-      <div className="flex gap-5 flex-1 min-h-0">
+      <div className="flex gap-4 flex-1 min-h-0">
         {/* Chat area */}
         <div className="flex-1 flex flex-col bg-card border border-border rounded-2xl overflow-hidden">
           {/* Messages */}
-          <div className="flex-1 overflow-y-auto p-5 space-y-4">
+          <div className="flex-1 overflow-y-auto p-3 md:p-5 space-y-4">
             <AnimatePresence initial={false}>
               {messages.map((msg) => (
                 <MessageBubble
@@ -350,13 +350,13 @@ export default function CareerCoachPage() {
           <div className="border-t border-border p-4">
             {/* Quick starters — shown only before first user message */}
             {userMessageCount === 0 && (
-              <div className="grid grid-cols-2 gap-2 mb-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-3">
                 {STARTER_QUESTIONS.map((q) => (
                   <button
                     key={q.text}
                     onClick={() => sendMessage(q.text)}
                     disabled={isLoading}
-                    className="flex items-center gap-2 p-2.5 rounded-lg border border-border hover:border-indigo-500/30 hover:bg-indigo-500/5 text-left text-xs text-muted-foreground hover:text-foreground transition-all disabled:opacity-50"
+                    className="flex items-center gap-2 p-3 rounded-lg border border-border hover:border-indigo-500/30 hover:bg-indigo-500/5 text-left text-xs text-muted-foreground hover:text-foreground transition-all disabled:opacity-50 touch-manipulation"
                   >
                     <q.icon className="w-3.5 h-3.5 text-indigo-400 flex-shrink-0" />
                     <span className="line-clamp-2">{q.text}</span>
@@ -378,16 +378,16 @@ export default function CareerCoachPage() {
                 <Button variant="indigo" size="sm">Upgrade — R99/mo</Button>
               </div>
             ) : (
-              <div className="flex items-end gap-3">
+              <div className="flex items-end gap-2">
                 <textarea
                   ref={textareaRef}
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
                   onKeyDown={handleKeyDown}
-                  placeholder="Ask me anything about careers in South Africa..."
+                  placeholder="Ask anything about SA careers..."
                   rows={1}
                   disabled={isLoading}
-                  className="flex-1 resize-none bg-secondary rounded-xl px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring border border-input max-h-32 min-h-[44px] disabled:opacity-60"
+                  className="flex-1 resize-none bg-secondary rounded-xl px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring border border-input max-h-32 min-h-[48px] disabled:opacity-60"
                   onInput={(e) => {
                     const el = e.currentTarget;
                     el.style.height = "auto";
@@ -399,7 +399,7 @@ export default function CareerCoachPage() {
                   disabled={!input.trim() || isLoading}
                   variant="indigo"
                   size="icon"
-                  className="h-11 w-11 rounded-xl flex-shrink-0"
+                  className="h-12 w-12 rounded-xl flex-shrink-0 touch-manipulation"
                 >
                   <Send className="w-4 h-4" />
                 </Button>
@@ -412,8 +412,8 @@ export default function CareerCoachPage() {
           </div>
         </div>
 
-        {/* Right sidebar */}
-        <div className="w-64 flex-shrink-0 space-y-4">
+        {/* Right sidebar — hidden on mobile, visible on lg+ */}
+        <div className="hidden lg:block w-64 flex-shrink-0 space-y-4">
           {/* Topics */}
           <div className="bg-card border border-border rounded-xl p-4">
             <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-3">

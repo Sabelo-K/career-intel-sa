@@ -186,10 +186,11 @@ export default function CareerCoachPage() {
     setUserMessageCount((c) => c + 1);
 
     try {
-      const history = [...messages, userMsg].map((m) => ({
-        role: m.role,
-        content: m.content,
-      }));
+      // Build history for Claude — must start with a user message.
+      // Exclude: the static welcome message, error bubbles, and empty streaming placeholders.
+      const history = [...messages, userMsg]
+        .filter((m) => m.id !== "welcome" && !m.error && m.content.trim() !== "")
+        .map((m) => ({ role: m.role, content: m.content }));
 
       const res = await fetch("/api/chat", {
         method: "POST",

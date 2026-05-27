@@ -6,7 +6,9 @@ import {
   BarChart, Bar, XAxis, YAxis, ResponsiveContainer, Tooltip, Cell,
   RadialBarChart, RadialBar, PieChart, Pie,
 } from "recharts";
-import { TrendingUp, TrendingDown, Globe, Zap, AlertTriangle, Search, SlidersHorizontal } from "lucide-react";
+import { TrendingUp, TrendingDown, Globe, Zap, AlertTriangle, Search, SlidersHorizontal, X, MapPin, GraduationCap, Shield, ChevronRight, Target, MessageCircle } from "lucide-react";
+import { AnimatePresence } from "framer-motion";
+import { useRouter } from "next/navigation";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -50,14 +52,230 @@ const SECTOR_PIE_DATA = [
   { name: "Other", value: 12, fill: "#6b7280" },
 ];
 
-function DemandCard({ career }: { career: (typeof SA_CAREERS)[0] }) {
+const PROVINCE_LABELS: Record<string, string> = {
+  GAUTENG: "Gauteng", WESTERN_CAPE: "Western Cape", KWAZULU_NATAL: "KwaZulu-Natal",
+  EASTERN_CAPE: "Eastern Cape", FREE_STATE: "Free State", LIMPOPO: "Limpopo",
+  MPUMALANGA: "Mpumalanga", NORTH_WEST: "North West", NORTHERN_CAPE: "Northern Cape",
+};
+
+const OUTLOOK_LABEL: Record<string, { label: string; color: string }> = {
+  EXCEPTIONAL: { label: "Exceptional outlook", color: "text-emerald-400" },
+  EXCELLENT:   { label: "Excellent outlook",   color: "text-emerald-400" },
+  GOOD:        { label: "Good outlook",         color: "text-indigo-400"  },
+  FAIR:        { label: "Fair outlook",          color: "text-amber-400"  },
+  POOR:        { label: "Poor outlook",          color: "text-red-400"    },
+};
+
+function CareerDetailDrawer({ career, onClose }: { career: (typeof SA_CAREERS)[0]; onClose: () => void }) {
+  const router = useRouter();
+  const { label: automationLabel } = getAutomationRiskLabel(career.automationRisk);
+  const outlook = OUTLOOK_LABEL[career.futureOutlook] ?? { label: career.futureOutlook, color: "text-foreground" };
+  const avgK = Math.round(career.avgSalaryZar / 1000);
+
+  // Construct a natural blurb from structured data
+  const blurb = `${career.title}s are in ${career.demandScore >= 85 ? "extremely high" : career.demandScore >= 70 ? "strong" : "steady"} demand across South Africa, particularly in ${(career.topProvinces.slice(0, 2).map(p => PROVINCE_LABELS[p] ?? p)).join(" and ")}. The role falls within the ${career.sector} sector and ${career.remoteFriendly ? "is well-suited to remote or hybrid work" : "typically requires on-site presence"}. ${career.internationalDemand ? "Skills transfer globally, opening doors to international opportunities." : ""} ${career.automationRisk < 25 ? "AI automation poses very little threat to this career." : career.automationRisk < 50 ? "Some tasks may be automated, but core expertise remains highly valued." : "Parts of this role are at risk of automation — continuous upskilling is key."}`;
+
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="fixed inset-0 z-50 flex"
+      onClick={onClose}
+    >
+      {/* Backdrop */}
+      <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
+
+      {/* Drawer */}
+      <motion.div
+        initial={{ x: "100%" }}
+        animate={{ x: 0 }}
+        exit={{ x: "100%" }}
+        transition={{ type: "spring", stiffness: 300, damping: 30 }}
+        onClick={(e) => e.stopPropagation()}
+        className="absolute right-0 top-0 h-full w-full max-w-md bg-background border-l border-border overflow-y-auto shadow-2xl"
+      >
+        {/* Header */}
+        <div className="sticky top-0 z-10 bg-background/95 backdrop-blur border-b border-border px-5 py-4 flex items-start justify-between">
+          <div>
+            <div className="flex items-center gap-2">
+              <h2 className="text-lg font-bold text-foreground">{career.title}</h2>
+              <span className={`text-sm font-bold px-2 py-0.5 rounded-lg border ${getDemandBadgeColor(career.demandScore)}`}>
+                {career.demandScore}
+              </span>
+            </div>
+            <p className="text-xs text-muted-foreground mt-0.5">{career.sector}</p>
+          </div>
+          <button onClick={onClose} className="text-muted-foreground hover:text-foreground transition-colors mt-0.5">
+            <X className="w-5 h-5" />
+          </button>
+        </div>
+
+        <div className="p-5 space-y-5">
+          {/* Blurb */}
+          <p className="text-sm text-muted-foreground leading-relaxed">{blurb}</p>
+
+          {/* Key stats row */}
+          <div className="grid grid-cols-3 gap-3">
+            {[
+              { label: "Avg Salary", value: `R${avgK}k/mo`, color: "text-emerald-400" },
+              { label: "Demand", value: `${career.demandScore}/100`, color: "text-indigo-400" },
+              { label: "Outlook", value: outlook.label.split(" ")[0], color: outlook.color },
+            ].map((s) => (
+              <div key={s.label} className="bg-secondary rounded-xl p-3 text-center">
+                <div className={`text-base font-bold ${s.color}`}>{s.value}</div>
+                <div className="text-xs text-muted-foreground mt-0.5">{s.label}</div>
+              </div>
+            ))}
+          </div>
+
+          {/* Salary breakdown */}
+          <div className="bg-card border border-border rounded-xl p-4">
+            <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-3">Salary Range (ZAR/month)</h3>
+            <div className="space-y-2">
+              {[
+                { label: "Entry level", value: career.minSalaryZar, pct: 30 },
+                { label: "Average", value: career.avgSalaryZar, pct: 60 },
+                { label: "Senior / top earner", value: career.maxSalaryZar, pct: 100 },
+              ].map((s) => (
+                <div key={s.label}>
+                  <div className="flex items-center justify-between text-xs mb-1">
+                    <span className="text-muted-foreground">{s.label}</span>
+                    <span className="font-semibold text-foreground">R{Math.round(s.value / 1000)}k</span>
+                  </div>
+                  <div className="h-1.5 bg-secondary rounded-full">
+                    <motion.div
+                      initial={{ width: 0 }}
+                      animate={{ width: `${s.pct}%` }}
+                      transition={{ duration: 0.6, delay: 0.1 }}
+                      className="h-full rounded-full bg-gradient-to-r from-indigo-500 to-emerald-500"
+                    />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Skills */}
+          <div className="bg-card border border-border rounded-xl p-4">
+            <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-3">Skills You Need</h3>
+            <div className="flex flex-wrap gap-1.5">
+              {career.topSkills.map((skill) => (
+                <span key={skill} className="text-xs bg-indigo-500/15 border border-indigo-500/25 text-indigo-300 px-2.5 py-1 rounded-full">
+                  {skill}
+                </span>
+              ))}
+            </div>
+          </div>
+
+          {/* Details grid */}
+          <div className="grid grid-cols-2 gap-3">
+            <div className="bg-card border border-border rounded-xl p-3">
+              <div className="flex items-center gap-1.5 mb-1.5">
+                <MapPin className="w-3.5 h-3.5 text-indigo-400" />
+                <span className="text-xs font-semibold text-foreground">Top Provinces</span>
+              </div>
+              <div className="space-y-1">
+                {career.topProvinces.map((p) => (
+                  <div key={p} className="text-xs text-muted-foreground flex items-center gap-1">
+                    <ChevronRight className="w-3 h-3 text-indigo-400/60" />
+                    {PROVINCE_LABELS[p] ?? p}
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="bg-card border border-border rounded-xl p-3 space-y-2">
+              {career.nqfLevel && (
+                <div className="flex items-start gap-1.5">
+                  <GraduationCap className="w-3.5 h-3.5 text-violet-400 mt-0.5 flex-shrink-0" />
+                  <div>
+                    <div className="text-xs font-semibold text-foreground">Min Qualification</div>
+                    <div className="text-xs text-muted-foreground">NQF Level {career.nqfLevel}</div>
+                  </div>
+                </div>
+              )}
+              <div className="flex items-start gap-1.5">
+                <Shield className="w-3.5 h-3.5 text-amber-400 mt-0.5 flex-shrink-0" />
+                <div>
+                  <div className="text-xs font-semibold text-foreground">AI Risk</div>
+                  <div className="text-xs text-muted-foreground">{automationLabel} ({career.automationRisk}%)</div>
+                </div>
+              </div>
+              <div className="flex items-start gap-1.5">
+                <Globe className="w-3.5 h-3.5 text-emerald-400 mt-0.5 flex-shrink-0" />
+                <div>
+                  <div className="text-xs font-semibold text-foreground">Work Style</div>
+                  <div className="text-xs text-muted-foreground">
+                    {career.remoteFriendly ? "Remote friendly" : "On-site"}
+                    {career.internationalDemand ? " · Global demand" : ""}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Trend */}
+          <div className="bg-card border border-border rounded-xl p-4">
+            <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2">Growth Trend</h3>
+            <div className="flex items-center justify-between">
+              <span className={`text-sm font-semibold ${career.growthTrend === "DECLINING" ? "text-red-400" : career.growthTrend === "STABLE" ? "text-blue-400" : "text-emerald-400"}`}>
+                {getTrendLabel(career.growthTrend)}
+              </span>
+              <span className={`text-sm font-medium ${outlook.color}`}>{outlook.label}</span>
+            </div>
+          </div>
+
+          {/* Related careers */}
+          {career.relatedCareers.length > 0 && (
+            <div className="bg-card border border-border rounded-xl p-4">
+              <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-3">Related Careers</h3>
+              <div className="flex flex-wrap gap-1.5">
+                {career.relatedCareers.map((r) => (
+                  <span key={r} className="text-xs bg-secondary border border-border text-muted-foreground px-2.5 py-1 rounded-full hover:text-foreground transition-colors cursor-default">
+                    {r}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* CTA buttons */}
+          <div className="grid grid-cols-2 gap-3 pb-2">
+            <Button
+              variant="indigo"
+              size="sm"
+              className="gap-2 w-full"
+              onClick={() => { onClose(); router.push(`/skills-gap?role=${encodeURIComponent(career.title)}`); }}
+            >
+              <Target className="w-3.5 h-3.5" />
+              Analyse My Gap
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              className="gap-2 w-full"
+              onClick={() => { onClose(); router.push(`/career-coach?q=${encodeURIComponent(`Tell me about a career as a ${career.title} in South Africa`)}`); }}
+            >
+              <MessageCircle className="w-3.5 h-3.5" />
+              Ask AI Coach
+            </Button>
+          </div>
+        </div>
+      </motion.div>
+    </motion.div>
+  );
+}
+
+function DemandCard({ career, onSelect }: { career: (typeof SA_CAREERS)[0]; onSelect: () => void }) {
   const { label: automationLabel, color: automationColor } = getAutomationRiskLabel(career.automationRisk);
   return (
     <motion.div
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       whileHover={{ y: -2 }}
-      className="bg-card border border-border rounded-xl p-5 hover:border-indigo-500/30 transition-all duration-200 cursor-pointer"
+      onClick={onSelect}
+      className="bg-card border border-border rounded-xl p-5 hover:border-indigo-500/40 transition-all duration-200 cursor-pointer"
     >
       <div className="flex items-start justify-between mb-3">
         <div>
@@ -118,6 +336,7 @@ function DemandCard({ career }: { career: (typeof SA_CAREERS)[0] }) {
 export default function JobMarketPage() {
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState("all");
+  const [selectedCareer, setSelectedCareer] = useState<(typeof SA_CAREERS)[0] | null>(null);
 
   const filtered = SA_CAREERS
     .filter((c) => {
@@ -221,7 +440,7 @@ export default function JobMarketPage() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
             {filtered.map((career) => (
-              <DemandCard key={career.id} career={career} />
+              <DemandCard key={career.id} career={career} onSelect={() => setSelectedCareer(career)} />
             ))}
           </div>
         </TabsContent>
@@ -426,6 +645,15 @@ export default function JobMarketPage() {
           </div>
         </TabsContent>
       </Tabs>
+
+      <AnimatePresence>
+        {selectedCareer && (
+          <CareerDetailDrawer
+            career={selectedCareer}
+            onClose={() => setSelectedCareer(null)}
+          />
+        )}
+      </AnimatePresence>
     </div>
   );
 }

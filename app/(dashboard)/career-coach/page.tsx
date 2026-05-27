@@ -199,8 +199,10 @@ export default function CareerCoachPage() {
       });
 
       if (!res.ok) {
-        const err = await res.json().catch(() => ({ error: `HTTP ${res.status}` }));
-        throw new Error(err.error || `HTTP ${res.status}`);
+        const body = await res.json().catch(() => ({ error: `HTTP ${res.status}` }));
+        const httpErr = new Error(body.error || `HTTP ${res.status}`) as Error & { status: number };
+        httpErr.status = res.status;
+        throw httpErr;
       }
 
       const reader = res.body?.getReader();
@@ -249,12 +251,15 @@ export default function CareerCoachPage() {
         prev.map((m) => (m.id === assistantId ? { ...m, streaming: false } : m))
       );
     } catch (err) {
-      const errMsg =
-        err instanceof Error && err.message.includes("401")
-          ? "Authentication issue. Please refresh the page and try again."
-          : err instanceof Error && err.message.includes("500")
-          ? "The AI service is temporarily unavailable. Please try again in a moment."
-          : "Connection issue. Check your internet and try again.";
+      const status = (err as Error & { status?: number }).status;
+      const msg = err instanceof Error ? err.message : "Unknown error";
+      const isAuth = status === 401 || msg.toLowerCase().includes("auth") || msg.toLowerCase().includes("api key") || msg.includes("401");
+      const isServer = status === 500 || status === 503 || msg.includes("500") || msg.includes("503");
+      const errMsg = isAuth
+        ? "API key issue — the AI service isn't authenticated. Please contact support or try again later."
+        : isServer
+        ? `The AI service is temporarily unavailable. Please try again in a moment. (${msg})`
+        : `Something went wrong: ${msg}`;
 
       setMessages((prev) =>
         prev.map((m) =>

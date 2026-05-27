@@ -1,6 +1,6 @@
 "use client";
 
-import { generateCV, generateBuiltCV, CVTemplateData } from "@/lib/cv-templates";
+import { generateCV, generateRevampedCV, generateBuiltCV, CVTemplateData, CVBuiltData } from "@/lib/cv-templates";
 import { useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -25,6 +25,16 @@ interface CVAnalysisResult {
   improvedSummary: string;
   extractedSkills: string[];
   missingKeywords: string[];
+}
+
+/** Full revamped CV — analysis scores + the user's real extracted data */
+interface RevampedCV extends CVAnalysisResult {
+  personal: CVBuiltData["personal"];
+  experience: CVBuiltData["experience"];
+  education: CVBuiltData["education"];
+  skills: string[];
+  certifications: string[];
+  summary: string;
 }
 
 interface WorkEntry {
@@ -711,40 +721,92 @@ function BuildFromScratch() {
 // ─── Main Page ────────────────────────────────────────────────────────────────
 
 export default function CVBuilderPage() {
-  const [stage, setStage] = useState<"upload" | "analyzing" | "results">("upload");
+  const [stage, setStage] = useState<"upload" | "analyzing" | "results" | "error">("upload");
   const [dragActive, setDragActive] = useState(false);
   const [fileName, setFileName] = useState<string | null>(null);
-  const [analysis, setAnalysis] = useState<CVAnalysisResult | null>(null);
+  const [analysis, setAnalysis] = useState<RevampedCV | null>(null);
+  const [revampError, setRevampError] = useState<string | null>(null);
   const [selectedTemplate, setSelectedTemplate] = useState("modern");
   const [expandedSection, setExpandedSection] = useState<string | null>("suggestions");
   const fileRef = useRef<HTMLInputElement>(null);
 
-  const handleFile = (file: File) => {
+  const handleFile = async (file: File) => {
     if (!file) return;
     setFileName(file.name);
+    setRevampError(null);
     setStage("analyzing");
-    setTimeout(() => {
-      setAnalysis(MOCK_ANALYSIS);
+
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+
+      const res = await fetch("/api/cv/revamp", { method: "POST", body: formData });
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.error || `Server error ${res.status}`);
+      }
+
+      // Merge with MOCK_ANALYSIS fallbacks so UI never shows undefined
+      setAnalysis({
+        personal: data.personal ?? { fullName: "", email: "", phone: "", location: "", province: "", linkedin: "", website: "" },
+        experience: Array.isArray(data.experience) ? data.experience : [],
+        education: Array.isArray(data.education) ? data.education : [],
+        skills: Array.isArray(data.skills) ? data.skills : [],
+        certifications: Array.isArray(data.certifications) ? data.certifications : [],
+        summary: data.summary ?? data.improvedSummary ?? "",
+        improvedSummary: data.improvedSummary ?? data.summary ?? MOCK_ANALYSIS.improvedSummary,
+        extractedSkills: Array.isArray(data.extractedSkills) ? data.extractedSkills : (Array.isArray(data.skills) ? data.skills : MOCK_ANALYSIS.extractedSkills),
+        missingKeywords: Array.isArray(data.missingKeywords) ? data.missingKeywords : MOCK_ANALYSIS.missingKeywords,
+        atsScore: typeof data.atsScore === "number" ? data.atsScore : MOCK_ANALYSIS.atsScore,
+        recruiterScore: typeof data.recruiterScore === "number" ? data.recruiterScore : MOCK_ANALYSIS.recruiterScore,
+        suggestions: Array.isArray(data.suggestions) ? data.suggestions : MOCK_ANALYSIS.suggestions,
+        strengths: Array.isArray(data.strengths) ? data.strengths : MOCK_ANALYSIS.strengths,
+        weaknesses: Array.isArray(data.weaknesses) ? data.weaknesses : MOCK_ANALYSIS.weaknesses,
+      });
       setStage("results");
-    }, 3000);
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : "Failed to revamp CV";
+      setRevampError(msg);
+      setStage("error");
+    }
   };
 
   const handleDownloadCV = () => {
     if (!analysis) return;
-    const data: CVTemplateData = {
-      improvedSummary: analysis.improvedSummary,
-      extractedSkills: analysis.extractedSkills,
-      missingKeywords: analysis.missingKeywords,
-      suggestions: analysis.suggestions,
-    };
-    const html = generateCV(selectedTemplate, data);
+
+    // If we have real extracted data, use the fully-populated template
+    const hasRealData = analysis.personal?.fullName || analysis.experience?.length > 0;
+
+    let html: string;
+    if (hasRealData) {
+      const builtData: CVBuiltData = {
+        personal: analysis.personal,
+        summary: analysis.summary || analysis.improvedSummary,
+        experience: analysis.experience,
+        education: analysis.education,
+        skills: analysis.skills?.length ? analysis.skills : analysis.extractedSkills,
+        certifications: analysis.certifications,
+      };
+      html = generateRevampedCV(selectedTemplate, builtData);
+    } else {
+      // Fallback: placeholder template with AI analysis
+      const templateData: CVTemplateData = {
+        improvedSummary: analysis.improvedSummary,
+        extractedSkills: analysis.extractedSkills,
+        missingKeywords: analysis.missingKeywords,
+        suggestions: analysis.suggestions,
+      };
+      html = generateCV(selectedTemplate, templateData);
+    }
+
     const blob = new Blob([html], { type: "text/html" });
     const url = URL.createObjectURL(blob);
     const win = window.open(url, "_blank");
     if (!win) {
       const a = document.createElement("a");
       a.href = url;
-      a.download = "CareerIntel_Optimised_CV.html";
+      a.download = "CareerIntel_Revamped_CV.html";
       a.click();
     }
     setTimeout(() => URL.revokeObjectURL(url), 10000);
@@ -767,8 +829,8 @@ export default function CVBuilderPage() {
             Upload your CV for AI analysis, or build a professional CV from scratch — free for everyone.
           </p>
         </div>
-        {stage === "results" && (
-          <Button variant="outline" size="sm" className="gap-2" onClick={() => { setStage("upload"); setFileName(null); setAnalysis(null); }}>
+        {(stage === "results" || stage === "error") && (
+          <Button variant="outline" size="sm" className="gap-2" onClick={() => { setStage("upload"); setFileName(null); setAnalysis(null); setRevampError(null); }}>
             <RefreshCw className="w-3.5 h-3.5" />
             New CV
           </Button>
@@ -858,23 +920,80 @@ export default function CVBuilderPage() {
                       <Zap className="w-8 h-8 text-indigo-400" />
                     </motion.div>
                   </div>
-                  <h3 className="text-lg font-semibold text-foreground mb-2">Analysing your CV...</h3>
+                  <h3 className="text-lg font-semibold text-foreground mb-2">Revamping your CV with AI...</h3>
                   <p className="text-muted-foreground text-sm mb-6">{fileName}</p>
                   <div className="space-y-3 max-w-xs mx-auto text-left">
-                    {["Parsing document structure...", "Extracting skills & experience...", "Running ATS compatibility check...", "Scoring against SA recruiter standards..."].map((step, i) => (
-                      <motion.div key={step} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: i * 0.6 }} className="flex items-center gap-2 text-xs text-muted-foreground">
-                        <motion.div animate={{ scale: [1, 1.2, 1] }} transition={{ delay: i * 0.6, duration: 0.4 }}>
+                    {[
+                      "Extracting text from your document...",
+                      "Parsing personal details & work history...",
+                      "Rewriting content for ATS optimisation...",
+                      "Scoring against SA market standards...",
+                    ].map((step, i) => (
+                      <motion.div key={step} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: i * 1.5 }} className="flex items-center gap-2 text-xs text-muted-foreground">
+                        <motion.div animate={{ scale: [1, 1.2, 1] }} transition={{ delay: i * 1.5, duration: 0.4 }}>
                           <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
                         </motion.div>
                         {step}
                       </motion.div>
                     ))}
                   </div>
+                  <p className="text-xs text-muted-foreground mt-6 opacity-60">This takes 15–30 seconds — AI is rewriting your content</p>
+                </motion.div>
+              )}
+
+              {stage === "error" && (
+                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="bg-card border border-red-500/20 rounded-2xl p-10 text-center">
+                  <div className="w-16 h-16 rounded-2xl bg-red-500/15 flex items-center justify-center mx-auto mb-5">
+                    <AlertCircle className="w-8 h-8 text-red-400" />
+                  </div>
+                  <h3 className="text-lg font-semibold text-foreground mb-2">Revamp failed</h3>
+                  <p className="text-sm text-muted-foreground mb-4">{revampError}</p>
+                  <p className="text-xs text-muted-foreground mb-6 max-w-xs mx-auto">
+                    If your CV is a scanned image PDF it cannot be read as text. Try uploading a Word (.docx) or text-based PDF version.
+                  </p>
+                  <Button variant="indigo" size="sm" onClick={() => { setStage("upload"); setFileName(null); setRevampError(null); }}>
+                    Try Again
+                  </Button>
                 </motion.div>
               )}
 
               {stage === "results" && analysis && (
                 <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-4">
+                  {/* ── Revamped CV data preview ── */}
+                  {analysis.personal?.fullName && (
+                    <div className="bg-gradient-to-r from-indigo-500/10 to-purple-500/10 border border-indigo-500/20 rounded-xl p-4">
+                      <div className="flex items-start gap-3">
+                        <div className="w-10 h-10 rounded-full bg-indigo-600 flex items-center justify-center text-white text-sm font-bold flex-shrink-0">
+                          {analysis.personal.fullName.split(" ").filter(Boolean).slice(0, 2).map(w => w[0]).join("").toUpperCase() || "CV"}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <span className="text-sm font-semibold text-foreground">{analysis.personal.fullName}</span>
+                            <Badge variant="success" className="text-xs gap-1"><CheckCircle2 className="w-2.5 h-2.5" /> Data extracted</Badge>
+                          </div>
+                          <p className="text-xs text-muted-foreground mt-0.5">
+                            {[analysis.personal.email, analysis.personal.phone, analysis.personal.location].filter(Boolean).join(" · ")}
+                          </p>
+                          <div className="flex items-center gap-3 mt-2 text-xs text-muted-foreground">
+                            {analysis.experience?.length > 0 && (
+                              <span className="flex items-center gap-1"><Briefcase className="w-3 h-3 text-indigo-400" />{analysis.experience.length} job{analysis.experience.length !== 1 ? "s" : ""}</span>
+                            )}
+                            {analysis.education?.length > 0 && (
+                              <span className="flex items-center gap-1"><GraduationCap className="w-3 h-3 text-indigo-400" />{analysis.education.length} qualification{analysis.education.length !== 1 ? "s" : ""}</span>
+                            )}
+                            {(analysis.skills?.length || analysis.extractedSkills?.length) > 0 && (
+                              <span className="flex items-center gap-1"><Wrench className="w-3 h-3 text-indigo-400" />{analysis.skills?.length || analysis.extractedSkills?.length} skills</span>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                      <p className="text-xs text-indigo-300 mt-3 flex items-center gap-1.5">
+                        <Sparkles className="w-3 h-3" />
+                        Your CV has been rewritten — choose a template and download your revamped version below
+                      </p>
+                    </div>
+                  )}
+
                   {[
                     { key: "suggestions", icon: Sparkles, title: "AI Improvement Suggestions", items: analysis.suggestions, color: "indigo", badge: `${analysis.suggestions.length} suggestions` },
                     { key: "strengths", icon: Star, title: "CV Strengths", items: analysis.strengths, color: "emerald", badge: `${analysis.strengths.length} found` },
@@ -944,7 +1063,7 @@ export default function CVBuilderPage() {
                   disabled={!analysis}
                 >
                   <Download className="w-3.5 h-3.5" />
-                  {analysis ? "Download Optimised CV" : "Upload a CV first"}
+                  {analysis ? "Download Revamped CV" : "Upload a CV first"}
                 </Button>
               </div>
 

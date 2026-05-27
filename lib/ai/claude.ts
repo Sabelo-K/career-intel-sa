@@ -265,3 +265,99 @@ Return as JSON:
   const parsed = extractJSON(response.choices[0]?.message?.content ?? "");
   return (parsed as { questions?: unknown[] }).questions ? parsed : { questions: [] };
 }
+
+// ─── CV Revamp (parse + AI rewrite in one call) ───────────────────────────────
+
+export async function parseAndRevampCV(cvText: string) {
+  const response = await groq.chat.completions.create({
+    model: MODEL,
+    messages: [
+      {
+        role: "system",
+        content: `You are an expert South African CV specialist, ATS optimiser, and senior recruiter with 20+ years experience.
+You parse CVs and simultaneously rewrite them for maximum impact in the SA job market.
+You understand SA-specific requirements: NQF levels, B-BBEE, SAQA, POPIA, province names.
+Respond with valid JSON ONLY — no markdown, no text outside the JSON block.`,
+      },
+      {
+        role: "user",
+        content: `Parse and professionally revamp this CV for the South African job market.
+
+INSTRUCTIONS:
+1. Extract ALL information: full name, email, phone, city/town, SA province, LinkedIn URL, website
+2. Rewrite the professional summary to 2–3 powerful sentences — specific, ATS-optimised, SA-relevant
+3. For each job: rewrite the description with strong action verbs + inferred quantified outcomes. Separate each point with \\n (literal backslash-n in the JSON string)
+4. Estimate NQF level if not stated (Matric=4, Higher Cert=5, Diploma/ND=6, Degree=7, Honours/PGDip=8, Masters=9, PhD=10)
+5. Extract all skills from the CV and add up to 5 high-demand SA market keywords that match their background
+6. Score the ORIGINAL CV honestly before improvements (be realistic)
+
+CV TEXT:
+---
+${cvText.slice(0, 6000)}
+---
+
+Return ONLY valid JSON in this exact structure:
+{
+  "personal": {
+    "fullName": "",
+    "email": "",
+    "phone": "",
+    "location": "",
+    "province": "",
+    "linkedin": "",
+    "website": ""
+  },
+  "summary": "2-3 sentence AI-rewritten professional summary",
+  "experience": [
+    {
+      "jobTitle": "",
+      "company": "",
+      "startDate": "Month YYYY",
+      "endDate": "Month YYYY",
+      "current": false,
+      "description": "Achievement 1 with quantified result\\nAchievement 2 with impact\\nKey responsibility with scope"
+    }
+  ],
+  "education": [
+    {
+      "institution": "",
+      "qualification": "",
+      "fieldOfStudy": "",
+      "yearCompleted": "",
+      "nqfLevel": "7"
+    }
+  ],
+  "skills": ["Skill 1", "Skill 2"],
+  "certifications": ["Cert 1"],
+  "atsScore": 65,
+  "recruiterScore": 70,
+  "suggestions": ["Specific improvement 1", "Specific improvement 2", "Specific improvement 3"],
+  "strengths": ["Strength 1", "Strength 2"],
+  "weaknesses": ["Weakness 1", "Weakness 2"],
+  "missingKeywords": ["Keyword1", "Keyword2", "Keyword3"]
+}`,
+      },
+    ],
+    stream: false,
+    max_tokens: 3500,
+    temperature: 0.2,
+  });
+
+  const raw = extractJSON(response.choices[0]?.message?.content ?? "");
+
+  // Normalise to include the field names the UI components expect
+  const skills = Array.isArray(raw.skills) ? (raw.skills as string[]) : [];
+  return {
+    ...raw,
+    improvedSummary: (raw.summary as string) || "",
+    extractedSkills: skills,
+    // Ensure arrays have string IDs so CVBuiltData is satisfied
+    experience: Array.isArray(raw.experience)
+      ? (raw.experience as Record<string, unknown>[]).map((e, i) => ({ id: String(i), ...e }))
+      : [],
+    education: Array.isArray(raw.education)
+      ? (raw.education as Record<string, unknown>[]).map((e, i) => ({ id: String(i), ...e }))
+      : [],
+    certifications: Array.isArray(raw.certifications) ? (raw.certifications as string[]) : [],
+  };
+}

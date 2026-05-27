@@ -458,7 +458,7 @@ export default function CareerCoachPage() {
         </div>
 
         {/* Right sidebar — hidden on mobile, visible on lg+ */}
-        <div className="hidden lg:block w-64 flex-shrink-0 space-y-4">
+        <div className="hidden lg:block w-64 flex-shrink-0 overflow-y-auto min-h-0 space-y-4 pb-2">
           {/* Recent conversations */}
           {recentSessions.length > 0 && (
             <div className="bg-card border border-border rounded-xl p-4">

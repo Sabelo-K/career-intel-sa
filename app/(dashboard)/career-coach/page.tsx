@@ -292,9 +292,12 @@ export default function CareerCoachPage() {
     } catch (err) {
       const status = (err as Error & { status?: number }).status;
       const msg = err instanceof Error ? err.message : "Unknown error";
-      const isAuth = status === 401 || msg.toLowerCase().includes("auth") || msg.toLowerCase().includes("api key") || msg.includes("401");
-      const isServer = status === 500 || status === 503 || msg.includes("500") || msg.includes("503");
-      const errMsg = isAuth
+      const isAuth    = status === 401 || msg.toLowerCase().includes("auth") || msg.toLowerCase().includes("api key") || msg.includes("401");
+      const isServer  = status === 500 || status === 503 || msg.includes("500") || msg.includes("503");
+      const isLimited = status === 402 || msg.toLowerCase().includes("limit");
+      const errMsg = isLimited
+        ? `🔒 ${msg} [Upgrade to Premium](/upgrade)`
+        : isAuth
         ? "API key issue — the AI service isn't authenticated. Please contact support or try again later."
         : isServer
         ? `The AI service is temporarily unavailable. Please try again in a moment. (${msg})`

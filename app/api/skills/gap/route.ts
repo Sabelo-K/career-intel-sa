@@ -4,6 +4,12 @@ import { analyzeSkillsGap } from "@/lib/ai/claude";
 import { getOrCreateUser } from "@/lib/db-helpers";
 import { db } from "@/lib/db";
 import { z } from "zod";
+import {
+  getEffectivePlan,
+  isPaid,
+  monthlySkillsGaps,
+  FREE_LIMITS,
+} from "@/lib/plan-gate";
 
 const SkillsGapSchema = z.object({
   currentSkills:   z.array(z.string()).min(1),
@@ -19,6 +25,31 @@ export async function POST(req: NextRequest) {
 
     const body   = await req.json();
     const params = SkillsGapSchema.parse(body);
+
+    // ── Plan gate ─────────────────────────────────────────────────────────────
+    try {
+      const clerkUserEarly = await currentUser();
+      const dbUserEarly = await getOrCreateUser(
+        userId,
+        clerkUserEarly?.primaryEmailAddress?.emailAddress,
+        clerkUserEarly?.fullName
+      );
+      const plan = await getEffectivePlan(dbUserEarly.id);
+      if (!isPaid(plan)) {
+        const used = await monthlySkillsGaps(dbUserEarly.id);
+        if (used >= FREE_LIMITS.skillsGapAnalyses) {
+          return NextResponse.json(
+            {
+              error: `You have used all ${FREE_LIMITS.skillsGapAnalyses} free skills gap analyses this month. Upgrade to Premium for unlimited access.`,
+              code:  "LIMIT_REACHED",
+            },
+            { status: 402 }
+          );
+        }
+      }
+    } catch {
+      // Gate check failure must never block the user
+    }
 
     // Run AI analysis
     const result = await analyzeSkillsGap(params);

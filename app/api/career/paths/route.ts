@@ -4,6 +4,12 @@ import { simulateCareerPath } from "@/lib/ai/claude";
 import { getOrCreateUser } from "@/lib/db-helpers";
 import { db } from "@/lib/db";
 import { z } from "zod";
+import {
+  getEffectivePlan,
+  isPaid,
+  monthlyCareerPaths,
+  FREE_LIMITS,
+} from "@/lib/plan-gate";
 
 const CareerPathSchema = z.object({
   currentRole:    z.string().min(2),
@@ -21,6 +27,31 @@ export async function POST(req: NextRequest) {
 
     const body   = await req.json();
     const params = CareerPathSchema.parse(body);
+
+    // ── Plan gate ─────────────────────────────────────────────────────────────
+    try {
+      const clerkUserEarly = await currentUser();
+      const dbUserEarly = await getOrCreateUser(
+        userId,
+        clerkUserEarly?.primaryEmailAddress?.emailAddress,
+        clerkUserEarly?.fullName
+      );
+      const plan = await getEffectivePlan(dbUserEarly.id);
+      if (!isPaid(plan)) {
+        const used = await monthlyCareerPaths(dbUserEarly.id);
+        if (used >= FREE_LIMITS.careerSimulations) {
+          return NextResponse.json(
+            {
+              error: `Free plan includes ${FREE_LIMITS.careerSimulations} career path simulation per month. Upgrade to Premium for unlimited simulations.`,
+              code:  "LIMIT_REACHED",
+            },
+            { status: 402 }
+          );
+        }
+      }
+    } catch {
+      // Gate check failure must never block the user
+    }
 
     const simulation = await simulateCareerPath(params);
 

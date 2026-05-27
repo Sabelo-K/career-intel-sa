@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useUser, useClerk } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
@@ -211,8 +211,26 @@ export default function SettingsPage() {
     );
   };
 
-  const planName = "Free Plan";
-  const planColor = "text-muted-foreground";
+  const [planKey, setPlanKey] = useState<string>("FREE");
+  const [planExpiresAt, setPlanExpiresAt] = useState<string | null>(null);
+
+  useEffect(() => {
+    fetch("/api/dashboard")
+      .then((r) => r.json())
+      .then((d) => {
+        if (d.plan)          setPlanKey(d.plan);
+        if (d.planExpiresAt) setPlanExpiresAt(d.planExpiresAt);
+      })
+      .catch(() => {});
+  }, []);
+
+  const PLAN_DISPLAY: Record<string, { name: string; color: string }> = {
+    FREE:       { name: "Free Plan",         color: "text-muted-foreground" },
+    PREMIUM:    { name: "Premium",           color: "text-indigo-400" },
+    RECRUITER:  { name: "Recruiter",         color: "text-amber-400" },
+    ENTERPRISE: { name: "Enterprise",        color: "text-emerald-400" },
+  };
+  const { name: planName, color: planColor } = PLAN_DISPLAY[planKey] ?? PLAN_DISPLAY.FREE;
 
   return (
     <div className="max-w-3xl space-y-6">
@@ -303,12 +321,18 @@ export default function SettingsPage() {
           >
             <div className="flex items-center justify-between p-4 rounded-xl bg-secondary border border-border mb-4">
               <div>
-                <p className="text-sm font-semibold text-foreground">{planName}</p>
+                <p className={`text-sm font-semibold ${planColor}`}>{planName}</p>
                 <p className="text-xs text-muted-foreground mt-0.5">
-                  15 AI messages · 10 career searches · 4 CV templates
+                  {planKey === "FREE"
+                    ? "15 AI messages · 3 skills gaps · 1 simulation per month"
+                    : planExpiresAt
+                      ? `Active until ${new Date(planExpiresAt).toLocaleDateString("en-ZA", { day: "numeric", month: "long", year: "numeric" })}`
+                      : "Full access — all features unlocked"}
                 </p>
               </div>
-              <Badge variant="outline" className="text-xs">Active</Badge>
+              <Badge variant="outline" className={`text-xs ${planKey !== "FREE" ? "border-indigo-500/30 text-indigo-400" : ""}`}>
+                {planKey === "FREE" ? "Free" : "Active"}
+              </Badge>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-4">
               {[

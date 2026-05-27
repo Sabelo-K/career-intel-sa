@@ -2,6 +2,12 @@ import { NextRequest } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { streamCareerCoach } from "@/lib/ai/claude";
 import { db } from "@/lib/db";
+import {
+  getEffectivePlan,
+  isPaid,
+  monthlyCoachMessages,
+  FREE_LIMITS,
+} from "@/lib/plan-gate";
 
 export const runtime = "nodejs";
 
@@ -34,6 +40,21 @@ export async function POST(req: NextRequest) {
       const dbUser = await db.user.findUnique({ where: { clerkId: userId } });
       if (dbUser) {
         dbUserId = dbUser.id;
+
+        // ── Plan gate — enforce FREE monthly message limit ──────────────────
+        const plan = await getEffectivePlan(dbUser.id);
+        if (!isPaid(plan)) {
+          const used = await monthlyCoachMessages(dbUser.id);
+          if (used >= FREE_LIMITS.chatMessages) {
+            return new Response(
+              JSON.stringify({
+                error: `You have reached your free limit of ${FREE_LIMITS.chatMessages} AI coach messages this month. Upgrade to Premium for unlimited coaching.`,
+                code:  "LIMIT_REACHED",
+              }),
+              { status: 402, headers: { "Content-Type": "application/json" } }
+            );
+          }
+        }
 
         // Verify session belongs to this user, else null it out
         if (dbSessionId) {

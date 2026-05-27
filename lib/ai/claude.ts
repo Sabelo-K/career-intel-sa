@@ -1,9 +1,11 @@
 /**
- * AI layer — powered by Google Gemini 2.0 Flash (free tier)
- * Previously used Anthropic Claude; function signatures are preserved
- * so the rest of the codebase requires no changes.
+ * AI layer — powered by Groq (free tier, llama-3.3-70b-versatile)
+ * Groq free tier: 14,400 requests/day, 500,000 tokens/min — no credit card required.
+ * Get a free key at: https://console.groq.com
+ *
+ * Function signatures are preserved so the rest of the codebase requires no changes.
  */
-import { GoogleGenerativeAI, type Content } from "@google/generative-ai";
+import Groq from "groq-sdk";
 import {
   SYSTEM_PROMPT_CAREER_COACH,
   SYSTEM_PROMPT_CV_PARSER,
@@ -12,30 +14,22 @@ import {
   buildEmployabilityPrompt,
 } from "./prompts";
 
-const genAI = new GoogleGenerativeAI(process.env.GOOGLE_AI_API_KEY!);
+const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
 
-const MODEL = "gemini-1.5-flash";
+const MODEL = "llama-3.3-70b-versatile";
 
-/** Create a model instance with an optional system instruction. */
-function getModel(systemInstruction?: string, maxOutputTokens = 1024) {
-  return genAI.getGenerativeModel({
-    model: MODEL,
-    ...(systemInstruction ? { systemInstruction } : {}),
-    generationConfig: { maxOutputTokens },
-  });
-}
+type Message = { role: "user" | "assistant"; content: string };
+type GroqMessage = { role: "system" | "user" | "assistant"; content: string };
 
-/**
- * Convert our internal message format to Gemini's Content format.
- * Anthropic uses "assistant"; Gemini uses "model".
- */
-function toGeminiHistory(
-  messages: Array<{ role: "user" | "assistant"; content: string }>
-): Content[] {
-  return messages.map((m) => ({
-    role: m.role === "assistant" ? "model" : "user",
-    parts: [{ text: m.content }],
-  }));
+/** Build the full messages array Groq expects, with system prompt prepended. */
+function buildMessages(
+  messages: Message[],
+  systemPrompt: string
+): GroqMessage[] {
+  return [
+    { role: "system", content: systemPrompt },
+    ...messages.map((m) => ({ role: m.role, content: m.content })),
+  ];
 }
 
 /** Extract and parse the first JSON object from a text response. */
@@ -51,24 +45,23 @@ function extractJSON(text: string): Record<string, unknown> {
 // ─── Career Coach (streaming) ────────────────────────────────────────────────
 
 export async function* streamCareerCoach(
-  messages: Array<{ role: "user" | "assistant"; content: string }>,
+  messages: Message[],
   systemContext?: string
 ) {
-  const systemInstruction = systemContext
+  const systemPrompt = systemContext
     ? `${SYSTEM_PROMPT_CAREER_COACH}\n\nAdditional context: ${systemContext}`
     : SYSTEM_PROMPT_CAREER_COACH;
 
-  const model = getModel(systemInstruction, 1024);
+  const stream = await groq.chat.completions.create({
+    model: MODEL,
+    messages: buildMessages(messages, systemPrompt),
+    stream: true,
+    max_tokens: 1024,
+    temperature: 0.7,
+  });
 
-  // All messages except the last become chat history
-  const history = toGeminiHistory(messages.slice(0, -1));
-  const lastMessage = messages[messages.length - 1];
-
-  const chat = model.startChat({ history });
-  const result = await chat.sendMessageStream(lastMessage.content);
-
-  for await (const chunk of result.stream) {
-    const text = chunk.text();
+  for await (const chunk of stream) {
+    const text = chunk.choices[0]?.delta?.content ?? "";
     if (text) yield text;
   }
 }
@@ -76,45 +69,56 @@ export async function* streamCareerCoach(
 // ─── Career Coach (non-streaming fallback) ───────────────────────────────────
 
 export async function chatWithCareerCoach(
-  messages: Array<{ role: "user" | "assistant"; content: string }>,
+  messages: Message[],
   systemContext?: string
 ) {
-  const systemInstruction = systemContext
+  const systemPrompt = systemContext
     ? `${SYSTEM_PROMPT_CAREER_COACH}\n\nAdditional context: ${systemContext}`
     : SYSTEM_PROMPT_CAREER_COACH;
 
-  const model = getModel(systemInstruction, 1024);
-  const history = toGeminiHistory(messages.slice(0, -1));
-  const lastMessage = messages[messages.length - 1];
+  const response = await groq.chat.completions.create({
+    model: MODEL,
+    messages: buildMessages(messages, systemPrompt),
+    stream: false,
+    max_tokens: 1024,
+  });
 
-  const chat = model.startChat({ history });
-  const result = await chat.sendMessage(lastMessage.content);
-  return result.response.text();
+  return response.choices[0]?.message?.content ?? "";
 }
 
 // ─── CV Parser ───────────────────────────────────────────────────────────────
 
 export async function parseCV(cvText: string) {
-  const model = getModel(SYSTEM_PROMPT_CV_PARSER, 2048);
-  const result = await model.generateContent(
-    `Parse this CV and return structured JSON:\n\n${cvText}`
-  );
-  return extractJSON(result.response.text());
+  const response = await groq.chat.completions.create({
+    model: MODEL,
+    messages: [
+      { role: "system", content: SYSTEM_PROMPT_CV_PARSER },
+      { role: "user", content: `Parse this CV and return structured JSON:\n\n${cvText}` },
+    ],
+    stream: false,
+    max_tokens: 2048,
+  });
+
+  return extractJSON(response.choices[0]?.message?.content ?? "");
 }
 
 // ─── CV Analyser ─────────────────────────────────────────────────────────────
 
 export async function analyzeCV(cvData: Record<string, unknown>) {
-  const model = getModel(
-    `You are an expert ATS optimisation specialist and SA recruiter.
+  const response = await groq.chat.completions.create({
+    model: MODEL,
+    messages: [
+      {
+        role: "system",
+        content: `You are an expert ATS optimisation specialist and SA recruiter.
 Analyse CVs and provide detailed improvement recommendations.
-Always respond with valid JSON only — no markdown, no explanation outside the JSON.`,
-    2048
-  );
-
-  const result = await model.generateContent(`Analyse this CV for the South African job market and provide:
-1. ATS score (0-100) — how well it passes applicant tracking systems
-2. Recruiter score (0-100) — how compelling it is to SA recruiters
+Respond with valid JSON only — no markdown, no explanation outside the JSON.`,
+      },
+      {
+        role: "user",
+        content: `Analyse this CV for the South African job market and provide:
+1. ATS score (0-100)
+2. Recruiter score (0-100)
 3. Specific improvements needed
 4. Strengths to highlight
 5. An improved professional summary
@@ -132,9 +136,14 @@ Return as JSON:
   "weaknesses": ["weakness1", ...],
   "improvedSummary": "text",
   "missingKeywords": ["keyword1", ...]
-}`);
+}`,
+      },
+    ],
+    stream: false,
+    max_tokens: 2048,
+  });
 
-  return extractJSON(result.response.text());
+  return extractJSON(response.choices[0]?.message?.content ?? "");
 }
 
 // ─── Skills Gap Analysis ──────────────────────────────────────────────────────
@@ -145,26 +154,35 @@ export async function analyzeSkillsGap(params: {
   yearsExperience: number;
   education: string;
 }) {
-  const model = getModel(SYSTEM_PROMPT_SKILLS_GAP, 2048);
-
-  const result = await model.generateContent(`Analyse the skills gap for this South African professional:
+  const response = await groq.chat.completions.create({
+    model: MODEL,
+    messages: [
+      { role: "system", content: SYSTEM_PROMPT_SKILLS_GAP },
+      {
+        role: "user",
+        content: `Analyse the skills gap for this South African professional:
 
 Current Skills: ${params.currentSkills.join(", ")}
 Target Role: ${params.targetRole}
 Years of Experience: ${params.yearsExperience}
 Education: ${params.education}
 
-Provide detailed gap analysis. Return as JSON:
+Return as JSON:
 {
   "matchPercentage": number,
   "missingSkills": [{ "skill": "", "priority": "HIGH|MEDIUM|LOW", "demandScore": number, "timeToLearnWeeks": number, "reason": "" }],
   "learningPath": [{ "order": number, "title": "", "description": "", "skills": [], "resources": [], "estimatedWeeks": number }],
   "estimatedMonths": number,
-  "quickWins": ["skill1", ...],
+  "quickWins": ["skill1"],
   "salaryImpact": "string"
-}`);
+}`,
+      },
+    ],
+    stream: false,
+    max_tokens: 2048,
+  });
 
-  return extractJSON(result.response.text());
+  return extractJSON(response.choices[0]?.message?.content ?? "");
 }
 
 // ─── Career Path Simulator ────────────────────────────────────────────────────
@@ -177,9 +195,16 @@ export async function simulateCareerPath(params: {
   province: string;
   timeframeYears: number;
 }) {
-  const model = getModel(undefined, 2048);
-  const result = await model.generateContent(buildCareerPathPrompt(params));
-  return extractJSON(result.response.text());
+  const response = await groq.chat.completions.create({
+    model: MODEL,
+    messages: [
+      { role: "user", content: buildCareerPathPrompt(params) },
+    ],
+    stream: false,
+    max_tokens: 2048,
+  });
+
+  return extractJSON(response.choices[0]?.message?.content ?? "");
 }
 
 // ─── Employability Score ──────────────────────────────────────────────────────
@@ -192,9 +217,16 @@ export async function calculateEmployabilityScore(profile: {
   yearsExperience?: number;
   province?: string;
 }) {
-  const model = getModel(undefined, 1024);
-  const result = await model.generateContent(buildEmployabilityPrompt(profile));
-  return extractJSON(result.response.text());
+  const response = await groq.chat.completions.create({
+    model: MODEL,
+    messages: [
+      { role: "user", content: buildEmployabilityPrompt(profile) },
+    ],
+    stream: false,
+    max_tokens: 1024,
+  });
+
+  return extractJSON(response.choices[0]?.message?.content ?? "");
 }
 
 // ─── Interview Question Generator ────────────────────────────────────────────
@@ -204,16 +236,14 @@ export async function generateInterviewQuestions(params: {
   level: string;
   industry: string;
 }) {
-  const model = getModel(undefined, 2048);
+  const response = await groq.chat.completions.create({
+    model: MODEL,
+    messages: [
+      {
+        role: "user",
+        content: `Generate 10 realistic interview questions for a ${params.level} ${params.role} in the South African ${params.industry} industry.
 
-  const result = await model.generateContent(
-    `Generate 10 realistic interview questions for a ${params.level} ${params.role} position in the South African ${params.industry} industry.
-
-Include a mix of:
-- Behavioural questions (STAR method)
-- Technical questions
-- Situational questions
-- SA-specific questions (load shedding resilience, team diversity, local market knowledge)
+Include a mix of behavioural, technical, situational, and SA-specific questions.
 
 Return as JSON:
 {
@@ -225,11 +255,13 @@ Return as JSON:
     "sampleAnswer": "brief guide",
     "tips": ["tip1", "tip2"]
   }]
-}`
-  );
+}`,
+      },
+    ],
+    stream: false,
+    max_tokens: 2048,
+  });
 
-  const parsed = extractJSON(result.response.text());
-  return (parsed as { questions?: unknown[] }).questions
-    ? parsed
-    : { questions: [] };
+  const parsed = extractJSON(response.choices[0]?.message?.content ?? "");
+  return (parsed as { questions?: unknown[] }).questions ? parsed : { questions: [] };
 }

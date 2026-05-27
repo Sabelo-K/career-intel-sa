@@ -285,8 +285,25 @@ export default function JobMarketPage() {
         <TabsContent value="provinces">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
             <div className="md:col-span-2 bg-card border border-border rounded-xl p-5">
-              <h3 className="text-sm font-semibold text-foreground mb-4">Opportunity Score by Province</h3>
-              <ResponsiveContainer width="100%" height={320}>
+              <div className="flex items-start justify-between mb-1">
+                <h3 className="text-sm font-semibold text-foreground">Opportunity Score by Province</h3>
+              </div>
+              <p className="text-xs text-muted-foreground mb-3">
+                A score out of 100 showing how many job opportunities, active employers, and growth sectors exist in each province. Higher = more jobs available right now.
+              </p>
+              <div className="flex items-center gap-4 mb-4 flex-wrap">
+                {[
+                  { color: "bg-emerald-500", label: "High (70+) — Strong market" },
+                  { color: "bg-indigo-500",  label: "Medium (55–69) — Decent prospects" },
+                  { color: "bg-amber-500",   label: "Lower (below 55) — Fewer openings" },
+                ].map((l) => (
+                  <div key={l.label} className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                    <div className={`w-2.5 h-2.5 rounded-sm ${l.color}`} />
+                    {l.label}
+                  </div>
+                ))}
+              </div>
+              <ResponsiveContainer width="100%" height={280}>
                 <BarChart data={PROVINCE_DATA} margin={{ top: 5, right: 5, bottom: 0, left: -10 }}>
                   <XAxis dataKey="label" tick={{ fontSize: 9, fill: "#6b7280" }} axisLine={false} tickLine={false} angle={-25} textAnchor="end" height={50} />
                   <YAxis tick={{ fontSize: 10, fill: "#6b7280" }} axisLine={false} tickLine={false} domain={[0, 100]} />

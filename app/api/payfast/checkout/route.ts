@@ -15,6 +15,7 @@ export const runtime = "nodejs";
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
 
 export async function POST(req: NextRequest) {
+  console.log("[PayFast checkout] APP_URL:", APP_URL);
   try {
     const { userId } = await auth();
     if (!userId) {

@@ -31,6 +31,7 @@ export const dynamic = "force-dynamic";
 export async function POST(req: NextRequest) {
   try {
     // ── Parse raw form-encoded body ─────────────────────────────────────────
+    console.log("[PayFast ITN] Received request from:", req.headers.get("x-forwarded-for"));
     const text = await req.text();
     const params: Record<string, string> = {};
 

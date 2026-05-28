@@ -7,6 +7,7 @@ import {
   isPaid,
   monthlyCoachMessages,
   FREE_LIMITS,
+  getPlanLimits,
 } from "@/lib/plan-gate";
 
 export const runtime = "nodejs";
@@ -41,14 +42,17 @@ export async function POST(req: NextRequest) {
       if (dbUser) {
         dbUserId = dbUser.id;
 
-        // ── Plan gate — enforce FREE monthly message limit ──────────────────
-        const plan = await getEffectivePlan(dbUser.id);
-        if (!isPaid(plan)) {
+        // ── Plan gate — enforce FREE + Graduate monthly message limits ───────
+        const { plan, planKey } = await getEffectivePlan(dbUser.id);
+        const limits = isPaid(plan) ? getPlanLimits(planKey) : FREE_LIMITS;
+        if (!isPaid(plan) || planKey === "graduate") {
           const used = await monthlyCoachMessages(dbUser.id);
-          if (used >= FREE_LIMITS.chatMessages) {
+          if (used >= limits.chatMessages) {
             return new Response(
               JSON.stringify({
-                error: `You have reached your free limit of ${FREE_LIMITS.chatMessages} AI coach messages this month. Upgrade to Premium for unlimited coaching.`,
+                error: planKey === "graduate"
+                  ? `Graduate plan includes ${limits.chatMessages} AI coach messages/month. Upgrade to Professional for unlimited coaching.`
+                  : `Free plan includes ${FREE_LIMITS.chatMessages} AI coach messages/month. Upgrade to Premium for unlimited coaching.`,
                 code:  "LIMIT_REACHED",
               }),
               { status: 402, headers: { "Content-Type": "application/json" } }

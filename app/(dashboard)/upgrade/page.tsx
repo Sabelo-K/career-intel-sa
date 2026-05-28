@@ -116,14 +116,18 @@ const HIGHLIGHTS = [
 
 export default function UpgradePage() {
   const router         = useRouter();
-  const [loading, setLoading]   = useState<PlanKey | null>(null);
-  const [error, setError]       = useState<string | null>(null);
-  const [currentPlan, setCurrentPlan] = useState<string>("FREE");
+  const [loading, setLoading]       = useState<PlanKey | null>(null);
+  const [error, setError]           = useState<string | null>(null);
+  const [currentPlan, setCurrentPlan]   = useState<string>("FREE");
+  const [currentPlanKey, setCurrentPlanKey] = useState<string | null>(null);
 
   useEffect(() => {
     fetch("/api/dashboard")
       .then((r) => r.json())
-      .then((d) => { if (d.plan) setCurrentPlan(d.plan); })
+      .then((d) => {
+        if (d.plan) setCurrentPlan(d.plan);
+        if (d.planKey) setCurrentPlanKey(d.planKey);
+      })
       .catch(() => {});
   }, []);
 
@@ -192,7 +196,9 @@ export default function UpgradePage() {
         {isAlreadyPaid && (
           <div className="inline-flex items-center gap-2 bg-emerald-500/10 border border-emerald-500/20 rounded-full px-3 py-1 text-xs text-emerald-400">
             <Check className="w-3.5 h-3.5" />
-            You are on the {currentPlan.charAt(0) + currentPlan.slice(1).toLowerCase()} plan
+            You are on the {currentPlanKey
+            ? currentPlanKey.charAt(0).toUpperCase() + currentPlanKey.slice(1)
+            : currentPlan.charAt(0) + currentPlan.slice(1).toLowerCase()} plan
           </div>
         )}
       </div>
@@ -202,10 +208,10 @@ export default function UpgradePage() {
         {PLANS.map((plan, i) => {
           const Icon      = plan.icon;
           const isLoading = loading === plan.key;
-          const isCurrent = currentPlan !== "FREE" && (
-            (currentPlan === "PREMIUM"   && (plan.key === "graduate" || plan.key === "professional")) ||
-            (currentPlan === "RECRUITER" && plan.key === "recruiter")
-          );
+          // Use planKey for exact match; fall back to tier for legacy records
+          const isCurrent = currentPlanKey
+            ? plan.key === currentPlanKey
+            : (currentPlan === "RECRUITER" && plan.key === "recruiter");
 
           return (
             <motion.div

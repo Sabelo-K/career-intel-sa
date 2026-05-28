@@ -9,6 +9,7 @@ import {
   isPaid,
   monthlyCareerPaths,
   FREE_LIMITS,
+  getPlanLimits,
 } from "@/lib/plan-gate";
 
 const CareerPathSchema = z.object({
@@ -36,13 +37,16 @@ export async function POST(req: NextRequest) {
         clerkUserEarly?.primaryEmailAddress?.emailAddress,
         clerkUserEarly?.fullName
       );
-      const plan = await getEffectivePlan(dbUserEarly.id);
-      if (!isPaid(plan)) {
+      const { plan, planKey } = await getEffectivePlan(dbUserEarly.id);
+      const limits = isPaid(plan) ? getPlanLimits(planKey) : FREE_LIMITS;
+      if (!isPaid(plan) || planKey === "graduate") {
         const used = await monthlyCareerPaths(dbUserEarly.id);
-        if (used >= FREE_LIMITS.careerSimulations) {
+        if (used >= limits.careerSimulations) {
           return NextResponse.json(
             {
-              error: `Free plan includes ${FREE_LIMITS.careerSimulations} career path simulation per month. Upgrade to Premium for unlimited simulations.`,
+              error: planKey === "graduate"
+                ? `Graduate plan includes ${limits.careerSimulations} career path simulation per month. Upgrade to Professional for unlimited simulations.`
+                : `Free plan includes ${FREE_LIMITS.careerSimulations} career path simulation per month. Upgrade to Premium for unlimited simulations.`,
               code:  "LIMIT_REACHED",
             },
             { status: 402 }

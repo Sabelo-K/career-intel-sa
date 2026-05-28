@@ -8,12 +8,16 @@ import { Plan } from "@prisma/client";
 // ── Limits ────────────────────────────────────────────────────────────────────
 
 export const FREE_LIMITS = {
-  /** Max AI coach messages (USER role) per calendar month */
-  chatMessages:       15,
-  /** Max skills gap analyses per calendar month */
-  skillsGapAnalyses:  3,
-  /** Max career path simulations per calendar month */
-  careerSimulations:  1,
+  chatMessages:       15,   // AI coach messages/month
+  skillsGapAnalyses:  3,    // skills gap analyses/month
+  careerSimulations:  1,    // career path simulations/month
+} as const;
+
+/** Graduate plan (R49) — paid but still has monthly caps */
+export const GRADUATE_LIMITS = {
+  chatMessages:       50,   // 50 AI coach messages/month
+  skillsGapAnalyses:  Infinity,  // unlimited
+  careerSimulations:  1,    // 1 career path simulation/month
 } as const;
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
@@ -26,33 +30,48 @@ export function startOfCurrentMonth(): Date {
   return d;
 }
 
+export interface EffectivePlan {
+  plan:    Plan;
+  planKey: string | null;
+}
+
 /**
  * Returns the user's effective plan, auto-expiring a paid plan that has
  * passed its `planExpiresAt` date back to FREE.
  */
-export async function getEffectivePlan(dbUserId: string): Promise<Plan> {
+export async function getEffectivePlan(dbUserId: string): Promise<EffectivePlan> {
   const user = await db.user.findUnique({
     where:  { id: dbUserId },
-    select: { plan: true, planExpiresAt: true },
+    select: { plan: true, planKey: true, planExpiresAt: true },
   });
 
-  if (!user) return Plan.FREE;
+  if (!user) return { plan: Plan.FREE, planKey: null };
 
   if (user.planExpiresAt && user.planExpiresAt < new Date()) {
-    // Plan has lapsed — quietly reset
     await db.user.update({
       where: { id: dbUserId },
-      data:  { plan: Plan.FREE, planExpiresAt: null },
+      data:  { plan: Plan.FREE, planKey: null, planExpiresAt: null },
     }).catch(() => {});
-    return Plan.FREE;
+    return { plan: Plan.FREE, planKey: null };
   }
 
-  return user.plan;
+  return { plan: user.plan, planKey: user.planKey };
 }
 
 /** True for any paying tier */
 export function isPaid(plan: Plan): boolean {
   return plan === Plan.PREMIUM || plan === Plan.RECRUITER || plan === Plan.ENTERPRISE;
+}
+
+/**
+ * Returns the monthly limits for a user based on their specific plan key.
+ * Professional + Recruiter = unlimited (Infinity) for all features.
+ * Graduate = capped per GRADUATE_LIMITS.
+ */
+export function getPlanLimits(planKey: string | null): typeof FREE_LIMITS {
+  if (planKey === "graduate") return GRADUATE_LIMITS as unknown as typeof FREE_LIMITS;
+  // professional, recruiter, enterprise → unlimited
+  return { chatMessages: Infinity, skillsGapAnalyses: Infinity, careerSimulations: Infinity };
 }
 
 // ── Per-feature usage checks ──────────────────────────────────────────────────

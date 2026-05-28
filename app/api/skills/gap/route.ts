@@ -34,7 +34,8 @@ export async function POST(req: NextRequest) {
         clerkUserEarly?.primaryEmailAddress?.emailAddress,
         clerkUserEarly?.fullName
       );
-      const plan = await getEffectivePlan(dbUserEarly.id);
+      const { plan } = await getEffectivePlan(dbUserEarly.id);
+      // Graduate + Professional both get unlimited skills gap — only FREE is limited
       if (!isPaid(plan)) {
         const used = await monthlySkillsGaps(dbUserEarly.id);
         if (used >= FREE_LIMITS.skillsGapAnalyses) {

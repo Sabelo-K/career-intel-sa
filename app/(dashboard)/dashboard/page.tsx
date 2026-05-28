@@ -163,7 +163,7 @@ export default function DashboardPage() {
       <motion.div {...fadeUp} className="flex items-start justify-between">
         <div>
           <h1 className="text-2xl font-bold text-foreground">
-            Good morning, {firstName} 👋
+            {(() => { const h = new Date().getHours(); return h < 12 ? "Good morning" : h < 17 ? "Good afternoon" : h < 21 ? "Good evening" : "Good night"; })()}, {firstName} 👋
           </h1>
           <p className="text-muted-foreground text-sm mt-1">
             Here&apos;s your career intelligence snapshot for today.

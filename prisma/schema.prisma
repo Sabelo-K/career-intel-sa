@@ -15,6 +15,7 @@ model User {
   name          String?
   avatarUrl     String?
   plan          Plan     @default(FREE)
+  planKey       String?  // "graduate" | "professional" | "recruiter" — the specific paid tier
   planExpiresAt DateTime?
   payfastToken  String?
   onboarded     Boolean  @default(false)

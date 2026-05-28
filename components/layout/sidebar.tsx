@@ -42,11 +42,18 @@ function Logo() {
   );
 }
 
+// Tier enum → display name (fallback when planKey not stored)
 const PLAN_LABELS: Record<string, string> = {
   FREE:       "Free Plan",
   PREMIUM:    "Premium",
   RECRUITER:  "Recruiter",
   ENTERPRISE: "Enterprise",
+};
+// Specific plan key → display name
+const PLAN_KEY_LABELS: Record<string, string> = {
+  graduate:     "Graduate",
+  professional: "Professional",
+  recruiter:    "Recruiter",
 };
 
 function getDaysLeft(expiresAt: string): number {
@@ -66,7 +73,11 @@ export function Sidebar() {
       .then((r) => r.json())
       .then((d) => {
         if (d.plan) {
-          setPlanLabel(PLAN_LABELS[d.plan] ?? d.plan);
+          // Use specific plan key name if available (e.g. "Graduate"), else tier name
+          const label = d.planKey
+            ? (PLAN_KEY_LABELS[d.planKey] ?? PLAN_LABELS[d.plan] ?? d.plan)
+            : (PLAN_LABELS[d.plan] ?? d.plan);
+          setPlanLabel(label);
           if (d.plan !== "FREE") setIsPaid(true);
         }
         if (d.planExpiresAt) setPlanExpiresAt(d.planExpiresAt);

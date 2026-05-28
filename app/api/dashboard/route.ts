@@ -94,6 +94,7 @@ export async function GET() {
       recentSessions,
       recentSkillsGaps,
       plan: dbUser.plan,
+      planKey: dbUser.planKey ?? null,
       planExpiresAt: dbUser.planExpiresAt ?? null,
       onboarded: dbUser.onboarded,
     });

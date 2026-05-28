@@ -90,12 +90,13 @@ export async function POST(req: NextRequest) {
       where: { id: dbUserId },
       data:  {
         plan:          planConfig.dbPlan as Plan,
+        planKey,          // "graduate" | "professional" | "recruiter"
         planExpiresAt,
       },
     });
 
     console.log(
-      `[PayFast ITN] User ${dbUserId} → ${planConfig.dbPlan} until ${planExpiresAt.toISOString()}`
+      `[PayFast ITN] User ${dbUserId} → ${planKey} (${planConfig.dbPlan}) until ${planExpiresAt.toISOString()}`
     );
 
     return new NextResponse("OK");

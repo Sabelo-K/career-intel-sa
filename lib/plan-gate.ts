@@ -68,8 +68,8 @@ export function isPaid(plan: Plan): boolean {
  * Professional + Recruiter = unlimited (Infinity) for all features.
  * Graduate = capped per GRADUATE_LIMITS.
  */
-export function getPlanLimits(planKey: string | null): typeof FREE_LIMITS {
-  if (planKey === "graduate") return GRADUATE_LIMITS as unknown as typeof FREE_LIMITS;
+export function getPlanLimits(planKey: string | null): { chatMessages: number; skillsGapAnalyses: number; careerSimulations: number } {
+  if (planKey === "graduate") return GRADUATE_LIMITS;
   // professional, recruiter, enterprise → unlimited
   return { chatMessages: Infinity, skillsGapAnalyses: Infinity, careerSimulations: Infinity };
 }

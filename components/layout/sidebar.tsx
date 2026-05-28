@@ -44,7 +44,15 @@ function Logo() {
 
 export function Sidebar() {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [isPaid, setIsPaid] = useState(false);
   const pathname = usePathname();
+
+  useEffect(() => {
+    fetch("/api/dashboard")
+      .then((r) => r.json())
+      .then((d) => { if (d.plan && d.plan !== "FREE") setIsPaid(true); })
+      .catch(() => {});
+  }, []);
 
   // Close drawer on route change
   useEffect(() => { setMobileOpen(false); }, [pathname]);
@@ -147,24 +155,26 @@ export function Sidebar() {
             })}
           </div>
 
-          {/* Upgrade card */}
-          <div className="mt-6 p-4 rounded-xl bg-gradient-to-br from-indigo-600/15 to-violet-600/10 border border-indigo-500/20">
-            <div className="flex items-center gap-2 mb-2">
-              <Crown className="w-4 h-4 text-amber-400" />
-              <span className="text-sm font-semibold text-white">Go Premium</span>
+          {/* Upgrade card — hidden for paid users */}
+          {!isPaid && (
+            <div className="mt-6 p-4 rounded-xl bg-gradient-to-br from-indigo-600/15 to-violet-600/10 border border-indigo-500/20">
+              <div className="flex items-center gap-2 mb-2">
+                <Crown className="w-4 h-4 text-amber-400" />
+                <span className="text-sm font-semibold text-white">Go Premium</span>
+              </div>
+              <p className="text-xs text-white/50 mb-3 leading-relaxed">
+                Unlock unlimited AI coaching, simulations &amp; salary forecasting.
+              </p>
+              <Link
+                href="/upgrade"
+                className="flex items-center justify-center gap-1.5 w-full py-2.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 active:scale-95 text-white text-xs font-semibold transition-all touch-manipulation"
+              >
+                <Zap className="w-3 h-3" />
+                From R49/mo
+                <ChevronRight className="w-3 h-3" />
+              </Link>
             </div>
-            <p className="text-xs text-white/50 mb-3 leading-relaxed">
-              Unlock unlimited AI coaching, simulations &amp; salary forecasting.
-            </p>
-            <Link
-              href="/upgrade"
-              className="flex items-center justify-center gap-1.5 w-full py-2.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 active:scale-95 text-white text-xs font-semibold transition-all touch-manipulation"
-            >
-              <Zap className="w-3 h-3" />
-              Upgrade — R199/mo
-              <ChevronRight className="w-3 h-3" />
-            </Link>
-          </div>
+          )}
         </nav>
 
         {/* Bottom: profile + settings */}

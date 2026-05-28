@@ -11,7 +11,10 @@ export const PAYFAST_MERCHANT_ID  = process.env.PAYFAST_MERCHANT_ID  ?? "";
 export const PAYFAST_MERCHANT_KEY = process.env.PAYFAST_MERCHANT_KEY ?? "";
 const PAYFAST_PASSPHRASE          = process.env.PAYFAST_PASSPHRASE   ?? "";
 
-const IS_PRODUCTION = process.env.NODE_ENV === "production";
+// Set PAYFAST_SANDBOX=true in Vercel env vars to use sandbox without real charges.
+// Remove it (or set to false) when ready to accept live payments.
+const IS_SANDBOX    = process.env.PAYFAST_SANDBOX === "true";
+const IS_PRODUCTION = process.env.NODE_ENV === "production" && !IS_SANDBOX;
 
 export const PAYFAST_URL = IS_PRODUCTION
   ? "https://www.payfast.co.za/eng/process"

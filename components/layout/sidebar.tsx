@@ -228,6 +228,12 @@ export function Sidebar() {
               </Link>
             );
           })}
+          {/* Legal links */}
+          <div className="mx-3 mb-1 flex items-center justify-center gap-3 px-2 py-1">
+            <Link href="/privacy" className="text-[10px] text-muted-foreground hover:text-foreground transition-colors">Privacy</Link>
+            <span className="text-[10px] text-muted-foreground/40">·</span>
+            <Link href="/terms" className="text-[10px] text-muted-foreground hover:text-foreground transition-colors">Terms</Link>
+          </div>
           {/* Plan badge row */}
           <div className="mx-3 mt-1 flex items-center justify-between px-2.5 py-1.5 rounded-lg bg-indigo-500/10 border border-indigo-500/20">
             <span className={cn(

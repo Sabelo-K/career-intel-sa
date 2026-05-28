@@ -18,7 +18,7 @@ export default function PrivacyPage() {
 
       <main className="max-w-3xl mx-auto px-6 py-12">
         <h1 className="text-3xl font-bold text-foreground mb-2">Privacy Policy</h1>
-        <p className="text-muted-foreground text-sm mb-8">Last updated: January 2025 · Compliant with POPIA (Protection of Personal Information Act 4 of 2013)</p>
+        <p className="text-muted-foreground text-sm mb-8">Last updated: May 2026 · Compliant with POPIA (Protection of Personal Information Act 4 of 2013)</p>
 
         <div className="prose prose-sm prose-invert max-w-none space-y-8 text-muted-foreground leading-relaxed">
 
@@ -28,8 +28,8 @@ export default function PrivacyPage() {
 
           <section>
             <h2 className="text-lg font-semibold text-foreground mb-3">1. Who We Are (Responsible Party)</h2>
-            <p>CareerIntel SA is operated by <strong className="text-foreground">Analytica (Pty) Ltd</strong>, registered in the Republic of South Africa. We are the &quot;responsible party&quot; as defined under POPIA for the personal information we process.</p>
-            <p className="mt-2">Contact our Information Officer: <a href="mailto:privacy@careerintel.co.za" className="text-indigo-400 hover:text-indigo-300">privacy@careerintel.co.za</a></p>
+            <p>CareerIntel SA is operated by <strong className="text-foreground">Sabelo Khanyile</strong> (trading as CareerIntel SA), based in the Republic of South Africa. We are the &quot;responsible party&quot; as defined under POPIA for the personal information we process.</p>
+            <p className="mt-2">Contact our Information Officer: <a href="mailto:privacy@careerintelsa.co.za" className="text-indigo-400 hover:text-indigo-300">privacy@careerintelsa.co.za</a></p>
           </section>
 
           <section>
@@ -103,7 +103,7 @@ export default function PrivacyPage() {
               <li><strong className="text-foreground">Data portability:</strong> Request your data in a machine-readable format</li>
               <li><strong className="text-foreground">Complaint:</strong> Lodge a complaint with the Information Regulator of South Africa</li>
             </ul>
-            <p className="mt-3">To exercise these rights, go to <strong className="text-foreground">Settings → Privacy</strong> in the app, or email <a href="mailto:privacy@careerintel.co.za" className="text-indigo-400 hover:text-indigo-300">privacy@careerintel.co.za</a>.</p>
+            <p className="mt-3">To exercise these rights, go to <strong className="text-foreground">Settings → Privacy</strong> in the app, or email <a href="mailto:privacy@careerintelsa.co.za" className="text-indigo-400 hover:text-indigo-300">privacy@careerintelsa.co.za</a>.</p>
             <p className="mt-2">We will respond to requests within <strong className="text-foreground">30 days</strong> as required by POPIA.</p>
           </section>
 
@@ -129,7 +129,12 @@ export default function PrivacyPage() {
           </section>
 
           <section>
-            <h2 className="text-lg font-semibold text-foreground mb-3">11. Information Regulator</h2>
+            <h2 className="text-lg font-semibold text-foreground mb-3">11. PAIA — Promotion of Access to Information Act</h2>
+            <p>In terms of the <strong className="text-foreground">Promotion of Access to Information Act 2 of 2000 (PAIA)</strong>, you have the right to request access to records held by CareerIntel SA. To submit a PAIA request, email our Information Officer at <a href="mailto:privacy@careerintelsa.co.za" className="text-indigo-400 hover:text-indigo-300">privacy@careerintelsa.co.za</a>. A copy of our PAIA manual is available on request.</p>
+          </section>
+
+          <section>
+            <h2 className="text-lg font-semibold text-foreground mb-3">12. Information Regulator</h2>
             <p>If you are not satisfied with how we handle your complaint, you may contact the Information Regulator of South Africa:</p>
             <div className="mt-2 p-3 bg-secondary rounded-lg text-sm">
               <p className="text-foreground font-medium">Information Regulator (South Africa)</p>
@@ -140,7 +145,7 @@ export default function PrivacyPage() {
         </div>
 
         <div className="mt-12 pt-8 border-t border-border flex items-center justify-between text-xs text-muted-foreground">
-          <span>© 2025 Analytica (Pty) Ltd · CareerIntel SA</span>
+          <span>© 2026 CareerIntel SA · Sabelo Khanyile</span>
           <Link href="/terms" className="hover:text-foreground transition-colors">Terms of Service →</Link>
         </div>
       </main>

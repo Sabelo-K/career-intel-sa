@@ -735,7 +735,7 @@ export default function LandingPage() {
             ))}
           </div>
           <div className="border-t border-white/5 pt-8 flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-white/30">
-            <p>© 2025 CareerIntel SA. All rights reserved. Built for South Africa.</p>
+            <p>© 2026 CareerIntel SA. All rights reserved. Built for South Africa.</p>
             <p>POPIA Compliant · South African Company</p>
           </div>
         </div>

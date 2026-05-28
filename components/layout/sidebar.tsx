@@ -49,10 +49,16 @@ const PLAN_LABELS: Record<string, string> = {
   ENTERPRISE: "Enterprise",
 };
 
+function getDaysLeft(expiresAt: string): number {
+  const diff = new Date(expiresAt).getTime() - Date.now();
+  return Math.max(0, Math.ceil(diff / (1000 * 60 * 60 * 24)));
+}
+
 export function Sidebar() {
-  const [mobileOpen, setMobileOpen] = useState(false);
-  const [isPaid, setIsPaid]         = useState(false);
-  const [planLabel, setPlanLabel]   = useState("Free Plan");
+  const [mobileOpen, setMobileOpen]       = useState(false);
+  const [isPaid, setIsPaid]               = useState(false);
+  const [planLabel, setPlanLabel]         = useState("Free Plan");
+  const [planExpiresAt, setPlanExpiresAt] = useState<string | null>(null);
   const pathname = usePathname();
 
   useEffect(() => {
@@ -63,6 +69,7 @@ export function Sidebar() {
           setPlanLabel(PLAN_LABELS[d.plan] ?? d.plan);
           if (d.plan !== "FREE") setIsPaid(true);
         }
+        if (d.planExpiresAt) setPlanExpiresAt(d.planExpiresAt);
       })
       .catch(() => {});
   }, []);
@@ -210,16 +217,30 @@ export function Sidebar() {
               </Link>
             );
           })}
-          <div className="flex items-center gap-3 px-3 py-2 mt-1">
+          <div className="flex items-center gap-2.5 px-3 py-2 mt-1">
             <UserButton
               afterSignOutUrl="/"
               appearance={{ elements: { avatarBox: "w-7 h-7" } }}
             />
             <div className="flex-1 min-w-0">
-              <div className="text-xs font-medium text-foreground truncate">
+              <div className="text-xs font-medium text-foreground truncate leading-tight">
                 My Account
               </div>
-              <div className="text-xs text-muted-foreground">{planLabel}</div>
+              <div className="flex items-center gap-1.5 mt-0.5 flex-wrap">
+                <span className={cn(
+                  "inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-semibold leading-none",
+                  isPaid
+                    ? "bg-indigo-500/20 text-indigo-300 border border-indigo-500/30"
+                    : "bg-secondary text-muted-foreground"
+                )}>
+                  {planLabel}
+                </span>
+                {isPaid && planExpiresAt && (
+                  <span className="text-[10px] text-muted-foreground whitespace-nowrap">
+                    {getDaysLeft(planExpiresAt)}d left
+                  </span>
+                )}
+              </div>
             </div>
           </div>
         </div>

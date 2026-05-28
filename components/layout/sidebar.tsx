@@ -228,31 +228,27 @@ export function Sidebar() {
               </Link>
             );
           })}
-          <div className="flex items-center gap-2.5 px-3 py-2 mt-1">
+          {/* Plan badge row */}
+          <div className="mx-3 mt-1 flex items-center justify-between px-2.5 py-1.5 rounded-lg bg-indigo-500/10 border border-indigo-500/20">
+            <span className={cn(
+              "text-[11px] font-semibold",
+              isPaid ? "text-indigo-300" : "text-muted-foreground"
+            )}>
+              {planLabel}
+            </span>
+            {isPaid && planExpiresAt && (
+              <span className="text-[10px] text-muted-foreground">
+                {getDaysLeft(planExpiresAt)}d left
+              </span>
+            )}
+          </div>
+          {/* Avatar row */}
+          <div className="flex items-center gap-2.5 px-3 py-2">
             <UserButton
               afterSignOutUrl="/"
               appearance={{ elements: { avatarBox: "w-7 h-7" } }}
             />
-            <div className="flex-1 min-w-0">
-              <div className="text-xs font-medium text-foreground truncate leading-tight">
-                My Account
-              </div>
-              <div className="flex items-center gap-1.5 mt-0.5 flex-wrap">
-                <span className={cn(
-                  "inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-semibold leading-none",
-                  isPaid
-                    ? "bg-indigo-500/20 text-indigo-300 border border-indigo-500/30"
-                    : "bg-secondary text-muted-foreground"
-                )}>
-                  {planLabel}
-                </span>
-                {isPaid && planExpiresAt && (
-                  <span className="text-[10px] text-muted-foreground whitespace-nowrap">
-                    {getDaysLeft(planExpiresAt)}d left
-                  </span>
-                )}
-              </div>
-            </div>
+            <span className="text-xs font-medium text-foreground truncate">My Account</span>
           </div>
         </div>
       </aside>

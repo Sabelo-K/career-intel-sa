@@ -53,6 +53,8 @@ export async function POST(req: NextRequest) {
     }
 
     // ── 2. Signature validation ─────────────────────────────────────────────
+    const passphrase = process.env.PAYFAST_PASSPHRASE ?? "";
+    console.log("[PayFast ITN] Passphrase set:", passphrase.length > 0, "| Length:", passphrase.length, "| First3:", passphrase.slice(0, 3));
     if (!verifyITNSignature(params)) {
       console.error("[PayFast ITN] Signature mismatch");
       return new NextResponse("INVALID", { status: 400 });

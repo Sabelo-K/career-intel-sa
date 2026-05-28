@@ -5,6 +5,7 @@ const isPublicRoute = createRouteMatcher([
   "/sign-in(.*)",
   "/sign-up(.*)",
   "/api/career/demand(.*)",
+  "/api/payfast/notify",   // PayFast ITN webhook — unauthenticated POST from PayFast servers
 ]);
 
 export default clerkMiddleware((auth, req) => {

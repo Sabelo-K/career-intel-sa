@@ -73,22 +73,23 @@ export type PlanKey = keyof typeof PLANS;
  */
 export function generateSignature(
   data: Record<string, string>,
-  passphrase: string = PAYFAST_PASSPHRASE
+  passphrase: string = PAYFAST_PASSPHRASE,
+  skipEmpty: boolean = true   // checkout: skip empty fields; ITN verify: include all
 ): string {
   let payload = "";
 
   for (const [key, val] of Object.entries(data)) {
     if (key === "signature") continue;
-    if (val !== "" && val != null) {
-      payload += `${key}=${encodeURIComponent(String(val)).replace(/%20/g, "+")}&`;
-    }
+    const strVal = String(val ?? "").trim();
+    if (skipEmpty && strVal === "") continue;
+    payload += `${key}=${encodeURIComponent(strVal).replace(/%20/g, "+")}&`;
   }
 
   // Remove trailing &
   payload = payload.slice(0, -1);
 
   if (passphrase) {
-    payload += `&passphrase=${encodeURIComponent(passphrase).replace(/%20/g, "+")}`;
+    payload += `&passphrase=${encodeURIComponent(passphrase.trim()).replace(/%20/g, "+")}`;
   }
 
   return crypto.createHash("md5").update(payload).digest("hex");
@@ -101,7 +102,8 @@ export function verifyITNSignature(
   passphrase: string = PAYFAST_PASSPHRASE
 ): boolean {
   const { signature, ...rest } = data;
-  const calculated = generateSignature(rest, passphrase);
+  // PayFast includes ALL fields (even empty) in the ITN signature — skipEmpty must be false
+  const calculated = generateSignature(rest, passphrase, false);
   return signature === calculated;
 }
 

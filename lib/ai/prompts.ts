@@ -79,12 +79,21 @@ Province: ${params.province}
 Desired Timeframe: ${params.timeframeYears} years
 
 Generate a detailed career path simulation with:
-1. Year-by-year milestones (roles, skills to acquire, salary expectations in ZAR)
+1. Year-by-year milestones (roles, skills to acquire, salary expectations in ZAR per MONTH)
 2. Critical certifications and qualifications needed (with NQF levels)
-3. Salary growth projection (in ZAR, realistic for SA market)
+3. Salary growth projection (in ZAR per MONTH, realistic for SA market)
 4. Key risks and how to mitigate them
 5. Alternative paths if primary path is blocked
 6. Remote/international opportunity potential
+
+IMPORTANT — use realistic South African MONTHLY salary ranges (ZAR/month):
+- Entry-level / Graduate: R15,000–R28,000/month
+- Junior (1–3 yrs): R25,000–R45,000/month
+- Mid-level (3–6 yrs): R40,000–R75,000/month
+- Senior (6–10 yrs): R65,000–R120,000/month
+- Lead / Principal (10+ yrs): R100,000–R180,000/month
+- C-Suite / Director: R150,000–R350,000/month
+Scale within these ranges based on the specific role, province, and sector.
 
 Return as JSON:
 {
@@ -95,7 +104,8 @@ Return as JSON:
   "alternativePaths": ["path1", ...],
   "keyRisks": ["risk1", ...],
   "summary": "narrative summary"
-}`;
+}
+All salary values must be realistic ZAR/month integers (e.g. 22000, 45000, 85000).`;
 }
 
 export function buildEmployabilityPrompt(profile: {

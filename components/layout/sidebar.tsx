@@ -42,15 +42,28 @@ function Logo() {
   );
 }
 
+const PLAN_LABELS: Record<string, string> = {
+  FREE:       "Free Plan",
+  PREMIUM:    "Premium",
+  RECRUITER:  "Recruiter",
+  ENTERPRISE: "Enterprise",
+};
+
 export function Sidebar() {
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [isPaid, setIsPaid] = useState(false);
+  const [isPaid, setIsPaid]         = useState(false);
+  const [planLabel, setPlanLabel]   = useState("Free Plan");
   const pathname = usePathname();
 
   useEffect(() => {
     fetch("/api/dashboard")
       .then((r) => r.json())
-      .then((d) => { if (d.plan && d.plan !== "FREE") setIsPaid(true); })
+      .then((d) => {
+        if (d.plan) {
+          setPlanLabel(PLAN_LABELS[d.plan] ?? d.plan);
+          if (d.plan !== "FREE") setIsPaid(true);
+        }
+      })
       .catch(() => {});
   }, []);
 
@@ -206,7 +219,7 @@ export function Sidebar() {
               <div className="text-xs font-medium text-foreground truncate">
                 My Account
               </div>
-              <div className="text-xs text-muted-foreground">Free Plan</div>
+              <div className="text-xs text-muted-foreground">{planLabel}</div>
             </div>
           </div>
         </div>

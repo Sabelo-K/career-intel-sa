@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { useFeedback } from "@/components/feedback-provider";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Target, CheckCircle2, BookOpen, TrendingUp,
@@ -48,6 +49,7 @@ const PRIORITY_COLOR: Record<string, string> = {
 
 export default function SkillsGapPage() {
   const router = useRouter();
+  const { triggerFeedback } = useFeedback();
   const [targetRole, setTargetRole] = useState("");
   const [analyzing, setAnalyzing] = useState(false);
   const [result, setResult] = useState<GapResult | null>(null);
@@ -93,6 +95,8 @@ export default function SkillsGapPage() {
         salaryImpact:     String(data.salaryImpact ?? ""),
       };
       setResult(normalised);
+      // Trigger CSAT feedback 4 seconds after the result loads
+      setTimeout(() => triggerFeedback("skills-gap"), 4000);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Analysis failed. Please try again.");
     } finally {

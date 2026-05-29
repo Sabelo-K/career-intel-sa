@@ -2,6 +2,7 @@
 
 import { generateCV, generateRevampedCV, generateBuiltCV, CVTemplateData, CVBuiltData } from "@/lib/cv-templates";
 import { useState, useRef, useEffect } from "react";
+import { useFeedback } from "@/components/feedback-provider";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Upload, FileText, Zap, Download, CheckCircle2, AlertCircle,
@@ -260,6 +261,7 @@ function CVPreview({ data }: { data: CVData }) {
 // ─── Build from Scratch Form ──────────────────────────────────────────────────
 
 function BuildFromScratch({ isPaid }: { isPaid: boolean }) {
+  const { triggerFeedback } = useFeedback();
   const [step, setStep] = useState(1);
   const [cv, setCv] = useState<CVData>(EMPTY_CV);
   const [skillInput, setSkillInput] = useState("");
@@ -319,6 +321,8 @@ function BuildFromScratch({ isPaid }: { isPaid: boolean }) {
       a.click();
     }
     setTimeout(() => URL.revokeObjectURL(url), 10000);
+    // Trigger CSAT 3 seconds after download
+    setTimeout(() => triggerFeedback("cv-builder"), 3000);
   };
 
   const inputCls = "w-full bg-secondary border border-border rounded-lg px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500";
@@ -721,6 +725,7 @@ function BuildFromScratch({ isPaid }: { isPaid: boolean }) {
 // ─── Main Page ────────────────────────────────────────────────────────────────
 
 export default function CVBuilderPage() {
+  const { triggerFeedback } = useFeedback();
   const [stage, setStage] = useState<"upload" | "analyzing" | "results" | "error">("upload");
   const [dragActive, setDragActive] = useState(false);
   const [fileName, setFileName] = useState<string | null>(null);
@@ -818,6 +823,8 @@ export default function CVBuilderPage() {
       a.click();
     }
     setTimeout(() => URL.revokeObjectURL(url), 10000);
+    // Trigger CSAT after download
+    setTimeout(() => triggerFeedback("cv-builder"), 3000);
   };
 
   const handleDrop = (e: React.DragEvent) => {

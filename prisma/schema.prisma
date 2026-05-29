@@ -29,6 +29,7 @@ model User {
   skillsGaps    SkillsGap[]
   jobAlerts     JobAlert[]
   courseProgress CourseProgress[]
+  feedback      Feedback[]
 
   @@map("users")
 }
@@ -218,6 +219,18 @@ enum MessageRole {
   USER
   ASSISTANT
   SYSTEM
+}
+
+model Feedback {
+  id        String   @id @default(cuid())
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  rating    Int      // 1–5 stars
+  comment   String?
+  feature   String   // "cv-builder" | "career-coach" | "skills-gap" | "career-paths" | "general"
+  createdAt DateTime @default(now())
+
+  @@map("feedback")
 }
 
 enum GrowthTrend {

@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { useFeedback } from "@/components/feedback-provider";
 
 interface Message {
   id: string;
@@ -157,6 +158,7 @@ interface ChatSession {
 }
 
 export default function CareerCoachPage() {
+  const { triggerFeedback } = useFeedback();
   const [messages, setMessages] = useState<Message[]>([INITIAL_MESSAGE]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -169,6 +171,14 @@ export default function CareerCoachPage() {
   // Session persistence
   const [sessionId, setSessionId] = useState<string | null>(null);
   const [recentSessions, setRecentSessions] = useState<ChatSession[]>([]);
+
+  // Trigger CSAT after the 4th assistant reply (enough to judge the experience)
+  useEffect(() => {
+    const assistantCount = messages.filter((m) => m.role === "assistant" && m.id !== "welcome").length;
+    if (assistantCount === 4) {
+      setTimeout(() => triggerFeedback("career-coach"), 2000);
+    }
+  }, [messages, triggerFeedback]);
 
   // Load recent sessions on mount
   useEffect(() => {

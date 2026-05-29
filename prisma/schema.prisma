@@ -32,6 +32,7 @@ model User {
   courseProgress     CourseProgress[]
   feedback           Feedback[]
   creditTransactions CreditTransaction[]
+  learningRoadmaps   LearningRoadmap[]
 
   @@map("users")
 }
@@ -233,6 +234,37 @@ model CreditTransaction {
   createdAt   DateTime @default(now())
 
   @@map("credit_transactions")
+}
+
+model LearningRoadmap {
+  id           String         @id @default(cuid())
+  userId       String
+  user         User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  targetRole   String
+  totalMonths  Int
+  matchPct     Int            @default(0)
+  salaryImpact String?
+  phases       RoadmapPhase[]
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+
+  @@map("learning_roadmaps")
+}
+
+model RoadmapPhase {
+  id          String          @id @default(cuid())
+  roadmapId   String
+  roadmap     LearningRoadmap @relation(fields: [roadmapId], references: [id], onDelete: Cascade)
+  phaseNumber Int
+  title       String
+  description String
+  skills      String[]
+  weeks       Int
+  completed   Boolean         @default(false)
+  completedAt DateTime?
+  createdAt   DateTime        @default(now())
+
+  @@map("roadmap_phases")
 }
 
 model Feedback {

@@ -17,6 +17,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
+import { RoadmapWidget } from "@/components/roadmap-widget";
 import { SA_CAREERS, TOP_GROWING_CAREERS_2025 } from "@/lib/data/sa-careers";
 import { formatSalaryRange, getDemandBadgeColor, getTrendLabel } from "@/lib/utils";
 
@@ -436,6 +437,15 @@ export default function DashboardPage() {
           </div>
         </motion.div>
       </div>
+
+      {/* Active Learning Roadmap */}
+      <motion.div
+        initial={{ opacity: 0, y: 16 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.42 }}
+      >
+        <RoadmapWidget />
+      </motion.div>
 
       {/* Quick actions */}
       <motion.div

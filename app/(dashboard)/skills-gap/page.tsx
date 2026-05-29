@@ -6,8 +6,9 @@ import { useFeedback } from "@/components/feedback-provider";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Target, CheckCircle2, BookOpen, TrendingUp,
-  Zap, AlertCircle, ChevronRight, Sparkles, Search, Plus, X,
+  Zap, AlertCircle, ChevronRight, Sparkles, Search, Plus, X, LayoutDashboard,
 } from "lucide-react";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -61,6 +62,7 @@ export default function SkillsGapPage() {
   const [currentSkills, setCurrentSkills] = useState(CURRENT_SKILLS);
   const [creditsModal, setCreditsModal] = useState(false);
   const [creditBalance, setCreditBalance] = useState(0);
+  const [roadmapSaved, setRoadmapSaved] = useState(false);
 
   useEffect(() => {
     fetch("/api/credits/balance")
@@ -110,6 +112,28 @@ export default function SkillsGapPage() {
         salaryImpact:     String(data.salaryImpact ?? ""),
       };
       setResult(normalised);
+
+      // Auto-save roadmap to dashboard (fire-and-forget)
+      fetch("/api/roadmap/save", {
+        method:  "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          targetRole:   targetRole.trim(),
+          totalMonths:  normalised.estimatedMonths,
+          matchPct:     normalised.matchPercentage,
+          salaryImpact: normalised.salaryImpact,
+          phases: normalised.learningPath.map((step) => ({
+            phaseNumber: step.order,
+            title:       step.title,
+            description: step.description,
+            skills:      step.skills,
+            weeks:       step.estimatedWeeks,
+          })),
+        }),
+      })
+        .then((r) => r.ok && setRoadmapSaved(true))
+        .catch(() => {});
+
       // Trigger CSAT feedback 4 seconds after the result loads
       setTimeout(() => triggerFeedback("skills-gap"), 4000);
     } catch (err) {
@@ -248,6 +272,27 @@ export default function SkillsGapPage() {
           </button>
         </div>
       )}
+
+      {/* Saved-to-dashboard toast */}
+      <AnimatePresence>
+        {roadmapSaved && (
+          <motion.div
+            initial={{ opacity: 0, y: -8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8 }}
+            className="flex items-center gap-3 p-3.5 rounded-xl bg-emerald-500/12 border border-emerald-500/30 text-sm"
+          >
+            <CheckCircle2 className="w-4 h-4 text-emerald-400 flex-shrink-0" />
+            <span className="text-emerald-200 flex-1">
+              Roadmap saved to your dashboard — track progress from there anytime.
+            </span>
+            <Link href="/dashboard" className="flex items-center gap-1 text-xs text-emerald-400 hover:text-emerald-300 font-medium transition-colors">
+              <LayoutDashboard className="w-3.5 h-3.5" />
+              View
+            </Link>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       <AnimatePresence>
         {result && (

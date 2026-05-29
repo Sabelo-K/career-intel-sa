@@ -61,23 +61,32 @@ function Skeleton({ className }: { className?: string }) {
 // ── Page ──────────────────────────────────────────────────────────────────────
 
 export default function AdminPage() {
-  const [stats,   setStats]   = useState<AdminStats | null>(null);
-  const [csat,    setCsat]    = useState<FeedbackStats | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [stats,     setStats]     = useState<AdminStats | null>(null);
+  const [csat,      setCsat]      = useState<FeedbackStats | null>(null);
+  const [loading,   setLoading]   = useState(true);
+  const [apiError,  setApiError]  = useState<string | null>(null);
   const [lastRefreshed, setLastRefreshed] = useState<Date>(new Date());
 
   const loadData = () => {
     setLoading(true);
+    setApiError(null);
     Promise.all([
-      fetch("/api/admin/stats").then((r) => r.json()),
+      fetch("/api/admin/stats").then(async (r) => {
+        const data = await r.json();
+        if (!r.ok) throw new Error(data.detail ?? data.error ?? `HTTP ${r.status}`);
+        return data;
+      }),
       fetch("/api/feedback").then((r) => r.json()),
     ])
       .then(([s, f]) => {
-        if (s.totalUsers !== undefined) setStats(s);
-        if (f.total      !== undefined) setCsat(f);
+        setStats(s);
+        if (f.total !== undefined) setCsat(f);
         setLastRefreshed(new Date());
       })
-      .catch(console.error)
+      .catch((err) => {
+        console.error(err);
+        setApiError(String(err?.message ?? err));
+      })
       .finally(() => setLoading(false));
   };
 
@@ -110,6 +119,17 @@ export default function AdminPage() {
           </Badge>
         </div>
       </div>
+
+      {/* ── API error banner ─────────────────────────────────────────────── */}
+      {apiError && (
+        <div className="flex items-start gap-3 p-4 rounded-xl bg-red-500/10 border border-red-500/25 text-sm">
+          <Shield className="w-4 h-4 text-red-400 flex-shrink-0 mt-0.5" />
+          <div className="flex-1">
+            <p className="text-red-300 font-medium">Stats API error — check server logs</p>
+            <p className="text-red-400/70 text-xs mt-0.5 font-mono break-all">{apiError}</p>
+          </div>
+        </div>
+      )}
 
       {/* ── CSAT ──────────────────────────────────────────────────────────── */}
       <div className="bg-card border border-border rounded-xl p-5 space-y-5">
@@ -222,7 +242,9 @@ export default function AdminPage() {
             </div>
             {loading
               ? <Skeleton className="h-7 w-16 mb-1" />
-              : <div className="text-xl font-bold text-foreground">{(stat.value ?? 0).toLocaleString()}</div>
+              : apiError
+                ? <div className="text-xl font-bold text-red-400">—</div>
+                : <div className="text-xl font-bold text-foreground">{(stat.value ?? 0).toLocaleString()}</div>
             }
             <div className="text-xs text-muted-foreground mt-0.5">{stat.label}</div>
           </div>
@@ -248,7 +270,9 @@ export default function AdminPage() {
             </div>
             {loading
               ? <Skeleton className="h-8 w-20 mb-1" />
-              : <div className="text-2xl font-bold text-foreground">{(stat.value ?? 0).toLocaleString()}</div>
+              : apiError
+                ? <div className="text-2xl font-bold text-red-400">—</div>
+                : <div className="text-2xl font-bold text-foreground">{(stat.value ?? 0).toLocaleString()}</div>
             }
             <div className="text-xs text-muted-foreground mt-1">{stat.desc}</div>
           </div>

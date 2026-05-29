@@ -6,6 +6,7 @@
 import { NextResponse } from "next/server";
 import { auth, currentUser } from "@clerk/nextjs/server";
 import { db } from "@/lib/db";
+import { MessageRole } from "@prisma/client";
 
 export async function GET() {
   try {
@@ -35,7 +36,12 @@ export async function GET() {
     startOfMonth.setDate(1);
     startOfMonth.setHours(0, 0, 0, 0);
 
-    // ── Run all queries in parallel ──────────────────────────────────────────
+    // ── Helper: safe count (never throws) ───────────────────────────────────
+    async function safeCount(promise: Promise<number>): Promise<number> {
+      try { return await promise; } catch { return 0; }
+    }
+
+    // ── Core counts (each isolated so one failure doesn't zero everything) ──
     const [
       totalUsers,
       premiumUsers,
@@ -44,104 +50,106 @@ export async function GET() {
       chatMsgCount,
       skillsCount,
       pathCount,
-      recentUsers,
-      activeChatUsers,
-      activeSkillsUsers,
-      activePathUsers,
-      skillsGapRoles,
-      careerPathRoles,
     ] = await Promise.all([
-      db.user.count(),
-      db.user.count({ where: { plan: { not: "FREE" } } }),
-      db.user.count({ where: { createdAt: { gte: startOfMonth } } }),
-      db.cv.count(),
-      db.chatMessage.count({ where: { role: "USER" } }),
-      db.skillsGap.count(),
-      db.careerPath.count(),
-
-      // Users from last 6 months for the growth chart
-      db.user.findMany({
-        where:   { createdAt: { gte: sixMonthsAgo } },
-        select:  { createdAt: true },
-        orderBy: { createdAt: "asc" },
-      }),
-
-      // Active today — distinct users with any activity
-      db.chatSession.findMany({
-        where:    { updatedAt: { gte: todayStart } },
-        select:   { userId: true },
-        distinct: ["userId"],
-      }),
-      db.skillsGap.findMany({
-        where:    { createdAt: { gte: todayStart } },
-        select:   { userId: true },
-        distinct: ["userId"],
-      }),
-      db.careerPath.findMany({
-        where:    { createdAt: { gte: todayStart } },
-        select:   { userId: true },
-        distinct: ["userId"],
-      }),
-
-      // Top target roles from skills gap analyses
-      db.skillsGap.groupBy({
-        by:      ["targetRole"],
-        _count:  { targetRole: true },
-        orderBy: { _count: { targetRole: "desc" } },
-        take:    10,
-      }),
-
-      // Top target roles from career path simulations
-      db.careerPath.groupBy({
-        by:      ["targetRole"],
-        _count:  { targetRole: true },
-        orderBy: { _count: { targetRole: "desc" } },
-        take:    10,
-      }),
+      safeCount(db.user.count()),
+      safeCount(db.user.count({ where: { plan: { not: "FREE" } } })),
+      safeCount(db.user.count({ where: { createdAt: { gte: startOfMonth } } })),
+      safeCount(db.cv.count()),
+      // Use Prisma enum constant — avoids string-literal type mismatch
+      safeCount(db.chatMessage.count({ where: { role: MessageRole.USER } })),
+      safeCount(db.skillsGap.count()),
+      safeCount(db.careerPath.count()),
     ]);
 
     // ── Active today ─────────────────────────────────────────────────────────
-    const activeTodaySet = new Set([
-      ...activeChatUsers.map((u) => u.userId),
-      ...activeSkillsUsers.map((u) => u.userId),
-      ...activePathUsers.map((u) => u.userId),
-    ]);
-    const activeToday = activeTodaySet.size;
+    let activeToday = 0;
+    try {
+      const [chatActive, skillsActive, pathActive] = await Promise.all([
+        db.chatSession.findMany({
+          where:    { updatedAt: { gte: todayStart } },
+          select:   { userId: true },
+          distinct: ["userId"],
+        }),
+        db.skillsGap.findMany({
+          where:    { createdAt: { gte: todayStart } },
+          select:   { userId: true },
+          distinct: ["userId"],
+        }),
+        db.careerPath.findMany({
+          where:    { createdAt: { gte: todayStart } },
+          select:   { userId: true },
+          distinct: ["userId"],
+        }),
+      ]);
+      const set = new Set([
+        ...chatActive.map((u) => u.userId),
+        ...skillsActive.map((u) => u.userId),
+        ...pathActive.map((u) => u.userId),
+      ]);
+      activeToday = set.size;
+    } catch { /* leave 0 */ }
 
-    // ── User growth chart (last 6 months, new signups per month) ─────────────
-    const growthData = Array.from({ length: 6 }, (_, i) => {
-      const target = new Date();
-      target.setMonth(target.getMonth() - (5 - i));
-      const y = target.getFullYear();
-      const m = target.getMonth();
-      const count = recentUsers.filter((u) => {
-        const d = new Date(u.createdAt);
-        return d.getFullYear() === y && d.getMonth() === m;
-      }).length;
-      return {
-        month: target.toLocaleDateString("en-ZA", { month: "short" }),
-        users: count,
-      };
-    });
+    // ── User growth chart (last 6 months) ────────────────────────────────────
+    let growthData: { month: string; users: number }[] = [];
+    try {
+      const recentUsers = await db.user.findMany({
+        where:   { createdAt: { gte: sixMonthsAgo } },
+        select:  { createdAt: true },
+        orderBy: { createdAt: "asc" },
+      });
+      growthData = Array.from({ length: 6 }, (_, i) => {
+        const target = new Date();
+        target.setMonth(target.getMonth() - (5 - i));
+        const y = target.getFullYear();
+        const m = target.getMonth();
+        const count = recentUsers.filter((u) => {
+          const d = new Date(u.createdAt);
+          return d.getFullYear() === y && d.getMonth() === m;
+        }).length;
+        return {
+          month: target.toLocaleDateString("en-ZA", { month: "short" }),
+          users: count,
+        };
+      });
+    } catch { /* leave empty array */ }
 
-    // ── Top career roles (merge skills gap + career path queries) ────────────
+    // ── Top career roles ─────────────────────────────────────────────────────
     const CHART_COLORS = ["#6366f1", "#8b5cf6", "#10b981", "#f59e0b", "#ef4444"];
-    const roleMap: Record<string, number> = {};
-    for (const r of skillsGapRoles)  roleMap[r.targetRole] = (roleMap[r.targetRole] ?? 0) + r._count.targetRole;
-    for (const r of careerPathRoles) roleMap[r.targetRole] = (roleMap[r.targetRole] ?? 0) + r._count.targetRole;
+    let topRoles: { career: string; queries: number; color: string }[] = [];
+    try {
+      // Use raw aggregation to avoid groupBy orderBy compatibility issues
+      const [skillsRoles, pathRoles] = await Promise.all([
+        db.skillsGap.groupBy({
+          by:      ["targetRole"],
+          _count:  { _all: true },
+          orderBy: { _count: { _all: "desc" } },
+          take:    10,
+        }),
+        db.careerPath.groupBy({
+          by:      ["targetRole"],
+          _count:  { _all: true },
+          orderBy: { _count: { _all: "desc" } },
+          take:    10,
+        }),
+      ]);
 
-    const topRoles = Object.entries(roleMap)
-      .sort(([, a], [, b]) => b - a)
-      .slice(0, 5)
-      .map(([role, count], i) => ({ career: role, queries: count, color: CHART_COLORS[i] }));
+      const roleMap: Record<string, number> = {};
+      for (const r of skillsRoles)  roleMap[r.targetRole] = (roleMap[r.targetRole] ?? 0) + r._count._all;
+      for (const r of pathRoles)    roleMap[r.targetRole] = (roleMap[r.targetRole] ?? 0) + r._count._all;
+
+      topRoles = Object.entries(roleMap)
+        .sort(([, a], [, b]) => b - a)
+        .slice(0, 5)
+        .map(([role, count], i) => ({ career: role, queries: count, color: CHART_COLORS[i] }));
+    } catch { /* leave empty */ }
 
     // ── Feature usage breakdown ──────────────────────────────────────────────
     const totalActivity = cvCount + chatMsgCount + skillsCount + pathCount;
     const featureUsage = [
-      { type: "CV Builder",      count: cvCount,      color: "bg-indigo-500" },
-      { type: "Career Coach",    count: chatMsgCount, color: "bg-violet-500" },
-      { type: "Skills Gap",      count: skillsCount,  color: "bg-emerald-500" },
-      { type: "Career Paths",    count: pathCount,    color: "bg-amber-500" },
+      { type: "CV Builder",   count: cvCount,      color: "bg-indigo-500"  },
+      { type: "Career Coach", count: chatMsgCount, color: "bg-violet-500"  },
+      { type: "Skills Gap",   count: skillsCount,  color: "bg-emerald-500" },
+      { type: "Career Paths", count: pathCount,    color: "bg-amber-500"   },
     ].map((f) => ({
       ...f,
       pct: totalActivity > 0 ? Math.round((f.count / totalActivity) * 100) : 0,
@@ -162,6 +170,9 @@ export async function GET() {
     });
   } catch (err) {
     console.error("[admin/stats]", err);
-    return NextResponse.json({ error: "Failed to load stats" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Failed to load stats", detail: String(err) },
+      { status: 500 }
+    );
   }
 }

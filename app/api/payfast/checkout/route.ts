@@ -12,10 +12,19 @@ import {
 
 export const runtime = "nodejs";
 
-const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
+// Derive APP_URL from the request origin so the notify_url is always correct
+// even when NEXT_PUBLIC_APP_URL hasn't been set in the hosting env vars.
+function getAppUrl(req: NextRequest): string {
+  if (process.env.NEXT_PUBLIC_APP_URL) return process.env.NEXT_PUBLIC_APP_URL.replace(/\/$/, "");
+  try {
+    const u = new URL(req.url);
+    return `${u.protocol}//${u.host}`;
+  } catch {
+    return "http://localhost:3000";
+  }
+}
 
 export async function POST(req: NextRequest) {
-  console.log("[PayFast checkout] APP_URL:", APP_URL);
   try {
     const { userId } = await auth();
     if (!userId) {
@@ -29,7 +38,9 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Invalid plan" }, { status: 400 });
     }
 
-    const plan      = PLANS[planKey];
+    const APP_URL = getAppUrl(req);
+    console.log("[PayFast checkout] APP_URL:", APP_URL);
+    const plan    = PLANS[planKey];
     const clerkUser = await currentUser();
     const dbUser    = await getOrCreateUser(
       userId,

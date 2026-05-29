@@ -11,6 +11,7 @@ import {
   Moon, Sun, Globe, Info, Zap, ChevronRight,
   Eye, EyeOff, MapPin, DollarSign,
 } from "lucide-react";
+
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -351,13 +352,31 @@ export default function SettingsPage() {
                 </div>
               ))}
             </div>
-            <Link href="/upgrade">
-              <Button variant="indigo" className="w-full gap-2">
-                <Zap className="w-4 h-4" />
-                Upgrade Your Plan
-                <ChevronRight className="w-4 h-4 ml-auto" />
-              </Button>
-            </Link>
+            {planKey === "FREE" ? (
+              <Link href="/upgrade">
+                <Button variant="indigo" className="w-full gap-2">
+                  <Zap className="w-4 h-4" />
+                  Upgrade Your Plan
+                  <ChevronRight className="w-4 h-4 ml-auto" />
+                </Button>
+              </Link>
+            ) : (
+              <div className="flex items-center justify-between px-4 py-3 rounded-xl bg-indigo-500/8 border border-indigo-500/20 text-sm">
+                <div className="flex items-center gap-2 text-indigo-300">
+                  <Crown className="w-4 h-4 text-amber-400" />
+                  <span className="font-medium">Plan active</span>
+                </div>
+                {planExpiresAt && (() => {
+                  const ms   = new Date(planExpiresAt).getTime() - Date.now();
+                  const days = Math.max(0, Math.ceil(ms / (1000 * 60 * 60 * 24)));
+                  return (
+                    <span className={`text-xs font-semibold ${days <= 5 ? "text-amber-400" : "text-muted-foreground"}`}>
+                      {days}d remaining
+                    </span>
+                  );
+                })()}
+              </div>
+            )}
           </SectionCard>
 
           {/* Security */}

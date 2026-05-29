@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import {
   BarChart2, Users, MessageCircle, TrendingUp, Activity,
   Shield, Database, Zap, Star, MessageSquare, RefreshCw,
-  Target, GitBranch,
+  Target, GitBranch, Crown, CheckCircle2,
 } from "lucide-react";
 import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer, Tooltip, Cell, LineChart, Line } from "recharts";
 import { Badge } from "@/components/ui/badge";
@@ -56,6 +56,114 @@ function StarRow({ rating }: { rating: number }) {
 
 function Skeleton({ className }: { className?: string }) {
   return <div className={`animate-pulse bg-secondary rounded ${className}`} />;
+}
+
+// ── Plan Override Panel ───────────────────────────────────────────────────────
+
+function PlanOverridePanel() {
+  const [email,   setEmail]   = useState("");
+  const [plan,    setPlan]    = useState("PREMIUM");
+  const [planKey, setPlanKey] = useState("professional");
+  const [days,    setDays]    = useState("30");
+  const [result,  setResult]  = useState<{ ok: boolean; msg: string } | null>(null);
+  const [busy,    setBusy]    = useState(false);
+
+  const submit = async () => {
+    if (!email.trim()) return;
+    setBusy(true);
+    setResult(null);
+    try {
+      const r = await fetch("/api/admin/set-plan", {
+        method:  "POST",
+        headers: { "Content-Type": "application/json" },
+        body:    JSON.stringify({ email: email.trim(), plan, planKey: planKey || undefined, days: Number(days) || 30 }),
+      });
+      const d = await r.json();
+      setResult({ ok: r.ok, msg: d.message ?? d.error ?? JSON.stringify(d) });
+    } catch (e) {
+      setResult({ ok: false, msg: String(e) });
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  return (
+    <div className="bg-card border border-border rounded-xl p-5 space-y-4">
+      <h3 className="text-sm font-semibold text-foreground flex items-center gap-2">
+        <Crown className="w-4 h-4 text-amber-400" />
+        Manual Plan Override
+        <span className="text-xs text-muted-foreground font-normal ml-1">— fix users whose PayFast ITN didn&apos;t fire</span>
+      </h3>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+        <div className="lg:col-span-2">
+          <label className="text-xs text-muted-foreground mb-1 block">User Email</label>
+          <input
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="user@example.com"
+            className="w-full h-9 px-3 rounded-lg border border-border bg-secondary text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-indigo-500/40"
+          />
+        </div>
+        <div>
+          <label className="text-xs text-muted-foreground mb-1 block">Plan Tier</label>
+          <select
+            value={plan}
+            onChange={(e) => setPlan(e.target.value)}
+            className="w-full h-9 px-3 rounded-lg border border-border bg-secondary text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-indigo-500/40"
+          >
+            <option value="FREE">FREE</option>
+            <option value="PREMIUM">PREMIUM</option>
+            <option value="RECRUITER">RECRUITER</option>
+            <option value="ENTERPRISE">ENTERPRISE</option>
+          </select>
+        </div>
+        <div>
+          <label className="text-xs text-muted-foreground mb-1 block">Plan Key</label>
+          <select
+            value={planKey}
+            onChange={(e) => setPlanKey(e.target.value)}
+            className="w-full h-9 px-3 rounded-lg border border-border bg-secondary text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-indigo-500/40"
+          >
+            <option value="graduate">graduate (R49)</option>
+            <option value="professional">professional (R99)</option>
+            <option value="recruiter">recruiter (R499)</option>
+          </select>
+        </div>
+        <div className="sm:col-span-2 lg:col-span-4 flex items-end gap-3">
+          <div>
+            <label className="text-xs text-muted-foreground mb-1 block">Days from now</label>
+            <input
+              type="number"
+              value={days}
+              onChange={(e) => setDays(e.target.value)}
+              min={1}
+              max={365}
+              className="w-24 h-9 px-3 rounded-lg border border-border bg-secondary text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-indigo-500/40"
+            />
+          </div>
+          <button
+            onClick={submit}
+            disabled={busy || !email.trim()}
+            className="flex items-center gap-2 px-4 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 text-white text-sm font-medium transition-colors"
+          >
+            {busy ? <RefreshCw className="w-3.5 h-3.5 animate-spin" /> : <Zap className="w-3.5 h-3.5" />}
+            Apply Plan
+          </button>
+        </div>
+      </div>
+
+      {result && (
+        <div className={`flex items-start gap-2 p-3 rounded-lg text-sm ${result.ok ? "bg-emerald-500/10 border border-emerald-500/25 text-emerald-300" : "bg-red-500/10 border border-red-500/25 text-red-300"}`}>
+          {result.ok
+            ? <CheckCircle2 className="w-4 h-4 flex-shrink-0 mt-0.5" />
+            : <Shield className="w-4 h-4 flex-shrink-0 mt-0.5" />}
+          {result.msg}
+        </div>
+      )}
+    </div>
+  );
 }
 
 // ── Page ──────────────────────────────────────────────────────────────────────
@@ -341,6 +449,9 @@ export default function AdminPage() {
           )}
         </div>
       </div>
+
+      {/* ── Manual plan override ────────────────────────────────────────────── */}
+      <PlanOverridePanel />
 
       {/* ── Feature usage breakdown ───────────────────────────────────────── */}
       <div className="bg-card border border-border rounded-xl p-5">

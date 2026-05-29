@@ -296,7 +296,11 @@ export default function AdminPage() {
               <LineChart data={s?.growthData ?? []}>
                 <XAxis dataKey="month" tick={{ fontSize: 10, fill: "#6b7280" }} axisLine={false} tickLine={false} />
                 <YAxis tick={{ fontSize: 10, fill: "#6b7280" }} axisLine={false} tickLine={false} allowDecimals={false} />
-                <Tooltip contentStyle={{ background: "rgba(13,21,38,0.95)", border: "1px solid rgba(99,102,241,0.2)", borderRadius: 8, fontSize: 12 }} />
+                <Tooltip
+                  contentStyle={{ background: "rgba(13,21,38,0.97)", border: "1px solid rgba(99,102,241,0.25)", borderRadius: 8, fontSize: 12, color: "#e5e7eb" }}
+                  labelStyle={{ color: "#a5b4fc", fontWeight: 600 }}
+                  itemStyle={{ color: "#e5e7eb" }}
+                />
                 <Line type="monotone" dataKey="users" stroke="#6366f1" strokeWidth={2.5} dot={{ fill: "#6366f1", r: 4 }} name="New users" />
               </LineChart>
             </ResponsiveContainer>
@@ -321,7 +325,12 @@ export default function AdminPage() {
               <BarChart data={s?.topRoles ?? []} layout="vertical" margin={{ left: 20 }}>
                 <XAxis type="number" tick={{ fontSize: 10, fill: "#6b7280" }} axisLine={false} tickLine={false} allowDecimals={false} />
                 <YAxis type="category" dataKey="career" tick={{ fontSize: 10, fill: "#6b7280" }} axisLine={false} tickLine={false} width={120} />
-                <Tooltip contentStyle={{ background: "rgba(13,21,38,0.95)", border: "1px solid rgba(99,102,241,0.2)", borderRadius: 8, fontSize: 12 }} />
+                <Tooltip
+                  contentStyle={{ background: "rgba(13,21,38,0.97)", border: "1px solid rgba(99,102,241,0.25)", borderRadius: 8, fontSize: 12, color: "#e5e7eb" }}
+                  labelStyle={{ color: "#a5b4fc", fontWeight: 600 }}
+                  itemStyle={{ color: "#e5e7eb" }}
+                  cursor={{ fill: "rgba(99,102,241,0.08)" }}
+                />
                 <Bar dataKey="queries" radius={4} name="Searches">
                   {(s?.topRoles ?? []).map((entry, i) => (
                     <Cell key={i} fill={entry.color} fillOpacity={0.85} />

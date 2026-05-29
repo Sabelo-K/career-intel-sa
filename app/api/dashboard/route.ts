@@ -84,6 +84,12 @@ export async function GET() {
     return NextResponse.json({
       employabilityScore,
       profileStrength,
+      // Individual score components (used by the employability breakdown bars)
+      scoreComponents: {
+        skills:   { score: skillsScore,   max: 40, pct: Math.round((skillsScore   / 40) * 100) },
+        profile:  { score: profileScore,  max: 30, pct: Math.round((profileScore  / 30) * 100) },
+        activity: { score: activityScore, max: 30, pct: Math.round((activityScore / 30) * 100) },
+      },
       skillsCount: p?.skills?.length ?? 0,
       targetRole: p?.targetRole ?? null,
       currentRole: p?.currentRole ?? null,

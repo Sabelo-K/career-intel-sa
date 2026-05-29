@@ -21,9 +21,16 @@ import { RoadmapWidget } from "@/components/roadmap-widget";
 import { SA_CAREERS, TOP_GROWING_CAREERS_2025 } from "@/lib/data/sa-careers";
 import { formatSalaryRange, getDemandBadgeColor, getTrendLabel } from "@/lib/utils";
 
+interface ScoreComponent { score: number; max: number; pct: number; }
+
 interface DashboardStats {
   employabilityScore: number;
   profileStrength: number;
+  scoreComponents?: {
+    skills:   ScoreComponent;
+    profile:  ScoreComponent;
+    activity: ScoreComponent;
+  };
   skillsCount: number;
   targetRole: string | null;
   currentRole: string | null;
@@ -244,17 +251,32 @@ export default function DashboardPage() {
 
           <div className="mt-6 space-y-3">
             {[
-              { label: "Skills Match", value: 78, color: "bg-indigo-500" },
-              { label: "Experience", value: 65, color: "bg-violet-500" },
-              { label: "Education", value: 70, color: "bg-emerald-500" },
-              { label: "Profile Completeness", value: profileStrength, color: "bg-amber-500" },
+              {
+                label: "Skills Added",
+                value: stats.scoreComponents?.skills.pct ?? 0,
+                sub:   `${stats.skillsCount} skill${stats.skillsCount !== 1 ? "s" : ""} · ${stats.scoreComponents?.skills.score ?? 0}/40 pts`,
+                color: "bg-indigo-500",
+              },
+              {
+                label: "Profile Completeness",
+                value: profileStrength,
+                sub:   `${stats.scoreComponents?.profile.score ?? 0}/30 pts`,
+                color: "bg-amber-500",
+              },
+              {
+                label: "Platform Activity",
+                value: stats.scoreComponents?.activity.pct ?? 0,
+                sub:   `Chats · gap analyses · simulations · ${stats.scoreComponents?.activity.score ?? 0}/30 pts`,
+                color: "bg-emerald-500",
+              },
             ].map((item) => (
               <div key={item.label}>
-                <div className="flex items-center justify-between text-xs mb-1">
+                <div className="flex items-center justify-between text-xs mb-0.5">
                   <span className="text-muted-foreground">{item.label}</span>
                   <span className="text-foreground font-medium">{item.value}%</span>
                 </div>
                 <Progress value={item.value} className="h-1.5" indicatorClassName={item.color} />
+                <p className="text-[10px] text-muted-foreground/60 mt-0.5">{item.sub}</p>
               </div>
             ))}
           </div>

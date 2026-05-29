@@ -42,11 +42,12 @@ body::before {
   position: fixed;
   inset: 0;
   background:
-    radial-gradient(ellipse at 15% 40%,  rgba(139, 92, 246, 0.30) 0%, transparent 52%),
-    radial-gradient(ellipse at 85% 12%,  rgba(249,115,  22, 0.22) 0%, transparent 48%),
-    radial-gradient(ellipse at 60% 88%,  rgba( 16,185, 129, 0.14) 0%, transparent 44%),
-    radial-gradient(ellipse at 75% 55%,  rgba(236, 72, 153, 0.10) 0%, transparent 40%),
-    radial-gradient(ellipse at 30% 80%,  rgba(139, 92, 246, 0.12) 0%, transparent 42%),
+    radial-gradient(ellipse at 18% 35%,  rgba(139, 92, 246, 0.55) 0%, transparent 50%),
+    radial-gradient(ellipse at 82% 10%,  rgba(249,115,  22, 0.50) 0%, transparent 45%),
+    radial-gradient(ellipse at 60% 90%,  rgba( 16,185, 129, 0.28) 0%, transparent 42%),
+    radial-gradient(ellipse at 78% 52%,  rgba(236, 72, 153, 0.22) 0%, transparent 38%),
+    radial-gradient(ellipse at 28% 78%,  rgba(139, 92, 246, 0.25) 0%, transparent 40%),
+    radial-gradient(ellipse at 50% 50%,  rgba( 99,102, 241, 0.10) 0%, transparent 70%),
     #09060f;
   z-index: 0;
   pointer-events: none;
@@ -78,9 +79,9 @@ body::before {
 /* ── Glass card override — applies to all bg-card elements ───────────────── */
 /* Cards use a semi-transparent frosted layer over the cosmic background      */
 .bg-card {
-  background-color: rgba(255, 255, 255, 0.055) !important;
-  backdrop-filter: blur(22px) saturate(160%);
-  -webkit-backdrop-filter: blur(22px) saturate(160%);
+  background-color: rgba(255, 255, 255, 0.045) !important;
+  backdrop-filter: blur(28px) saturate(180%) brightness(1.08);
+  -webkit-backdrop-filter: blur(28px) saturate(180%) brightness(1.08);
 }
 
 /* Glass borders — white/10 instead of the default dark border */
@@ -104,9 +105,9 @@ body::before {
 
 /* Secondary / muted panels (used inside cards) */
 .bg-secondary {
-  background-color: rgba(255, 255, 255, 0.07) !important;
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  background-color: rgba(255, 255, 255, 0.06) !important;
+  backdrop-filter: blur(14px) saturate(150%);
+  -webkit-backdrop-filter: blur(14px) saturate(150%);
 }
 
 /* ── Stat card ────────────────────────────────────────────────────────────── */
@@ -114,9 +115,9 @@ body::before {
   position: relative;
   border-radius: var(--radius);
   border: 1px solid rgba(255,255,255,0.10);
-  background: rgba(255, 255, 255, 0.055);
-  backdrop-filter: blur(22px) saturate(160%);
-  -webkit-backdrop-filter: blur(22px) saturate(160%);
+  background: rgba(255, 255, 255, 0.045);
+  backdrop-filter: blur(28px) saturate(180%) brightness(1.08);
+  -webkit-backdrop-filter: blur(28px) saturate(180%) brightness(1.08);
   padding: 1.25rem;
   transition: all 0.2s;
   overflow: hidden;
@@ -153,10 +154,10 @@ body::before {
 
   /* ── Glass utility ─────────────────────────────────────────────────────── */
   .glass-card {
-    background: rgba(255,255,255,0.06) !important;
-    backdrop-filter: blur(22px) saturate(160%);
-    -webkit-backdrop-filter: blur(22px) saturate(160%);
-    border: 1px solid rgba(255,255,255,0.10) !important;
+    background: rgba(255,255,255,0.045) !important;
+    backdrop-filter: blur(28px) saturate(180%) brightness(1.08);
+    -webkit-backdrop-filter: blur(28px) saturate(180%) brightness(1.08);
+    border: 1px solid rgba(255,255,255,0.12) !important;
     position: relative;
     overflow: hidden;
   }

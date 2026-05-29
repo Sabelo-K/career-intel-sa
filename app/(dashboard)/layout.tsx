@@ -9,7 +9,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
 
   return (
     <FeedbackProvider>
-      <div className="flex min-h-screen bg-background">
+      <div className="flex min-h-screen">
         <Sidebar />
         {/* ml-0 on mobile (sidebar is a drawer), ml-60 on md+ (sidebar is always visible) */}
         <main className="flex-1 md:ml-60 min-h-screen overflow-y-auto">

@@ -1,20 +1,27 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 import { motion } from "framer-motion";
-import { BookOpen, Star, Clock, Globe, GraduationCap, ExternalLink, Filter, Search } from "lucide-react";
+import { BookOpen, Star, Clock, Globe, GraduationCap, ExternalLink, Search } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { SA_COURSES, COURSE_PLATFORMS } from "@/lib/data/sa-courses";
 
 const CATEGORIES = ["All", "Data Science", "Cloud", "Software Dev", "Cybersecurity", "Business", "Project Management"];
 
 export default function CoursesPage() {
-  const [search, setSearch] = useState("");
+  const searchParams = useSearchParams();
+  const [search, setSearch] = useState(() => searchParams.get("q") ?? "");
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [selectedPlatform, setSelectedPlatform] = useState("all");
   const [freeOnly, setFreeOnly] = useState(false);
+
+  // Sync search when ?q= param changes (e.g. back/forward navigation)
+  useEffect(() => {
+    const q = searchParams.get("q") ?? "";
+    setSearch(q);
+  }, [searchParams]);
 
   const filtered = SA_COURSES.filter((c) => {
     const matchSearch = c.title.toLowerCase().includes(search.toLowerCase()) ||
@@ -56,6 +63,26 @@ export default function CoursesPage() {
           ))}
         </div>
       </div>
+
+      {/* Roadmap deep-link banner */}
+      {searchParams.get("q") && (
+        <motion.div
+          initial={{ opacity: 0, y: -6 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="flex items-center gap-3 px-4 py-3 rounded-xl bg-indigo-500/12 border border-indigo-500/25 text-sm"
+        >
+          <BookOpen className="w-4 h-4 text-indigo-400 flex-shrink-0" />
+          <span className="text-indigo-200 flex-1">
+            Showing courses for <strong className="text-indigo-300">{searchParams.get("q")}</strong> — from your learning roadmap
+          </span>
+          <button
+            onClick={() => setSearch("")}
+            className="text-xs text-indigo-400 hover:text-indigo-200 transition-colors font-medium"
+          >
+            Clear ×
+          </button>
+        </motion.div>
+      )}
 
       {/* Filters */}
       <div className="flex items-center gap-3 flex-wrap">

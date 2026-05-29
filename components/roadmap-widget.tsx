@@ -230,31 +230,46 @@ export function RoadmapWidget() {
                   )}>
                     {phase.phaseNumber}. {phase.title}
                   </span>
-                  <span className="text-[10px] text-muted-foreground flex-shrink-0">
-                    {phase.weeks}w
-                  </span>
+                  <div className="flex items-center gap-2 flex-shrink-0">
+                    <span className="text-[10px] text-muted-foreground">{phase.weeks}w</span>
+                    {/* Find courses shortcut — stops propagation so it doesn't toggle completion */}
+                    <Link
+                      href={`/courses?q=${encodeURIComponent(phase.title)}`}
+                      onClick={(e) => e.stopPropagation()}
+                      className="flex items-center gap-0.5 text-[10px] text-indigo-400 hover:text-indigo-300 border border-indigo-500/30 hover:border-indigo-400/50 bg-indigo-500/10 hover:bg-indigo-500/15 px-1.5 py-0.5 rounded transition-all"
+                    >
+                      <BookOpen className="w-2.5 h-2.5" />
+                      Courses
+                    </Link>
+                  </div>
                 </div>
 
-                {/* Skill tags */}
+                {/* Skill tags — each links to /courses?q=<skill> */}
                 {phase.skills.length > 0 && (
                   <div className="flex flex-wrap gap-1 mt-1.5">
                     {phase.skills.slice(0, 3).map((s) => (
-                      <span
+                      <Link
                         key={s}
+                        href={`/courses?q=${encodeURIComponent(s)}`}
+                        onClick={(e) => e.stopPropagation()}
                         className={cn(
-                          "text-[10px] px-1.5 py-0.5 rounded border",
+                          "text-[10px] px-1.5 py-0.5 rounded border transition-all",
                           phase.completed
-                            ? "text-muted-foreground border-white/10 bg-white/5"
-                            : "text-indigo-300 border-indigo-500/25 bg-indigo-500/10"
+                            ? "text-muted-foreground border-white/10 bg-white/5 hover:border-white/20"
+                            : "text-indigo-300 border-indigo-500/25 bg-indigo-500/10 hover:bg-indigo-500/20 hover:border-indigo-400/40"
                         )}
                       >
                         {s}
-                      </span>
+                      </Link>
                     ))}
                     {phase.skills.length > 3 && (
-                      <span className="text-[10px] text-muted-foreground">
-                        +{phase.skills.length - 3}
-                      </span>
+                      <Link
+                        href={`/courses?q=${encodeURIComponent(phase.title)}`}
+                        onClick={(e) => e.stopPropagation()}
+                        className="text-[10px] text-muted-foreground hover:text-indigo-300 transition-colors"
+                      >
+                        +{phase.skills.length - 3} more
+                      </Link>
                     )}
                   </div>
                 )}
@@ -275,7 +290,7 @@ export function RoadmapWidget() {
         </button>
       )}
 
-      {/* CTA — salary impact or run new analysis */}
+      {/* Salary impact callout */}
       {roadmap.salaryImpact && !allDone && (
         <div className="mt-3 p-2.5 rounded-lg bg-amber-500/8 border border-amber-500/20">
           <p className="text-xs text-amber-200/80 flex items-center gap-1.5">
@@ -284,6 +299,16 @@ export function RoadmapWidget() {
           </p>
         </div>
       )}
+
+      {/* Browse all courses for this role */}
+      <Link
+        href={`/courses?q=${encodeURIComponent(roadmap.targetRole)}`}
+        className="mt-3 flex items-center justify-center gap-2 w-full py-2.5 rounded-lg border border-indigo-500/25 bg-indigo-500/8 hover:bg-indigo-500/14 hover:border-indigo-400/40 text-xs font-medium text-indigo-300 hover:text-indigo-200 transition-all"
+      >
+        <BookOpen className="w-3.5 h-3.5" />
+        Browse all {roadmap.targetRole} courses
+        <ChevronRight className="w-3 h-3" />
+      </Link>
     </div>
   );
 }

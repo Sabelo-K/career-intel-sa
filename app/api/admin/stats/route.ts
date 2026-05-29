@@ -37,9 +37,9 @@ export async function GET() {
     startOfMonth.setHours(0, 0, 0, 0);
 
     // ── Helper: safe count (never throws) ───────────────────────────────────
-    async function safeCount(promise: Promise<number>): Promise<number> {
+    const safeCount = async (promise: Promise<number>): Promise<number> => {
       try { return await promise; } catch { return 0; }
-    }
+    };
 
     // ── Core counts (each isolated so one failure doesn't zero everything) ──
     const [
@@ -54,7 +54,7 @@ export async function GET() {
       safeCount(db.user.count()),
       safeCount(db.user.count({ where: { plan: { not: "FREE" } } })),
       safeCount(db.user.count({ where: { createdAt: { gte: startOfMonth } } })),
-      safeCount(db.cv.count()),
+      safeCount(db.cV.count()),
       // Use Prisma enum constant — avoids string-literal type mismatch
       safeCount(db.chatMessage.count({ where: { role: MessageRole.USER } })),
       safeCount(db.skillsGap.count()),
@@ -121,21 +121,21 @@ export async function GET() {
       const [skillsRoles, pathRoles] = await Promise.all([
         db.skillsGap.groupBy({
           by:      ["targetRole"],
-          _count:  { _all: true },
-          orderBy: { _count: { _all: "desc" } },
+          _count:  { targetRole: true },
+          orderBy: { _count: { targetRole: "desc" } },
           take:    10,
         }),
         db.careerPath.groupBy({
           by:      ["targetRole"],
-          _count:  { _all: true },
-          orderBy: { _count: { _all: "desc" } },
+          _count:  { targetRole: true },
+          orderBy: { _count: { targetRole: "desc" } },
           take:    10,
         }),
       ]);
 
       const roleMap: Record<string, number> = {};
-      for (const r of skillsRoles)  roleMap[r.targetRole] = (roleMap[r.targetRole] ?? 0) + r._count._all;
-      for (const r of pathRoles)    roleMap[r.targetRole] = (roleMap[r.targetRole] ?? 0) + r._count._all;
+      for (const r of skillsRoles)  roleMap[r.targetRole] = (roleMap[r.targetRole] ?? 0) + (r._count.targetRole ?? 0);
+      for (const r of pathRoles)    roleMap[r.targetRole] = (roleMap[r.targetRole] ?? 0) + (r._count.targetRole ?? 0);
 
       topRoles = Object.entries(roleMap)
         .sort(([, a], [, b]) => b - a)

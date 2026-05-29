@@ -73,6 +73,8 @@ export interface CourseRecommendation {
   rating: number;
   skills: string[];
   nqfLevel?: number;
+  /** Explicit category — used for filtering on the Courses page */
+  category?: string;
 }
 
 export interface CVAnalysis {

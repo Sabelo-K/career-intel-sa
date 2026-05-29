@@ -25,22 +25,6 @@ const CATEGORIES = [
   "Environment",
 ];
 
-// Map category label → skill keywords for filtering
-const CATEGORY_SKILLS: Record<string, string[]> = {
-  "Data & AI":      ["Data Science","Machine Learning","Data Analysis","Python","SQL","Tableau","Power BI","Deep Learning","NLP","MLOps","AI","Data Visualization","Business Intelligence"],
-  "Software Dev":   ["JavaScript","React","Node.js","TypeScript","Python","Algorithms","Full Stack","Web Development"],
-  "Cloud & DevOps": ["AWS","Azure","GCP","Terraform","Docker","Kubernetes","DevOps","CI/CD","Cloud","Infrastructure as Code"],
-  "Cybersecurity":  ["Cybersecurity","Network Security","Ethical Hacking","SIEM","Incident Response","Penetration Testing","Security"],
-  "Finance":        ["Financial Modeling","IFRS","Accounting","CFA","Valuation","Bloomberg","Tax","Audit","Excel","Financial Analysis"],
-  "Engineering":    ["AutoCAD","Project Management","PLC","Structural Analysis","Renewable Energy","Engineering","ECSA","SANS Standards"],
-  "Healthcare":     ["Patient Care","Clinical Assessment","ICU","Nursing","Healthcare","EMR","Leadership","Medical"],
-  "Energy & Solar": ["Solar PV","Renewable Energy","HOMER","Battery Systems","Grid Integration","SAPVIA","EWSETA","Energy Storage"],
-  "Trades":         ["Welding","Plumbing","Electrical","SANS 10142","Fault Finding","Refrigeration","HVAC","Artisan","MERSETA","TVET","CETA"],
-  "Marketing":      ["SEO","Social Media","Google Analytics","Content Marketing","Meta Ads","Email Marketing","Digital Marketing"],
-  "Hospitality":    ["Hospitality","Food & Beverage","Chef","Culinary","Tourism","Kitchen","CATHSSETA"],
-  "Education":      ["Curriculum","Teaching","PGCE","EdTech","Assessment","Classroom"],
-  "Environment":    ["Environmental","GIS","Climate","EIA","Water Quality","Sustainability","ESG"],
-};
 
 export default function CoursesPage() {
   const searchParams = useSearchParams();
@@ -63,11 +47,7 @@ export default function CoursesPage() {
       c.skills.some((s) => s.toLowerCase().includes(q));
     const matchFree = freeOnly ? c.price === "free" || c.price === 0 : true;
     const matchPlatform = selectedPlatform === "all" ? true : c.platform.toLowerCase().includes(selectedPlatform.toLowerCase());
-    const matchCategory = selectedCategory === "All" ? true :
-      (CATEGORY_SKILLS[selectedCategory] ?? []).some((kw) =>
-        c.skills.some((s) => s.toLowerCase().includes(kw.toLowerCase())) ||
-        c.title.toLowerCase().includes(kw.toLowerCase())
-      );
+    const matchCategory = selectedCategory === "All" ? true : c.category === selectedCategory;
     return matchSearch && matchFree && matchPlatform && matchCategory;
   });
 

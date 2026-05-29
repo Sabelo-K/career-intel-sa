@@ -36,9 +36,9 @@ export async function GET() {
     startOfMonth.setDate(1);
     startOfMonth.setHours(0, 0, 0, 0);
 
-    // ── Helper: safe count (never throws) ───────────────────────────────────
-    const safeCount = async (promise: Promise<number>): Promise<number> => {
-      try { return await promise; } catch { return 0; }
+    // ── Helper: safe count — accepts a THUNK so sync throws are also caught ──
+    const safeCount = async (fn: () => Promise<number>): Promise<number> => {
+      try { return await fn(); } catch { return 0; }
     };
 
     // ── Core counts (each isolated so one failure doesn't zero everything) ──
@@ -51,14 +51,14 @@ export async function GET() {
       skillsCount,
       pathCount,
     ] = await Promise.all([
-      safeCount(db.user.count()),
-      safeCount(db.user.count({ where: { plan: { not: "FREE" } } })),
-      safeCount(db.user.count({ where: { createdAt: { gte: startOfMonth } } })),
-      safeCount(db.cV.count()),
+      safeCount(() => db.user.count()),
+      safeCount(() => db.user.count({ where: { plan: { not: "FREE" } } })),
+      safeCount(() => db.user.count({ where: { createdAt: { gte: startOfMonth } } })),
+      safeCount(() => db.cV.count()),
       // Use Prisma enum constant — avoids string-literal type mismatch
-      safeCount(db.chatMessage.count({ where: { role: MessageRole.USER } })),
-      safeCount(db.skillsGap.count()),
-      safeCount(db.careerPath.count()),
+      safeCount(() => db.chatMessage.count({ where: { role: MessageRole.USER } })),
+      safeCount(() => db.skillsGap.count()),
+      safeCount(() => db.careerPath.count()),
     ]);
 
     // ── Active today ─────────────────────────────────────────────────────────

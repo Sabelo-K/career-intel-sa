@@ -103,7 +103,7 @@ export function Sidebar() {
   return (
     <>
       {/* ── Mobile top bar ─────────────────────────────────────────────────── */}
-      <header className="md:hidden fixed top-0 left-0 right-0 h-14 bg-white/[0.06] backdrop-blur-2xl border-b border-white/10 flex items-center justify-between px-4 z-40">
+      <header className="md:hidden fixed top-0 left-0 right-0 h-14 bg-black/60 backdrop-blur-2xl border-b border-white/10 flex items-center justify-between px-4 z-40">
         <Link href="/dashboard">
           <Logo />
         </Link>
@@ -138,7 +138,7 @@ export function Sidebar() {
         className={cn(
           "fixed left-0 top-0 h-screen w-64 md:w-60 flex flex-col z-50",
           "border-r border-white/10",
-          "bg-white/[0.06] backdrop-blur-2xl",
+          "bg-black/60 backdrop-blur-2xl",
           "transition-transform duration-300 ease-in-out",
           "md:translate-x-0",
           mobileOpen ? "translate-x-0 shadow-2xl shadow-violet-950/50" : "-translate-x-full md:translate-x-0"

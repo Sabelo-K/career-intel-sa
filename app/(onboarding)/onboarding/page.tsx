@@ -34,6 +34,7 @@ export default function OnboardingPage() {
   const router = useRouter();
   const [step, setStep] = useState(1);
   const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState("");
   const [currentRole, setCurrentRole] = useState("");
   const [yearsExperience, setYearsExperience] = useState("");
   const [targetRole, setTargetRole] = useState("");
@@ -60,8 +61,9 @@ export default function OnboardingPage() {
 
   const finish = async () => {
     setSaving(true);
+    setSaveError("");
     try {
-      await fetch("/api/onboarding/complete", {
+      const res = await fetch("/api/onboarding/complete", {
         method:  "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -71,10 +73,18 @@ export default function OnboardingPage() {
           yearsExperience: yearsExperience ? Number(yearsExperience) : undefined,
         }),
       });
-    } catch {
-      // non-fatal — still navigate
-    } finally {
+
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        setSaveError(data?.error ?? `Server error (${res.status}) — please try again.`);
+        setSaving(false);
+        return; // don't navigate; keep user on the form
+      }
+
       router.push("/dashboard");
+    } catch {
+      setSaveError("Network error — check your connection and try again.");
+      setSaving(false);
     }
   };
 
@@ -257,6 +267,13 @@ export default function OnboardingPage() {
             </motion.div>
           )}
         </AnimatePresence>
+
+        {/* Error banner */}
+        {saveError && (
+          <div className="mt-4 px-4 py-3 rounded-lg bg-red-500/15 border border-red-500/30 text-red-300 text-sm">
+            {saveError}
+          </div>
+        )}
 
         {/* Navigation */}
         <div className="flex items-center justify-between mt-6">

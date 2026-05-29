@@ -150,12 +150,15 @@ export default function DashboardPage() {
   const employabilityScore = stats.employabilityScore;
   const profileStrength    = stats.profileStrength;
 
-  // Redirect new users to onboarding
+  // Redirect genuinely new users (no profile data at all) to onboarding.
+  // We check targetRole + currentRole as a fallback so that users who
+  // completed the form but had a transient API failure aren't caught in a
+  // redirect loop — if they have any profile data they're not "new".
   useEffect(() => {
-    if (statsLoaded && !stats.onboarded) {
+    if (statsLoaded && !stats.onboarded && !stats.targetRole && !stats.currentRole) {
       window.location.href = "/onboarding";
     }
-  }, [statsLoaded, stats.onboarded]);
+  }, [statsLoaded, stats.onboarded, stats.targetRole, stats.currentRole]);
 
   return (
     <div className="space-y-6">

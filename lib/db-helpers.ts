@@ -6,52 +6,57 @@
 import { db } from "./db";
 
 /**
- * Upsert a Clerk user into the local `users` table.
- * Safe to call on every authenticated request — it is a no-op if the row
- * already exists and only writes on first visit.
+ * Get or create a user row linked to a Clerk user ID.
  *
- * Handles the case where a user switches from a dev → prod Clerk instance:
- * the email stays the same but the Clerk user ID changes.  If the upsert
- * hits a unique-email conflict (Prisma P2002) we find the existing row by
- * email and update its clerkId so all historical data is preserved.
+ * Handles the dev → prod Clerk migration case: when a user first signs in
+ * on the Production Clerk instance their clerkId is brand-new, but their
+ * email already exists in the DB (from the Dev instance). We proactively
+ * check for this before inserting to avoid a P2002 unique-constraint error,
+ * and re-link the existing row to the new clerkId so all historical data
+ * (plan, profile, CVs, sessions) is preserved.
  */
 export async function getOrCreateUser(
   clerkId: string,
   email?: string | null,
   name?: string | null
 ) {
-  try {
-    return await db.user.upsert({
-      where: { clerkId },
-      update: {
-        ...(email ? { email } : {}),
-        ...(name  ? { name }  : {}),
-      },
-      create: {
-        clerkId,
-        email: email ?? `${clerkId}@careerintel-placeholder.sa`,
-        name:  name  ?? null,
-      },
-    });
-  } catch (err: unknown) {
-    // P2002 = unique constraint violation.  Most likely cause: same email
-    // address already exists under a different clerkId (dev → prod migration).
-    // Re-link the existing row to the new clerkId so data is preserved.
-    const isPrismaUniqueError =
-      typeof err === "object" &&
-      err !== null &&
-      (err as { code?: string }).code === "P2002";
+  // 1. Happy path — row already linked to this clerkId
+  const existing = await db.user.findUnique({ where: { clerkId } });
+  if (existing) {
+    // Keep email / name up to date but don't overwrite with nulls
+    if ((email && email !== existing.email) || (name && name !== existing.name)) {
+      return db.user.update({
+        where: { clerkId },
+        data: {
+          ...(email ? { email } : {}),
+          ...(name  ? { name }  : {}),
+        },
+      });
+    }
+    return existing;
+  }
 
-    if (isPrismaUniqueError && email) {
-      return await db.user.update({
+  // 2. Same email exists under a different clerkId (dev → prod migration).
+  //    Re-link the row instead of creating a duplicate.
+  if (email) {
+    const byEmail = await db.user.findUnique({ where: { email } });
+    if (byEmail) {
+      return db.user.update({
         where: { email },
-        data:  {
+        data: {
           clerkId,
           ...(name ? { name } : {}),
         },
       });
     }
-
-    throw err;
   }
+
+  // 3. Genuinely new user — create a fresh row
+  return db.user.create({
+    data: {
+      clerkId,
+      email: email ?? `${clerkId}@careerintel-placeholder.sa`,
+      name:  name  ?? null,
+    },
+  });
 }

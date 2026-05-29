@@ -8,7 +8,7 @@ import { UserButton } from "@clerk/nextjs";
 import {
   Brain, LayoutDashboard, FileText, MessageCircle,
   GitBranch, Target, BarChart3, BookOpen, Mic,
-  User, Settings, Zap, ChevronRight, Crown, Menu, X,
+  User, Settings, Zap, ChevronRight, Crown, Menu, X, Coins,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -66,6 +66,7 @@ export function Sidebar() {
   const [isPaid, setIsPaid]               = useState(false);
   const [planLabel, setPlanLabel]         = useState("Free Plan");
   const [planExpiresAt, setPlanExpiresAt] = useState<string | null>(null);
+  const [credits, setCredits]             = useState<number | null>(null);
   const pathname = usePathname();
 
   useEffect(() => {
@@ -73,7 +74,6 @@ export function Sidebar() {
       .then((r) => r.json())
       .then((d) => {
         if (d.plan) {
-          // Use specific plan key name if available (e.g. "Graduate"), else tier name
           const label = d.planKey
             ? (PLAN_KEY_LABELS[d.planKey] ?? PLAN_LABELS[d.plan] ?? d.plan)
             : (PLAN_LABELS[d.plan] ?? d.plan);
@@ -82,6 +82,12 @@ export function Sidebar() {
         }
         if (d.planExpiresAt) setPlanExpiresAt(d.planExpiresAt);
       })
+      .catch(() => {});
+
+    // Load credit balance for free users
+    fetch("/api/credits/balance")
+      .then((r) => r.json())
+      .then((d) => setCredits(d.balance ?? 0))
       .catch(() => {});
   }, []);
 
@@ -186,9 +192,26 @@ export function Sidebar() {
             })}
           </div>
 
+          {/* Credits balance + buy link — shown for free users */}
+          {!isPaid && credits !== null && (
+            <div className="mt-4 px-1">
+              <Link href="/buy-credits">
+                <div className="flex items-center justify-between px-3 py-2.5 rounded-lg bg-amber-500/10 border border-amber-500/20 hover:bg-amber-500/15 transition-colors cursor-pointer">
+                  <div className="flex items-center gap-2">
+                    <Coins className="w-3.5 h-3.5 text-amber-400" />
+                    <span className="text-xs font-medium text-amber-300">
+                      {credits} credit{credits !== 1 ? "s" : ""}
+                    </span>
+                  </div>
+                  <span className="text-[10px] text-amber-400/70 font-medium">Top up →</span>
+                </div>
+              </Link>
+            </div>
+          )}
+
           {/* Upgrade card — hidden for paid users */}
           {!isPaid && (
-            <div className="mt-6 p-4 rounded-xl bg-gradient-to-br from-indigo-600/15 to-violet-600/10 border border-indigo-500/20">
+            <div className="mt-3 p-4 rounded-xl bg-gradient-to-br from-indigo-600/15 to-violet-600/10 border border-indigo-500/20">
               <div className="flex items-center gap-2 mb-2">
                 <Crown className="w-4 h-4 text-amber-400" />
                 <span className="text-sm font-semibold text-white">Go Premium</span>

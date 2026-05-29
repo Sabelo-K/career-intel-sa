@@ -11,6 +11,7 @@ import {
   FREE_LIMITS,
   getPlanLimits,
 } from "@/lib/plan-gate";
+import { spendCredits } from "@/lib/credits";
 
 const CareerPathSchema = z.object({
   currentRole:    z.string().min(2),
@@ -42,15 +43,19 @@ export async function POST(req: NextRequest) {
       if (!isPaid(plan) || planKey === "graduate") {
         const used = await monthlyCareerPaths(dbUserEarly.id);
         if (used >= limits.careerSimulations) {
-          return NextResponse.json(
-            {
-              error: planKey === "graduate"
-                ? `Graduate plan includes ${limits.careerSimulations} career path simulation per month. Upgrade to Professional for unlimited simulations.`
-                : `Free plan includes ${FREE_LIMITS.careerSimulations} career path simulation per month. Upgrade to Premium for unlimited simulations.`,
-              code:  "LIMIT_REACHED",
-            },
-            { status: 402 }
-          );
+          // Try spending 3 credits before blocking
+          const spent = await spendCredits(dbUserEarly.id, "career-path", "Career Path simulation");
+          if (!spent) {
+            return NextResponse.json(
+              {
+                error: planKey === "graduate"
+                  ? `Graduate plan includes ${limits.careerSimulations} career path simulation per month. Buy credits (3 per simulation) or upgrade to Professional for unlimited simulations.`
+                  : `Free plan includes ${FREE_LIMITS.careerSimulations} career path simulation per month. Buy credits (3 per simulation) or upgrade for unlimited simulations.`,
+                code:  "NO_CREDITS",
+              },
+              { status: 402 }
+            );
+          }
         }
       }
     } catch {

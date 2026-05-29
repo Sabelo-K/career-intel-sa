@@ -9,6 +9,7 @@ import {
   FREE_LIMITS,
   getPlanLimits,
 } from "@/lib/plan-gate";
+import { spendCredits } from "@/lib/credits";
 
 export const runtime = "nodejs";
 
@@ -48,15 +49,19 @@ export async function POST(req: NextRequest) {
         if (!isPaid(plan) || planKey === "graduate") {
           const used = await monthlyCoachMessages(dbUser.id);
           if (used >= limits.chatMessages) {
-            return new Response(
-              JSON.stringify({
-                error: planKey === "graduate"
-                  ? `Graduate plan includes ${limits.chatMessages} AI coach messages/month. Upgrade to Professional for unlimited coaching.`
-                  : `Free plan includes ${FREE_LIMITS.chatMessages} AI coach messages/month. Upgrade to Premium for unlimited coaching.`,
-                code:  "LIMIT_REACHED",
-              }),
-              { status: 402, headers: { "Content-Type": "application/json" } }
-            );
+            // Try spending 1 credit before blocking
+            const spent = await spendCredits(dbUser.id, "chat-message", "AI Coach message");
+            if (!spent) {
+              return new Response(
+                JSON.stringify({
+                  error: planKey === "graduate"
+                    ? `Graduate plan includes ${limits.chatMessages} AI coach messages/month. Buy credits or upgrade to Professional for unlimited coaching.`
+                    : `Free plan includes ${FREE_LIMITS.chatMessages} AI coach messages/month. Buy credits or upgrade for unlimited coaching.`,
+                  code:  "NO_CREDITS",
+                }),
+                { status: 402, headers: { "Content-Type": "application/json" } }
+              );
+            }
           }
         }
 

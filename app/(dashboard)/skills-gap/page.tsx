@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
+import { OutOfCreditsModal } from "@/components/out-of-credits-modal";
 
 const CURRENT_SKILLS = ["Excel", "PowerPoint", "Communication", "Project Coordination", "Basic Python"];
 
@@ -58,6 +59,15 @@ export default function SkillsGapPage() {
   const [showSkillInput, setShowSkillInput] = useState(false);
   const [newSkill, setNewSkill] = useState("");
   const [currentSkills, setCurrentSkills] = useState(CURRENT_SKILLS);
+  const [creditsModal, setCreditsModal] = useState(false);
+  const [creditBalance, setCreditBalance] = useState(0);
+
+  useEffect(() => {
+    fetch("/api/credits/balance")
+      .then((r) => r.json())
+      .then((d) => setCreditBalance(d.balance ?? 0))
+      .catch(() => {});
+  }, []);
 
   const analyse = async () => {
     if (!targetRole.trim() || currentSkills.length === 0) return;
@@ -79,6 +89,11 @@ export default function SkillsGapPage() {
 
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
+        if (res.status === 402 && data.code === "NO_CREDITS") {
+          setCreditsModal(true);
+          setAnalyzing(false);
+          return;
+        }
         throw new Error(data.error || `Error ${res.status}`);
       }
 
@@ -107,6 +122,14 @@ export default function SkillsGapPage() {
   const totalWeeks = result?.missingSkills.reduce((acc, s) => acc + s.timeToLearnWeeks, 0) || 0;
 
   return (
+    <>
+    <OutOfCreditsModal
+      open={creditsModal}
+      onClose={() => setCreditsModal(false)}
+      featureLabel="Skills Gap analysis"
+      creditCost={3}
+      currentBalance={creditBalance}
+    />
     <div className="space-y-6">
       {/* Header */}
       <div>
@@ -364,5 +387,6 @@ export default function SkillsGapPage() {
         )}
       </AnimatePresence>
     </div>
+    </>
   );
 }

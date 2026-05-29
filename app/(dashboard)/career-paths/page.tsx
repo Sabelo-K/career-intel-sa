@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   AreaChart, Area, XAxis, YAxis, ResponsiveContainer, Tooltip, CartesianGrid,
@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { formatSalary } from "@/lib/utils";
+import { OutOfCreditsModal } from "@/components/out-of-credits-modal";
 
 const MOCK_SIMULATION = {
   currentRole: "Junior Software Developer",
@@ -75,6 +76,15 @@ export default function CareerPathsPage() {
   const [result, setResult] = useState<typeof MOCK_SIMULATION | null>(null);
   const [activeYear, setActiveYear] = useState<number | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [creditsModal, setCreditsModal] = useState(false);
+  const [creditBalance, setCreditBalance] = useState(0);
+
+  useEffect(() => {
+    fetch("/api/credits/balance")
+      .then((r) => r.json())
+      .then((d) => setCreditBalance(d.balance ?? 0))
+      .catch(() => {});
+  }, []);
 
   const simulate = async () => {
     if (!currentRole.trim() || !targetRole.trim()) return;
@@ -98,6 +108,11 @@ export default function CareerPathsPage() {
 
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
+        if (res.status === 402 && data.code === "NO_CREDITS") {
+          setCreditsModal(true);
+          setSimulating(false);
+          return;
+        }
         throw new Error(data.error || `Error ${res.status}`);
       }
 
@@ -129,6 +144,14 @@ export default function CareerPathsPage() {
   const maxSalary = result ? Math.max(...result.salaryProjection.map((s) => s.salary)) : 0;
 
   return (
+    <>
+    <OutOfCreditsModal
+      open={creditsModal}
+      onClose={() => setCreditsModal(false)}
+      featureLabel="Career Path simulation"
+      creditCost={3}
+      currentBalance={creditBalance}
+    />
     <div className="space-y-6">
       {/* Header */}
       <div>
@@ -365,5 +388,6 @@ export default function CareerPathsPage() {
         )}
       </AnimatePresence>
     </div>
+    </>
   );
 }

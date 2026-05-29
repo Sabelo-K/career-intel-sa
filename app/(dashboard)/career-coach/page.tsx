@@ -10,6 +10,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useFeedback } from "@/components/feedback-provider";
+import { OutOfCreditsModal } from "@/components/out-of-credits-modal";
 
 interface Message {
   id: string;
@@ -163,7 +164,17 @@ export default function CareerCoachPage() {
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [userMessageCount, setUserMessageCount] = useState(0);
+  const [creditsModal, setCreditsModal] = useState(false);
+  const [creditBalance, setCreditBalance] = useState(0);
   const maxFree = 15;
+
+  // Load credit balance once
+  useEffect(() => {
+    fetch("/api/credits/balance")
+      .then((r) => r.json())
+      .then((d) => setCreditBalance(d.balance ?? 0))
+      .catch(() => {});
+  }, []);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const lastUserMessageRef = useRef<string>("");
@@ -249,6 +260,16 @@ export default function CareerCoachPage() {
 
       if (!res.ok) {
         const body = await res.json().catch(() => ({ error: `HTTP ${res.status}` }));
+        // Show credits modal instead of inline error when user is out of credits
+        if (res.status === 402 && body.code === "NO_CREDITS") {
+          setCreditBalance((b) => b); // keep current balance (it's 0)
+          setCreditsModal(true);
+          // Remove the empty streaming placeholder
+          setMessages((prev) => prev.filter((m) => m.id !== assistantId));
+          setUserMessageCount((c) => Math.max(0, c - 1));
+          setIsLoading(false);
+          return;
+        }
         const httpErr = new Error(body.error || `HTTP ${res.status}`) as Error & { status: number };
         httpErr.status = res.status;
         throw httpErr;
@@ -348,6 +369,14 @@ export default function CareerCoachPage() {
   const remainingMessages = maxFree - userMessageCount;
 
   return (
+    <>
+    <OutOfCreditsModal
+      open={creditsModal}
+      onClose={() => setCreditsModal(false)}
+      featureLabel="AI Coach messages"
+      creditCost={1}
+      currentBalance={creditBalance}
+    />
     <div className="flex flex-col h-[calc(100svh-11rem)] md:h-[calc(100vh-8rem)] overflow-hidden">
       {/* Header */}
       <div className="flex items-start sm:items-center justify-between mb-3 md:mb-5 gap-3">
@@ -568,5 +597,6 @@ export default function CareerCoachPage() {
         </div>
       </div>
     </div>
+    </>
   );
 }

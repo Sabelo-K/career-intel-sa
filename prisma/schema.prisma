@@ -19,17 +19,19 @@ model User {
   planExpiresAt DateTime?
   payfastToken  String?
   onboarded     Boolean  @default(false)
+  credits       Int      @default(0)   // pay-as-you-go credit balance
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 
-  profile       Profile?
-  cvs           CV[]
-  chatSessions  ChatSession[]
-  careerPaths   CareerPath[]
-  skillsGaps    SkillsGap[]
-  jobAlerts     JobAlert[]
-  courseProgress CourseProgress[]
-  feedback      Feedback[]
+  profile            Profile?
+  cvs                CV[]
+  chatSessions       ChatSession[]
+  careerPaths        CareerPath[]
+  skillsGaps         SkillsGap[]
+  jobAlerts          JobAlert[]
+  courseProgress     CourseProgress[]
+  feedback           Feedback[]
+  creditTransactions CreditTransaction[]
 
   @@map("users")
 }
@@ -219,6 +221,18 @@ enum MessageRole {
   USER
   ASSISTANT
   SYSTEM
+}
+
+model CreditTransaction {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  amount      Int      // positive = purchase/bonus, negative = usage deduction
+  description String   // e.g. "Purchased Starter Pack", "AI Coach message"
+  packId      String?  // "starter" | "popular" | "value" — null for usage
+  createdAt   DateTime @default(now())
+
+  @@map("credit_transactions")
 }
 
 model Feedback {

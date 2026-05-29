@@ -10,6 +10,7 @@ import {
   monthlySkillsGaps,
   FREE_LIMITS,
 } from "@/lib/plan-gate";
+import { spendCredits } from "@/lib/credits";
 
 const SkillsGapSchema = z.object({
   currentSkills:   z.array(z.string()).min(1),
@@ -39,13 +40,17 @@ export async function POST(req: NextRequest) {
       if (!isPaid(plan)) {
         const used = await monthlySkillsGaps(dbUserEarly.id);
         if (used >= FREE_LIMITS.skillsGapAnalyses) {
-          return NextResponse.json(
-            {
-              error: `You have used all ${FREE_LIMITS.skillsGapAnalyses} free skills gap analyses this month. Upgrade to Premium for unlimited access.`,
-              code:  "LIMIT_REACHED",
-            },
-            { status: 402 }
-          );
+          // Try spending 3 credits before blocking
+          const spent = await spendCredits(dbUserEarly.id, "skills-gap", "Skills Gap analysis");
+          if (!spent) {
+            return NextResponse.json(
+              {
+                error: `You have used all ${FREE_LIMITS.skillsGapAnalyses} free skills gap analyses this month. Buy credits (3 per analysis) or upgrade for unlimited access.`,
+                code:  "NO_CREDITS",
+              },
+              { status: 402 }
+            );
+          }
         }
       }
     } catch {

@@ -8,7 +8,39 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { SA_COURSES, COURSE_PLATFORMS } from "@/lib/data/sa-courses";
 
-const CATEGORIES = ["All", "Data Science", "Cloud", "Software Dev", "Cybersecurity", "Business", "Project Management"];
+const CATEGORIES = [
+  "All",
+  "Data & AI",
+  "Software Dev",
+  "Cloud & DevOps",
+  "Cybersecurity",
+  "Finance",
+  "Engineering",
+  "Healthcare",
+  "Energy & Solar",
+  "Trades",
+  "Marketing",
+  "Hospitality",
+  "Education",
+  "Environment",
+];
+
+// Map category label → skill keywords for filtering
+const CATEGORY_SKILLS: Record<string, string[]> = {
+  "Data & AI":      ["Data Science","Machine Learning","Data Analysis","Python","SQL","Tableau","Power BI","Deep Learning","NLP","MLOps","AI","Data Visualization","Business Intelligence"],
+  "Software Dev":   ["JavaScript","React","Node.js","TypeScript","Python","Algorithms","Full Stack","Web Development"],
+  "Cloud & DevOps": ["AWS","Azure","GCP","Terraform","Docker","Kubernetes","DevOps","CI/CD","Cloud","Infrastructure as Code"],
+  "Cybersecurity":  ["Cybersecurity","Network Security","Ethical Hacking","SIEM","Incident Response","Penetration Testing","Security"],
+  "Finance":        ["Financial Modeling","IFRS","Accounting","CFA","Valuation","Bloomberg","Tax","Audit","Excel","Financial Analysis"],
+  "Engineering":    ["AutoCAD","Project Management","PLC","Structural Analysis","Renewable Energy","Engineering","ECSA","SANS Standards"],
+  "Healthcare":     ["Patient Care","Clinical Assessment","ICU","Nursing","Healthcare","EMR","Leadership","Medical"],
+  "Energy & Solar": ["Solar PV","Renewable Energy","HOMER","Battery Systems","Grid Integration","SAPVIA","EWSETA","Energy Storage"],
+  "Trades":         ["Welding","Plumbing","Electrical","SANS 10142","Fault Finding","Refrigeration","HVAC","Artisan","MERSETA","TVET","CETA"],
+  "Marketing":      ["SEO","Social Media","Google Analytics","Content Marketing","Meta Ads","Email Marketing","Digital Marketing"],
+  "Hospitality":    ["Hospitality","Food & Beverage","Chef","Culinary","Tourism","Kitchen","CATHSSETA"],
+  "Education":      ["Curriculum","Teaching","PGCE","EdTech","Assessment","Classroom"],
+  "Environment":    ["Environmental","GIS","Climate","EIA","Water Quality","Sustainability","ESG"],
+};
 
 export default function CoursesPage() {
   const searchParams = useSearchParams();
@@ -24,12 +56,19 @@ export default function CoursesPage() {
   }, [searchParams]);
 
   const filtered = SA_COURSES.filter((c) => {
-    const matchSearch = c.title.toLowerCase().includes(search.toLowerCase()) ||
-      c.provider.toLowerCase().includes(search.toLowerCase()) ||
-      c.skills.some((s) => s.toLowerCase().includes(search.toLowerCase()));
+    const q = search.toLowerCase();
+    const matchSearch = !q || c.title.toLowerCase().includes(q) ||
+      c.provider.toLowerCase().includes(q) ||
+      c.platform.toLowerCase().includes(q) ||
+      c.skills.some((s) => s.toLowerCase().includes(q));
     const matchFree = freeOnly ? c.price === "free" || c.price === 0 : true;
     const matchPlatform = selectedPlatform === "all" ? true : c.platform.toLowerCase().includes(selectedPlatform.toLowerCase());
-    return matchSearch && matchFree && matchPlatform;
+    const matchCategory = selectedCategory === "All" ? true :
+      (CATEGORY_SKILLS[selectedCategory] ?? []).some((kw) =>
+        c.skills.some((s) => s.toLowerCase().includes(kw.toLowerCase())) ||
+        c.title.toLowerCase().includes(kw.toLowerCase())
+      );
+    return matchSearch && matchFree && matchPlatform && matchCategory;
   });
 
   return (
@@ -41,9 +80,26 @@ export default function CoursesPage() {
         </p>
       </div>
 
+      {/* Category filter */}
+      <div className="flex flex-wrap gap-2">
+        {CATEGORIES.map((cat) => (
+          <button
+            key={cat}
+            onClick={() => setSelectedCategory(cat)}
+            className={`px-3 py-1.5 rounded-full border text-xs font-medium transition-all ${
+              selectedCategory === cat
+                ? "border-violet-500/50 bg-violet-500/20 text-violet-300"
+                : "border-border text-muted-foreground hover:text-foreground hover:bg-secondary"
+            }`}
+          >
+            {cat}
+          </button>
+        ))}
+      </div>
+
       {/* Platform chips */}
       <div className="bg-card border border-border rounded-xl p-4">
-        <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-3">Learning Platforms</div>
+        <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-3">Filter by Platform</div>
         <div className="flex flex-wrap gap-2">
           {COURSE_PLATFORMS.map((p) => (
             <button
@@ -98,6 +154,22 @@ export default function CoursesPage() {
         >
           Free / Subsidised Only
         </button>
+      </div>
+
+      {/* Results count */}
+      <div className="flex items-center justify-between">
+        <p className="text-sm text-muted-foreground">
+          <span className="text-foreground font-semibold">{filtered.length}</span> course{filtered.length !== 1 ? "s" : ""} found
+          {selectedCategory !== "All" && <span className="ml-1">in <span className="text-violet-300">{selectedCategory}</span></span>}
+        </p>
+        {(search || selectedCategory !== "All" || selectedPlatform !== "all" || freeOnly) && (
+          <button
+            onClick={() => { setSearch(""); setSelectedCategory("All"); setSelectedPlatform("all"); setFreeOnly(false); }}
+            className="text-xs text-muted-foreground hover:text-foreground transition-colors"
+          >
+            Clear all filters ×
+          </button>
+        )}
       </div>
 
       {/* Results */}

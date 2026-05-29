@@ -20,15 +20,17 @@ export async function POST(req: NextRequest) {
     const { userId } = await auth();
     if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
+    console.log("[onboarding/complete] userId:", userId);
+
     const body   = await req.json();
     const parsed = Schema.parse(body);
 
     const clerkUser = await currentUser();
-    const dbUser = await getOrCreateUser(
-      userId,
-      clerkUser?.primaryEmailAddress?.emailAddress,
-      clerkUser?.fullName
-    );
+    const email = clerkUser?.primaryEmailAddress?.emailAddress;
+    console.log("[onboarding/complete] email:", email);
+
+    const dbUser = await getOrCreateUser(userId, email, clerkUser?.fullName);
+    console.log("[onboarding/complete] dbUser.id:", dbUser.id, "onboarded:", dbUser.onboarded);
 
     // Upsert profile with onboarding data
     await db.profile.upsert({
@@ -47,19 +49,25 @@ export async function POST(req: NextRequest) {
         yearsExperience: parsed.yearsExperience ?? 0,
       },
     });
+    console.log("[onboarding/complete] profile upserted");
 
     // Mark user as onboarded
     await db.user.update({
       where: { id: dbUser.id },
       data:  { onboarded: true },
     });
+    console.log("[onboarding/complete] onboarded=true set — done");
 
     return NextResponse.json({ success: true });
   } catch (err) {
     if (err instanceof z.ZodError) {
       return NextResponse.json({ error: "Validation error", details: err.errors }, { status: 400 });
     }
-    console.error("Onboarding complete error:", err);
-    return NextResponse.json({ error: "Failed to save onboarding data" }, { status: 500 });
+    // Log the full error object so we can see what's failing in Vercel logs
+    console.error("[onboarding/complete] FATAL ERROR:", JSON.stringify(err, Object.getOwnPropertyNames(err)));
+    return NextResponse.json({
+      error: "Failed to save onboarding data",
+      detail: (err as Error)?.message ?? "unknown",
+    }, { status: 500 });
   }
 }

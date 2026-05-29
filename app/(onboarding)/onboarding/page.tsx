@@ -34,6 +34,7 @@ export default function OnboardingPage() {
   const router = useRouter();
   const [step, setStep] = useState(1);
   const [saving, setSaving] = useState(false);
+  const [skipping, setSkipping] = useState(false);
   const [saveError, setSaveError] = useState("");
   const [currentRole, setCurrentRole] = useState("");
   const [yearsExperience, setYearsExperience] = useState("");
@@ -57,6 +58,26 @@ export default function OnboardingPage() {
     if (step === 2) return targetRole.trim().length > 0;
     if (step === 3) return skills.length >= 1;
     return false;
+  };
+
+  // "Skip for now" — calls the skip API so getOrCreateUser re-links the
+  // clerkId and marks the user as onboarded before navigating.
+  const skip = async () => {
+    setSkipping(true);
+    setSaveError("");
+    try {
+      const res = await fetch("/api/onboarding/skip", { method: "POST" });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        setSaveError(data?.error ?? `Could not skip (${res.status}) — please try again.`);
+        setSkipping(false);
+        return;
+      }
+      router.push("/dashboard");
+    } catch {
+      setSaveError("Network error — check your connection and try again.");
+      setSkipping(false);
+    }
   };
 
   const finish = async () => {
@@ -280,10 +301,11 @@ export default function OnboardingPage() {
           <Button
             variant="ghost"
             size="sm"
-            onClick={() => step > 1 ? setStep(step - 1) : router.push("/dashboard")}
+            onClick={() => step > 1 ? setStep(step - 1) : skip()}
+            disabled={skipping}
             className="text-muted-foreground"
           >
-            {step === 1 ? "Skip for now" : "Back"}
+            {step === 1 ? (skipping ? "Setting up…" : "Skip for now") : "Back"}
           </Button>
 
           <div className="flex items-center gap-2">

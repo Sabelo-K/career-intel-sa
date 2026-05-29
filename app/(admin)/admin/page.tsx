@@ -220,9 +220,9 @@ export default function AdminPage() {
                 stat.color === "blue"    ? "text-blue-400"    : "text-pink-400"
               }`} />
             </div>
-            {loading || stat.value === undefined
+            {loading
               ? <Skeleton className="h-7 w-16 mb-1" />
-              : <div className="text-xl font-bold text-foreground">{stat.value.toLocaleString()}</div>
+              : <div className="text-xl font-bold text-foreground">{(stat.value ?? 0).toLocaleString()}</div>
             }
             <div className="text-xs text-muted-foreground mt-0.5">{stat.label}</div>
           </div>
@@ -246,9 +246,9 @@ export default function AdminPage() {
                 stat.color === "amber"   ? "text-amber-400"   : "text-indigo-400"
               }`} />
             </div>
-            {loading || stat.value === undefined
+            {loading
               ? <Skeleton className="h-8 w-20 mb-1" />
-              : <div className="text-2xl font-bold text-foreground">{stat.value.toLocaleString()}</div>
+              : <div className="text-2xl font-bold text-foreground">{(stat.value ?? 0).toLocaleString()}</div>
             }
             <div className="text-xs text-muted-foreground mt-1">{stat.desc}</div>
           </div>

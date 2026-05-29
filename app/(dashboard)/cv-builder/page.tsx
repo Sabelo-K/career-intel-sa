@@ -1,7 +1,7 @@
 "use client";
 
 import { generateCV, generateRevampedCV, generateBuiltCV, CVTemplateData, CVBuiltData } from "@/lib/cv-templates";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Upload, FileText, Zap, Download, CheckCircle2, AlertCircle,
@@ -259,7 +259,7 @@ function CVPreview({ data }: { data: CVData }) {
 
 // ─── Build from Scratch Form ──────────────────────────────────────────────────
 
-function BuildFromScratch() {
+function BuildFromScratch({ isPaid }: { isPaid: boolean }) {
   const [step, setStep] = useState(1);
   const [cv, setCv] = useState<CVData>(EMPTY_CV);
   const [skillInput, setSkillInput] = useState("");
@@ -308,7 +308,7 @@ function BuildFromScratch() {
   };
 
   const handleDownload = () => {
-    const html = generateBuiltCV(cv);
+    const html = generateBuiltCV(cv, !isPaid);
     const blob = new Blob([html], { type: "text/html" });
     const url = URL.createObjectURL(blob);
     const win = window.open(url, "_blank");
@@ -728,7 +728,15 @@ export default function CVBuilderPage() {
   const [revampError, setRevampError] = useState<string | null>(null);
   const [selectedTemplate, setSelectedTemplate] = useState("modern");
   const [expandedSection, setExpandedSection] = useState<string | null>("suggestions");
+  const [isPaid, setIsPaid] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    fetch("/api/dashboard")
+      .then((r) => r.json())
+      .then((d) => { if (d.plan && d.plan !== "FREE") setIsPaid(true); })
+      .catch(() => {});
+  }, []);
 
   const handleFile = async (file: File) => {
     if (!file) return;
@@ -788,7 +796,7 @@ export default function CVBuilderPage() {
         skills: analysis.skills?.length ? analysis.skills : analysis.extractedSkills,
         certifications: analysis.certifications,
       };
-      html = generateRevampedCV(selectedTemplate, builtData);
+      html = generateRevampedCV(selectedTemplate, builtData, !isPaid);
     } else {
       // Fallback: placeholder template with AI analysis
       const templateData: CVTemplateData = {
@@ -797,7 +805,7 @@ export default function CVBuilderPage() {
         missingKeywords: analysis.missingKeywords,
         suggestions: analysis.suggestions,
       };
-      html = generateCV(selectedTemplate, templateData);
+      html = generateCV(selectedTemplate, templateData, !isPaid);
     }
 
     const blob = new Blob([html], { type: "text/html" });
@@ -1113,7 +1121,7 @@ export default function CVBuilderPage() {
 
         {/* ── Build tab ── */}
         <TabsContent value="build">
-          <BuildFromScratch />
+          <BuildFromScratch isPaid={isPaid} />
         </TabsContent>
       </Tabs>
     </div>

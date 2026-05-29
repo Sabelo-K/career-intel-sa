@@ -103,7 +103,7 @@ export function Sidebar() {
   return (
     <>
       {/* ── Mobile top bar ─────────────────────────────────────────────────── */}
-      <header className="md:hidden fixed top-0 left-0 right-0 h-14 bg-card border-b border-border flex items-center justify-between px-4 z-40">
+      <header className="md:hidden fixed top-0 left-0 right-0 h-14 bg-white/[0.06] backdrop-blur-2xl border-b border-white/10 flex items-center justify-between px-4 z-40">
         <Link href="/dashboard">
           <Logo />
         </Link>
@@ -136,14 +136,16 @@ export function Sidebar() {
       {/* Mobile: slide-in drawer from left                                      */}
       <aside
         className={cn(
-          "fixed left-0 top-0 h-screen w-64 md:w-60 border-r border-border bg-card flex flex-col z-50",
+          "fixed left-0 top-0 h-screen w-64 md:w-60 flex flex-col z-50",
+          "border-r border-white/10",
+          "bg-white/[0.06] backdrop-blur-2xl",
           "transition-transform duration-300 ease-in-out",
           "md:translate-x-0",
-          mobileOpen ? "translate-x-0 shadow-2xl" : "-translate-x-full md:translate-x-0"
+          mobileOpen ? "translate-x-0 shadow-2xl shadow-violet-950/50" : "-translate-x-full md:translate-x-0"
         )}
       >
         {/* Logo row */}
-        <div className="h-16 flex items-center justify-between px-5 border-b border-border flex-shrink-0">
+        <div className="h-16 flex items-center justify-between px-5 border-b border-white/10 flex-shrink-0">
           <Link href="/dashboard">
             <Logo />
           </Link>
@@ -170,16 +172,16 @@ export function Sidebar() {
                     className={cn(
                       "flex items-center gap-3 px-3 py-3 md:py-2.5 rounded-lg text-sm font-medium transition-all duration-150 group",
                       isActive
-                        ? "bg-indigo-600/15 text-indigo-300 border border-indigo-500/20"
-                        : "text-muted-foreground hover:text-foreground hover:bg-secondary"
+                        ? "bg-white/10 text-white border border-white/15 backdrop-blur-sm"
+                        : "text-white/40 hover:text-white/80 hover:bg-white/[0.06]"
                     )}
                   >
                     <item.icon
                       className={cn(
                         "w-4 h-4 flex-shrink-0 transition-colors",
                         isActive
-                          ? "text-indigo-400"
-                          : "text-muted-foreground group-hover:text-foreground"
+                          ? "text-violet-300"
+                          : "text-white/35 group-hover:text-white/70"
                       )}
                     />
                     <span className="flex-1">{item.label}</span>
@@ -196,14 +198,15 @@ export function Sidebar() {
           {!isPaid && credits !== null && (
             <div className="mt-4 px-1">
               <Link href="/buy-credits">
-                <div className="flex items-center justify-between px-3 py-2.5 rounded-lg bg-amber-500/10 border border-amber-500/20 hover:bg-amber-500/15 transition-colors cursor-pointer">
+                <div className="flex items-center justify-between px-3 py-2.5 rounded-lg bg-white/[0.07] border border-white/10 hover:bg-white/[0.11] transition-colors cursor-pointer relative overflow-hidden">
+                  <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-orange-400/30 to-transparent" />
                   <div className="flex items-center gap-2">
-                    <Coins className="w-3.5 h-3.5 text-amber-400" />
-                    <span className="text-xs font-medium text-amber-300">
+                    <Coins className="w-3.5 h-3.5 text-orange-400" />
+                    <span className="text-xs font-medium text-white/80">
                       {credits} credit{credits !== 1 ? "s" : ""}
                     </span>
                   </div>
-                  <span className="text-[10px] text-amber-400/70 font-medium">Top up →</span>
+                  <span className="text-[10px] text-orange-400/70 font-medium">Top up →</span>
                 </div>
               </Link>
             </div>
@@ -211,17 +214,18 @@ export function Sidebar() {
 
           {/* Upgrade card — hidden for paid users */}
           {!isPaid && (
-            <div className="mt-3 p-4 rounded-xl bg-gradient-to-br from-indigo-600/15 to-violet-600/10 border border-indigo-500/20">
+            <div className="mt-3 p-4 rounded-xl bg-white/[0.07] border border-white/10 backdrop-blur-sm relative overflow-hidden">
+              <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-violet-400/40 to-transparent" />
               <div className="flex items-center gap-2 mb-2">
                 <Crown className="w-4 h-4 text-amber-400" />
                 <span className="text-sm font-semibold text-white">Go Premium</span>
               </div>
-              <p className="text-xs text-white/50 mb-3 leading-relaxed">
+              <p className="text-xs text-white/40 mb-3 leading-relaxed">
                 Unlock unlimited AI coaching, simulations &amp; salary forecasting.
               </p>
               <Link
                 href="/upgrade"
-                className="flex items-center justify-center gap-1.5 w-full py-2.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 active:scale-95 text-white text-xs font-semibold transition-all touch-manipulation"
+                className="flex items-center justify-center gap-1.5 w-full py-2.5 rounded-lg bg-gradient-to-r from-violet-600 to-orange-500 hover:from-violet-500 hover:to-orange-400 active:scale-95 text-white text-xs font-semibold transition-all touch-manipulation"
               >
                 <Zap className="w-3 h-3" />
                 From R49/mo
@@ -232,7 +236,7 @@ export function Sidebar() {
         </nav>
 
         {/* Bottom: profile + settings */}
-        <div className="border-t border-border p-3 space-y-0.5 flex-shrink-0">
+        <div className="border-t border-white/10 p-3 space-y-0.5 flex-shrink-0">
           {BOTTOM_ITEMS.map((item) => {
             const isActive = pathname === item.href;
             return (
@@ -258,7 +262,7 @@ export function Sidebar() {
             <Link href="/terms" className="text-[10px] text-muted-foreground hover:text-foreground transition-colors">Terms</Link>
           </div>
           {/* Plan badge row */}
-          <div className="mx-3 mt-1 flex items-center justify-between px-2.5 py-1.5 rounded-lg bg-indigo-500/10 border border-indigo-500/20">
+          <div className="mx-3 mt-1 flex items-center justify-between px-2.5 py-1.5 rounded-lg bg-white/[0.06] border border-white/10">
             <span className={cn(
               "text-[11px] font-semibold",
               isPaid ? "text-indigo-300" : "text-muted-foreground"

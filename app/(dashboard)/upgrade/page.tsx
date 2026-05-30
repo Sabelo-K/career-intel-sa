@@ -204,7 +204,7 @@ export default function UpgradePage() {
       </div>
 
       {/* Plan cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mt-4">
         {PLANS.map((plan, i) => {
           const Icon      = plan.icon;
           const isLoading = loading === plan.key;
@@ -221,7 +221,7 @@ export default function UpgradePage() {
               transition={{ delay: i * 0.08 }}
               className={`relative rounded-2xl border p-5 flex flex-col ${plan.color} ${
                 plan.highlight ? "ring-1 ring-indigo-500/40 shadow-lg shadow-indigo-500/10" : ""
-              }`}
+              } ${plan.badge ? "mt-3" : ""}`}
             >
               {/* Badge */}
               {plan.badge && (

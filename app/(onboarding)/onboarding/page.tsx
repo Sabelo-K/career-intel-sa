@@ -4,9 +4,10 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useUser } from "@clerk/nextjs";
 import { motion, AnimatePresence } from "framer-motion";
-import { Sparkles, Briefcase, Target, Code, ArrowRight, CheckCircle2, Zap } from "lucide-react";
+import { Sparkles, Briefcase, Target, Code, ArrowRight, CheckCircle2, Zap, BookOpen } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { CAPS_SUBJECTS, SUBJECT_GROUPS } from "@/lib/data/sa-subjects";
 
 const POPULAR_SKILLS = [
   "Python", "JavaScript", "SQL", "Excel", "Power BI", "React",
@@ -23,11 +24,26 @@ const ROLE_SUGGESTIONS = [
   "Accountant", "Cybersecurity Analyst", "UX Designer",
 ];
 
-const STEPS = [
-  { id: 1, title: "Your Current Role", icon: Briefcase, color: "indigo" },
-  { id: 2, title: "Your Dream Role", icon: Target, color: "emerald" },
-  { id: 3, title: "Your Skills", icon: Code, color: "violet" },
+const HS_ROLES = [
+  "Software Engineer", "Medical Doctor", "Chartered Accountant",
+  "Civil Engineer", "Data Scientist", "Nurse",
+  "Electrician", "Teacher", "Financial Analyst",
 ];
+
+const BASE_STEPS = [
+  { id: 1, title: "Your Situation",  icon: Briefcase, color: "indigo" },
+  { id: 2, title: "Your Dream Role", icon: Target,    color: "emerald" },
+  { id: 3, title: "Your Skills",     icon: Code,      color: "violet" },
+];
+
+const HS_STEP = { id: 4, title: "Your Subjects", icon: BookOpen, color: "amber" };
+
+const HS_KEYWORDS = ["high school", "grade 10", "grade 11", "grade 12", "matric", "learner", "scholar"];
+
+function isHighSchoolStudent(role: string): boolean {
+  const lower = role.toLowerCase();
+  return HS_KEYWORDS.some((kw) => lower.includes(kw));
+}
 
 export default function OnboardingPage() {
   const { user } = useUser();
@@ -41,8 +57,12 @@ export default function OnboardingPage() {
   const [targetRole, setTargetRole] = useState("");
   const [skills, setSkills] = useState<string[]>([]);
   const [newSkill, setNewSkill] = useState("");
+  const [subjects, setSubjects] = useState<string[]>([]);
 
   const firstName = user?.firstName || "there";
+  const showSubjectStep = isHighSchoolStudent(currentRole);
+  const STEPS = showSubjectStep ? [...BASE_STEPS, HS_STEP] : BASE_STEPS;
+  const totalSteps = STEPS.length;
 
   const addSkill = (skill: string) => {
     if (skill.trim() && !skills.includes(skill.trim())) {
@@ -53,15 +73,20 @@ export default function OnboardingPage() {
 
   const removeSkill = (skill: string) => setSkills(skills.filter((s) => s !== skill));
 
+  const toggleSubject = (subject: string) => {
+    setSubjects((prev) =>
+      prev.includes(subject) ? prev.filter((s) => s !== subject) : [...prev, subject]
+    );
+  };
+
   const canNext = () => {
     if (step === 1) return currentRole.trim().length > 0;
     if (step === 2) return targetRole.trim().length > 0;
     if (step === 3) return skills.length >= 1;
+    if (step === 4) return subjects.length >= 1; // HS subject step
     return false;
   };
 
-  // "Skip for now" — calls the skip API so getOrCreateUser re-links the
-  // clerkId and marks the user as onboarded before navigating.
   const skip = async () => {
     setSkipping(true);
     setSaveError("");
@@ -92,6 +117,7 @@ export default function OnboardingPage() {
           targetRole:      targetRole.trim(),
           skills,
           yearsExperience: yearsExperience ? Number(yearsExperience) : undefined,
+          subjects:        showSubjectStep ? subjects : undefined,
         }),
       });
 
@@ -99,15 +125,17 @@ export default function OnboardingPage() {
         const data = await res.json().catch(() => ({}));
         setSaveError(data?.error ?? `Server error (${res.status}) — please try again.`);
         setSaving(false);
-        return; // don't navigate; keep user on the form
+        return;
       }
 
-      router.push("/dashboard");
+      router.push(showSubjectStep ? "/high-school" : "/dashboard");
     } catch {
       setSaveError("Network error — check your connection and try again.");
       setSaving(false);
     }
   };
+
+  const isLastStep = step === totalSteps;
 
   return (
     <div className="min-h-screen bg-background flex flex-col items-center justify-center p-4">
@@ -130,8 +158,8 @@ export default function OnboardingPage() {
               <div key={s.id} className="flex items-center gap-2 flex-1">
                 <div className={`flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium transition-all ${
                   active ? "bg-indigo-600 text-white" :
-                  done ? "bg-indigo-500/20 text-indigo-300" :
-                  "bg-secondary text-muted-foreground"
+                  done   ? "bg-indigo-500/20 text-indigo-300" :
+                           "bg-secondary text-muted-foreground"
                 }`}>
                   {done ? <CheckCircle2 className="w-3.5 h-3.5" /> : <Icon className="w-3.5 h-3.5" />}
                   <span className="hidden sm:inline">{s.title}</span>
@@ -159,7 +187,7 @@ export default function OnboardingPage() {
                   <Input
                     value={currentRole}
                     onChange={(e) => setCurrentRole(e.target.value)}
-                    placeholder="e.g. Data Analyst, Student, Unemployed, Junior Developer..."
+                    placeholder="e.g. Data Analyst, High School Student, Graduate, Unemployed..."
                     onKeyDown={(e) => e.key === "Enter" && canNext() && setStep(2)}
                     autoFocus
                   />
@@ -178,7 +206,7 @@ export default function OnboardingPage() {
                 <div>
                   <div className="text-xs text-muted-foreground mb-2">Quick select:</div>
                   <div className="flex flex-wrap gap-1.5">
-                    {["Student", "Graduate", "Unemployed", "Career Change", "Self-employed"].map((r) => (
+                    {["High School Student", "Student", "Graduate", "Unemployed", "Career Change", "Self-employed"].map((r) => (
                       <button
                         key={r}
                         onClick={() => setCurrentRole(r)}
@@ -193,6 +221,15 @@ export default function OnboardingPage() {
                     ))}
                   </div>
                 </div>
+
+                {showSubjectStep && (
+                  <div className="flex items-start gap-2 bg-amber-500/10 border border-amber-500/20 rounded-xl px-3 py-2.5">
+                    <BookOpen className="w-3.5 h-3.5 text-amber-400 mt-0.5 flex-shrink-0" />
+                    <p className="text-xs text-amber-300 leading-relaxed">
+                      We&apos;ll add a subject selection step so we can match you to careers that suit your Grade 10–12 subjects.
+                    </p>
+                  </div>
+                )}
               </div>
             </motion.div>
           )}
@@ -201,7 +238,7 @@ export default function OnboardingPage() {
           {step === 2 && (
             <motion.div key="step2" initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -30 }} className="space-y-5">
               <div>
-                <h1 className="text-2xl font-bold text-foreground">What&apos;s your dream role? 🎯</h1>
+                <h1 className="text-2xl font-bold text-foreground">What&apos;s your dream career? 🎯</h1>
                 <p className="text-muted-foreground text-sm mt-1">This powers your skills gap analysis, salary data, and AI coaching.</p>
               </div>
 
@@ -218,9 +255,9 @@ export default function OnboardingPage() {
                 </div>
 
                 <div>
-                  <div className="text-xs text-muted-foreground mb-2">Popular in SA right now:</div>
+                  <div className="text-xs text-muted-foreground mb-2">{showSubjectStep ? "Popular career goals for Grade 12 leavers:" : "Popular in SA right now:"}</div>
                   <div className="flex flex-wrap gap-1.5">
-                    {ROLE_SUGGESTIONS.slice(0, 8).map((r) => (
+                    {(showSubjectStep ? HS_ROLES : ROLE_SUGGESTIONS.slice(0, 8)).map((r) => (
                       <button
                         key={r}
                         onClick={() => setTargetRole(r)}
@@ -244,7 +281,11 @@ export default function OnboardingPage() {
             <motion.div key="step3" initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -30 }} className="space-y-5">
               <div>
                 <h1 className="text-2xl font-bold text-foreground">What are your top skills? ⚡</h1>
-                <p className="text-muted-foreground text-sm mt-1">Add at least 3 skills — you can always edit these later in your profile.</p>
+                <p className="text-muted-foreground text-sm mt-1">
+                  {showSubjectStep
+                    ? "Add at least 1 skill — even basic ones like Computer Literacy or Communication count."
+                    : "Add at least 3 skills — you can always edit these later in your profile."}
+                </p>
               </div>
 
               <div className="bg-card border border-border rounded-xl p-5 space-y-4">
@@ -287,6 +328,56 @@ export default function OnboardingPage() {
               </div>
             </motion.div>
           )}
+
+          {/* Step 4 — CAPS Subjects (high school only) */}
+          {step === 4 && showSubjectStep && (
+            <motion.div key="step4" initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -30 }} className="space-y-5">
+              <div>
+                <h1 className="text-2xl font-bold text-foreground">Which subjects do you take? 📚</h1>
+                <p className="text-muted-foreground text-sm mt-1">
+                  Select your Grade 10–12 CAPS subjects. We&apos;ll show you exactly which careers you can access.
+                </p>
+              </div>
+
+              <div className="bg-card border border-border rounded-xl p-5 space-y-5">
+                {SUBJECT_GROUPS.map((group) => (
+                  <div key={group.label}>
+                    <div className="text-xs font-semibold text-muted-foreground mb-2">{group.label}</div>
+                    <div className="flex flex-wrap gap-1.5">
+                      {group.subjects.map((subject) => {
+                        const selected = subjects.includes(subject);
+                        return (
+                          <button
+                            key={subject}
+                            onClick={() => toggleSubject(subject)}
+                            className={`text-xs px-2.5 py-1.5 rounded-full border transition-all font-medium ${
+                              selected
+                                ? group.color === "indigo"  ? "border-indigo-500/60 bg-indigo-500/20 text-indigo-300"
+                                : group.color === "emerald" ? "border-emerald-500/60 bg-emerald-500/20 text-emerald-300"
+                                : group.color === "violet"  ? "border-violet-500/60 bg-violet-500/20 text-violet-300"
+                                : group.color === "amber"   ? "border-amber-500/60 bg-amber-500/20 text-amber-300"
+                                : group.color === "blue"    ? "border-blue-500/60 bg-blue-500/20 text-blue-300"
+                                :                             "border-pink-500/60 bg-pink-500/20 text-pink-300"
+                                : "border-border text-muted-foreground hover:text-foreground hover:border-border/60"
+                            }`}
+                          >
+                            {selected && "✓ "}{subject}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                ))}
+
+                {subjects.length > 0 && (
+                  <div className="flex items-center gap-2 pt-1">
+                    <CheckCircle2 className="w-4 h-4 text-emerald-400 flex-shrink-0" />
+                    <span className="text-xs text-emerald-400">{subjects.length} subject{subjects.length !== 1 ? "s" : ""} selected</span>
+                  </div>
+                )}
+              </div>
+            </motion.div>
+          )}
         </AnimatePresence>
 
         {/* Error banner */}
@@ -309,8 +400,8 @@ export default function OnboardingPage() {
           </Button>
 
           <div className="flex items-center gap-2">
-            <span className="text-xs text-muted-foreground">{step} of {STEPS.length}</span>
-            {step < STEPS.length ? (
+            <span className="text-xs text-muted-foreground">{step} of {totalSteps}</span>
+            {!isLastStep ? (
               <Button
                 variant="indigo"
                 size="sm"
@@ -330,6 +421,8 @@ export default function OnboardingPage() {
               >
                 {saving ? (
                   <><motion.div animate={{ rotate: 360 }} transition={{ duration: 1, repeat: Infinity, ease: "linear" }}><Zap className="w-3.5 h-3.5" /></motion.div> Setting up...</>
+                ) : showSubjectStep ? (
+                  <><BookOpen className="w-3.5 h-3.5" /> Go to Career Hub</>
                 ) : (
                   <><Sparkles className="w-3.5 h-3.5" /> Go to Dashboard</>
                 )}

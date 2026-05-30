@@ -15,6 +15,7 @@ export interface UserProfile {
   province?: Province;
   yearsExperience?: number;
   skills: string[];
+  subjects?: string[];      // CAPS school subjects — populated for high school students
   employabilityScore?: number;
 }
 

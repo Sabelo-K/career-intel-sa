@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import React, { useState } from "react";
 import { motion } from "framer-motion";
 import {
   BarChart, Bar, XAxis, YAxis, ResponsiveContainer, Tooltip, Cell,
@@ -14,6 +14,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { SA_CAREERS, SA_SECTORS, SCARCE_SKILLS } from "@/lib/data/sa-careers";
+import { CAREER_SUBJECTS } from "@/lib/data/sa-subjects";
 import { SA_MARKET_STATS } from "@/lib/data/sa-provinces";
 import { formatSalaryRange, getDemandBadgeColor, getTrendLabel, getAutomationRiskLabel } from "@/lib/utils";
 
@@ -214,6 +215,7 @@ const OUTLOOK_LABEL: Record<string, { label: string; color: string }> = {
 function CareerDetailDrawer({ career, onClose }: { career: (typeof SA_CAREERS)[0]; onClose: () => void }) {
   const router = useRouter();
   const { label: automationLabel } = getAutomationRiskLabel(career.automationRisk);
+  const subjectReqs = CAREER_SUBJECTS[career.id];
   const outlook = OUTLOOK_LABEL[career.futureOutlook] ?? { label: career.futureOutlook, color: "text-foreground" };
   const avgK = Math.round(career.avgSalaryZar / 1000);
 
@@ -320,6 +322,36 @@ function CareerDetailDrawer({ career, onClose }: { career: (typeof SA_CAREERS)[0
               ))}
             </div>
           </div>
+
+          {/* High school subject requirements */}
+          {subjectReqs && (
+            <div className="bg-card border border-amber-500/20 rounded-xl p-4">
+              <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-3 flex items-center gap-1.5">
+                <GraduationCap className="w-3.5 h-3.5 text-amber-400" />
+                Grade 12 Subject Requirements
+              </h3>
+              {subjectReqs.required.length > 0 && (
+                <div className="mb-2">
+                  <div className="text-xs font-medium text-amber-400 mb-1.5">Required for entry:</div>
+                  <div className="flex flex-wrap gap-1.5">
+                    {subjectReqs.required.map((s) => (
+                      <span key={s} className="text-xs bg-amber-500/15 border border-amber-500/30 text-amber-300 px-2 py-0.5 rounded-full">{s}</span>
+                    ))}
+                  </div>
+                </div>
+              )}
+              {subjectReqs.recommended.length > 0 && (
+                <div>
+                  <div className="text-xs font-medium text-muted-foreground mb-1.5">Helpful to have:</div>
+                  <div className="flex flex-wrap gap-1.5">
+                    {subjectReqs.recommended.map((s) => (
+                      <span key={s} className="text-xs bg-secondary border border-border text-muted-foreground px-2 py-0.5 rounded-full">{s}</span>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
 
           {/* Details grid */}
           <div className="grid grid-cols-2 gap-3">
@@ -491,6 +523,16 @@ export default function JobMarketPage() {
   const [filter, setFilter] = useState("all");
   const [selectedCareer, setSelectedCareer] = useState<(typeof SA_CAREERS)[0] | null>(null);
   const [provinceFilter, setProvinceFilter] = useState("all");
+  const [userSubjects, setUserSubjects] = useState<string[]>([]);
+
+  // Load user's CAPS subjects for the "My Subjects" filter
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  React.useEffect(() => {
+    fetch("/api/profile")
+      .then((r) => r.json())
+      .then(({ profile }) => { if (profile?.subjects?.length) setUserSubjects(profile.subjects); })
+      .catch(() => {});
+  }, []);
 
   const filtered = SA_CAREERS
     .filter((c) => {
@@ -501,7 +543,13 @@ export default function JobMarketPage() {
         filter === "remote" ? c.remoteFriendly :
         filter === "high-demand" ? c.demandScore >= 85 :
         filter === "growing" ? ["GROWING", "STRONG_GROWTH", "EXPLOSIVE_GROWTH"].includes(c.growthTrend) :
-        filter === "low-risk" ? c.automationRisk < 30 : true;
+        filter === "low-risk" ? c.automationRisk < 30 :
+        filter === "my-subjects" ? (() => {
+          if (userSubjects.length === 0) return true;
+          const reqs = CAREER_SUBJECTS[c.id];
+          if (!reqs) return false;
+          return reqs.required.every((s) => userSubjects.includes(s));
+        })() : true;
       const matchProvince =
         provinceFilter === "all" ? true :
         (c.topProvinces ?? []).includes(provinceFilter);
@@ -572,13 +620,14 @@ export default function JobMarketPage() {
                 className="pl-9"
               />
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 flex-wrap">
               {[
                 { key: "all", label: "All" },
                 { key: "high-demand", label: "High Demand" },
                 { key: "growing", label: "Growing" },
                 { key: "remote", label: "Remote" },
                 { key: "low-risk", label: "Low AI Risk" },
+                ...(userSubjects.length > 0 ? [{ key: "my-subjects", label: "My Subjects ✓" }] : []),
               ].map((f) => (
                 <button
                   key={f.key}

@@ -48,6 +48,7 @@ model Profile {
   educationLevel      EducationLevel?
   industry            String?
   skills              String[]
+  subjects            String[]  // CAPS school subjects — used for high school career guidance
   employabilityScore  Int?
   salaryExpectation   Int?
   isOpenToWork        Boolean   @default(false)

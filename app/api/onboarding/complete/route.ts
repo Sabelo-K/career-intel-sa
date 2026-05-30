@@ -14,6 +14,7 @@ const Schema = z.object({
   targetRole:   z.string().min(1),
   skills:       z.array(z.string()).min(1),
   yearsExperience: z.number().min(0).max(60).optional(),
+  subjects:     z.array(z.string()).optional(),
 });
 
 export async function POST(req: NextRequest) {
@@ -41,6 +42,7 @@ export async function POST(req: NextRequest) {
         targetRole:      parsed.targetRole,
         skills:          parsed.skills,
         yearsExperience: parsed.yearsExperience,
+        ...(parsed.subjects?.length ? { subjects: parsed.subjects } : {}),
       },
       create: {
         userId:          dbUser.id,
@@ -48,6 +50,7 @@ export async function POST(req: NextRequest) {
         targetRole:      parsed.targetRole,
         skills:          parsed.skills,
         yearsExperience: parsed.yearsExperience ?? 0,
+        subjects:        parsed.subjects ?? [],
       },
     });
     console.log("[onboarding/complete] profile upserted");

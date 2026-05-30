@@ -21,7 +21,7 @@ const store = new Map<string, RateWindow>();
 if (typeof setInterval !== "undefined") {
   setInterval(() => {
     const now = Date.now();
-    for (const [key, win] of store) {
+    for (const [key, win] of Array.from(store)) {
       if (win.resetAt < now) store.delete(key);
     }
   }, 5 * 60 * 1000);

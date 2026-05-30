@@ -3,11 +3,12 @@
 import { useState, useEffect, useRef } from "react";
 import { useUser } from "@clerk/nextjs";
 import { motion } from "framer-motion";
-import { User, MapPin, Briefcase, GraduationCap, Code, Target, Save, Sparkles, CheckCircle2 } from "lucide-react";
+import { User, MapPin, Briefcase, GraduationCap, Code, Target, Save, Sparkles, CheckCircle2, BookOpen } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
+import { SUBJECT_GROUPS } from "@/lib/data/sa-subjects";
 
 const PROVINCES = [
   "Gauteng", "Western Cape", "KwaZulu-Natal", "Eastern Cape",
@@ -31,6 +32,7 @@ export default function ProfilePage() {
   const { user } = useUser();
   const [skills, setSkills] = useState<string[]>(["Excel", "Communication", "Project Coordination"]);
   const [newSkill, setNewSkill] = useState("");
+  const [subjects, setSubjects] = useState<string[]>([]);
   const [saved, setSaved] = useState(false);
   const [saving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
@@ -57,6 +59,7 @@ export default function ProfilePage() {
       .then(({ profile }) => {
         if (!profile) return;
         if (profile.skills?.length) setSkills(profile.skills);
+        if (profile.subjects?.length) setSubjects(profile.subjects);
         // Populate refs after mount
         setTimeout(() => {
           if (currentRoleRef.current  && profile.currentRole)              currentRoleRef.current.value    = profile.currentRole;
@@ -112,6 +115,7 @@ export default function ProfilePage() {
         fieldOfStudy:      fieldOfStudyRef.current?.value     || undefined,
         yearCompleted:     yearCompletedRef.current?.value    ? Number(yearCompletedRef.current.value) : undefined,
         skills,
+        subjects,
         isOpenToWork:      true,
       };
       const res = await fetch("/api/profile", {
@@ -308,6 +312,53 @@ export default function ProfilePage() {
               </button>
             ))}
           </div>
+        </div>
+      </div>
+
+      {/* CAPS Subjects (for high school students) */}
+      <div className="bg-card border border-border rounded-xl p-5">
+        <h2 className="text-sm font-semibold text-foreground mb-1 flex items-center gap-2">
+          <BookOpen className="w-4 h-4 text-amber-400" />
+          CAPS Subjects ({subjects.length} selected)
+        </h2>
+        <p className="text-xs text-muted-foreground mb-4">
+          High school students — select your Grade 10–12 subjects so we can match you to careers that fit your subject choices.
+        </p>
+        <div className="space-y-4">
+          {SUBJECT_GROUPS.map((group) => (
+            <div key={group.label}>
+              <div className="text-xs font-medium text-muted-foreground mb-1.5">{group.label}</div>
+              <div className="flex flex-wrap gap-1.5">
+                {group.subjects.map((subject) => {
+                  const selected = subjects.includes(subject);
+                  return (
+                    <button
+                      key={subject}
+                      onClick={() =>
+                        setSubjects((prev) =>
+                          prev.includes(subject)
+                            ? prev.filter((s) => s !== subject)
+                            : [...prev, subject]
+                        )
+                      }
+                      className={`text-xs px-2.5 py-1.5 rounded-full border transition-all font-medium ${
+                        selected
+                          ? group.color === "indigo"  ? "border-indigo-500/60 bg-indigo-500/20 text-indigo-300"
+                          : group.color === "emerald" ? "border-emerald-500/60 bg-emerald-500/20 text-emerald-300"
+                          : group.color === "violet"  ? "border-violet-500/60 bg-violet-500/20 text-violet-300"
+                          : group.color === "amber"   ? "border-amber-500/60 bg-amber-500/20 text-amber-300"
+                          : group.color === "blue"    ? "border-blue-500/60 bg-blue-500/20 text-blue-300"
+                          :                             "border-pink-500/60 bg-pink-500/20 text-pink-300"
+                          : "border-border text-muted-foreground hover:text-foreground"
+                      }`}
+                    >
+                      {selected && "✓ "}{subject}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          ))}
         </div>
       </div>
 

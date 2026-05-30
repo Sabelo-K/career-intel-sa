@@ -203,7 +203,14 @@ export default function InterviewPrepPage() {
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {[
           { label: "Total Questions", value: questions.length, icon: Target },
-          { label: "SA-Specific", value: 2, icon: Star },
+          { label: "SA-Specific", value: questions.filter((q) => {
+              const haystack = (q.question + " " + q.tips.join(" ")).toLowerCase();
+              return haystack.includes("south africa") || haystack.includes("load shed") ||
+                     haystack.includes("b-bbee") || haystack.includes("bbee") ||
+                     haystack.includes("nqf") || haystack.includes("saqa") ||
+                     haystack.includes("sa-specific") || haystack.includes("sa ") ||
+                     haystack.includes("bcea") || haystack.includes("lra");
+            }).length, icon: Star },
           { label: "Technical", value: questions.filter(q => q.type === "technical").length, icon: Brain },
           { label: "Avg Difficulty", value: "Medium", icon: Clock },
         ].map((s) => (

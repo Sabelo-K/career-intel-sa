@@ -9,7 +9,7 @@ import {
   Crown, CheckCircle2, LogOut, Trash2, Download,
   Mail, Lock, ExternalLink, Save, AlertTriangle,
   Moon, Sun, Globe, Info, Zap, ChevronRight,
-  Eye, EyeOff, MapPin, DollarSign,
+  Eye, EyeOff, MapPin, DollarSign, Link2,
 } from "lucide-react";
 
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
@@ -196,7 +196,28 @@ export default function SettingsPage() {
   const [deleteError, setDeleteError] = useState<string | null>(null);
   const [exporting, setExporting] = useState(false);
 
-  const handleSave = () => {
+  const handleSave = async () => {
+    // Persist profile fields that exist on the schema
+    try {
+      await fetch("/api/profile", {
+        method:  "POST",
+        headers: { "Content-Type": "application/json" },
+        body:    JSON.stringify({
+          isOpenToWork:      openToWork,
+          salaryExpectation: salaryMin ? Number(salaryMin) : undefined,
+        }),
+      });
+    } catch { /* non-fatal — preferences still saved locally */ }
+
+    // Save UI-only preferences to localStorage
+    try {
+      localStorage.setItem("ci_notifs",       JSON.stringify(notifs));
+      localStorage.setItem("ci_privacy",      JSON.stringify(privacy));
+      localStorage.setItem("ci_career_prefs", JSON.stringify({
+        jobType, remotePreference, industries, salaryMin, salaryMax,
+      }));
+    } catch { /* ignore */ }
+
     setSaved(true);
     setTimeout(() => setSaved(false), 2500);
   };
@@ -252,10 +273,13 @@ export default function SettingsPage() {
     );
   };
 
-  const [planKey, setPlanKey] = useState<string>("FREE");
+  const [planKey, setPlanKey]           = useState<string>("FREE");
   const [planExpiresAt, setPlanExpiresAt] = useState<string | null>(null);
+  const [profileLink, setProfileLink]   = useState<string | null>(null);
+  const [linkCopied, setLinkCopied]     = useState(false);
 
   useEffect(() => {
+    // Load plan info
     fetch("/api/dashboard")
       .then((r) => r.json())
       .then((d) => {
@@ -263,7 +287,49 @@ export default function SettingsPage() {
         if (d.planExpiresAt) setPlanExpiresAt(d.planExpiresAt);
       })
       .catch(() => {});
+
+    // Load profile prefs + build share link from Clerk user id
+    fetch("/api/profile")
+      .then((r) => r.json())
+      .then((d) => {
+        if (d.profile?.isOpenToWork !== undefined) setOpenToWork(d.profile.isOpenToWork);
+        if (d.profile?.salaryExpectation) setSalaryMin(String(d.profile.salaryExpectation));
+      })
+      .catch(() => {});
+
+    // Load UI prefs from localStorage
+    try {
+      const savedNotifs = localStorage.getItem("ci_notifs");
+      if (savedNotifs) setNotifs(JSON.parse(savedNotifs));
+      const savedPrivacy = localStorage.getItem("ci_privacy");
+      if (savedPrivacy) setPrivacy(JSON.parse(savedPrivacy));
+      const savedCareer = localStorage.getItem("ci_career_prefs");
+      if (savedCareer) {
+        const c = JSON.parse(savedCareer);
+        if (c.jobType)           setJobType(c.jobType);
+        if (c.remotePreference)  setRemotePreference(c.remotePreference);
+        if (c.industries)        setIndustries(c.industries);
+        if (c.salaryMin)         setSalaryMin(c.salaryMin);
+        if (c.salaryMax)         setSalaryMax(c.salaryMax);
+      }
+    } catch { /* ignore */ }
   }, []);
+
+  // Build shareable link from Clerk user ID
+  useEffect(() => {
+    if (user?.id && typeof window !== "undefined") {
+      setProfileLink(`${window.location.origin}/p/${user.id}`);
+    }
+  }, [user?.id]);
+
+  const copyProfileLink = async () => {
+    if (!profileLink) return;
+    try {
+      await navigator.clipboard.writeText(profileLink);
+      setLinkCopied(true);
+      setTimeout(() => setLinkCopied(false), 2500);
+    } catch { /* fallback */ }
+  };
 
   const PLAN_DISPLAY: Record<string, { name: string; color: string }> = {
     FREE:       { name: "Free Plan",         color: "text-muted-foreground" },
@@ -350,6 +416,38 @@ export default function SettingsPage() {
                   </button>
                 </p>
               </div>
+            </div>
+          </SectionCard>
+
+          {/* Shareable profile link */}
+          <SectionCard title="Shareable Profile Link" icon={Link2} iconColor="text-violet-400"
+            description="Share your CareerIntel SA profile with recruiters and employers — no account needed to view it.">
+            <div className="space-y-3">
+              <div className="flex gap-2">
+                <Input
+                  value={profileLink ?? "Loading…"}
+                  readOnly
+                  className="text-xs text-muted-foreground opacity-80 select-all"
+                />
+                <Button
+                  variant={linkCopied ? "indigo" : "outline"}
+                  size="sm"
+                  className="gap-2 flex-shrink-0"
+                  onClick={copyProfileLink}
+                  disabled={!profileLink}
+                >
+                  {linkCopied ? <CheckCircle2 className="w-3.5 h-3.5" /> : <Link2 className="w-3.5 h-3.5" />}
+                  {linkCopied ? "Copied!" : "Copy"}
+                </Button>
+              </div>
+              {profileLink && (
+                <p className="text-xs text-muted-foreground">
+                  Anyone with this link can view your name, current role, skills, and career goal — no login required.{" "}
+                  <a href={profileLink} target="_blank" rel="noopener noreferrer" className="text-indigo-400 hover:underline">
+                    Preview it →
+                  </a>
+                </p>
+              )}
             </div>
           </SectionCard>
 

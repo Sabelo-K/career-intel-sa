@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Zap, Crown, CheckCircle2, Coins, MessageCircle, Target, GitBranch, Loader2 } from "lucide-react";
+import { Zap, Crown, CheckCircle2, Coins, MessageCircle, Target, GitBranch, Loader2, AlertCircle, X } from "lucide-react";
 import Link from "next/link";
 import { CREDIT_PACKS } from "@/lib/credits";
 
@@ -32,6 +32,7 @@ export default function BuyCreditsPage() {
   const [balance,   setBalance]   = useState<number | null>(null);
   const [loading,   setLoading]   = useState<string | null>(null); // packId being purchased
   const [isPaid,    setIsPaid]    = useState(false);
+  const [buyError,  setBuyError]  = useState<string | null>(null);
 
   useEffect(() => {
     // Load current balance + plan status
@@ -46,6 +47,7 @@ export default function BuyCreditsPage() {
 
   async function handleBuy(packId: string) {
     setLoading(packId);
+    setBuyError(null);
     try {
       const res  = await fetch("/api/credits/purchase", {
         method:  "POST",
@@ -57,7 +59,7 @@ export default function BuyCreditsPage() {
       submitPayFastForm(data.url, data.params);
     } catch (err) {
       console.error(err);
-      alert("Could not initiate payment. Please try again.");
+      setBuyError(err instanceof Error ? err.message : "Could not initiate payment. Please try again.");
       setLoading(null);
     }
   }
@@ -84,6 +86,17 @@ export default function BuyCreditsPage() {
           </div>
         )}
       </div>
+
+      {/* Payment error */}
+      {buyError && (
+        <div className="flex items-center gap-3 p-4 rounded-xl bg-red-500/10 border border-red-500/20 text-sm text-red-300">
+          <AlertCircle className="w-4 h-4 flex-shrink-0" />
+          <span className="flex-1">{buyError}</span>
+          <button onClick={() => setBuyError(null)} className="text-red-400 hover:text-red-200">
+            <X className="w-4 h-4" />
+          </button>
+        </div>
+      )}
 
       {/* Paid user notice */}
       {isPaid && (

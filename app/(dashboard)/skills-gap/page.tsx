@@ -6,7 +6,7 @@ import { useFeedback } from "@/components/feedback-provider";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Target, CheckCircle2, BookOpen, TrendingUp,
-  Zap, AlertCircle, ChevronRight, Sparkles, Search, Plus, X, LayoutDashboard,
+  Zap, AlertCircle, ChevronRight, Sparkles, Search, Plus, X, LayoutDashboard, Save,
 } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -65,6 +65,32 @@ export default function SkillsGapPage() {
   const [roadmapSaved, setRoadmapSaved] = useState(false);
   const [previousGapCount, setPreviousGapCount] = useState<number | null>(null);
   const [closedGaps, setClosedGaps] = useState<number | null>(null);
+  const [profileSkills, setProfileSkills] = useState<string[]>([]);
+  const [skillsSaving, setSkillsSaving] = useState(false);
+  const [skillsSaved, setSkillsSaved] = useState(false);
+
+  // Skills not yet saved to profile
+  const newSkillsToSync = currentSkills.filter((s) => !profileSkills.includes(s));
+
+  const handleSyncSkills = async () => {
+    if (newSkillsToSync.length === 0) return;
+    setSkillsSaving(true);
+    try {
+      const merged = Array.from(new Set([...profileSkills, ...currentSkills]));
+      await fetch("/api/profile", {
+        method:  "POST",
+        headers: { "Content-Type": "application/json" },
+        body:    JSON.stringify({ skills: merged }),
+      });
+      setProfileSkills(merged);
+      setSkillsSaved(true);
+      setTimeout(() => setSkillsSaved(false), 3000);
+    } catch {
+      // silently ignore
+    } finally {
+      setSkillsSaving(false);
+    }
+  };
 
   useEffect(() => {
     // Load credits balance
@@ -77,9 +103,10 @@ export default function SkillsGapPage() {
     fetch("/api/profile")
       .then((r) => r.json())
       .then((d) => {
-        const profileSkills: string[] = d.profile?.skills ?? [];
-        if (profileSkills.length > 0) {
-          setCurrentSkills(profileSkills);
+        const loaded: string[] = d.profile?.skills ?? [];
+        setProfileSkills(loaded);
+        if (loaded.length > 0) {
+          setCurrentSkills(loaded);
         }
       })
       .catch(() => {});
@@ -248,6 +275,45 @@ export default function SkillsGapPage() {
           </div>
         )}
       </div>
+
+      {/* Skills sync banner — shown when currentSkills has new entries vs saved profile */}
+      <AnimatePresence>
+        {(newSkillsToSync.length > 0 || skillsSaved) && (
+          <motion.div
+            initial={{ opacity: 0, y: -8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8 }}
+            className={`flex items-center gap-3 p-3.5 rounded-xl border text-sm ${
+              skillsSaved
+                ? "bg-emerald-500/12 border-emerald-500/30 text-emerald-200"
+                : "bg-indigo-500/10 border-indigo-500/25 text-indigo-200"
+            }`}
+          >
+            {skillsSaved ? (
+              <>
+                <CheckCircle2 className="w-4 h-4 text-emerald-400 flex-shrink-0" />
+                <span className="flex-1">Skills saved to your profile!</span>
+              </>
+            ) : (
+              <>
+                <Save className="w-4 h-4 text-indigo-400 flex-shrink-0" />
+                <span className="flex-1">
+                  You added <strong className="text-indigo-300">{newSkillsToSync.length} new skill{newSkillsToSync.length !== 1 ? "s" : ""}</strong> not yet in your profile.
+                </span>
+                <Button
+                  size="sm"
+                  variant="indigo"
+                  onClick={handleSyncSkills}
+                  disabled={skillsSaving}
+                  className="flex-shrink-0 text-xs px-3 h-7"
+                >
+                  {skillsSaving ? "Saving…" : "Save to Profile"}
+                </Button>
+              </>
+            )}
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Target role input */}
       <div className="bg-card border border-border rounded-xl p-5">

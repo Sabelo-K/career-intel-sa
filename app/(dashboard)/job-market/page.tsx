@@ -490,6 +490,7 @@ export default function JobMarketPage() {
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState("all");
   const [selectedCareer, setSelectedCareer] = useState<(typeof SA_CAREERS)[0] | null>(null);
+  const [provinceFilter, setProvinceFilter] = useState("all");
 
   const filtered = SA_CAREERS
     .filter((c) => {
@@ -501,7 +502,10 @@ export default function JobMarketPage() {
         filter === "high-demand" ? c.demandScore >= 85 :
         filter === "growing" ? ["GROWING", "STRONG_GROWTH", "EXPLOSIVE_GROWTH"].includes(c.growthTrend) :
         filter === "low-risk" ? c.automationRisk < 30 : true;
-      return matchSearch && matchFilter;
+      const matchProvince =
+        provinceFilter === "all" ? true :
+        (c.topProvinces ?? []).includes(provinceFilter);
+      return matchSearch && matchFilter && matchProvince;
     })
     .sort((a, b) => b.demandScore - a.demandScore);
 
@@ -588,6 +592,36 @@ export default function JobMarketPage() {
                   {f.label}
                 </button>
               ))}
+            </div>
+          </div>
+
+          {/* Province dropdown */}
+          <div className="mb-5">
+            <div className="flex items-center gap-2">
+              <MapPin className="w-4 h-4 text-muted-foreground flex-shrink-0" />
+              <select
+                value={provinceFilter}
+                onChange={(e) => setProvinceFilter(e.target.value)}
+                className="text-xs bg-card border border-border rounded-lg px-3 py-1.5 text-foreground focus:outline-none focus:ring-1 focus:ring-indigo-500/50 cursor-pointer"
+              >
+                <option value="all">All Provinces</option>
+                {Object.entries(PROVINCE_LABELS).map(([key, label]) => (
+                  <option key={key} value={key}>{label}</option>
+                ))}
+              </select>
+              {provinceFilter !== "all" && (
+                <button
+                  onClick={() => setProvinceFilter("all")}
+                  className="text-xs text-muted-foreground hover:text-foreground flex items-center gap-1"
+                >
+                  <X className="w-3 h-3" /> Clear
+                </button>
+              )}
+              {provinceFilter !== "all" && (
+                <span className="text-xs text-muted-foreground">
+                  — {filtered.length} career{filtered.length !== 1 ? "s" : ""} with strong demand in {PROVINCE_LABELS[provinceFilter]}
+                </span>
+              )}
             </div>
           </div>
 

@@ -2,6 +2,7 @@
 
 import { generateCV, generateRevampedCV, generateBuiltCV, CVTemplateData, CVBuiltData } from "@/lib/cv-templates";
 import { useState, useRef, useEffect } from "react";
+import { useUser } from "@clerk/nextjs";
 import { useFeedback } from "@/components/feedback-provider";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -260,12 +261,45 @@ function CVPreview({ data }: { data: CVData }) {
 
 // ─── Build from Scratch Form ──────────────────────────────────────────────────
 
+const PROVINCE_DISPLAY_CV: Record<string, string> = {
+  GAUTENG: "Gauteng", WESTERN_CAPE: "Western Cape", KWAZULU_NATAL: "KwaZulu-Natal",
+  EASTERN_CAPE: "Eastern Cape", FREE_STATE: "Free State", LIMPOPO: "Limpopo",
+  MPUMALANGA: "Mpumalanga", NORTH_WEST: "North West", NORTHERN_CAPE: "Northern Cape",
+};
+
 function BuildFromScratch({ isPaid }: { isPaid: boolean }) {
+  const { user } = useUser();
   const { triggerFeedback } = useFeedback();
   const [step, setStep] = useState(1);
   const [cv, setCv] = useState<CVData>(EMPTY_CV);
   const [skillInput, setSkillInput] = useState("");
   const [certInput, setCertInput] = useState("");
+  const [profileLoaded, setProfileLoaded] = useState(false);
+
+  // Pre-fill from saved profile on first mount
+  useEffect(() => {
+    if (profileLoaded) return;
+    fetch("/api/profile")
+      .then((r) => r.json())
+      .then((d) => {
+        const p = d.profile;
+        setProfileLoaded(true);
+        setCv((prev) => ({
+          ...prev,
+          personal: {
+            ...prev.personal,
+            fullName: prev.personal.fullName || user?.fullName || "",
+            email:    prev.personal.email    || user?.primaryEmailAddress?.emailAddress || "",
+            province: prev.personal.province || (p?.province ? (PROVINCE_DISPLAY_CV[p.province] ?? "") : ""),
+            linkedin: prev.personal.linkedin || p?.linkedinUrl  || "",
+            website:  prev.personal.website  || p?.portfolioUrl || "",
+          },
+          skills:  prev.skills.length  === 0 ? (p?.skills ?? []) : prev.skills,
+          summary: prev.summary || p?.bio || "",
+        }));
+      })
+      .catch(() => setProfileLoaded(true));
+  }, [user, profileLoaded]);
 
   const update = (section: keyof CVData, value: CVData[keyof CVData]) =>
     setCv((prev) => ({ ...prev, [section]: value }));

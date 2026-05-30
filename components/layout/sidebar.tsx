@@ -8,7 +8,7 @@ import { UserButton } from "@clerk/nextjs";
 import {
   Brain, LayoutDashboard, FileText, MessageCircle,
   GitBranch, Target, BarChart3, BookOpen, Mic,
-  User, Settings, Zap, ChevronRight, Crown, Menu, X, Coins,
+  User, Settings, Zap, ChevronRight, Crown, Menu, X, Coins, Bell,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -21,6 +21,7 @@ const NAV_ITEMS = [
   { href: "/job-market",    icon: BarChart3,       label: "Job Market"      },
   { href: "/courses",       icon: BookOpen,        label: "Courses"         },
   { href: "/interview-prep",icon: Mic,             label: "Interview Prep"  },
+  { href: "/job-alerts",    icon: Bell,            label: "Job Alerts"      },
 ];
 
 const BOTTOM_ITEMS = [

@@ -65,7 +65,8 @@ export async function searchAdzunaJobs(opts: AdzunaSearchOptions): Promise<Adzun
     // OR-join keywords for broader matching, e.g. "Data Analyst OR SQL Developer"
     what_or:          opts.keywords.join(" "),
     sort_by:          "date",
-    content_type:     "application/json",
+    // Note: do NOT pass content_type as a query param — Adzuna returns JSON by
+    // default and passing it causes a 400 on their SA endpoint.
   });
 
   if (opts.province) {

@@ -44,6 +44,8 @@ export interface AdzunaSearchOptions {
   /** true = remote only, false = on-site only, null/undefined = any */
   remote?:            boolean | null;
   maxResults?:        number;
+  /** Only return jobs posted at most this many days ago (cron: 1, UI: omit) */
+  maxDaysOld?:        number;
 }
 
 /**
@@ -73,6 +75,10 @@ export async function searchAdzunaJobs(opts: AdzunaSearchOptions): Promise<Adzun
   if (opts.minSalaryMonthly && opts.minSalaryMonthly > 0) {
     // Adzuna stores salaries annually
     params.set("salary_min", String(opts.minSalaryMonthly * 12));
+  }
+
+  if (opts.maxDaysOld && opts.maxDaysOld > 0) {
+    params.set("max_days_old", String(opts.maxDaysOld));
   }
 
   // Adzuna has no dedicated remote flag — appending "remote" to keyword search is the standard workaround

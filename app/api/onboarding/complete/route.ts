@@ -6,6 +6,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth, currentUser } from "@clerk/nextjs/server";
 import { db } from "@/lib/db";
 import { getOrCreateUser } from "@/lib/db-helpers";
+import { sendWelcomeEmail } from "@/lib/email";
 import { z } from "zod";
 
 const Schema = z.object({
@@ -57,6 +58,11 @@ export async function POST(req: NextRequest) {
       data:  { onboarded: true },
     });
     console.log("[onboarding/complete] onboarded=true set — done");
+
+    // Fire welcome email (fire-and-forget — never block the response)
+    if (email && clerkUser?.fullName) {
+      sendWelcomeEmail(email, clerkUser.fullName).catch(() => {});
+    }
 
     return NextResponse.json({ success: true });
   } catch (err) {

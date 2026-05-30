@@ -2,18 +2,17 @@
   "buildCommand": "prisma generate && next build",
   "framework": "nextjs",
   "regions": ["iad1"],
-  "functions": {
-    "app/api/chat/route.ts": {
-      "maxDuration": 30
-    },
-    "app/api/cv/analyze/route.ts": {
-      "maxDuration": 60
-    },
-    "app/api/career/paths/route.ts": {
-      "maxDuration": 30
-    },
-    "app/api/skills/gap/route.ts": {
-      "maxDuration": 30
+  "crons": [
+    {
+      "path": "/api/cron/job-alerts",
+      "schedule": "0 8 * * *"
     }
+  ],
+  "functions": {
+    "app/api/chat/route.ts":             { "maxDuration": 30 },
+    "app/api/cv/analyze/route.ts":       { "maxDuration": 60 },
+    "app/api/career/paths/route.ts":     { "maxDuration": 30 },
+    "app/api/skills/gap/route.ts":       { "maxDuration": 30 },
+    "app/api/cron/job-alerts/route.ts":  { "maxDuration": 60 }
   }
 }

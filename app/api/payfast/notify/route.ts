@@ -22,6 +22,7 @@ import {
   PLANS,
   type PlanKey,
 } from "@/lib/payfast";
+import { sendUpgradeReceipt } from "@/lib/email";
 
 export const runtime = "nodejs";
 
@@ -85,18 +86,29 @@ export async function POST(req: NextRequest) {
     const planExpiresAt = new Date();
     planExpiresAt.setDate(planExpiresAt.getDate() + planConfig.days);
 
-    await db.user.update({
+    const updatedUser = await db.user.update({
       where: { id: dbUserId },
       data:  {
         plan:          planConfig.dbPlan as Plan,
         planKey,          // "graduate" | "professional" | "recruiter"
         planExpiresAt,
       },
+      select: { email: true, name: true },
     });
 
     console.log(
       `[PayFast ITN] User ${dbUserId} → ${planKey} (${planConfig.dbPlan}) until ${planExpiresAt.toISOString()}`
     );
+
+    // Send payment receipt (fire-and-forget)
+    if (updatedUser.email) {
+      sendUpgradeReceipt(updatedUser.email, {
+        name:          updatedUser.name ?? "there",
+        planName:      planConfig.name,
+        amountRands:   planConfig.amount,
+        planExpiresAt,
+      }).catch(() => {});
+    }
 
     return new NextResponse("OK");
   } catch (err) {

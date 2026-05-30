@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth, currentUser } from "@clerk/nextjs/server";
 import { parseAndRevampCV } from "@/lib/ai/claude";
+import { checkRateLimit, rateLimitResponse, CV_LIMIT } from "@/lib/rate-limit";
 import { db } from "@/lib/db";
 import { getOrCreateUser } from "@/lib/db-helpers";
 
@@ -12,6 +13,10 @@ export async function POST(req: NextRequest) {
     if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
+
+    // Rate limit: 10 revamps per hour per user
+    const limited = rateLimitResponse(checkRateLimit({ key: `cv-revamp:${userId}`, ...CV_LIMIT }));
+    if (limited) return limited;
 
     const formData = await req.formData();
     const file = formData.get("file") as File | null;

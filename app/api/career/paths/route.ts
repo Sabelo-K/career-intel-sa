@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth, currentUser } from "@clerk/nextjs/server";
 import { simulateCareerPath } from "@/lib/ai/claude";
+import { checkRateLimit, rateLimitResponse, ANALYSIS_LIMIT } from "@/lib/rate-limit";
 import { getOrCreateUser } from "@/lib/db-helpers";
 import { db } from "@/lib/db";
 import { z } from "zod";
@@ -26,6 +27,10 @@ export async function POST(req: NextRequest) {
   try {
     const { userId } = await auth();
     if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+    // Rate limit: 10 simulations per hour per user
+    const limited = rateLimitResponse(checkRateLimit({ key: `career-paths:${userId}`, ...ANALYSIS_LIMIT }));
+    if (limited) return limited;
 
     const body   = await req.json();
     const params = CareerPathSchema.parse(body);

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { parseCV, analyzeCV } from "@/lib/ai/claude";
+import { checkRateLimit, rateLimitResponse, CV_LIMIT } from "@/lib/rate-limit";
 
 export const runtime = "nodejs";
 
@@ -8,6 +9,10 @@ export async function POST(req: NextRequest) {
   try {
     const { userId } = await auth();
     if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+    // Rate limit: 10 analyses per hour per user
+    const limited = rateLimitResponse(checkRateLimit({ key: `cv-analyze:${userId}`, ...CV_LIMIT }));
+    if (limited) return limited;
 
     const formData = await req.formData();
     const file = formData.get("file") as File | null;

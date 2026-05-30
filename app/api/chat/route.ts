@@ -1,6 +1,7 @@
 import { NextRequest } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { streamCareerCoach } from "@/lib/ai/claude";
+import { checkRateLimit, rateLimitResponse, CHAT_LIMIT } from "@/lib/rate-limit";
 import { db } from "@/lib/db";
 import {
   getEffectivePlan,
@@ -22,6 +23,10 @@ export async function POST(req: NextRequest) {
         headers: { "Content-Type": "application/json" },
       });
     }
+
+    // Rate limit: 20 messages per minute per user
+    const limited = rateLimitResponse(checkRateLimit({ key: `chat:${userId}`, ...CHAT_LIMIT }));
+    if (limited) return limited;
 
     const body = await req.json();
     const { messages, context, sessionId } = body;

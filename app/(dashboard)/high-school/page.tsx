@@ -256,29 +256,46 @@ export default function HighSchoolPage() {
                 className="pl-9"
               />
             </div>
-            <div className="flex flex-wrap gap-2 items-center">
-              <span className="text-xs text-muted-foreground">Filter by subject:</span>
-              {selectedSubjectFilter && (
-                <button
-                  onClick={() => setSelectedSubjectFilter(null)}
-                  className="flex items-center gap-1 text-xs px-2.5 py-1 rounded-full border border-indigo-500/50 bg-indigo-500/15 text-indigo-300"
-                >
-                  {selectedSubjectFilter} <X className="w-3 h-3" />
-                </button>
-              )}
-              {!selectedSubjectFilter && (
-                <div className="flex flex-wrap gap-1.5">
-                  {["Mathematics", "Physical Sciences", "Life Sciences", "Accounting", "Information Technology (IT)", "Agricultural Sciences"].map((s) => (
-                    <button
-                      key={s}
-                      onClick={() => setSelectedSubjectFilter(s)}
-                      className="text-xs px-2.5 py-1 rounded-full border border-border text-muted-foreground hover:text-foreground hover:border-indigo-500/30 transition-all"
-                    >
-                      {s}
-                    </button>
-                  ))}
+
+            {/* All CAPS subjects grouped */}
+            <div className="bg-card border border-border rounded-xl p-4 space-y-3">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-medium text-muted-foreground">Filter by subject:</span>
+                {selectedSubjectFilter && (
+                  <button
+                    onClick={() => setSelectedSubjectFilter(null)}
+                    className="flex items-center gap-1 text-xs text-indigo-400 hover:text-indigo-300"
+                  >
+                    <X className="w-3 h-3" /> Clear filter
+                  </button>
+                )}
+              </div>
+              {SUBJECT_GROUPS.map((group) => (
+                <div key={group.label}>
+                  <div className="text-[10px] font-semibold text-muted-foreground/60 uppercase tracking-wide mb-1.5">{group.label}</div>
+                  <div className="flex flex-wrap gap-1.5">
+                    {group.subjects.map((s) => {
+                      const isSelected = selectedSubjectFilter === s;
+                      const isUserSubject = userSubjects.includes(s);
+                      return (
+                        <button
+                          key={s}
+                          onClick={() => setSelectedSubjectFilter(isSelected ? null : s)}
+                          className={`text-xs px-2.5 py-1 rounded-full border transition-all font-medium ${
+                            isSelected
+                              ? "border-indigo-500/60 bg-indigo-500/20 text-indigo-300"
+                              : isUserSubject
+                              ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-300 hover:border-emerald-500/60"
+                              : "border-border text-muted-foreground hover:text-foreground hover:border-indigo-500/30"
+                          }`}
+                        >
+                          {isUserSubject && !isSelected && "✓ "}{s}
+                        </button>
+                      );
+                    })}
+                  </div>
                 </div>
-              )}
+              ))}
             </div>
           </div>
 

@@ -78,6 +78,7 @@ model CV {
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
 
+  @@index([userId])
   @@map("cvs")
 }
 
@@ -91,6 +92,7 @@ model ChatSession {
   createdAt DateTime      @default(now())
   updatedAt DateTime      @updatedAt
 
+  @@index([userId])
   @@map("chat_sessions")
 }
 
@@ -102,6 +104,7 @@ model ChatMessage {
   content   String
   createdAt DateTime    @default(now())
 
+  @@index([sessionId])
   @@map("chat_messages")
 }
 
@@ -117,6 +120,7 @@ model CareerPath {
   salaryProjection Json
   createdAt       DateTime  @default(now())
 
+  @@index([userId])
   @@map("career_paths")
 }
 
@@ -132,6 +136,7 @@ model SkillsGap {
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
 
+  @@index([userId])
   @@map("skills_gaps")
 }
 
@@ -168,6 +173,8 @@ model JobAlert {
   isActive    Boolean  @default(true)
   createdAt   DateTime @default(now())
 
+  @@index([userId])
+  @@index([isActive])   // cron queries all active alerts across users
   @@map("job_alerts")
 }
 
@@ -183,6 +190,7 @@ model CourseProgress {
   startedAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 
+  @@index([userId])
   @@map("course_progress")
 }
 
@@ -233,6 +241,7 @@ model CreditTransaction {
   packId      String?  // "starter" | "popular" | "value" — null for usage
   createdAt   DateTime @default(now())
 
+  @@index([userId])
   @@map("credit_transactions")
 }
 
@@ -248,6 +257,7 @@ model LearningRoadmap {
   createdAt    DateTime       @default(now())
   updatedAt    DateTime       @updatedAt
 
+  @@index([userId])
   @@map("learning_roadmaps")
 }
 
@@ -264,6 +274,7 @@ model RoadmapPhase {
   completedAt DateTime?
   createdAt   DateTime        @default(now())
 
+  @@index([roadmapId])
   @@map("roadmap_phases")
 }
 
@@ -276,6 +287,7 @@ model Feedback {
   feature   String   // "cv-builder" | "career-coach" | "skills-gap" | "career-paths" | "general"
   createdAt DateTime @default(now())
 
+  @@index([userId])
   @@map("feedback")
 }
 

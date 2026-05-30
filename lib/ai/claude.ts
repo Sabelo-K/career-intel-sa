@@ -8,6 +8,7 @@
 import Groq from "groq-sdk";
 import {
   SYSTEM_PROMPT_CAREER_COACH,
+  SYSTEM_PROMPT_SUPPORT_AGENT,
   SYSTEM_PROMPT_CV_PARSER,
   SYSTEM_PROMPT_SKILLS_GAP,
   buildCareerPathPrompt,
@@ -58,6 +59,23 @@ export async function* streamCareerCoach(
     stream: true,
     max_tokens: 1024,
     temperature: 0.7,
+  });
+
+  for await (const chunk of stream) {
+    const text = chunk.choices[0]?.delta?.content ?? "";
+    if (text) yield text;
+  }
+}
+
+// ─── Support Agent (streaming) ───────────────────────────────────────────────
+
+export async function* streamSupportAgent(messages: Message[]) {
+  const stream = await groq.chat.completions.create({
+    model:       MODEL,
+    messages:    buildMessages(messages, SYSTEM_PROMPT_SUPPORT_AGENT),
+    stream:      true,
+    max_tokens:  512,   // Support answers should be short and direct
+    temperature: 0.3,   // Lower temp = more consistent, factual responses
   });
 
   for await (const chunk of stream) {

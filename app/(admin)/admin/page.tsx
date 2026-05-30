@@ -5,25 +5,28 @@ import { useEffect, useState } from "react";
 import {
   BarChart2, Users, MessageCircle, TrendingUp, Activity,
   Shield, Database, Zap, Star, MessageSquare, RefreshCw,
-  Target, GitBranch, Crown, CheckCircle2,
+  Target, GitBranch, Crown, CheckCircle2, DollarSign,
 } from "lucide-react";
-import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer, Tooltip, Cell, LineChart, Line } from "recharts";
+import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer, Tooltip, Cell, LineChart, Line, AreaChart, Area } from "recharts";
 import { Badge } from "@/components/ui/badge";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
 interface AdminStats {
-  totalUsers:   number;
-  premiumUsers: number;
-  activeToday:  number;
-  newThisMonth: number;
-  cvCount:      number;
-  chatMsgCount: number;
-  skillsCount:  number;
-  pathCount:    number;
-  growthData:   { month: string; users: number }[];
-  topRoles:     { career: string; queries: number; color: string }[];
-  featureUsage: { type: string; count: number; color: string; pct: number }[];
+  totalUsers:        number;
+  premiumUsers:      number;
+  activeToday:       number;
+  newThisMonth:      number;
+  cvCount:           number;
+  chatMsgCount:      number;
+  skillsCount:       number;
+  pathCount:         number;
+  growthData:        { month: string; users: number }[];
+  topRoles:          { career: string; queries: number; color: string }[];
+  featureUsage:      { type: string; count: number; color: string; pct: number }[];
+  planBreakdown:     { graduate: number; professional: number; recruiter: number };
+  revenueThisMonth:  number;
+  revenueData:       { month: string; revenue: number; users: number }[];
 }
 
 interface FeedbackStats {
@@ -325,12 +328,12 @@ export default function AdminPage() {
       {/* ── Stat cards ────────────────────────────────────────────────────── */}
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
         {[
-          { label: "Total Users",    value: s?.totalUsers,   icon: Users,         color: "indigo"  },
-          { label: "Active Today",   value: s?.activeToday,  icon: Activity,      color: "emerald" },
-          { label: "Paid Users",     value: s?.premiumUsers, icon: Shield,        color: "amber"   },
-          { label: "AI Messages",    value: s?.chatMsgCount, icon: MessageCircle, color: "violet"  },
-          { label: "CVs Uploaded",   value: s?.cvCount,      icon: Database,      color: "blue"    },
-          { label: "Simulations",    value: s?.pathCount,    icon: Zap,           color: "pink"    },
+          { label: "Total Users",    value: s?.totalUsers,   icon: Users,         color: "indigo",  prefix: ""   },
+          { label: "Active Today",   value: s?.activeToday,  icon: Activity,      color: "emerald", prefix: ""   },
+          { label: "Paid Users",     value: s?.premiumUsers, icon: Shield,        color: "amber",   prefix: ""   },
+          { label: "Revenue MTD",    value: s?.revenueThisMonth, icon: DollarSign, color: "green",  prefix: "R"  },
+          { label: "CVs Uploaded",   value: s?.cvCount,      icon: Database,      color: "blue",    prefix: ""   },
+          { label: "Simulations",    value: s?.pathCount,    icon: Zap,           color: "pink",    prefix: ""   },
         ].map((stat) => (
           <div key={stat.label} className="stat-card">
             <div className={`w-8 h-8 rounded-lg flex items-center justify-center mb-2 ${
@@ -338,6 +341,7 @@ export default function AdminPage() {
               stat.color === "emerald" ? "bg-emerald-500/15" :
               stat.color === "amber"   ? "bg-amber-500/15"   :
               stat.color === "violet"  ? "bg-violet-500/15"  :
+              stat.color === "green"   ? "bg-green-500/15"   :
               stat.color === "blue"    ? "bg-blue-500/15"    : "bg-pink-500/15"
             }`}>
               <stat.icon className={`w-4 h-4 ${
@@ -345,6 +349,7 @@ export default function AdminPage() {
                 stat.color === "emerald" ? "text-emerald-400" :
                 stat.color === "amber"   ? "text-amber-400"   :
                 stat.color === "violet"  ? "text-violet-400"  :
+                stat.color === "green"   ? "text-green-400"   :
                 stat.color === "blue"    ? "text-blue-400"    : "text-pink-400"
               }`} />
             </div>
@@ -352,7 +357,7 @@ export default function AdminPage() {
               ? <Skeleton className="h-7 w-16 mb-1" />
               : apiError
                 ? <div className="text-xl font-bold text-red-400">—</div>
-                : <div className="text-xl font-bold text-foreground">{(stat.value ?? 0).toLocaleString()}</div>
+                : <div className="text-xl font-bold text-foreground">{stat.prefix}{(stat.value ?? 0).toLocaleString()}</div>
             }
             <div className="text-xs text-muted-foreground mt-0.5">{stat.label}</div>
           </div>
@@ -385,6 +390,109 @@ export default function AdminPage() {
             <div className="text-xs text-muted-foreground mt-1">{stat.desc}</div>
           </div>
         ))}
+      </div>
+
+      {/* ── Revenue & Plan Breakdown ─────────────────────────────────────── */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+
+        {/* Plan breakdown */}
+        <div className="bg-card border border-border rounded-xl p-5">
+          <h3 className="text-sm font-semibold text-foreground mb-1 flex items-center gap-2">
+            <Crown className="w-4 h-4 text-amber-400" />
+            Paid Plan Breakdown
+          </h3>
+          <p className="text-xs text-muted-foreground mb-4">Currently active paid users by plan tier</p>
+
+          {loading ? (
+            <div className="space-y-3">{[1,2,3].map((i) => <Skeleton key={i} className="h-10 w-full" />)}</div>
+          ) : (() => {
+            const bd = s?.planBreakdown ?? { graduate: 0, professional: 0, recruiter: 0 };
+            const total = bd.graduate + bd.professional + bd.recruiter || 1;
+            const plans = [
+              { key: "graduate",     label: "Graduate",     price: 49,  count: bd.graduate,     color: "bg-violet-500", textColor: "text-violet-300" },
+              { key: "professional", label: "Professional", price: 99,  count: bd.professional, color: "bg-indigo-500", textColor: "text-indigo-300" },
+              { key: "recruiter",    label: "Recruiter",    price: 499, count: bd.recruiter,     color: "bg-amber-500",  textColor: "text-amber-300"  },
+            ];
+            const totalRevenue = plans.reduce((sum, p) => sum + p.count * p.price, 0);
+            return (
+              <div className="space-y-3">
+                {plans.map((p) => (
+                  <div key={p.key}>
+                    <div className="flex items-center justify-between text-xs mb-1.5">
+                      <div className="flex items-center gap-2">
+                        <span className={`font-semibold ${p.textColor}`}>{p.label}</span>
+                        <span className="text-muted-foreground">R{p.price}/mo</span>
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <span className="text-muted-foreground">{p.count} user{p.count !== 1 ? "s" : ""}</span>
+                        <span className="font-semibold text-foreground w-16 text-right">R{(p.count * p.price).toLocaleString()}</span>
+                      </div>
+                    </div>
+                    <div className="h-2 bg-secondary rounded-full overflow-hidden">
+                      <motion.div
+                        initial={{ width: 0 }}
+                        animate={{ width: `${(p.count / total) * 100}%` }}
+                        transition={{ duration: 0.6 }}
+                        className={`h-full rounded-full ${p.color}`}
+                      />
+                    </div>
+                  </div>
+                ))}
+                <div className="pt-2 border-t border-border flex items-center justify-between text-sm">
+                  <span className="text-muted-foreground">Total active MRR</span>
+                  <span className="font-bold text-green-400">R{totalRevenue.toLocaleString()}/mo</span>
+                </div>
+              </div>
+            );
+          })()}
+        </div>
+
+        {/* Revenue trend */}
+        <div className="bg-card border border-border rounded-xl p-5">
+          <h3 className="text-sm font-semibold text-foreground mb-1 flex items-center gap-2">
+            <DollarSign className="w-4 h-4 text-green-400" />
+            Revenue Trend (last 6 months)
+          </h3>
+          <p className="text-xs text-muted-foreground mb-4">Estimated ZAR revenue per month · based on plan prices</p>
+          {loading ? (
+            <Skeleton className="h-48 w-full" />
+          ) : (
+            <ResponsiveContainer width="100%" height={200}>
+              <AreaChart data={s?.revenueData ?? []} margin={{ top: 5, right: 5, bottom: 0, left: -10 }}>
+                <defs>
+                  <linearGradient id="revenueGrad" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%"  stopColor="#22c55e" stopOpacity={0.25} />
+                    <stop offset="95%" stopColor="#22c55e" stopOpacity={0}    />
+                  </linearGradient>
+                </defs>
+                <XAxis dataKey="month" tick={{ fontSize: 10, fill: "#6b7280" }} axisLine={false} tickLine={false} />
+                <YAxis tick={{ fontSize: 10, fill: "#6b7280" }} axisLine={false} tickLine={false} tickFormatter={(v) => `R${v}`} />
+                <Tooltip
+                  contentStyle={{ background: "rgba(13,21,38,0.97)", border: "1px solid rgba(34,197,94,0.25)", borderRadius: 8, fontSize: 12, color: "#e5e7eb" }}
+                  labelStyle={{ color: "#86efac", fontWeight: 600 }}
+                  itemStyle={{ color: "#e5e7eb" }}
+                  formatter={(v: number) => [`R${v.toLocaleString()}`, "Revenue"]}
+                />
+                <Area
+                  type="monotone"
+                  dataKey="revenue"
+                  stroke="#22c55e"
+                  strokeWidth={2.5}
+                  fill="url(#revenueGrad)"
+                  dot={{ fill: "#22c55e", r: 4 }}
+                  name="Revenue"
+                />
+              </AreaChart>
+            </ResponsiveContainer>
+          )}
+          {/* Month total annotation */}
+          {!loading && s && (
+            <div className="flex items-center justify-between text-xs text-muted-foreground mt-3 pt-3 border-t border-border">
+              <span>This month so far</span>
+              <span className="font-semibold text-green-400">R{(s.revenueThisMonth ?? 0).toLocaleString()}</span>
+            </div>
+          )}
+        </div>
       </div>
 
       {/* ── Charts ────────────────────────────────────────────────────────── */}

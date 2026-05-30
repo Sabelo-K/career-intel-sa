@@ -25,6 +25,8 @@ export async function GET() {
     }
 
     // ── Dates ────────────────────────────────────────────────────────────────
+    const now = new Date();
+
     const todayStart = new Date();
     todayStart.setHours(0, 0, 0, 0);
 
@@ -36,6 +38,22 @@ export async function GET() {
     const startOfMonth = new Date();
     startOfMonth.setDate(1);
     startOfMonth.setHours(0, 0, 0, 0);
+
+    // PayFast grants exactly 30 days → planExpiresAt = paymentDate + 30 days
+    // So "paid this month" = planExpiresAt between (startOfMonth+29d) and (startOfNextMonth+31d)
+    const nextMonthStart = new Date(startOfMonth);
+    nextMonthStart.setMonth(nextMonthStart.getMonth() + 1);
+    const revenueWindowStart = new Date(startOfMonth);
+    revenueWindowStart.setDate(revenueWindowStart.getDate() + 29);
+    const revenueWindowEnd = new Date(nextMonthStart);
+    revenueWindowEnd.setDate(revenueWindowEnd.getDate() + 31);
+
+    // Plan prices in ZAR
+    const PLAN_PRICES: Record<string, number> = {
+      graduate:     49,
+      professional: 99,
+      recruiter:    499,
+    };
 
     // ── Helper: safe count — accepts a THUNK so sync throws are also caught ──
     const safeCount = async (fn: () => Promise<number>): Promise<number> => {
@@ -61,6 +79,62 @@ export async function GET() {
       safeCount(() => db.skillsGap.count()),
       safeCount(() => db.careerPath.count()),
     ]);
+
+    // ── Plan breakdown + revenue ─────────────────────────────────────────────
+    let planBreakdown = { graduate: 0, professional: 0, recruiter: 0 };
+    let revenueThisMonth = 0;
+    let revenueData: { month: string; revenue: number; users: number }[] = [];
+
+    try {
+      // All paid users (planExpiresAt in future = currently active)
+      const activePaid = await db.user.findMany({
+        where: { plan: { not: "FREE" }, planExpiresAt: { gte: now } },
+        select: { planKey: true },
+      });
+
+      planBreakdown = {
+        graduate:     activePaid.filter((u) => u.planKey === "graduate").length,
+        professional: activePaid.filter((u) => u.planKey === "professional").length,
+        recruiter:    activePaid.filter((u) => u.planKey === "recruiter").length,
+      };
+
+      // All paid users with expiry for revenue calculations
+      const allPaid = await db.user.findMany({
+        where: { plan: { not: "FREE" }, planExpiresAt: { not: null } },
+        select: { planKey: true, planExpiresAt: true },
+      });
+
+      // Revenue this calendar month (approximated via planExpiresAt window)
+      const paidThisMonth = allPaid.filter((u) => {
+        if (!u.planExpiresAt) return false;
+        const exp = new Date(u.planExpiresAt);
+        return exp >= revenueWindowStart && exp < revenueWindowEnd;
+      });
+      revenueThisMonth = paidThisMonth.reduce(
+        (sum, u) => sum + (PLAN_PRICES[u.planKey ?? ""] ?? 99), 0
+      );
+
+      // Revenue trend — last 6 months
+      revenueData = Array.from({ length: 6 }, (_, i) => {
+        const tgt = new Date();
+        tgt.setMonth(tgt.getMonth() - (5 - i));
+        tgt.setDate(1); tgt.setHours(0, 0, 0, 0);
+        const tgtNext = new Date(tgt); tgtNext.setMonth(tgtNext.getMonth() + 1);
+        const wStart = new Date(tgt);  wStart.setDate(wStart.getDate() + 29);
+        const wEnd   = new Date(tgtNext); wEnd.setDate(wEnd.getDate() + 31);
+
+        const monthUsers = allPaid.filter((u) => {
+          if (!u.planExpiresAt) return false;
+          const exp = new Date(u.planExpiresAt);
+          return exp >= wStart && exp < wEnd;
+        });
+        return {
+          month:   tgt.toLocaleDateString("en-ZA", { month: "short" }),
+          revenue: monthUsers.reduce((s, u) => s + (PLAN_PRICES[u.planKey ?? ""] ?? 99), 0),
+          users:   monthUsers.length,
+        };
+      });
+    } catch { /* leave zeros */ }
 
     // ── Active today ─────────────────────────────────────────────────────────
     let activeToday = 0;
@@ -168,6 +242,9 @@ export async function GET() {
       growthData,
       topRoles,
       featureUsage,
+      planBreakdown,
+      revenueThisMonth,
+      revenueData,
     });
   } catch (err) {
     console.error("[admin/stats]", err);

@@ -587,22 +587,12 @@ export default function LandingPage() {
             <p className="text-white/50">Start free, upgrade when you&apos;re ready. No hidden fees.</p>
           </motion.div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5 sm:gap-6 max-w-6xl mx-auto mt-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5 sm:gap-6 max-w-6xl mx-auto">
             {PRICING.map((plan, i) => (
-              <motion.div
-                key={plan.name}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.1 }}
-                className={`relative rounded-2xl p-6 ${
-                  plan.highlight
-                    ? "bg-gradient-to-b from-indigo-600/20 to-violet-600/10 border-2 border-indigo-500/50 shadow-2xl shadow-indigo-500/10"
-                    : "glass-card"
-                }`}
-              >
+              <div key={plan.name} className={`relative ${plan.badge ? "pt-5" : ""}`}>
+                {/* Badge lives outside motion.div to avoid animation stacking-context clip */}
                 {plan.badge && (
-                  <div className={`absolute -top-3.5 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full text-white text-xs font-semibold whitespace-nowrap ${
+                  <div className={`absolute top-0 left-1/2 -translate-x-1/2 z-10 px-3 py-1 rounded-full text-white text-xs font-semibold whitespace-nowrap ${
                     plan.badge === "Most Popular" ? "bg-indigo-600" :
                     plan.badge === "For Youth"    ? "bg-violet-600" :
                     "bg-amber-600"
@@ -610,6 +600,17 @@ export default function LandingPage() {
                     {plan.badge}
                   </div>
                 )}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.1 }}
+                className={`relative rounded-2xl p-6 h-full ${
+                  plan.highlight
+                    ? "bg-gradient-to-b from-indigo-600/20 to-violet-600/10 border-2 border-indigo-500/50 shadow-2xl shadow-indigo-500/10"
+                    : "glass-card"
+                }`}
+              >
                 <div className="mb-6">
                   <h3 className="text-lg font-bold text-white mb-1">{plan.name}</h3>
                   <p className="text-white/40 text-sm mb-4">{plan.description}</p>
@@ -637,6 +638,7 @@ export default function LandingPage() {
                   {plan.cta}
                 </Link>
               </motion.div>
+              </div>
             ))}
           </div>
         </div>

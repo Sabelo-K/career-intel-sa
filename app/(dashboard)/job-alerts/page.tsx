@@ -1,14 +1,15 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Bell, Plus, Trash2, X, CheckCircle2, AlertCircle,
-  MapPin, Coins, Wifi, WifiOff, Zap,
+  MapPin, Coins, Wifi, WifiOff, Zap, ExternalLink,
+  RefreshCw, Briefcase, Building2, ChevronDown, ChevronUp,
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
+import { Button }  from "@/components/ui/button";
+import { Input }   from "@/components/ui/input";
+import { Badge }   from "@/components/ui/badge";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -20,6 +21,23 @@ interface JobAlert {
   remote:    boolean | null;
   isActive:  boolean;
   createdAt: string;
+}
+
+interface AdzunaJob {
+  id:          string;
+  title:       string;
+  company:     string;
+  location:    string;
+  salaryMin:   number | null;
+  salaryMax:   number | null;
+  description: string;
+  url:         string;
+  postedAt:    string;
+}
+
+interface MatchResult {
+  alertId: string;
+  jobs:    AdzunaJob[];
 }
 
 // ── Constants ─────────────────────────────────────────────────────────────────
@@ -41,25 +59,124 @@ const PROVINCE_DISPLAY: Record<string, string> = Object.fromEntries(
 );
 
 const SALARY_OPTIONS = [
-  { value: "",       label: "Any salary" },
-  { value: "10000",  label: "R10 000+ / month" },
-  { value: "20000",  label: "R20 000+ / month" },
-  { value: "30000",  label: "R30 000+ / month" },
-  { value: "50000",  label: "R50 000+ / month" },
-  { value: "80000",  label: "R80 000+ / month" },
-  { value: "120000", label: "R120 000+ / month" },
+  { value: "",       label: "Any salary"          },
+  { value: "10000",  label: "R10 000+ / month"    },
+  { value: "20000",  label: "R20 000+ / month"    },
+  { value: "30000",  label: "R30 000+ / month"    },
+  { value: "50000",  label: "R50 000+ / month"    },
+  { value: "80000",  label: "R80 000+ / month"    },
+  { value: "120000", label: "R120 000+ / month"   },
 ];
 
-// ── Component ─────────────────────────────────────────────────────────────────
+// ── Live job card ──────────────────────────────────────────────────────────────
+
+function JobCard({ job }: { job: AdzunaJob }) {
+  const [expanded, setExpanded] = useState(false);
+
+  const salary =
+    job.salaryMin && job.salaryMax
+      ? `R${Math.round(job.salaryMin / 1000)}k–R${Math.round(job.salaryMax / 1000)}k/mo`
+      : job.salaryMin
+      ? `From R${Math.round(job.salaryMin / 1000)}k/mo`
+      : null;
+
+  const daysAgo = job.postedAt
+    ? Math.max(0, Math.round((Date.now() - new Date(job.postedAt).getTime()) / 86_400_000))
+    : null;
+
+  return (
+    <div className="rounded-lg bg-background/60 border border-border/60 hover:border-indigo-500/30 transition-all overflow-hidden">
+      <div className="p-3">
+        <div className="flex items-start gap-3">
+          {/* Icon */}
+          <div className="w-8 h-8 rounded-lg bg-indigo-500/10 flex items-center justify-center flex-shrink-0 mt-0.5">
+            <Briefcase className="w-3.5 h-3.5 text-indigo-400" />
+          </div>
+
+          <div className="flex-1 min-w-0">
+            <div className="flex items-start justify-between gap-2">
+              <div className="flex-1 min-w-0">
+                <p className="text-xs font-semibold text-foreground leading-tight">{job.title}</p>
+                <div className="flex items-center gap-1.5 mt-0.5 flex-wrap">
+                  <span className="text-[11px] text-muted-foreground flex items-center gap-0.5">
+                    <Building2 className="w-2.5 h-2.5" />{job.company}
+                  </span>
+                  <span className="text-muted-foreground/30">·</span>
+                  <span className="text-[11px] text-muted-foreground flex items-center gap-0.5">
+                    <MapPin className="w-2.5 h-2.5" />{job.location}
+                  </span>
+                </div>
+              </div>
+              <a
+                href={job.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={(e) => e.stopPropagation()}
+                className="flex-shrink-0 text-[11px] font-medium text-indigo-400 hover:text-indigo-300 flex items-center gap-0.5 transition-colors"
+              >
+                Apply <ExternalLink className="w-2.5 h-2.5" />
+              </a>
+            </div>
+
+            <div className="flex items-center gap-3 mt-1.5 flex-wrap">
+              {salary && (
+                <span className="text-[11px] font-medium text-emerald-400">{salary}</span>
+              )}
+              {daysAgo !== null && (
+                <span className="text-[11px] text-muted-foreground/60">
+                  {daysAgo === 0 ? "Today" : daysAgo === 1 ? "Yesterday" : `${daysAgo}d ago`}
+                </span>
+              )}
+              {job.description && (
+                <button
+                  onClick={() => setExpanded(!expanded)}
+                  className="text-[11px] text-muted-foreground/50 hover:text-muted-foreground flex items-center gap-0.5 transition-colors"
+                >
+                  {expanded ? <ChevronUp className="w-2.5 h-2.5" /> : <ChevronDown className="w-2.5 h-2.5" />}
+                  {expanded ? "Less" : "Preview"}
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Expandable description */}
+        <AnimatePresence>
+          {expanded && (
+            <motion.div
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: "auto", opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              className="overflow-hidden"
+            >
+              <p className="mt-2 text-[11px] text-muted-foreground leading-relaxed pl-11">
+                {job.description}
+              </p>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+    </div>
+  );
+}
+
+// ── Main component ─────────────────────────────────────────────────────────────
 
 export default function JobAlertsPage() {
-  const [alerts,   setAlerts]   = useState<JobAlert[]>([]);
-  const [loading,  setLoading]  = useState(true);
-  const [error,    setError]    = useState<string | null>(null);
-  const [success,  setSuccess]  = useState<string | null>(null);
-  const [showForm, setShowForm] = useState(false);
-  const [saving,   setSaving]   = useState(false);
-  const [deleting, setDeleting] = useState<string | null>(null);
+  const [alerts,            setAlerts]            = useState<JobAlert[]>([]);
+  const [loading,           setLoading]           = useState(true);
+  const [error,             setError]             = useState<string | null>(null);
+  const [success,           setSuccess]           = useState<string | null>(null);
+  const [showForm,          setShowForm]          = useState(false);
+  const [saving,            setSaving]            = useState(false);
+  const [deleting,          setDeleting]          = useState<string | null>(null);
+
+  // Live job matches
+  const [jobMatches,        setJobMatches]        = useState<Record<string, AdzunaJob[]>>({});
+  const [matchesLoading,    setMatchesLoading]    = useState(false);
+  const [adzunaConfigured,  setAdzunaConfigured]  = useState<boolean | null>(null);
+  const [lastRefreshed,     setLastRefreshed]     = useState<Date | null>(null);
 
   // Form state
   const [keywords,  setKeywords]  = useState<string[]>([]);
@@ -75,6 +192,35 @@ export default function JobAlertsPage() {
       .then(d => { setAlerts(d.alerts ?? []); setLoading(false); })
       .catch(() => setLoading(false));
   }, []);
+
+  // ── Fetch live job matches ───────────────────────────────────────────────────
+  const fetchMatches = useCallback(async () => {
+    setMatchesLoading(true);
+    try {
+      const res  = await fetch("/api/job-alerts/match");
+      const data = await res.json() as { configured: boolean; results: MatchResult[] };
+      setAdzunaConfigured(data.configured);
+      if (data.configured) {
+        const map: Record<string, AdzunaJob[]> = {};
+        for (const r of data.results) map[r.alertId] = r.jobs;
+        setJobMatches(map);
+        setLastRefreshed(new Date());
+      }
+    } catch {
+      // silently ignore — live matches are a bonus, not blocking
+    } finally {
+      setMatchesLoading(false);
+    }
+  }, []);
+
+  // Auto-fetch matches once alerts have loaded
+  useEffect(() => {
+    if (!loading && alerts.some(a => a.isActive)) {
+      fetchMatches();
+    } else if (!loading) {
+      setAdzunaConfigured(null); // no active alerts — skip the check
+    }
+  }, [loading, alerts, fetchMatches]);
 
   // ── Helpers ──────────────────────────────────────────────────────────────────
   const addKeyword = () => {
@@ -114,7 +260,9 @@ export default function JobAlertsPage() {
       if (!res.ok) throw new Error(data.error ?? "Failed to create alert");
       setAlerts(prev => [data.alert, ...prev]);
       resetForm();
-      showBanner("Job alert created! You'll be notified about matching opportunities.");
+      showBanner("Job alert created! Searching for live matches…");
+      // Re-fetch matches to include the new alert
+      fetchMatches();
     } catch (err) {
       showBanner(err instanceof Error ? err.message : "Failed to create alert", true);
     } finally {
@@ -131,6 +279,8 @@ export default function JobAlertsPage() {
         headers: { "Content-Type": "application/json" },
         body:    JSON.stringify({ id, isActive }),
       });
+      // Re-fetch matches whenever an alert is toggled on
+      if (isActive) fetchMatches();
     } catch {
       setAlerts(prev => prev.map(a => a.id === id ? { ...a, isActive: !isActive } : a));
     }
@@ -143,6 +293,7 @@ export default function JobAlertsPage() {
       const res = await fetch(`/api/job-alerts?id=${id}`, { method: "DELETE" });
       if (!res.ok) throw new Error("Delete failed");
       setAlerts(prev => prev.filter(a => a.id !== id));
+      setJobMatches(prev => { const n = { ...prev }; delete n[id]; return n; });
       showBanner("Alert removed.");
     } catch {
       showBanner("Failed to delete alert", true);
@@ -162,12 +313,29 @@ export default function JobAlertsPage() {
             Get notified when new SA jobs match your target role, province, and salary range.
           </p>
         </div>
-        {!showForm && alerts.length < 5 && (
-          <Button variant="indigo" size="sm" className="gap-2 flex-shrink-0" onClick={() => setShowForm(true)}>
-            <Plus className="w-4 h-4" />
-            New Alert
-          </Button>
-        )}
+        <div className="flex items-center gap-2 flex-shrink-0">
+          {adzunaConfigured && alerts.some(a => a.isActive) && (
+            <Button
+              variant="ghost"
+              size="sm"
+              className="gap-1.5 text-muted-foreground"
+              onClick={fetchMatches}
+              disabled={matchesLoading}
+              title="Refresh live job matches"
+            >
+              <RefreshCw className={`w-3.5 h-3.5 ${matchesLoading ? "animate-spin" : ""}`} />
+              {lastRefreshed
+                ? `Updated ${lastRefreshed.toLocaleTimeString("en-ZA", { hour: "2-digit", minute: "2-digit" })}`
+                : "Refresh"}
+            </Button>
+          )}
+          {!showForm && alerts.length < 5 && (
+            <Button variant="indigo" size="sm" className="gap-2" onClick={() => setShowForm(true)}>
+              <Plus className="w-4 h-4" />
+              New Alert
+            </Button>
+          )}
+        </div>
       </div>
 
       {/* Banners */}
@@ -220,8 +388,11 @@ export default function JobAlertsPage() {
                 <Input
                   value={kwInput}
                   onChange={e => setKwInput(e.target.value)}
-                  onKeyDown={e => { if (e.key === "Enter") { e.preventDefault(); addKeyword(); } if (e.key === "Escape") setKwInput(""); }}
-                  placeholder="e.g. Data Analyst, Python Developer, CA(SA)..."
+                  onKeyDown={e => {
+                    if (e.key === "Enter") { e.preventDefault(); addKeyword(); }
+                    if (e.key === "Escape") setKwInput("");
+                  }}
+                  placeholder="e.g. Data Analyst, Python Developer, CA(SA)…"
                   className="text-sm"
                 />
                 <Button size="sm" variant="indigo" onClick={addKeyword} disabled={!kwInput.trim() || keywords.length >= 10}>
@@ -301,7 +472,10 @@ export default function JobAlertsPage() {
                 Cancel
               </Button>
               <Button variant="indigo" size="sm" className="flex-1 gap-2" onClick={handleCreate} disabled={keywords.length === 0 || saving}>
-                {saving ? <motion.div animate={{ rotate: 360 }} transition={{ duration: 1, repeat: Infinity, ease: "linear" }}><Zap className="w-3.5 h-3.5" /></motion.div> : <Bell className="w-3.5 h-3.5" />}
+                {saving
+                  ? <motion.div animate={{ rotate: 360 }} transition={{ duration: 1, repeat: Infinity, ease: "linear" }}><Zap className="w-3.5 h-3.5" /></motion.div>
+                  : <Bell className="w-3.5 h-3.5" />
+                }
                 {saving ? "Creating…" : "Create Alert"}
               </Button>
             </div>
@@ -321,7 +495,7 @@ export default function JobAlertsPage() {
           </div>
           <p className="text-sm font-medium text-foreground">No job alerts yet</p>
           <p className="text-xs text-muted-foreground max-w-sm mx-auto">
-            Create an alert and we&apos;ll notify you when new opportunities matching your criteria appear in the SA job market.
+            Create an alert and we&apos;ll surface matching SA job listings in real time.
           </p>
           <Button variant="indigo" size="sm" className="gap-2 mt-2" onClick={() => setShowForm(true)}>
             <Plus className="w-4 h-4" />
@@ -329,78 +503,108 @@ export default function JobAlertsPage() {
           </Button>
         </div>
       ) : (
-        <div className="space-y-3">
-          {alerts.map((alert, i) => (
-            <motion.div
-              key={alert.id}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.04 }}
-              className={`bg-card border rounded-xl p-4 transition-all ${
-                alert.isActive ? "border-border" : "border-border/50 opacity-60"
-              }`}
-            >
-              <div className="flex items-start justify-between gap-3">
-                <div className="flex-1 min-w-0">
-                  {/* Keywords */}
-                  <div className="flex flex-wrap gap-1.5 mb-2">
-                    {alert.keywords.map(k => (
-                      <Badge key={k} variant="indigo" className="text-xs">{k}</Badge>
-                    ))}
-                  </div>
-                  {/* Filters */}
-                  <div className="flex flex-wrap gap-3 text-xs text-muted-foreground">
-                    {alert.province && (
-                      <span className="flex items-center gap-1">
-                        <MapPin className="w-3 h-3" />
-                        {PROVINCE_DISPLAY[alert.province] ?? alert.province}
-                      </span>
-                    )}
-                    {alert.minSalary && (
-                      <span className="flex items-center gap-1">
-                        <Coins className="w-3 h-3" />
-                        R{(alert.minSalary / 1000).toFixed(0)}k+/mo
-                      </span>
-                    )}
-                    {alert.remote !== null && (
-                      <span className="flex items-center gap-1">
-                        {alert.remote ? <Wifi className="w-3 h-3" /> : <WifiOff className="w-3 h-3" />}
-                        {alert.remote ? "Remote only" : "On-site only"}
-                      </span>
-                    )}
-                    <span className="text-muted-foreground/50">
-                      Created {new Date(alert.createdAt).toLocaleDateString("en-ZA", { day: "numeric", month: "short" })}
-                    </span>
+        <div className="space-y-4">
+          {alerts.map((alert, i) => {
+            const matches = jobMatches[alert.id] ?? [];
+            return (
+              <motion.div
+                key={alert.id}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: i * 0.04 }}
+                className={`bg-card border rounded-xl overflow-hidden transition-all ${
+                  alert.isActive ? "border-border" : "border-border/50 opacity-60"
+                }`}
+              >
+                {/* Alert header */}
+                <div className="p-4">
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="flex-1 min-w-0">
+                      {/* Keywords */}
+                      <div className="flex flex-wrap gap-1.5 mb-2">
+                        {alert.keywords.map(k => (
+                          <Badge key={k} variant="indigo" className="text-xs">{k}</Badge>
+                        ))}
+                      </div>
+                      {/* Filters */}
+                      <div className="flex flex-wrap gap-3 text-xs text-muted-foreground">
+                        {alert.province && (
+                          <span className="flex items-center gap-1">
+                            <MapPin className="w-3 h-3" />
+                            {PROVINCE_DISPLAY[alert.province] ?? alert.province}
+                          </span>
+                        )}
+                        {alert.minSalary && (
+                          <span className="flex items-center gap-1">
+                            <Coins className="w-3 h-3" />
+                            R{(alert.minSalary / 1000).toFixed(0)}k+/mo
+                          </span>
+                        )}
+                        {alert.remote !== null && (
+                          <span className="flex items-center gap-1">
+                            {alert.remote ? <Wifi className="w-3 h-3" /> : <WifiOff className="w-3 h-3" />}
+                            {alert.remote ? "Remote only" : "On-site only"}
+                          </span>
+                        )}
+                        <span className="text-muted-foreground/50">
+                          Created {new Date(alert.createdAt).toLocaleDateString("en-ZA", { day: "numeric", month: "short" })}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Controls */}
+                    <div className="flex items-center gap-2 flex-shrink-0">
+                      <button
+                        onClick={() => handleToggle(alert.id, !alert.isActive)}
+                        className={`relative w-9 h-5 rounded-full transition-colors ${
+                          alert.isActive ? "bg-indigo-600" : "bg-secondary border border-border"
+                        }`}
+                        title={alert.isActive ? "Pause alert" : "Activate alert"}
+                      >
+                        <span className={`absolute top-0.5 left-0.5 w-4 h-4 rounded-full bg-white shadow-sm transition-transform ${
+                          alert.isActive ? "translate-x-4" : "translate-x-0"
+                        }`} />
+                      </button>
+                      <button
+                        onClick={() => handleDelete(alert.id)}
+                        disabled={deleting === alert.id}
+                        className="w-7 h-7 rounded-lg flex items-center justify-center text-muted-foreground hover:text-red-400 hover:bg-red-500/10 transition-all disabled:opacity-40"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
                   </div>
                 </div>
 
-                {/* Controls */}
-                <div className="flex items-center gap-2 flex-shrink-0">
-                  {/* Active toggle */}
-                  <button
-                    onClick={() => handleToggle(alert.id, !alert.isActive)}
-                    className={`relative w-9 h-5 rounded-full transition-colors ${
-                      alert.isActive ? "bg-indigo-600" : "bg-secondary border border-border"
-                    }`}
-                    title={alert.isActive ? "Pause alert" : "Activate alert"}
-                  >
-                    <span className={`absolute top-0.5 left-0.5 w-4 h-4 rounded-full bg-white shadow-sm transition-transform ${
-                      alert.isActive ? "translate-x-4" : "translate-x-0"
-                    }`} />
-                  </button>
-
-                  {/* Delete */}
-                  <button
-                    onClick={() => handleDelete(alert.id)}
-                    disabled={deleting === alert.id}
-                    className="w-7 h-7 rounded-lg flex items-center justify-center text-muted-foreground hover:text-red-400 hover:bg-red-500/10 transition-all disabled:opacity-40"
-                  >
-                    <Trash2 className="w-3.5 h-3.5" />
-                  </button>
-                </div>
-              </div>
-            </motion.div>
-          ))}
+                {/* ── Live job matches ─────────────────────────────────────── */}
+                {adzunaConfigured && alert.isActive && (
+                  <div className="border-t border-border/50 bg-secondary/20 px-4 py-3 space-y-2">
+                    {matchesLoading && matches.length === 0 ? (
+                      <div className="flex items-center gap-2 text-xs text-muted-foreground py-1">
+                        <RefreshCw className="w-3 h-3 animate-spin" />
+                        Finding live matches…
+                      </div>
+                    ) : matches.length === 0 ? (
+                      <p className="text-xs text-muted-foreground py-1">
+                        No live matches right now — we&apos;ll check again when you refresh.
+                      </p>
+                    ) : (
+                      <>
+                        <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wide">
+                          {matches.length} Live Match{matches.length !== 1 ? "es" : ""}
+                        </p>
+                        <div className="space-y-1.5">
+                          {matches.map(job => (
+                            <JobCard key={job.id} job={job} />
+                          ))}
+                        </div>
+                      </>
+                    )}
+                  </div>
+                )}
+              </motion.div>
+            );
+          })}
 
           {alerts.length >= 5 && (
             <p className="text-xs text-center text-muted-foreground py-2">
@@ -410,9 +614,9 @@ export default function JobAlertsPage() {
         </div>
       )}
 
-      {/* How it works */}
-      <div className="bg-card border border-border rounded-xl p-5">
-        <h3 className="text-sm font-semibold text-foreground mb-3 flex items-center gap-2">
+      {/* How it works + attribution */}
+      <div className="bg-card border border-border rounded-xl p-5 space-y-4">
+        <h3 className="text-sm font-semibold text-foreground flex items-center gap-2">
           <Bell className="w-4 h-4 text-indigo-400" />
           How Job Alerts Work
         </h3>
@@ -420,7 +624,7 @@ export default function JobAlertsPage() {
           {[
             "Set keywords matching roles you want — e.g. 'Data Analyst', 'Renewable Energy Engineer'",
             "Filter by province and minimum salary to match your location and expectations",
-            "We'll notify you by email when new matching SA opportunities are posted",
+            "Live matching jobs from across the SA market are shown below each active alert",
             "Pause alerts when you're not actively searching without losing your settings",
           ].map((tip) => (
             <div key={tip} className="flex items-start gap-2 text-xs text-muted-foreground">
@@ -429,9 +633,30 @@ export default function JobAlertsPage() {
             </div>
           ))}
         </div>
-        <div className="mt-4 p-3 rounded-lg bg-amber-500/8 border border-amber-500/20 text-xs text-amber-200/80">
-          <strong>Coming soon:</strong> Integration with PNet, CareerJunction, and LinkedIn SA for real-time job matching. You&apos;ll be notified when this is live.
-        </div>
+
+        {/* Source attribution — changes based on whether Adzuna is wired in */}
+        {adzunaConfigured === false ? (
+          <div className="p-3 rounded-lg bg-amber-500/8 border border-amber-500/20 text-xs text-amber-200/80">
+            <strong>Coming soon:</strong> Live job matching is ready — add your{" "}
+            <code className="font-mono text-amber-300">ADZUNA_APP_ID</code> and{" "}
+            <code className="font-mono text-amber-300">ADZUNA_APP_KEY</code> env vars (free at{" "}
+            <a href="https://developer.adzuna.com" target="_blank" rel="noopener noreferrer" className="underline hover:text-amber-100">
+              developer.adzuna.com
+            </a>
+            ) to activate. Email notifications coming once our email system launches.
+          </div>
+        ) : (
+          <div className="flex items-center justify-between p-3 rounded-lg bg-indigo-500/8 border border-indigo-500/20 text-xs text-indigo-200/80">
+            <span>
+              Jobs sourced from the SA market via{" "}
+              <a href="https://www.adzuna.co.za" target="_blank" rel="noopener noreferrer" className="font-medium underline hover:text-indigo-100">
+                Adzuna
+              </a>
+              . Results refresh hourly.
+            </span>
+            <span className="text-muted-foreground/50">Email alerts coming soon</span>
+          </div>
+        )}
       </div>
     </div>
   );

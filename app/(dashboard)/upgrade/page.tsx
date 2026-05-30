@@ -47,10 +47,10 @@ const PLANS: PlanConfig[] = [
     highlight:  false,
     features: [
       "Everything in Free",
-      "Unlimited career demand searches",
-      "Full skills gap analysis (unlimited)",
+      "Full career demand access (all sectors)",
+      "Unlimited skills gap analysis",
       "50 AI coach messages/month",
-      "Interview prep — 20 questions",
+      "AI interview prep (role-specific questions)",
       "1 career path simulation/month",
       "Trade & artisan career insights",
     ],

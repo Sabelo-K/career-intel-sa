@@ -128,7 +128,10 @@ export default function OnboardingPage() {
         return;
       }
 
-      router.push(showSubjectStep ? "/high-school" : "/dashboard");
+      const data = await res.json().catch(() => ({}));
+      const destination = showSubjectStep ? "/high-school" : "/dashboard";
+      // Pass credits granted as a query param so the dashboard can show a toast
+      router.push(data.creditsGranted ? `${destination}?welcome=1` : destination);
     } catch {
       setSaveError("Network error — check your connection and try again.");
       setSaving(false);

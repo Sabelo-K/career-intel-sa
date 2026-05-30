@@ -55,19 +55,41 @@ export async function POST(req: NextRequest) {
     });
     console.log("[onboarding/complete] profile upserted");
 
-    // Mark user as onboarded
-    await db.user.update({
-      where: { id: dbUser.id },
-      data:  { onboarded: true },
-    });
-    console.log("[onboarding/complete] onboarded=true set — done");
+    // Mark user as onboarded + grant welcome credits (only on first completion)
+    const WELCOME_CREDITS = 10;
+    const isFirstOnboarding = !dbUser.onboarded;
+
+    if (isFirstOnboarding) {
+      // Atomic: mark onboarded + add credits + record transaction in one go
+      await db.$transaction([
+        db.user.update({
+          where: { id: dbUser.id },
+          data:  { onboarded: true, credits: { increment: WELCOME_CREDITS } },
+        }),
+        db.creditTransaction.create({
+          data: {
+            userId:      dbUser.id,
+            amount:      WELCOME_CREDITS,
+            description: "Welcome bonus — thanks for joining CareerIntel SA!",
+          },
+        }),
+      ]);
+      console.log(`[onboarding/complete] onboarded=true + ${WELCOME_CREDITS} welcome credits granted`);
+    } else {
+      // Already onboarded — just re-save the profile, no extra credits
+      await db.user.update({
+        where: { id: dbUser.id },
+        data:  { onboarded: true },
+      });
+      console.log("[onboarding/complete] re-onboarding — no additional credits granted");
+    }
 
     // Fire welcome email (fire-and-forget — never block the response)
     if (email && clerkUser?.fullName) {
       sendWelcomeEmail(email, clerkUser.fullName).catch(() => {});
     }
 
-    return NextResponse.json({ success: true });
+    return NextResponse.json({ success: true, creditsGranted: isFirstOnboarding ? WELCOME_CREDITS : 0 });
   } catch (err) {
     if (err instanceof z.ZodError) {
       return NextResponse.json({ error: "Validation error", details: err.errors }, { status: 400 });

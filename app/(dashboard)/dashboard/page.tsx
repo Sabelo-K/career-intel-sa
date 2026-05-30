@@ -1,13 +1,14 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { useUser } from "@clerk/nextjs";
 import { useEffect, useState, useMemo } from "react";
+import { useSearchParams } from "next/navigation";
 import {
   TrendingUp, Target, Zap, ArrowRight, Brain,
   FileText, MessageCircle, BarChart3, Sparkles,
   AlertCircle, CheckCircle2, Clock, ChevronRight,
-  Award, Globe, BookOpen,
+  Award, Globe, BookOpen, Gift, X,
 } from "lucide-react";
 import Link from "next/link";
 import {
@@ -129,6 +130,18 @@ export default function DashboardPage() {
   const { user } = useUser();
   const firstName = user?.firstName || "there";
   const topCareers = SA_CAREERS.slice(0, 5);
+  const searchParams = useSearchParams();
+  const [showWelcomeBanner, setShowWelcomeBanner] = useState(false);
+
+  // Show welcome credits banner if redirected from onboarding with ?welcome=1
+  useEffect(() => {
+    if (searchParams.get("welcome") === "1") {
+      setShowWelcomeBanner(true);
+      // Auto-dismiss after 8 seconds
+      const t = setTimeout(() => setShowWelcomeBanner(false), 8000);
+      return () => clearTimeout(t);
+    }
+  }, [searchParams]);
 
   const [stats, setStats] = useState<DashboardStats>({
     employabilityScore: 0,
@@ -214,6 +227,38 @@ export default function DashboardPage() {
 
   return (
     <div className="space-y-6">
+
+      {/* Welcome credits banner */}
+      <AnimatePresence>
+        {showWelcomeBanner && (
+          <motion.div
+            initial={{ opacity: 0, y: -12, scale: 0.97 }}
+            animate={{ opacity: 1, y: 0,   scale: 1    }}
+            exit={{    opacity: 0, y: -12, scale: 0.97 }}
+            transition={{ type: "spring", stiffness: 300, damping: 25 }}
+            className="flex items-center gap-3 bg-gradient-to-r from-indigo-500/15 to-violet-500/15 border border-indigo-500/30 rounded-xl px-4 py-3.5"
+          >
+            <div className="w-8 h-8 rounded-lg bg-indigo-500/20 flex items-center justify-center flex-shrink-0">
+              <Gift className="w-4 h-4 text-indigo-400" />
+            </div>
+            <div className="flex-1">
+              <p className="text-sm font-semibold text-foreground">
+                🎉 10 free credits added to your account!
+              </p>
+              <p className="text-xs text-muted-foreground mt-0.5">
+                Welcome to CareerIntel SA. Use your credits to try the AI Career Coach, CV Builder, and Skills Gap analysis.
+              </p>
+            </div>
+            <button
+              onClick={() => setShowWelcomeBanner(false)}
+              className="text-muted-foreground hover:text-foreground transition-colors flex-shrink-0"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* Header */}
       <motion.div {...fadeUp} className="flex items-start justify-between">
         <div>

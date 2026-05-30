@@ -53,10 +53,10 @@ export default function TermsPage() {
           </section>
 
           <section>
-            <h2 className="text-lg font-semibold text-foreground mb-3">4. Subscriptions and Payments</h2>
-            <p>CareerIntel SA offers both free and paid subscription tiers. Paid subscriptions are billed monthly as selected at checkout. Payments are processed securely through PayFast, a licensed South African payment service provider.</p>
+            <h2 className="text-lg font-semibold text-foreground mb-3">4. Payments and Access</h2>
+            <p>CareerIntel SA offers both free and paid access tiers. Paid access is purchased as a once-off 30-day payment at the price selected at checkout. Payments are processed securely through PayFast, a licensed South African payment service provider.</p>
             <p className="mt-2">All prices are quoted in South African Rand (ZAR) and are inclusive of VAT where applicable.</p>
-            <p className="mt-2">Subscriptions automatically renew each month unless cancelled before the renewal date. You may cancel your subscription at any time through the <strong className="text-foreground">Settings</strong> page in the app.</p>
+            <p className="mt-2">There is <strong className="text-foreground">no automatic renewal</strong>. Each payment grants 30 days of access from the date of purchase. When your access period expires, your account returns to the Free tier automatically — all your data is preserved. You may purchase a new access period at any time through the <strong className="text-foreground">Upgrade</strong> page in the app.</p>
           </section>
 
           {/* CPA Section 16 — Cooling-Off Period */}

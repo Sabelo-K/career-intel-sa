@@ -15,12 +15,13 @@ export async function GET() {
     if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
     const adminEmail = process.env.ADMIN_EMAIL;
-    if (adminEmail) {
-      const user = await currentUser();
-      const email = user?.primaryEmailAddress?.emailAddress ?? "";
-      if (email.toLowerCase() !== adminEmail.toLowerCase()) {
-        return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-      }
+    if (!adminEmail) {
+      return NextResponse.json({ error: "Forbidden — admin not configured" }, { status: 403 });
+    }
+    const user = await currentUser();
+    const email = user?.primaryEmailAddress?.emailAddress ?? "";
+    if (email.toLowerCase() !== adminEmail.toLowerCase()) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
     // ── Dates ────────────────────────────────────────────────────────────────

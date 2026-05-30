@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion";
 import { useUser } from "@clerk/nextjs";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import {
   TrendingUp, Target, Zap, ArrowRight, Brain,
   FileText, MessageCircle, BarChart3, Sparkles,
@@ -66,10 +66,12 @@ const SKILLS_RADAR_DATA = [
   { subject: "Domain", A: 55, fullMark: 100 },
 ];
 
-const INSIGHTS = [
-  { type: "opportunity", icon: TrendingUp, color: "emerald", text: "Renewable Energy roles in Western Cape grew 45% this quarter — your Engineering background is highly transferable." },
-  { type: "warning", icon: AlertCircle, color: "amber", text: "Data Analysis skills are in the top 3 scarcest skills in SA. Adding SQL & Python could increase your salary by R12k/month." },
-  { type: "action", icon: Target, color: "indigo", text: "You're 3 skills away from qualifying for Cloud Architect roles (R60k–R180k/month). Start with AWS Cloud Practitioner." },
+// Static fallback insights — shown when the user has completed most profile steps
+const MARKET_INSIGHTS = [
+  { type: "opportunity", icon: TrendingUp, color: "emerald", text: "Renewable Energy roles in Western Cape grew 45% this quarter — Solar PV and electrical skills are in top demand." },
+  { type: "warning",     icon: AlertCircle, color: "amber",  text: "Data Analysis skills are in the top 3 scarcest in SA. Adding SQL & Power BI could increase your salary by R12k/month." },
+  { type: "action",      icon: Target,      color: "indigo", text: "Cloud Architect roles (R60k–R180k/mo) have surged 38% in SA. AWS Cloud Practitioner cert is the fastest entry point." },
+  { type: "opportunity", icon: Globe,       color: "emerald", text: "Cybersecurity roles in SA are 40% unfilled — CISSP or CompTIA Security+ adds R15–25k/month to average packages." },
 ];
 
 const QUICK_ACTIONS = [
@@ -158,6 +160,48 @@ export default function DashboardPage() {
   const employabilityScore = stats.employabilityScore;
   const profileStrength    = stats.profileStrength;
 
+  // Dynamic insights — personalised next-step nudges based on real user data
+  const insights = useMemo(() => {
+    if (!statsLoaded) return MARKET_INSIGHTS.slice(0, 3);
+    const items: { type: string; icon: React.ElementType; color: string; text: string }[] = [];
+
+    if (stats.skillsCount === 0) {
+      items.push({ type: "action", icon: Target, color: "indigo",
+        text: "You haven't added any skills yet. Add at least 3 skills to your profile to unlock your Skills Score and career matching." });
+    } else if (stats.skillsCount < 5) {
+      items.push({ type: "action", icon: Target, color: "indigo",
+        text: `You have ${stats.skillsCount} skill${stats.skillsCount !== 1 ? "s" : ""} — aim for at least 8 to maximise your match score and recruiter visibility.` });
+    }
+
+    if (!stats.hasCV) {
+      items.push({ type: "warning", icon: FileText, color: "amber",
+        text: "No CV on file. SA recruiters expect a PDF CV — build yours in under 5 minutes using the AI CV Builder." });
+    }
+
+    if (stats.skillsGapCount === 0) {
+      items.push({ type: "action", icon: BookOpen, color: "violet",
+        text: `Run a Skills Gap Analysis${stats.targetRole ? ` for ${stats.targetRole}` : ""} to see exactly what's missing and get a personalised learning roadmap.` });
+    }
+
+    if (stats.chatSessionsCount === 0) {
+      items.push({ type: "opportunity", icon: MessageCircle, color: "emerald",
+        text: "Start a Career Coach session — ask about SA salary benchmarks, interview prep, or how to break into your target industry." });
+    }
+
+    if (profileStrength < 50) {
+      items.push({ type: "warning", icon: AlertCircle, color: "amber",
+        text: `Your profile is ${profileStrength}% complete. A fully completed profile increases recruiter visibility and improves your Employability Score.` });
+    }
+
+    // Pad to 3 with market insights if not enough personalised ones
+    for (const insight of MARKET_INSIGHTS) {
+      if (items.length >= 3) break;
+      items.push(insight);
+    }
+
+    return items.slice(0, 3);
+  }, [statsLoaded, stats, profileStrength]);
+
   // Redirect genuinely new users (no profile data at all) to onboarding.
   // We check targetRole + currentRole as a fallback so that users who
   // completed the form but had a transient API failure aren't caught in a
@@ -183,8 +227,8 @@ export default function DashboardPage() {
         <Link href="/profile">
           <Button variant="outline" size="sm" className="gap-2">
             <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-            Complete Profile
-            <span className="bg-amber-500/20 text-amber-300 text-xs px-1.5 rounded">{profileStrength}%</span>
+            {profileStrength >= 100 ? "View Profile" : "Complete Profile"}
+            <span className={`text-xs px-1.5 rounded ${profileStrength >= 100 ? "bg-emerald-500/20 text-emerald-300" : "bg-amber-500/20 text-amber-300"}`}>{profileStrength}%</span>
           </Button>
         </Link>
       </motion.div>
@@ -357,10 +401,10 @@ export default function DashboardPage() {
         >
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-sm font-semibold text-foreground">AI Insights</h2>
-            <Badge variant="indigo">3 new</Badge>
+            <Badge variant="indigo">{insights.length} tips</Badge>
           </div>
           <div className="space-y-3">
-            {INSIGHTS.map((insight, i) => (
+            {insights.map((insight, i) => (
               <motion.div
                 key={i}
                 initial={{ opacity: 0, x: -10 }}

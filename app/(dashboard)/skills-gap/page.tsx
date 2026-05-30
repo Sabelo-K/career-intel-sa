@@ -15,7 +15,7 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { OutOfCreditsModal } from "@/components/out-of-credits-modal";
 
-const CURRENT_SKILLS = ["Excel", "PowerPoint", "Communication", "Project Coordination", "Basic Python"];
+const DEFAULT_SKILLS: string[] = [];
 
 // ─── Types returned by the AI ────────────────────────────────────────────────
 interface MissingSkill {
@@ -59,15 +59,29 @@ export default function SkillsGapPage() {
   const [activeStep, setActiveStep] = useState<number | null>(null);
   const [showSkillInput, setShowSkillInput] = useState(false);
   const [newSkill, setNewSkill] = useState("");
-  const [currentSkills, setCurrentSkills] = useState(CURRENT_SKILLS);
+  const [currentSkills, setCurrentSkills] = useState<string[]>(DEFAULT_SKILLS);
   const [creditsModal, setCreditsModal] = useState(false);
   const [creditBalance, setCreditBalance] = useState(0);
   const [roadmapSaved, setRoadmapSaved] = useState(false);
+  const [previousGapCount, setPreviousGapCount] = useState<number | null>(null);
+  const [closedGaps, setClosedGaps] = useState<number | null>(null);
 
   useEffect(() => {
+    // Load credits balance
     fetch("/api/credits/balance")
       .then((r) => r.json())
       .then((d) => setCreditBalance(d.balance ?? 0))
+      .catch(() => {});
+
+    // Load user's real skills from profile
+    fetch("/api/profile")
+      .then((r) => r.json())
+      .then((d) => {
+        const profileSkills: string[] = d.profile?.skills ?? [];
+        if (profileSkills.length > 0) {
+          setCurrentSkills(profileSkills);
+        }
+      })
       .catch(() => {});
   }, []);
 
@@ -111,6 +125,18 @@ export default function SkillsGapPage() {
         quickWins:        Array.isArray(data.quickWins)     ? data.quickWins     : [],
         salaryImpact:     String(data.salaryImpact ?? ""),
       };
+      // ── Gap diff: compare with previous run for this role ──────────────
+      const cacheKey = `ci_gap_${normalised.targetRole.toLowerCase().replace(/\s+/g, "_")}`;
+      try {
+        const prev = localStorage.getItem(cacheKey);
+        if (prev) {
+          const prevData = JSON.parse(prev) as { missingCount: number };
+          const closed = prevData.missingCount - normalised.missingSkills.length;
+          if (closed > 0) setClosedGaps(closed);
+        }
+        localStorage.setItem(cacheKey, JSON.stringify({ missingCount: normalised.missingSkills.length, runAt: Date.now() }));
+      } catch { /* localStorage unavailable */ }
+
       setResult(normalised);
 
       // Auto-save roadmap to dashboard (fire-and-forget)
@@ -170,6 +196,11 @@ export default function SkillsGapPage() {
           <Button variant="ghost" size="sm" className="text-xs text-indigo-400" onClick={() => setShowSkillInput(true)}>+ Add Skills</Button>
         </div>
         <div className="flex flex-wrap gap-2">
+          {currentSkills.length === 0 && (
+            <p className="text-xs text-muted-foreground italic">
+              No skills loaded yet — <a href="/profile" className="text-indigo-400 hover:underline">add skills to your profile</a> or use the + Add Skills button below.
+            </p>
+          )}
           {currentSkills.map((skill) => (
             <Badge key={skill} variant="success" className="flex items-center gap-1 pr-1">
               {skill}
@@ -272,6 +303,26 @@ export default function SkillsGapPage() {
           </button>
         </div>
       )}
+
+      {/* Gap improvement banner */}
+      <AnimatePresence>
+        {closedGaps !== null && closedGaps > 0 && (
+          <motion.div
+            initial={{ opacity: 0, y: -8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8 }}
+            className="flex items-center gap-3 p-3.5 rounded-xl bg-indigo-500/12 border border-indigo-500/30 text-sm"
+          >
+            <TrendingUp className="w-4 h-4 text-indigo-400 flex-shrink-0" />
+            <span className="text-indigo-200 flex-1">
+              🎉 You&apos;ve closed <strong className="text-indigo-300">{closedGaps} gap{closedGaps !== 1 ? "s" : ""}</strong> since your last analysis for this role. Keep going!
+            </span>
+            <button onClick={() => setClosedGaps(null)} className="text-muted-foreground hover:text-foreground">
+              <X className="w-4 h-4" />
+            </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Saved-to-dashboard toast */}
       <AnimatePresence>

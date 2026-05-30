@@ -78,13 +78,32 @@ export default function CareerPathsPage() {
   const [error, setError] = useState<string | null>(null);
   const [creditsModal, setCreditsModal] = useState(false);
   const [creditBalance, setCreditBalance] = useState(0);
+  const [userProvince, setUserProvince] = useState("GAUTENG");
+
+  // Province enum → display label
+  const PROVINCE_DISPLAY: Record<string, string> = {
+    GAUTENG: "Gauteng", WESTERN_CAPE: "Western Cape", KWAZULU_NATAL: "KwaZulu-Natal",
+    EASTERN_CAPE: "Eastern Cape", FREE_STATE: "Free State", LIMPOPO: "Limpopo",
+    MPUMALANGA: "Mpumalanga", NORTH_WEST: "North West", NORTHERN_CAPE: "Northern Cape",
+  };
 
   useEffect(() => {
     fetch("/api/credits/balance")
       .then((r) => r.json())
       .then((d) => setCreditBalance(d.balance ?? 0))
       .catch(() => {});
-  }, []);
+
+    // Load user's province from profile
+    fetch("/api/profile")
+      .then((r) => r.json())
+      .then((d) => {
+        if (d.profile?.province) setUserProvince(d.profile.province);
+        // Pre-fill current role from profile if empty
+        if (d.profile?.currentRole && !currentRole) setCurrentRole(d.profile.currentRole);
+        if (d.profile?.targetRole  && !targetRole)  setTargetRole(d.profile.targetRole);
+      })
+      .catch(() => {});
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const simulate = async () => {
     if (!currentRole.trim() || !targetRole.trim()) return;
@@ -101,7 +120,7 @@ export default function CareerPathsPage() {
           targetRole:      targetRole.trim(),
           yearsExperience: 0,
           currentSkills:   [],
-          province:        "GAUTENG",
+          province:        userProvince,
           timeframeYears:  years,
         }),
       });
@@ -180,7 +199,12 @@ export default function CareerPathsPage() {
               className="w-full accent-indigo-500 mt-2"
             />
           </div>
-          <div className="flex items-end">
+          <div className="flex items-end flex-col gap-2">
+            <div className="text-xs text-muted-foreground w-full flex items-center gap-1.5">
+              <span className="w-2 h-2 rounded-full bg-indigo-400 inline-block" />
+              Province: <span className="text-indigo-300 font-medium">{PROVINCE_DISPLAY[userProvince] ?? userProvince}</span>
+              <a href="/profile" className="text-xs text-indigo-400 hover:underline ml-auto">Change</a>
+            </div>
             <Button
               onClick={simulate}
               disabled={!currentRole || !targetRole || simulating}

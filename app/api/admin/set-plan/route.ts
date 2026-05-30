@@ -15,12 +15,13 @@ export async function POST(req: NextRequest) {
     if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
     const adminEmail = process.env.ADMIN_EMAIL;
-    if (adminEmail) {
-      const clerk = await currentUser();
-      const email = clerk?.primaryEmailAddress?.emailAddress ?? "";
-      if (email.toLowerCase() !== adminEmail.toLowerCase()) {
-        return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-      }
+    if (!adminEmail) {
+      return NextResponse.json({ error: "Forbidden — admin not configured" }, { status: 403 });
+    }
+    const clerk = await currentUser();
+    const callerEmail = clerk?.primaryEmailAddress?.emailAddress ?? "";
+    if (callerEmail.toLowerCase() !== adminEmail.toLowerCase()) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
     // ── Parse body ───────────────────────────────────────────────────────────

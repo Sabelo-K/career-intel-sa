@@ -192,10 +192,50 @@ export default function SettingsPage() {
   // Confirm delete modal
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [deleteConfirmText, setDeleteConfirmText] = useState("");
+  const [deleting, setDeleting] = useState(false);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
+  const [exporting, setExporting] = useState(false);
 
   const handleSave = () => {
     setSaved(true);
     setTimeout(() => setSaved(false), 2500);
+  };
+
+  const handleExport = async () => {
+    setExporting(true);
+    try {
+      const res = await fetch("/api/user/export");
+      if (!res.ok) throw new Error("Export failed");
+      const blob = await res.blob();
+      const url  = URL.createObjectURL(blob);
+      const a    = document.createElement("a");
+      a.href     = url;
+      a.download = `careerintel-data-${new Date().toISOString().split("T")[0]}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+    } catch {
+      alert("Export failed — please try again.");
+    } finally {
+      setExporting(false);
+    }
+  };
+
+  const handleDeleteAccount = async () => {
+    if (deleteConfirmText !== "DELETE") return;
+    setDeleting(true);
+    setDeleteError(null);
+    try {
+      const res = await fetch("/api/user/delete", { method: "DELETE" });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data.error || "Deletion failed");
+      }
+      // Sign out and redirect — account is gone
+      await signOut(() => router.push("/"));
+    } catch (err) {
+      setDeleteError(err instanceof Error ? err.message : "Deletion failed. Please contact support.");
+      setDeleting(false);
+    }
   };
 
   const toggleJobType = (type: string) => {
@@ -560,8 +600,8 @@ export default function SettingsPage() {
                 icon={Download}
                 title="Export My Data"
                 description="Download a copy of all data CareerIntel SA holds about you (POPIA Section 23 right)."
-                buttonLabel="Request Export"
-                onClick={() => alert("Your data export request has been submitted. You will receive an email within 5 business days.")}
+                buttonLabel={exporting ? "Exporting…" : "Download Export"}
+                onClick={handleExport}
               />
               <div className="pt-3">
                 <AnimatePresence mode="wait">
@@ -599,23 +639,29 @@ export default function SettingsPage() {
                           className="border-red-500/30 focus:ring-red-500/30"
                         />
                       </div>
+                      {deleteError && (
+                        <p className="text-xs text-red-300 bg-red-500/10 border border-red-500/20 rounded-lg px-3 py-2">
+                          {deleteError}
+                        </p>
+                      )}
                       <div className="flex gap-2">
                         <Button
                           variant="outline"
                           size="sm"
                           className="flex-1"
-                          onClick={() => { setShowDeleteConfirm(false); setDeleteConfirmText(""); }}
+                          disabled={deleting}
+                          onClick={() => { setShowDeleteConfirm(false); setDeleteConfirmText(""); setDeleteError(null); }}
                         >
                           Cancel
                         </Button>
                         <Button
                           size="sm"
                           className="flex-1 bg-red-600 hover:bg-red-500 text-white border-0"
-                          disabled={deleteConfirmText !== "DELETE"}
-                          onClick={() => alert("Account deletion has been requested. Our team will process this within 24 hours.")}
+                          disabled={deleteConfirmText !== "DELETE" || deleting}
+                          onClick={handleDeleteAccount}
                         >
                           <Trash2 className="w-3.5 h-3.5 mr-1.5" />
-                          Delete Forever
+                          {deleting ? "Deleting…" : "Delete Forever"}
                         </Button>
                       </div>
                     </motion.div>

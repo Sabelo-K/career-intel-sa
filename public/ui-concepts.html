@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>CareerIntel SA — UI Concepts</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #0a0a0a; color: #fff; }
+
+  .page-header { text-align: center; padding: 48px 24px 32px; }
+  .page-header h1 { font-size: 2rem; font-weight: 800; }
+  .page-header p { color: #555; margin-top: 8px; font-size: 0.92rem; }
+
+  .concepts { display: grid; grid-template-columns: 1fr; gap: 72px; padding: 0 32px 80px; max-width: 1200px; margin: 0 auto; }
+
+  .concept-label { font-size: 0.68rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 16px; display: flex; align-items: center; gap: 10px; }
+  .concept-label::after { content: ''; flex: 1; height: 1px; background: rgba(255,255,255,0.08); }
+  .concept-title { text-align: center; margin-bottom: 28px; }
+  .concept-title p { font-size: 0.82rem; color: #555; margin-top: 6px; line-height: 1.6; }
+  .palette { display: flex; gap: 8px; justify-content: center; margin-top: 14px; }
+  .swatch { width: 26px; height: 26px; border-radius: 50%; }
+  .flex { display: flex; }
+  .flex-1 { flex: 1; }
+
+  /* ══════════════════════════════════════════
+     CONCEPT 1 — UBUNTU GOLD
+  ══════════════════════════════════════════ */
+  .c1-wrap { background: #0f0b07; border-radius: 20px; overflow: hidden; border: 1px solid #2a1f08; display: flex; min-height: 420px; }
+  .c1-sidebar { background: #1a1208; border-right: 1px solid #3d2c10; padding: 20px 14px; width: 210px; flex-shrink: 0; display: flex; flex-direction: column; gap: 3px; }
+  .c1-logo { display: flex; align-items: center; gap: 9px; padding: 6px 10px 18px; border-bottom: 1px solid #3d2c10; margin-bottom: 8px; }
+  .c1-logo-icon { width: 30px; height: 30px; border-radius: 9px; background: linear-gradient(135deg, #f59e0b, #d97706); display: flex; align-items: center; justify-content: center; font-size: 15px; }
+  .c1-logo-text { font-weight: 800; font-size: 0.88rem; color: #fef3c7; }
+  .c1-logo-text span { color: #f59e0b; }
+  .c1-nav { display: flex; align-items: center; gap: 9px; padding: 9px 10px; border-radius: 9px; font-size: 0.79rem; color: #a07840; }
+  .c1-nav.active { background: rgba(245,158,11,0.12); color: #f59e0b; }
+  .c1-credits { margin-top: auto; background: rgba(245,158,11,0.08); border: 1px solid rgba(245,158,11,0.2); border-radius: 11px; padding: 11px; }
+  .c1-main { flex: 1; padding: 24px; background: #0f0b07; }
+  .c1-title { font-size: 1.3rem; font-weight: 800; color: #fef3c7; }
+  .c1-sub { font-size: 0.76rem; color: #a07840; margin-top: 3px; margin-bottom: 20px; }
+  .c1-stats { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; margin-bottom: 16px; }
+  .c1-stat { background: #221808; border: 1px solid #3d2c10; border-radius: 13px; padding: 14px; position: relative; overflow: hidden; }
+  .c1-stat::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, #f59e0b, transparent); }
+  .c1-stat-val { font-size: 1.5rem; font-weight: 800; color: #fef3c7; }
+  .c1-stat-lbl { font-size: 0.68rem; color: #a07840; margin-top: 2px; }
+  .c1-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .c1-card { background: #221808; border: 1px solid #3d2c10; border-radius: 13px; padding: 15px; }
+  .c1-card-title { font-size: 0.78rem; font-weight: 700; color: #fef3c7; margin-bottom: 11px; }
+  .c1-bar { display: flex; align-items: center; gap: 7px; margin-bottom: 7px; }
+  .c1-bar-lbl { font-size: 0.68rem; color: #a07840; width: 72px; flex-shrink: 0; }
+  .c1-bar-track { flex: 1; height: 5px; background: rgba(255,255,255,0.05); border-radius: 99px; overflow: hidden; }
+  .c1-bar-fill { height: 100%; border-radius: 99px; background: linear-gradient(90deg, #f59e0b, #d97706); }
+  .c1-bar-pct { font-size: 0.65rem; color: #a07840; width: 26px; text-align: right; }
+  .c1-chat { display: flex; flex-direction: column; gap: 8px; }
+  .c1-msg { padding: 9px 12px; border-radius: 11px; font-size: 0.75rem; max-width: 90%; line-height: 1.5; }
+  .c1-msg.bot { background: rgba(245,158,11,0.1); border: 1px solid rgba(245,158,11,0.18); color: #fef3c7; }
+  .c1-msg.user { background: #f59e0b; color: #000; font-weight: 600; align-self: flex-end; }
+
+  /* ══════════════════════════════════════════
+     CONCEPT 2 — ZULU KINGDOM
+  ══════════════════════════════════════════ */
+  .c2-wrap { background: #050708; border-radius: 20px; overflow: hidden; border: 1px solid #1a2010; display: flex; min-height: 420px; position: relative; }
+
+  /* Zulu beadwork border — top and left accent lines using triangular repeating pattern */
+  .c2-wrap::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 6px;
+    background: repeating-linear-gradient(
+      90deg,
+      #D4AF37 0px,  #D4AF37 8px,
+      #1a3a1a 8px,  #1a3a1a 16px,
+      #C41E3A 16px, #C41E3A 24px,
+      #1a3a1a 24px, #1a3a1a 32px,
+      #fff    32px, #fff    36px,
+      #1a3a1a 36px, #1a3a1a 44px,
+      #C41E3A 44px, #C41E3A 52px,
+      #1a3a1a 52px, #1a3a1a 60px,
+      #D4AF37 60px, #D4AF37 68px,
+      #050708 68px, #050708 80px
+    );
+    z-index: 10;
+  }
+
+  .c2-sidebar { background: #080a09; border-right: 1px solid #1a2a15; padding: 26px 14px 20px; width: 210px; flex-shrink: 0; display: flex; flex-direction: column; gap: 3px; }
+  .c2-logo { display: flex; align-items: center; gap: 9px; padding: 6px 10px 18px; border-bottom: 1px solid #1a2a15; margin-bottom: 8px; }
+  .c2-logo-shield { width: 30px; height: 34px; background: #fff; clip-path: polygon(50% 0%, 100% 15%, 100% 70%, 50% 100%, 0% 70%, 0% 15%); display: flex; align-items: center; justify-content: center; position: relative; flex-shrink: 0; overflow: hidden; }
+  .c2-logo-shield::before { content: ''; position: absolute; left: 50%; top: 0; bottom: 0; width: 3px; background: #C41E3A; transform: translateX(-50%); }
+  .c2-logo-shield::after { content: ''; position: absolute; left: 0; right: 0; top: 50%; height: 2px; background: #C41E3A; }
+  .c2-logo-text { font-weight: 800; font-size: 0.88rem; color: #f0ede0; }
+  .c2-logo-text span { color: #D4AF37; }
+  .c2-nav { display: flex; align-items: center; gap: 9px; padding: 9px 10px; border-radius: 8px; font-size: 0.79rem; color: #4a5a40; position: relative; }
+  .c2-nav.active { background: rgba(212,175,55,0.1); color: #D4AF37; }
+  .c2-nav.active::before { content: ''; position: absolute; left: 0; top: 20%; height: 60%; width: 3px; background: #C41E3A; border-radius: 0 3px 3px 0; }
+  .c2-credits-box { margin-top: auto; background: rgba(212,175,55,0.08); border: 1px solid rgba(212,175,55,0.2); border-radius: 10px; padding: 11px; }
+  .c2-main { flex: 1; padding: 28px 22px 22px; background: #050708; }
+  .c2-topbar { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 18px; }
+  .c2-topbar h2 { font-size: 1.25rem; font-weight: 800; color: #f0ede0; }
+  .c2-topbar-sub { font-size: 0.68rem; color: #4a5a40; margin-top: 2px; }
+
+  /* Zulu beadwork inspired decorative dots row */
+  .c2-beads { display: flex; gap: 5px; padding-top: 6px; }
+  .c2-bead { width: 8px; height: 8px; border-radius: 50%; }
+
+  .c2-hero { background: linear-gradient(135deg, #0a0f08, #111a0e); border: 1px solid #1a2a15; border-radius: 14px; padding: 16px 18px; margin-bottom: 13px; display: flex; align-items: center; gap: 14px; position: relative; overflow: hidden; }
+  /* Subtle beadwork diamond pattern overlay */
+  .c2-hero::after {
+    content: '';
+    position: absolute;
+    top: 0; right: 0;
+    width: 110px; height: 100%;
+    background:
+      radial-gradient(circle, rgba(212,175,55,0.15) 2px, transparent 2px) 0 0 / 12px 12px,
+      radial-gradient(circle, rgba(196,30,58,0.12) 2px, transparent 2px) 6px 6px / 12px 12px;
+  }
+  .c2-ring { width: 60px; height: 60px; border-radius: 50%; background: conic-gradient(#D4AF37 0deg 252deg, rgba(255,255,255,0.04) 252deg); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .c2-ring-inner { width: 46px; height: 46px; border-radius: 50%; background: #0a0f08; display: flex; align-items: center; justify-content: center; font-size: 0.85rem; font-weight: 800; color: #D4AF37; }
+  .c2-hero h3 { font-size: 0.88rem; font-weight: 700; color: #f0ede0; }
+  .c2-hero p { font-size: 0.7rem; color: #4a5a40; margin-top: 3px; }
+  .c2-chips { display: grid; grid-template-columns: repeat(3,1fr); gap: 9px; margin-bottom: 13px; }
+  .c2-chip { background: #0a0f08; border: 1px solid #1a2a15; border-radius: 11px; padding: 10px 12px; }
+  .c2-chip-val { font-size: 1.3rem; font-weight: 800; }
+  .c2-chip-lbl { font-size: 0.65rem; color: #4a5a40; margin-top: 1px; }
+  .c2-skills { background: #0a0f08; border: 1px solid #1a2a15; border-radius: 13px; padding: 14px; }
+  .c2-skill-title { font-size: 0.75rem; font-weight: 700; color: #f0ede0; margin-bottom: 10px; }
+  .c2-skill-row { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+  .c2-skill-name { font-size: 0.72rem; color: #c0b890; width: 90px; flex-shrink: 0; }
+  .c2-skill-track { flex: 1; height: 5px; background: rgba(255,255,255,0.05); border-radius: 99px; overflow: hidden; }
+  .c2-skill-fill { height: 100%; border-radius: 99px; }
+  .c2-skill-pct { font-size: 0.65rem; color: #4a5a40; width: 26px; text-align: right; }
+  .c2-tag { font-size: 0.6rem; padding: 2px 6px; border-radius: 4px; font-weight: 700; flex-shrink: 0; }
+  .c2-tag.gap { background: rgba(196,30,58,0.15); color: #C41E3A; }
+  .c2-tag.ok { background: rgba(26,74,26,0.4); color: #4ade80; }
+
+  /* ══════════════════════════════════════════
+     CONCEPT 3 — MZANSI SUNRISE
+  ══════════════════════════════════════════ */
+  .c3-wrap { background: #09060f; border-radius: 20px; overflow: hidden; border: 1px solid #1e1530; display: flex; min-height: 420px; }
+  .c3-sidebar { background: #100b1a; border-right: 1px solid #2a1f3d; padding: 20px 14px; width: 210px; flex-shrink: 0; display: flex; flex-direction: column; gap: 3px; }
+  .c3-logo { padding: 6px 10px 18px; border-bottom: 1px solid #2a1f3d; margin-bottom: 8px; }
+  .c3-brand { font-size: 0.95rem; font-weight: 900; background: linear-gradient(90deg, #8b5cf6, #f97316); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+  .c3-brand-sub { font-size: 0.62rem; color: #5c4d7a; margin-top: 1px; }
+  .c3-nav { display: flex; align-items: center; gap: 8px; padding: 9px 10px; border-radius: 9px; font-size: 0.78rem; color: #7c6fa0; }
+  .c3-nav.active { background: linear-gradient(135deg, rgba(139,92,246,0.14), rgba(249,115,22,0.09)); color: #f5f0ff; border: 1px solid rgba(139,92,246,0.18); }
+  .c3-upgrade { margin-top: auto; background: linear-gradient(135deg, rgba(139,92,246,0.18), rgba(249,115,22,0.12)); border: 1px solid rgba(139,92,246,0.22); border-radius: 13px; padding: 13px; }
+  .c3-upgrade h4 { font-size: 0.8rem; font-weight: 700; color: #f5f0ff; }
+  .c3-upgrade p { font-size: 0.68rem; color: #7c6fa0; margin: 4px 0 9px; line-height: 1.4; }
+  .c3-btn { width: 100%; padding: 8px; border-radius: 8px; background: linear-gradient(135deg, #8b5cf6, #f97316); border: none; color: #fff; font-size: 0.72rem; font-weight: 700; cursor: pointer; }
+  .c3-main { flex: 1; padding: 22px; background: #09060f; }
+  .c3-banner { border-radius: 15px; padding: 18px 20px; margin-bottom: 18px; background: linear-gradient(135deg, #160f24, #2d1420); border: 1px solid rgba(139,92,246,0.18); position: relative; overflow: hidden; }
+  .c3-banner::after { content: '🌅'; position: absolute; right: 16px; top: 50%; transform: translateY(-50%); font-size: 2.8rem; opacity: 0.25; }
+  .c3-banner-tag { display: inline-flex; align-items: center; gap: 4px; font-size: 0.62rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.09em; color: #f97316; background: rgba(249,115,22,0.13); padding: 3px 7px; border-radius: 5px; margin-bottom: 7px; }
+  .c3-banner h2 { font-size: 1.1rem; font-weight: 800; color: #f5f0ff; }
+  .c3-banner p { font-size: 0.72rem; color: #7c6fa0; margin-top: 3px; }
+  .c3-stats { display: grid; grid-template-columns: repeat(3,1fr); gap: 9px; margin-bottom: 14px; }
+  .c3-stat { background: #160f24; border: 1px solid #2a1f3d; border-radius: 13px; padding: 13px; }
+  .c3-stat-icon { width: 26px; height: 26px; border-radius: 7px; display: flex; align-items: center; justify-content: center; font-size: 12px; margin-bottom: 7px; }
+  .c3-stat-val { font-size: 1.3rem; font-weight: 800; }
+  .c3-stat-lbl { font-size: 0.65rem; color: #7c6fa0; margin-top: 2px; }
+  .c3-paths { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; }
+  .c3-path { background: #160f24; border: 1px solid #2a1f3d; border-radius: 13px; padding: 13px; position: relative; overflow: hidden; }
+  .c3-path::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; }
+  .c3-path.p1::before { background: linear-gradient(90deg, #8b5cf6, #ec4899); }
+  .c3-path.p2::before { background: linear-gradient(90deg, #f97316, #f59e0b); }
+  .c3-path.p3::before { background: linear-gradient(90deg, #10b981, #06b6d4); }
+  .c3-path.p4::before { background: linear-gradient(90deg, #ec4899, #8b5cf6); }
+  .c3-path h4 { font-size: 0.76rem; font-weight: 700; color: #f5f0ff; }
+  .c3-path p { font-size: 0.66rem; color: #7c6fa0; margin-top: 3px; }
+  .c3-arrow { position: absolute; right: 11px; top: 50%; transform: translateY(-50%); color: #5c4d7a; }
+
+  /* ══════════════════════════════════════════
+     CONCEPT 4 — HIGHVELD GLASS
+  ══════════════════════════════════════════ */
+
+  /* Full bleed gradient background that shows through the glass */
+  .c4-scene {
+    border-radius: 20px;
+    overflow: hidden;
+    position: relative;
+    min-height: 420px;
+    background:
+      radial-gradient(ellipse at 20% 50%, rgba(139,92,246,0.35) 0%, transparent 55%),
+      radial-gradient(ellipse at 80% 20%, rgba(249,115,22,0.3) 0%, transparent 50%),
+      radial-gradient(ellipse at 60% 80%, rgba(16,185,129,0.2) 0%, transparent 45%),
+      linear-gradient(135deg, #0d0818 0%, #160820 40%, #0a1020 70%, #050d18 100%);
+    border: 1px solid rgba(255,255,255,0.08);
+    display: flex;
+  }
+
+  /* Floating orbs for depth */
+  .c4-scene::before {
+    content: '';
+    position: absolute;
+    width: 280px; height: 280px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(139,92,246,0.2), transparent 70%);
+    top: -80px; left: -60px;
+    pointer-events: none;
+  }
+  .c4-scene::after {
+    content: '';
+    position: absolute;
+    width: 200px; height: 200px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(249,115,22,0.18), transparent 70%);
+    bottom: -50px; right: 80px;
+    pointer-events: none;
+  }
+
+  /* Glass sidebar */
+  .c4-sidebar {
+    width: 210px;
+    flex-shrink: 0;
+    padding: 20px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    background: rgba(255,255,255,0.04);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border-right: 1px solid rgba(255,255,255,0.08);
+    position: relative;
+    z-index: 2;
+  }
+  .c4-logo { padding: 6px 10px 18px; border-bottom: 1px solid rgba(255,255,255,0.07); margin-bottom: 8px; }
+  .c4-logo-brand { font-size: 0.95rem; font-weight: 900; color: #fff; letter-spacing: -0.02em; }
+  .c4-logo-brand span { background: linear-gradient(90deg, #a78bfa, #fb923c); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+  .c4-logo-sub { font-size: 0.62rem; color: rgba(255,255,255,0.3); margin-top: 1px; }
+  .c4-nav { display: flex; align-items: center; gap: 8px; padding: 9px 10px; border-radius: 10px; font-size: 0.78rem; color: rgba(255,255,255,0.35); }
+  .c4-nav.active {
+    background: rgba(255,255,255,0.1);
+    backdrop-filter: blur(10px);
+    color: rgba(255,255,255,0.9);
+    border: 1px solid rgba(255,255,255,0.12);
+  }
+
+  /* Glass credits card */
+  .c4-credits {
+    margin-top: auto;
+    background: rgba(255,255,255,0.07);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 12px;
+    padding: 12px;
+  }
+  .c4-credits-lbl { font-size: 0.62rem; color: rgba(255,255,255,0.4); }
+  .c4-credits-val { font-size: 1.25rem; font-weight: 800; background: linear-gradient(90deg, #a78bfa, #fb923c); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+  .c4-credits-link { font-size: 0.62rem; color: rgba(251,146,60,0.8); margin-top: 3px; }
+
+  /* Glass main area */
+  .c4-main { flex: 1; padding: 22px; position: relative; z-index: 2; }
+
+  /* Glass hero banner */
+  .c4-banner {
+    background: rgba(255,255,255,0.06);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 16px;
+    padding: 18px 20px;
+    margin-bottom: 16px;
+    position: relative;
+    overflow: hidden;
+  }
+  .c4-banner::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+  }
+  .c4-banner-tag { display: inline-flex; align-items: center; gap: 4px; font-size: 0.62rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: rgba(251,146,60,0.9); background: rgba(251,146,60,0.12); border: 1px solid rgba(251,146,60,0.2); padding: 3px 8px; border-radius: 5px; margin-bottom: 7px; }
+  .c4-banner h2 { font-size: 1.1rem; font-weight: 800; color: rgba(255,255,255,0.92); }
+  .c4-banner p { font-size: 0.72rem; color: rgba(255,255,255,0.4); margin-top: 3px; }
+  .c4-banner-emoji { position: absolute; right: 18px; top: 50%; transform: translateY(-50%); font-size: 2.5rem; opacity: 0.2; }
+
+  /* Glass stat cards */
+  .c4-stats { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; margin-bottom: 14px; }
+  .c4-stat {
+    background: rgba(255,255,255,0.06);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 14px;
+    padding: 14px;
+    position: relative;
+    overflow: hidden;
+  }
+  .c4-stat::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.25), transparent);
+  }
+  .c4-stat-icon { font-size: 1.1rem; margin-bottom: 7px; }
+  .c4-stat-val { font-size: 1.35rem; font-weight: 800; color: rgba(255,255,255,0.92); }
+  .c4-stat-lbl { font-size: 0.65rem; color: rgba(255,255,255,0.35); margin-top: 2px; }
+
+  /* Glass path cards */
+  .c4-paths { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; }
+  .c4-path {
+    background: rgba(255,255,255,0.05);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border: 1px solid rgba(255,255,255,0.09);
+    border-radius: 13px;
+    padding: 13px 15px;
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .c4-path:hover { background: rgba(255,255,255,0.09); }
+  .c4-path::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px; }
+  .c4-path.p1::before { background: linear-gradient(90deg, rgba(167,139,250,0.7), rgba(236,72,153,0.5), transparent); }
+  .c4-path.p2::before { background: linear-gradient(90deg, rgba(251,146,60,0.7), rgba(245,158,11,0.5), transparent); }
+  .c4-path.p3::before { background: linear-gradient(90deg, rgba(16,185,129,0.7), rgba(6,182,212,0.5), transparent); }
+  .c4-path.p4::before { background: linear-gradient(90deg, rgba(236,72,153,0.7), rgba(167,139,250,0.5), transparent); }
+  .c4-path h4 { font-size: 0.76rem; font-weight: 700; color: rgba(255,255,255,0.88); }
+  .c4-path p { font-size: 0.66rem; color: rgba(255,255,255,0.35); margin-top: 3px; }
+  .c4-path-arrow { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); color: rgba(255,255,255,0.2); font-size: 0.75rem; }
+
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <div style="font-size:0.65rem;letter-spacing:0.18em;text-transform:uppercase;color:#444;margin-bottom:10px;">CareerIntel SA</div>
+  <h1>UI Concept Exploration</h1>
+  <p>Four directions — each rooted in South African identity</p>
+</div>
+
+<div class="concepts">
+
+  <!-- ══ CONCEPT 1 — UBUNTU GOLD ══ -->
+  <div>
+    <div class="concept-label" style="color:#f59e0b;">Concept 1 — Ubuntu Gold</div>
+    <div class="concept-title">
+      <h2 style="font-size:1.5rem;font-weight:800;color:#f59e0b;">Warm &amp; Earthy</h2>
+      <p>Inspired by the South African savanna and the Ubuntu philosophy.<br>Amber, gold and warm earth tones — feels like home.</p>
+      <div class="palette">
+        <div class="swatch" style="background:#f59e0b;"></div>
+        <div class="swatch" style="background:#d97706;"></div>
+        <div class="swatch" style="background:#221808;"></div>
+        <div class="swatch" style="background:#3d2c10;"></div>
+        <div class="swatch" style="background:#10b981;"></div>
+        <div class="swatch" style="background:#fef3c7;"></div>
+      </div>
+    </div>
+    <div class="c1-wrap">
+      <div class="c1-sidebar">
+        <div class="c1-logo">
+          <div class="c1-logo-icon">🧠</div>
+          <div class="c1-logo-text">Career<span>Intel</span></div>
+        </div>
+        <div class="c1-nav active">📊 &nbsp;Dashboard</div>
+        <div class="c1-nav">📄 &nbsp;CV Builder</div>
+        <div class="c1-nav">💬 &nbsp;AI Coach</div>
+        <div class="c1-nav">🎯 &nbsp;Skills Gap</div>
+        <div class="c1-nav">🌿 &nbsp;Career Paths</div>
+        <div class="c1-nav">📈 &nbsp;Job Market</div>
+        <div class="c1-credits">
+          <div style="font-size:0.65rem;color:#a07840;">Credits balance</div>
+          <div style="font-size:1.25rem;font-weight:800;color:#f59e0b;">30 ✦</div>
+          <div style="font-size:0.65rem;color:#f59e0b;margin-top:3px;">Top up →</div>
+        </div>
+      </div>
+      <div class="c1-main">
+        <div class="c1-title">Sawubona, Sipho 👋</div>
+        <div class="c1-sub">Your SA career intelligence dashboard · Today</div>
+        <div class="c1-stats">
+          <div class="c1-stat"><div class="c1-stat-val">78%</div><div class="c1-stat-lbl">Employability Score</div></div>
+          <div class="c1-stat"><div class="c1-stat-val">R42k</div><div class="c1-stat-lbl">Est. Market Salary</div></div>
+          <div class="c1-stat"><div class="c1-stat-val">3</div><div class="c1-stat-lbl">Career Paths</div></div>
+        </div>
+        <div class="c1-row">
+          <div class="c1-card">
+            <div class="c1-card-title">Feature Usage</div>
+            <div class="c1-bar"><div class="c1-bar-lbl">AI Coach</div><div class="c1-bar-track"><div class="c1-bar-fill" style="width:78%"></div></div><div class="c1-bar-pct">78%</div></div>
+            <div class="c1-bar"><div class="c1-bar-lbl">CV Builder</div><div class="c1-bar-track"><div class="c1-bar-fill" style="width:54%"></div></div><div class="c1-bar-pct">54%</div></div>
+            <div class="c1-bar"><div class="c1-bar-lbl">Skills Gap</div><div class="c1-bar-track"><div class="c1-bar-fill" style="width:32%"></div></div><div class="c1-bar-pct">32%</div></div>
+          </div>
+          <div class="c1-card">
+            <div class="c1-card-title">Recent AI Chat</div>
+            <div class="c1-chat">
+              <div class="c1-msg bot">Top scarce skills in SA for 2026?</div>
+              <div class="c1-msg user">Cybersecurity &amp; Cloud are leading!</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ CONCEPT 2 — ZULU KINGDOM ══ -->
+  <div>
+    <div class="concept-label" style="color:#D4AF37;">Concept 2 — Zulu Kingdom</div>
+    <div class="concept-title">
+      <h2 style="font-size:1.5rem;font-weight:800;color:#D4AF37;">Regal &amp; Proud</h2>
+      <p>Inspired by Zulu beadwork, the Zulu shield and the hills of KwaZulu-Natal.<br>Royal gold, battle red and deep forest green on obsidian black — isiZulu strength.</p>
+      <div class="palette">
+        <div class="swatch" style="background:#D4AF37;" title="Royal Gold"></div>
+        <div class="swatch" style="background:#C41E3A;" title="Battle Red"></div>
+        <div class="swatch" style="background:#1a4a2e;" title="KZN Forest Green"></div>
+        <div class="swatch" style="background:#050708;" title="Obsidian Black"></div>
+        <div class="swatch" style="background:#f0ede0;" title="Ivory"></div>
+        <div class="swatch" style="background:#4ade80;" title="Savanna Leaf"></div>
+      </div>
+    </div>
+    <div class="c2-wrap">
+      <div class="c2-sidebar">
+        <div class="c2-logo">
+          <div class="c2-logo-shield"></div>
+          <div class="c2-logo-text">Career<span>Intel</span></div>
+        </div>
+        <div class="c2-nav active">⊞ &nbsp;Dashboard</div>
+        <div class="c2-nav">📄 &nbsp;CV Builder</div>
+        <div class="c2-nav">💬 &nbsp;AI Coach</div>
+        <div class="c2-nav">🎯 &nbsp;Skills Gap</div>
+        <div class="c2-nav">🌿 &nbsp;Career Paths</div>
+        <div class="c2-nav">📈 &nbsp;Job Market</div>
+        <div class="c2-credits-box">
+          <div style="font-size:0.62rem;color:#4a5a40;">Credits</div>
+          <div style="font-size:1.2rem;font-weight:800;color:#D4AF37;">30 ✦</div>
+          <div style="font-size:0.62rem;color:#C41E3A;margin-top:3px;">+ Top up</div>
+        </div>
+      </div>
+      <div class="c2-main">
+        <div class="c2-topbar">
+          <div>
+            <div style="font-size:0.6rem;color:#3a4a30;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:2px;">Dashboard</div>
+            <h2>Career Intelligence</h2>
+            <div class="c2-topbar-sub">Powered by AI · South African job market</div>
+          </div>
+          <!-- Zulu beadwork bead row in traditional colours -->
+          <div class="c2-beads">
+            <div class="c2-bead" style="background:#D4AF37;"></div>
+            <div class="c2-bead" style="background:#C41E3A;"></div>
+            <div class="c2-bead" style="background:#fff;"></div>
+            <div class="c2-bead" style="background:#1a4a2e;"></div>
+            <div class="c2-bead" style="background:#D4AF37;"></div>
+            <div class="c2-bead" style="background:#C41E3A;"></div>
+          </div>
+        </div>
+        <div class="c2-hero">
+          <div class="c2-ring"><div class="c2-ring-inner">70%</div></div>
+          <div>
+            <h3>Employability Score</h3>
+            <p>Top 35% of Data Engineering candidates in Gauteng</p>
+          </div>
+        </div>
+        <div class="c2-chips">
+          <div class="c2-chip"><div class="c2-chip-val" style="color:#C41E3A;">5</div><div class="c2-chip-lbl">Skills to Close</div></div>
+          <div class="c2-chip"><div class="c2-chip-val" style="color:#D4AF37;">8mo</div><div class="c2-chip-lbl">To Target Role</div></div>
+          <div class="c2-chip"><div class="c2-chip-val" style="color:#4ade80;">R65k</div><div class="c2-chip-lbl">Target Salary</div></div>
+        </div>
+        <div class="c2-skills">
+          <div class="c2-skill-title">Top Skills Gap</div>
+          <div class="c2-skill-row">
+            <div class="c2-skill-name">Apache Spark</div>
+            <div class="c2-skill-track"><div class="c2-skill-fill" style="width:20%;background:#C41E3A;"></div></div>
+            <div class="c2-skill-pct">20%</div>
+            <div class="c2-tag gap">Gap</div>
+          </div>
+          <div class="c2-skill-row">
+            <div class="c2-skill-name">Python</div>
+            <div class="c2-skill-track"><div class="c2-skill-fill" style="width:75%;background:#1a4a2e;"></div></div>
+            <div class="c2-skill-pct">75%</div>
+            <div class="c2-tag ok">Good</div>
+          </div>
+          <div class="c2-skill-row">
+            <div class="c2-skill-name">AWS / Azure</div>
+            <div class="c2-skill-track"><div class="c2-skill-fill" style="width:35%;background:#D4AF37;"></div></div>
+            <div class="c2-skill-pct">35%</div>
+            <div class="c2-tag gap">Gap</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ CONCEPT 3 — MZANSI SUNRISE ══ -->
+  <div>
+    <div class="concept-label" style="color:#8b5cf6;">Concept 3 — Mzansi Sunrise</div>
+    <div class="concept-title">
+      <h2 style="font-size:1.5rem;font-weight:800;background:linear-gradient(90deg,#8b5cf6,#f97316,#ec4899);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">Gradient &amp; Electric</h2>
+      <p>Inspired by a South African sunrise over the highveld.<br>Violet sky fading into orange horizon — modern, premium, unmistakably Mzansi.</p>
+      <div class="palette">
+        <div class="swatch" style="background:#8b5cf6;"></div>
+        <div class="swatch" style="background:#f97316;"></div>
+        <div class="swatch" style="background:#ec4899;"></div>
+        <div class="swatch" style="background:#09060f;"></div>
+        <div class="swatch" style="background:#10b981;"></div>
+        <div class="swatch" style="background:#f5f0ff;"></div>
+      </div>
+    </div>
+    <div class="c3-wrap">
+      <div class="c3-sidebar">
+        <div class="c3-logo">
+          <div class="c3-brand">CareerIntel SA</div>
+          <div class="c3-brand-sub">AI Career Intelligence</div>
+        </div>
+        <div class="c3-nav active">⊞ &nbsp;Dashboard</div>
+        <div class="c3-nav">📄 &nbsp;CV Builder</div>
+        <div class="c3-nav">💬 &nbsp;AI Coach</div>
+        <div class="c3-nav">🎯 &nbsp;Skills Gap</div>
+        <div class="c3-nav">🌿 &nbsp;Career Paths</div>
+        <div class="c3-nav">📈 &nbsp;Job Market</div>
+        <div class="c3-upgrade">
+          <h4>✦ 30 Credits</h4>
+          <p>Top up for more AI messages and simulations.</p>
+          <button class="c3-btn">Buy More Credits</button>
+        </div>
+      </div>
+      <div class="c3-main">
+        <div class="c3-banner">
+          <div class="c3-banner-tag">🌅 Mzansi Job Market</div>
+          <h2>Sawubona, Sipho</h2>
+          <p>3 scarce-skill opportunities in Gauteng match your profile today</p>
+        </div>
+        <div class="c3-stats">
+          <div class="c3-stat"><div class="c3-stat-icon" style="background:rgba(139,92,246,0.15);">🎯</div><div class="c3-stat-val" style="color:#8b5cf6;">78%</div><div class="c3-stat-lbl">Match Score</div></div>
+          <div class="c3-stat"><div class="c3-stat-icon" style="background:rgba(249,115,22,0.15);">💰</div><div class="c3-stat-val" style="color:#f97316;">R65k</div><div class="c3-stat-lbl">Target Salary</div></div>
+          <div class="c3-stat"><div class="c3-stat-icon" style="background:rgba(16,185,129,0.15);">📈</div><div class="c3-stat-val" style="color:#10b981;">8mo</div><div class="c3-stat-lbl">To Goal</div></div>
+        </div>
+        <div style="font-size:0.65rem;font-weight:700;color:#5c4d7a;margin-bottom:9px;text-transform:uppercase;letter-spacing:0.09em;">Explore Paths</div>
+        <div class="c3-paths">
+          <div class="c3-path p1"><h4>Data Engineer</h4><p>High demand · Gauteng</p><div class="c3-arrow">→</div></div>
+          <div class="c3-path p2"><h4>Cloud Architect</h4><p>Scarce skill · R95k+</p><div class="c3-arrow">→</div></div>
+          <div class="c3-path p3"><h4>ML Engineer</h4><p>Explosive growth</p><div class="c3-arrow">→</div></div>
+          <div class="c3-path p4"><h4>Cybersecurity</h4><p>SETA funding available</p><div class="c3-arrow">→</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ CONCEPT 4 — HIGHVELD GLASS ══ -->
+  <div>
+    <div class="concept-label" style="color:#a78bfa;">Concept 4 — Highveld Glass</div>
+    <div class="concept-title">
+      <h2 style="font-size:1.5rem;font-weight:800;background:linear-gradient(90deg,#a78bfa,rgba(255,255,255,0.9),#fb923c);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">Frosted &amp; Luminous</h2>
+      <p>Glassmorphism with a South African soul — deep cosmic background with SA sunrise<br>colours bleeding through frosted glass panels. Like looking at the highveld sky through ice.</p>
+      <div class="palette">
+        <div class="swatch" style="background:#a78bfa;"></div>
+        <div class="swatch" style="background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.3);"></div>
+        <div class="swatch" style="background:#fb923c;"></div>
+        <div class="swatch" style="background:#0d0818;"></div>
+        <div class="swatch" style="background:rgba(16,185,129,0.6);"></div>
+        <div class="swatch" style="background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.2);"></div>
+      </div>
+    </div>
+    <div class="c4-scene">
+      <!-- Glass sidebar -->
+      <div class="c4-sidebar">
+        <div class="c4-logo">
+          <div class="c4-logo-brand">Career<span>Intel SA</span></div>
+          <div class="c4-logo-sub">AI Career Intelligence</div>
+        </div>
+        <div class="c4-nav active">⊞ &nbsp;Dashboard</div>
+        <div class="c4-nav">📄 &nbsp;CV Builder</div>
+        <div class="c4-nav">💬 &nbsp;AI Coach</div>
+        <div class="c4-nav">🎯 &nbsp;Skills Gap</div>
+        <div class="c4-nav">🌿 &nbsp;Career Paths</div>
+        <div class="c4-nav">📈 &nbsp;Job Market</div>
+        <div class="c4-credits">
+          <div class="c4-credits-lbl">Credits balance</div>
+          <div class="c4-credits-val">30 ✦</div>
+          <div class="c4-credits-link">Top up →</div>
+        </div>
+      </div>
+      <!-- Glass main -->
+      <div class="c4-main">
+        <div class="c4-banner">
+          <div class="c4-banner-tag">🌅 Mzansi Job Market</div>
+          <h2>Sawubona, Sipho</h2>
+          <p>3 scarce-skill opportunities in Gauteng match your profile today</p>
+          <div class="c4-banner-emoji">🌅</div>
+        </div>
+        <div class="c4-stats">
+          <div class="c4-stat">
+            <div class="c4-stat-icon">🎯</div>
+            <div class="c4-stat-val">78%</div>
+            <div class="c4-stat-lbl">Match Score</div>
+          </div>
+          <div class="c4-stat">
+            <div class="c4-stat-icon">💰</div>
+            <div class="c4-stat-val">R65k</div>
+            <div class="c4-stat-lbl">Target Salary</div>
+          </div>
+          <div class="c4-stat">
+            <div class="c4-stat-icon">📈</div>
+            <div class="c4-stat-val">8mo</div>
+            <div class="c4-stat-lbl">To Goal</div>
+          </div>
+        </div>
+        <div style="font-size:0.65rem;font-weight:700;color:rgba(255,255,255,0.25);margin-bottom:9px;text-transform:uppercase;letter-spacing:0.09em;">Explore Paths</div>
+        <div class="c4-paths">
+          <div class="c4-path p1"><h4>Data Engineer</h4><p>High demand · Gauteng</p><div class="c4-path-arrow">→</div></div>
+          <div class="c4-path p2"><h4>Cloud Architect</h4><p>Scarce skill · R95k+</p><div class="c4-path-arrow">→</div></div>
+          <div class="c4-path p3"><h4>ML Engineer</h4><p>Explosive growth</p><div class="c4-path-arrow">→</div></div>
+          <div class="c4-path p4"><h4>Cybersecurity</h4><p>SETA funding available</p><div class="c4-path-arrow">→</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div style="text-align:center;padding:24px 24px 56px;font-size:0.82rem;color:#444;">
+  Which concept resonates? Elements can be mixed — e.g. Concept 2 gold accents inside Concept 4 glass panels.
+</div>
+
+</body>
+</html>

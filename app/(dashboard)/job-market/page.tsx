@@ -18,6 +18,12 @@ import { CAREER_SUBJECTS } from "@/lib/data/sa-subjects";
 import { SA_MARKET_STATS } from "@/lib/data/sa-provinces";
 import { formatSalaryRange, getDemandBadgeColor, getTrendLabel, getAutomationRiskLabel } from "@/lib/utils";
 
+// ── Data freshness ─────────────────────────────────────────────────────────────
+// Update this string each quarter when career data is refreshed.
+// Sources: Stats SA QES · DHET Scarce Skills List · Adzuna SA · Robert Walters SA Salary Guide
+const DATA_LAST_UPDATED = "May 2026";
+const NEXT_UPDATE_DUE   = "September 2026";
+
 // Shared tooltip style — dark background with white text for all charts
 const TOOLTIP_STYLE = {
   contentStyle: {
@@ -560,11 +566,24 @@ export default function JobMarketPage() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div>
-        <h1 className="text-2xl font-bold text-foreground">Job Market Analytics</h1>
-        <p className="text-muted-foreground text-sm mt-1">
-          Real-time demand intelligence for South Africa&apos;s labour market · Updated Q4 2025
-        </p>
+      <div className="flex items-start justify-between gap-4 flex-wrap">
+        <div>
+          <h1 className="text-2xl font-bold text-foreground">Job Market Analytics</h1>
+          <p className="text-muted-foreground text-sm mt-1">
+            SA career demand intelligence · 128 roles across 24 sectors
+          </p>
+        </div>
+        <div className="flex flex-col items-end gap-1.5 flex-shrink-0">
+          <div className="flex items-center gap-1.5 bg-emerald-500/10 border border-emerald-500/20 rounded-full px-3 py-1">
+            <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+            <span className="text-xs font-medium text-emerald-300">
+              Data updated: {DATA_LAST_UPDATED}
+            </span>
+          </div>
+          <span className="text-[10px] text-muted-foreground/60 pr-1">
+            Next refresh: {NEXT_UPDATE_DUE}
+          </span>
+        </div>
       </div>
 
       {/* Market overview stats */}
@@ -804,9 +823,12 @@ export default function JobMarketPage() {
         <TabsContent value="scarce">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <div className="bg-card border border-border rounded-xl p-5">
-              <div className="flex items-center gap-2 mb-4">
-                <Zap className="w-4 h-4 text-amber-400" />
-                <h3 className="text-sm font-semibold text-foreground">DHET / SETA Scarce Skills 2025</h3>
+              <div className="flex items-center justify-between gap-2 mb-4">
+                <div className="flex items-center gap-2">
+                  <Zap className="w-4 h-4 text-amber-400" />
+                  <h3 className="text-sm font-semibold text-foreground">DHET / SETA Scarce Skills</h3>
+                </div>
+                <span className="text-[10px] text-muted-foreground/60">Updated {DATA_LAST_UPDATED}</span>
               </div>
               <p className="text-xs text-muted-foreground mb-4">
                 Skills identified as critically scarce in South Africa. Learning these can unlock bursaries, learnerships, and premium salaries.

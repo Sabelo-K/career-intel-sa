@@ -64,6 +64,40 @@ export const PLANS = {
 
 export type PlanKey = keyof typeof PLANS;
 
+// ── New-user 50 % first-month discount ───────────────────────────────────────
+
+/** How many days after signup the discount is available */
+export const NEW_USER_DISCOUNT_DAYS = 7;
+
+interface PlanDef { name: string; amount: string; description: string; dbPlan: string; days: number }
+
+/** 50 % off prices (rounded to nearest whole rand) */
+export const DISCOUNT_PLANS: Record<PlanKey, PlanDef> = {
+  graduate:     { ...PLANS.graduate,     amount: "25.00",  description: "50% off — 30-day CareerIntel SA Graduate Plan (New User Offer)"     },
+  professional: { ...PLANS.professional, amount: "50.00",  description: "50% off — 30-day CareerIntel SA Professional Plan (New User Offer)" },
+  recruiter:    { ...PLANS.recruiter,    amount: "250.00", description: "50% off — 30-day CareerIntel SA Recruiter Plan (New User Offer)"     },
+};
+
+/**
+ * Returns true if the user qualifies for the first-month discount:
+ * - currently on FREE plan (has never paid), AND
+ * - signed up within the last NEW_USER_DISCOUNT_DAYS days
+ */
+export function isNewUserDiscountEligible(createdAt: Date, plan: string): boolean {
+  if (plan !== "FREE") return false;
+  const cutoff = new Date();
+  cutoff.setDate(cutoff.getDate() - NEW_USER_DISCOUNT_DAYS);
+  return new Date(createdAt) >= cutoff;
+}
+
+/** Days remaining on the new-user discount window (0 if not eligible) */
+export function discountDaysRemaining(createdAt: Date, plan: string): number {
+  if (!isNewUserDiscountEligible(createdAt, plan)) return 0;
+  const expiresAt = new Date(createdAt);
+  expiresAt.setDate(expiresAt.getDate() + NEW_USER_DISCOUNT_DAYS);
+  return Math.max(0, Math.ceil((expiresAt.getTime() - Date.now()) / 86_400_000));
+}
+
 // ── Signature generation ──────────────────────────────────────────────────────
 
 /**

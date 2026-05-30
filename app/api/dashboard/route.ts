@@ -5,6 +5,7 @@
 import { NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { db } from "@/lib/db";
+import { isNewUserDiscountEligible, discountDaysRemaining } from "@/lib/payfast";
 
 export async function GET() {
   try {
@@ -103,6 +104,8 @@ export async function GET() {
       planKey: dbUser.planKey ?? null,
       planExpiresAt: dbUser.planExpiresAt ?? null,
       onboarded: dbUser.onboarded,
+      isNewUser: isNewUserDiscountEligible(dbUser.createdAt, dbUser.plan),
+      daysLeftOnDiscount: discountDaysRemaining(dbUser.createdAt, dbUser.plan),
     });
   } catch (err) {
     console.error("Dashboard GET error:", err);

@@ -7,6 +7,8 @@ import {
   PAYFAST_MERCHANT_KEY,
   generateSignature,
   PLANS,
+  DISCOUNT_PLANS,
+  isNewUserDiscountEligible,
   type PlanKey,
 } from "@/lib/payfast";
 
@@ -40,13 +42,18 @@ export async function POST(req: NextRequest) {
 
     const APP_URL = getAppUrl(req);
     console.log("[PayFast checkout] APP_URL:", APP_URL);
-    const plan    = PLANS[planKey];
+
     const clerkUser = await currentUser();
     const dbUser    = await getOrCreateUser(
       userId,
       clerkUser?.primaryEmailAddress?.emailAddress,
       clerkUser?.fullName
     );
+
+    // Apply new-user 50 % discount if eligible (server-side enforcement)
+    const applyDiscount = isNewUserDiscountEligible(dbUser.createdAt, dbUser.plan);
+    const plan = applyDiscount ? DISCOUNT_PLANS[planKey] : PLANS[planKey];
+    console.log(`[PayFast checkout] planKey=${planKey} discount=${applyDiscount} amount=${plan.amount}`);
 
     // Build PayFast parameters IN ORDER (order matters for signature)
     const params: Record<string, string> = {
@@ -60,10 +67,11 @@ export async function POST(req: NextRequest) {
       email_address:    clerkUser?.primaryEmailAddress?.emailAddress ?? "",
       m_payment_id:     `${dbUser.id}-${planKey}-${Date.now()}`,
       amount:           plan.amount,
-      item_name:        `CareerIntel SA ${plan.name} Plan`,
+      item_name:        `CareerIntel SA ${plan.name} Plan${applyDiscount ? " — 50% Off" : ""}`,
       item_description: plan.description,
-      custom_str1:      dbUser.id,   // DB user ID — used in ITN to update plan
-      custom_str2:      planKey,     // Plan key  — used in ITN to pick dbPlan
+      custom_str1:      dbUser.id,                          // DB user ID — used in ITN to update plan
+      custom_str2:      planKey,                            // Plan key  — used in ITN to pick dbPlan
+      custom_str3:      applyDiscount ? "new_user_50pct" : "", // Discount tracking
     };
 
     params.signature = generateSignature(params);

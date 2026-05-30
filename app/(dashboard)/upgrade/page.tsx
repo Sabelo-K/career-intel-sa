@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import {
   Crown, Check, Zap, Star, Users, ChevronRight, ArrowLeft,
-  MessageCircle, BarChart2, FileText, Target, Shield, TrendingUp,
+  MessageCircle, BarChart2, FileText, Target, Shield, TrendingUp, Clock,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -116,10 +116,12 @@ const HIGHLIGHTS = [
 
 export default function UpgradePage() {
   const router         = useRouter();
-  const [loading, setLoading]       = useState<PlanKey | null>(null);
-  const [error, setError]           = useState<string | null>(null);
+  const [loading, setLoading]           = useState<PlanKey | null>(null);
+  const [error, setError]               = useState<string | null>(null);
   const [currentPlan, setCurrentPlan]   = useState<string>("FREE");
   const [currentPlanKey, setCurrentPlanKey] = useState<string | null>(null);
+  const [isNewUser, setIsNewUser]       = useState(false);
+  const [daysLeft, setDaysLeft]         = useState(0);
 
   useEffect(() => {
     fetch("/api/dashboard")
@@ -127,6 +129,7 @@ export default function UpgradePage() {
       .then((d) => {
         if (d.plan) setCurrentPlan(d.plan);
         if (d.planKey) setCurrentPlanKey(d.planKey);
+        if (d.isNewUser) { setIsNewUser(true); setDaysLeft(d.daysLeftOnDiscount ?? 0); }
       })
       .catch(() => {});
   }, []);
@@ -170,6 +173,13 @@ export default function UpgradePage() {
 
   const isAlreadyPaid = currentPlan !== "FREE";
 
+  // Discounted prices (50% off) — matches DISCOUNT_PLANS in lib/payfast.ts
+  const DISCOUNTED_PRICES: Record<PlanKey, string> = {
+    graduate:     "R25",
+    professional: "R50",
+    recruiter:    "R250",
+  };
+
   return (
     <div className="max-w-5xl space-y-10">
       {/* Back link */}
@@ -202,6 +212,35 @@ export default function UpgradePage() {
           </div>
         )}
       </div>
+
+      {/* New-user discount banner */}
+      {isNewUser && !isAlreadyPaid && (
+        <motion.div
+          initial={{ opacity: 0, y: -8 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="flex items-center gap-3 bg-gradient-to-r from-amber-500/15 to-orange-500/10 border border-amber-500/30 rounded-xl px-4 py-3.5"
+        >
+          <div className="w-8 h-8 rounded-lg bg-amber-500/20 flex items-center justify-center flex-shrink-0">
+            <Zap className="w-4 h-4 text-amber-400" />
+          </div>
+          <div className="flex-1">
+            <p className="text-sm font-bold text-foreground">
+              🎉 New user offer — 50% off your first month!
+            </p>
+            <p className="text-xs text-muted-foreground mt-0.5">
+              Prices shown below are your discounted rate. Full price applies from month 2.
+            </p>
+          </div>
+          {daysLeft > 0 && (
+            <div className="flex items-center gap-1.5 bg-amber-500/20 border border-amber-500/30 rounded-lg px-2.5 py-1.5 flex-shrink-0">
+              <Clock className="w-3.5 h-3.5 text-amber-400" />
+              <span className="text-xs font-bold text-amber-300">
+                {daysLeft} day{daysLeft !== 1 ? "s" : ""} left
+              </span>
+            </div>
+          )}
+        </motion.div>
+      )}
 
       {/* Plan cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mt-4">
@@ -242,9 +281,14 @@ export default function UpgradePage() {
               </div>
 
               {/* Price */}
-              <div className="flex items-baseline gap-1 mb-4">
-                <span className="text-3xl font-bold text-foreground">{plan.price}</span>
+              <div className="flex items-baseline gap-2 mb-4 flex-wrap">
+                <span className="text-3xl font-bold text-foreground">
+                  {isNewUser && !isAlreadyPaid ? DISCOUNTED_PRICES[plan.key] : plan.price}
+                </span>
                 <span className="text-sm text-muted-foreground">{plan.period}</span>
+                {isNewUser && !isAlreadyPaid && (
+                  <span className="text-sm text-muted-foreground line-through">{plan.price}</span>
+                )}
               </div>
 
               {/* Features */}
@@ -281,7 +325,7 @@ export default function UpgradePage() {
                     </span>
                   ) : (
                     <>
-                      Choose {plan.name}
+                      {isNewUser && !isAlreadyPaid ? `Get ${plan.name} — 50% Off` : `Choose ${plan.name}`}
                       <ChevronRight className="w-3.5 h-3.5" />
                     </>
                   )}
@@ -305,7 +349,10 @@ export default function UpgradePage() {
           Secure payments via <span className="text-foreground font-medium">PayFast</span> · South Africa&apos;s #1 payment gateway
         </p>
         <p className="text-xs text-muted-foreground">
-          30-day access · No automatic renewal · Cancel anytime · POPIA compliant
+          30-day access · No automatic renewal · POPIA compliant
+          {isNewUser && !isAlreadyPaid && (
+            <span className="text-amber-400 font-medium"> · 50% off your first month — no code needed</span>
+          )}
         </p>
       </div>
 

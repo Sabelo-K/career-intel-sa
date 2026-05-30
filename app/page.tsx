@@ -99,13 +99,13 @@ const PRICING = [
     features: [
       "Everything in Free",
       "Unlimited career demand searches",
-      "Full skills gap analysis",
+      "Full skills gap analysis (unlimited)",
       "50 AI coach messages/month",
       "Interview prep — 20 questions",
       "1 full career path simulation",
       "Trade & artisan career insights",
     ],
-    cta: "Start Free Trial",
+    cta: "Get Graduate Plan",
     highlight: false,
     badge: "For Youth",
   },
@@ -120,10 +120,10 @@ const PRICING = [
       "Unlimited career path simulations",
       "Advanced salary forecasting (ZAR)",
       "Unlimited skills gap analysis",
-      "LinkedIn profile generator",
-      "Priority support",
+      "Daily job alert digest emails",
+      "Early access to new features",
     ],
-    cta: "Start 14-Day Trial",
+    cta: "Get Professional Plan",
     highlight: true,
     badge: "Most Popular",
   },
@@ -131,17 +131,17 @@ const PRICING = [
     name: "Recruiter",
     price: "R499",
     period: "/month",
-    description: "Find exceptional SA talent faster",
+    description: "Market intelligence for HR & talent teams",
     features: [
-      "Candidate talent search",
-      "AI candidate ranking engine",
-      "Skills intelligence dashboard",
-      "Salary benchmarking tool",
-      "Custom talent reports",
-      "API access",
-      "Dedicated account manager",
+      "Everything in Professional",
+      "Province-level salary benchmarking",
+      "Skills demand intelligence dashboard",
+      "Advanced job market analytics",
+      "Unlimited job alert tracking",
+      "SA hiring trend reports",
+      "Priority email support",
     ],
-    cta: "Contact Sales",
+    cta: "Get Recruiter Plan",
     highlight: false,
     badge: "For Business",
   },
@@ -587,7 +587,7 @@ export default function LandingPage() {
             <p className="text-white/50">Start free, upgrade when you&apos;re ready. No hidden fees.</p>
           </motion.div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5 sm:gap-6 max-w-6xl mx-auto">
+          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5 sm:gap-6 max-w-6xl mx-auto mt-4">
             {PRICING.map((plan, i) => (
               <motion.div
                 key={plan.name}
@@ -602,7 +602,11 @@ export default function LandingPage() {
                 }`}
               >
                 {plan.badge && (
-                  <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full bg-indigo-600 text-white text-xs font-semibold">
+                  <div className={`absolute -top-3.5 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full text-white text-xs font-semibold whitespace-nowrap ${
+                    plan.badge === "Most Popular" ? "bg-indigo-600" :
+                    plan.badge === "For Youth"    ? "bg-violet-600" :
+                    "bg-amber-600"
+                  }`}>
                     {plan.badge}
                   </div>
                 )}

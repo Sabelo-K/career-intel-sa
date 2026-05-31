@@ -40,12 +40,24 @@ export default function CoursesPage() {
   }, [searchParams]);
 
   const filtered = SA_COURSES.filter((c) => {
-    const q = search.toLowerCase();
-    const matchSearch = !q || c.title.toLowerCase().includes(q) ||
-      c.provider.toLowerCase().includes(q) ||
-      c.platform.toLowerCase().includes(q) ||
-      c.skills.some((s) => s.toLowerCase().includes(q));
-    const matchFree = freeOnly ? c.price === "free" || c.price === 0 : true;
+    // Support comma-separated keywords (passed by roadmap widget skill links)
+    const keywords = search
+      .split(",")
+      .map((k) => k.trim().toLowerCase())
+      .filter(Boolean);
+
+    const matchSearch =
+      keywords.length === 0 ||
+      keywords.some(
+        (kw) =>
+          c.title.toLowerCase().includes(kw) ||
+          c.provider.toLowerCase().includes(kw) ||
+          c.platform.toLowerCase().includes(kw) ||
+          (c.category ?? "").toLowerCase().includes(kw) ||
+          c.skills.some((s) => s.toLowerCase().includes(kw))
+      );
+
+    const matchFree     = freeOnly ? c.price === "free" || c.price === 0 : true;
     const matchPlatform = selectedPlatform === "all" ? true : c.platform.toLowerCase().includes(selectedPlatform.toLowerCase());
     const matchCategory = selectedCategory === "All" ? true : c.category === selectedCategory;
     return matchSearch && matchFree && matchPlatform && matchCategory;
@@ -109,7 +121,12 @@ export default function CoursesPage() {
         >
           <BookOpen className="w-4 h-4 text-indigo-400 flex-shrink-0" />
           <span className="text-indigo-200 flex-1">
-            Showing courses for <strong className="text-indigo-300">{searchParams.get("q")}</strong> — from your learning roadmap
+            Showing courses for{" "}
+            <strong className="text-indigo-300">
+              {/* Prefer the human-readable phase name if provided */}
+              {searchParams.get("phase") ?? searchParams.get("q")}
+            </strong>
+            {searchParams.get("phase") && " — from your learning roadmap"}
           </span>
           <button
             onClick={() => setSearch("")}

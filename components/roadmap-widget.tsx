@@ -234,7 +234,11 @@ export function RoadmapWidget() {
                     <span className="text-[10px] text-muted-foreground">{phase.weeks}w</span>
                     {/* Find courses shortcut — stops propagation so it doesn't toggle completion */}
                     <Link
-                      href={`/courses?q=${encodeURIComponent(phase.title)}`}
+                      href={`/courses?q=${encodeURIComponent(
+                        phase.skills.length > 0
+                          ? phase.skills.slice(0, 3).join(",")
+                          : phase.title
+                      )}&phase=${encodeURIComponent(phase.title)}`}
                       onClick={(e) => e.stopPropagation()}
                       className="flex items-center gap-0.5 text-[10px] text-indigo-400 hover:text-indigo-300 border border-indigo-500/30 hover:border-indigo-400/50 bg-indigo-500/10 hover:bg-indigo-500/15 px-1.5 py-0.5 rounded transition-all"
                     >
@@ -264,7 +268,7 @@ export function RoadmapWidget() {
                     ))}
                     {phase.skills.length > 3 && (
                       <Link
-                        href={`/courses?q=${encodeURIComponent(phase.title)}`}
+                        href={`/courses?q=${encodeURIComponent(phase.skills.join(","))}&phase=${encodeURIComponent(phase.title)}`}
                         onClick={(e) => e.stopPropagation()}
                         className="text-[10px] text-muted-foreground hover:text-indigo-300 transition-colors"
                       >

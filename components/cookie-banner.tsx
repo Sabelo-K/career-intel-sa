@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { X, Cookie } from "lucide-react";
+import { Cookie } from "lucide-react";
 
 const STORAGE_KEY = "careerintelsa_cookie_consent";
 
@@ -47,8 +47,7 @@ export default function CookieBanner() {
           onClick={dismiss}
           className="flex-shrink-0 flex items-center gap-1.5 text-xs font-semibold bg-indigo-600 hover:bg-indigo-500 text-white px-3 py-1.5 rounded-lg transition-colors"
         >
-          <X className="w-3.5 h-3.5" />
-          Got it
+          I Agree
         </button>
       </div>
     </div>

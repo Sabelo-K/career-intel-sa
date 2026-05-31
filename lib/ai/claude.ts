@@ -45,13 +45,28 @@ function extractJSON(text: string): Record<string, unknown> {
 
 // ─── Career Coach (streaming) ────────────────────────────────────────────────
 
+const LANGUAGE_NAMES: Record<string, string> = {
+  en:  "English",
+  zu:  "isiZulu",
+  xh:  "isiXhosa",
+  af:  "Afrikaans",
+  st:  "Sesotho",
+  tn:  "Setswana",
+  nso: "Sepedi",
+};
+
 export async function* streamCareerCoach(
   messages: Message[],
-  systemContext?: string
+  systemContext?: string,
+  language?: string
 ) {
+  const langInstruction = language && language !== "en"
+    ? `\n\nIMPORTANT: The user has selected ${LANGUAGE_NAMES[language] ?? language} as their language. Always respond in ${LANGUAGE_NAMES[language] ?? language}. Keep all career terminology accurate and use South African context throughout.`
+    : "";
+
   const systemPrompt = systemContext
-    ? `${SYSTEM_PROMPT_CAREER_COACH}\n\nAdditional context: ${systemContext}`
-    : SYSTEM_PROMPT_CAREER_COACH;
+    ? `${SYSTEM_PROMPT_CAREER_COACH}${langInstruction}\n\nAdditional context: ${systemContext}`
+    : `${SYSTEM_PROMPT_CAREER_COACH}${langInstruction}`;
 
   const stream = await groq.chat.completions.create({
     model: MODEL,

@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useFeedback } from "@/components/feedback-provider";
 import { OutOfCreditsModal } from "@/components/out-of-credits-modal";
+import { useLanguage } from "@/lib/i18n/LanguageContext";
 
 interface Message {
   id: string;
@@ -160,6 +161,7 @@ interface ChatSession {
 
 export default function CareerCoachPage() {
   const { triggerFeedback } = useFeedback();
+  const { language } = useLanguage();
   const [messages, setMessages] = useState<Message[]>([INITIAL_MESSAGE]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -255,6 +257,7 @@ export default function CareerCoachPage() {
           messages:  history,
           context:   "SA job market 2025",
           sessionId: activeSessionId,
+          language,
         }),
       });
 
@@ -496,6 +499,11 @@ export default function CareerCoachPage() {
             <p className="text-xs text-muted-foreground mt-2 text-center">
               CareerIQ is AI-powered · Not a substitute for registered career counsellors
             </p>
+            {language !== "en" && (
+              <p className="text-xs text-amber-400/70 mt-1 text-center">
+                AI responses in indigenous languages may not be perfect — verify important information.
+              </p>
+            )}
           </div>
         </div>
 

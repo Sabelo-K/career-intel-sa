@@ -29,7 +29,7 @@ export async function POST(req: NextRequest) {
     if (limited) return limited;
 
     const body = await req.json();
-    const { messages, context, sessionId } = body;
+    const { messages, context, sessionId, language } = body;
 
     if (!messages || !Array.isArray(messages) || messages.length === 0) {
       return new Response(JSON.stringify({ error: "Invalid messages" }), {
@@ -101,7 +101,7 @@ export async function POST(req: NextRequest) {
     const stream = new ReadableStream({
       async start(controller) {
         try {
-          for await (const chunk of streamCareerCoach(messages, context)) {
+          for await (const chunk of streamCareerCoach(messages, context, language)) {
             fullResponse += chunk;
             controller.enqueue(
               encoder.encode(`data: ${JSON.stringify({ delta: chunk })}\n\n`)

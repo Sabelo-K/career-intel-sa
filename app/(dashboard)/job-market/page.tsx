@@ -589,10 +589,10 @@ export default function JobMarketPage() {
       {/* Market overview stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {[
-          { label: "National Unemployment", value: "32.9%", change: "Q3 2025", icon: AlertTriangle, color: "amber" },
-          { label: "Youth Unemployment", value: "45.5%", change: "Ages 15-34", icon: TrendingDown, color: "red" },
-          { label: "Tech Jobs Growth", value: "+28%", change: "YoY 2025", icon: TrendingUp, color: "emerald" },
-          { label: "Remote Jobs Available", value: "18%", change: "of SA listings", icon: Globe, color: "indigo" },
+          { label: "National Unemployment", value: "32.1%", change: "Q4 2025 · Stats SA", icon: AlertTriangle, color: "amber" },
+          { label: "Youth Unemployment", value: "46.1%", change: "Ages 15-34 · Q4 2025", icon: TrendingDown, color: "red" },
+          { label: "Tech Jobs Growth", value: "+32%", change: "YoY 2026", icon: TrendingUp, color: "emerald" },
+          { label: "Remote Jobs Available", value: "22%", change: "of SA listings · 2026", icon: Globe, color: "indigo" },
         ].map((stat) => (
           <div key={stat.label} className="stat-card">
             <div className="flex items-center justify-between mb-2">

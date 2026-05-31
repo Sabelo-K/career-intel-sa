@@ -5,12 +5,20 @@ import { useEffect, useState } from "react";
 import {
   BarChart2, Users, MessageCircle, TrendingUp, Activity,
   Shield, Database, Zap, Star, MessageSquare, RefreshCw,
-  Target, GitBranch, Crown, CheckCircle2, DollarSign,
+  Target, GitBranch, Crown, CheckCircle2, DollarSign, Clock, AlertTriangle, CalendarClock,
 } from "lucide-react";
 import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer, Tooltip, Cell, LineChart, Line, AreaChart, Area } from "recharts";
 import { Badge } from "@/components/ui/badge";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
+
+interface Subscriber {
+  name:          string;
+  email:         string;
+  planKey:       string;
+  planExpiresAt: string | null;
+  daysLeft:      number;
+}
 
 interface AdminStats {
   totalUsers:        number;
@@ -27,6 +35,8 @@ interface AdminStats {
   planBreakdown:     { graduate: number; professional: number; recruiter: number };
   revenueThisMonth:  number;
   revenueData:       { month: string; revenue: number; users: number }[];
+  subscribers:       Subscriber[];
+  expiringCount:     number;
 }
 
 interface FeedbackStats {
@@ -328,12 +338,12 @@ export default function AdminPage() {
       {/* ── Stat cards ────────────────────────────────────────────────────── */}
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
         {[
-          { label: "Total Users",    value: s?.totalUsers,   icon: Users,         color: "indigo",  prefix: ""   },
-          { label: "Active Today",   value: s?.activeToday,  icon: Activity,      color: "emerald", prefix: ""   },
-          { label: "Paid Users",     value: s?.premiumUsers, icon: Shield,        color: "amber",   prefix: ""   },
-          { label: "Revenue MTD",    value: s?.revenueThisMonth, icon: DollarSign, color: "green",  prefix: "R"  },
-          { label: "CVs Uploaded",   value: s?.cvCount,      icon: Database,      color: "blue",    prefix: ""   },
-          { label: "Simulations",    value: s?.pathCount,    icon: Zap,           color: "pink",    prefix: ""   },
+          { label: "Total Users",    value: s?.totalUsers,       icon: Users,         color: "indigo",  prefix: ""  },
+          { label: "Active Today",   value: s?.activeToday,      icon: Activity,      color: "emerald", prefix: ""  },
+          { label: "Paid Users",     value: s?.premiumUsers,     icon: Shield,        color: "amber",   prefix: ""  },
+          { label: "Revenue MTD",    value: s?.revenueThisMonth, icon: DollarSign,    color: "green",   prefix: "R" },
+          { label: "Expiring Soon",  value: s?.expiringCount,    icon: AlertTriangle, color: "red",     prefix: ""  },
+          { label: "CVs Uploaded",   value: s?.cvCount,          icon: Database,      color: "blue",    prefix: ""  },
         ].map((stat) => (
           <div key={stat.label} className="stat-card">
             <div className={`w-8 h-8 rounded-lg flex items-center justify-center mb-2 ${
@@ -342,6 +352,7 @@ export default function AdminPage() {
               stat.color === "amber"   ? "bg-amber-500/15"   :
               stat.color === "violet"  ? "bg-violet-500/15"  :
               stat.color === "green"   ? "bg-green-500/15"   :
+              stat.color === "red"     ? "bg-red-500/15"     :
               stat.color === "blue"    ? "bg-blue-500/15"    : "bg-pink-500/15"
             }`}>
               <stat.icon className={`w-4 h-4 ${
@@ -350,6 +361,7 @@ export default function AdminPage() {
                 stat.color === "amber"   ? "text-amber-400"   :
                 stat.color === "violet"  ? "text-violet-400"  :
                 stat.color === "green"   ? "text-green-400"   :
+                stat.color === "red"     ? "text-red-400"     :
                 stat.color === "blue"    ? "text-blue-400"    : "text-pink-400"
               }`} />
             </div>
@@ -555,6 +567,140 @@ export default function AdminPage() {
               </BarChart>
             </ResponsiveContainer>
           )}
+        </div>
+      </div>
+
+      {/* ── Active Subscribers ──────────────────────────────────────────────── */}
+      <div className="bg-card border border-border rounded-xl p-5">
+        <div className="flex items-center justify-between mb-4">
+          <div>
+            <h3 className="text-sm font-semibold text-foreground flex items-center gap-2">
+              <CalendarClock className="w-4 h-4 text-indigo-400" />
+              Active Subscribers — Membership Expiry
+            </h3>
+            <p className="text-xs text-muted-foreground mt-0.5">
+              All paid users sorted by days remaining · refresh for live data
+            </p>
+          </div>
+          {s && s.expiringCount > 0 && (
+            <div className="flex items-center gap-1.5 bg-red-500/10 border border-red-500/20 rounded-full px-3 py-1">
+              <AlertTriangle className="w-3.5 h-3.5 text-red-400" />
+              <span className="text-xs font-semibold text-red-300">
+                {s.expiringCount} expiring within 7 days
+              </span>
+            </div>
+          )}
+        </div>
+
+        {loading ? (
+          <div className="space-y-2">
+            {[1,2,3].map((i) => <Skeleton key={i} className="h-12 w-full" />)}
+          </div>
+        ) : !s || s.subscribers.length === 0 ? (
+          <div className="text-center py-8 text-sm text-muted-foreground">
+            No active paid subscribers yet — they will appear here once someone upgrades.
+          </div>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b border-border">
+                  <th className="text-left text-xs font-semibold text-muted-foreground pb-2 pr-4">User</th>
+                  <th className="text-left text-xs font-semibold text-muted-foreground pb-2 pr-4">Plan</th>
+                  <th className="text-left text-xs font-semibold text-muted-foreground pb-2 pr-4">Expires</th>
+                  <th className="text-right text-xs font-semibold text-muted-foreground pb-2">Days Left</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-border">
+                {s.subscribers.map((sub, i) => {
+                  const urgent  = sub.daysLeft <= 3;
+                  const warning = sub.daysLeft <= 7 && sub.daysLeft > 3;
+                  const good    = sub.daysLeft > 14;
+                  const expired = sub.daysLeft <= 0;
+
+                  return (
+                    <motion.tr
+                      key={i}
+                      initial={{ opacity: 0, x: -10 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: i * 0.05 }}
+                      className="group"
+                    >
+                      {/* User */}
+                      <td className="py-3 pr-4">
+                        <div className="flex items-center gap-2.5">
+                          <div className="w-7 h-7 rounded-full bg-indigo-500/20 border border-indigo-500/25 flex items-center justify-center flex-shrink-0">
+                            <span className="text-xs font-bold text-indigo-300">
+                              {(sub.name?.[0] ?? "?").toUpperCase()}
+                            </span>
+                          </div>
+                          <div className="min-w-0">
+                            <div className="text-xs font-medium text-foreground truncate max-w-[140px]">{sub.name}</div>
+                            <div className="text-[10px] text-muted-foreground truncate max-w-[140px]">{sub.email}</div>
+                          </div>
+                        </div>
+                      </td>
+
+                      {/* Plan */}
+                      <td className="py-3 pr-4">
+                        <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full border ${
+                          sub.planKey === "recruiter"    ? "bg-amber-500/15 border-amber-500/25 text-amber-300" :
+                          sub.planKey === "professional" ? "bg-indigo-500/15 border-indigo-500/25 text-indigo-300" :
+                                                          "bg-violet-500/15 border-violet-500/25 text-violet-300"
+                        }`}>
+                          {sub.planKey.charAt(0).toUpperCase() + sub.planKey.slice(1)}
+                        </span>
+                      </td>
+
+                      {/* Expiry date */}
+                      <td className="py-3 pr-4">
+                        <span className="text-xs text-muted-foreground">
+                          {sub.planExpiresAt
+                            ? new Date(sub.planExpiresAt).toLocaleDateString("en-ZA", { day: "numeric", month: "short", year: "numeric" })
+                            : "—"}
+                        </span>
+                      </td>
+
+                      {/* Days left badge */}
+                      <td className="py-3 text-right">
+                        {expired ? (
+                          <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2.5 py-1 rounded-full bg-secondary border border-border text-muted-foreground">
+                            Expired
+                          </span>
+                        ) : (
+                          <span className={`inline-flex items-center gap-1 text-[10px] font-bold px-2.5 py-1 rounded-full border ${
+                            urgent  ? "bg-red-500/15 border-red-500/25 text-red-300" :
+                            warning ? "bg-amber-500/15 border-amber-500/25 text-amber-300" :
+                            good    ? "bg-emerald-500/15 border-emerald-500/25 text-emerald-300" :
+                                      "bg-indigo-500/15 border-indigo-500/25 text-indigo-300"
+                          }`}>
+                            {urgent  && <AlertTriangle className="w-2.5 h-2.5" />}
+                            {warning && <Clock className="w-2.5 h-2.5" />}
+                            {sub.daysLeft} day{sub.daysLeft !== 1 ? "s" : ""}
+                          </span>
+                        )}
+                      </td>
+                    </motion.tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        )}
+
+        {/* Legend */}
+        <div className="flex items-center gap-4 mt-4 pt-3 border-t border-border flex-wrap">
+          {[
+            { color: "bg-red-500",     label: "1–3 days — urgent"  },
+            { color: "bg-amber-500",   label: "4–7 days — expiring soon" },
+            { color: "bg-indigo-500",  label: "8–14 days"          },
+            { color: "bg-emerald-500", label: "15+ days — healthy"  },
+          ].map((l) => (
+            <div key={l.label} className="flex items-center gap-1.5 text-[10px] text-muted-foreground">
+              <div className={`w-2 h-2 rounded-full ${l.color}`} />
+              {l.label}
+            </div>
+          ))}
         </div>
       </div>
 

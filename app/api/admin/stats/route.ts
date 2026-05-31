@@ -230,6 +230,34 @@ export async function GET() {
       pct: totalActivity > 0 ? Math.round((f.count / totalActivity) * 100) : 0,
     }));
 
+    // ── Active subscribers with days remaining ───────────────────────────────
+    interface Subscriber {
+      name: string; email: string; planKey: string;
+      planExpiresAt: Date | null; daysLeft: number;
+    }
+    let subscribers: Subscriber[] = [];
+    let expiringCount = 0;
+
+    try {
+      const rows = await db.user.findMany({
+        where:   { plan: { not: "FREE" }, planExpiresAt: { not: null } },
+        select:  { name: true, email: true, planKey: true, planExpiresAt: true },
+        orderBy: { planExpiresAt: "asc" },
+      });
+
+      subscribers = rows.map((u) => ({
+        name:          u.name ?? u.email ?? "Unknown",
+        email:         u.email,
+        planKey:       u.planKey ?? "unknown",
+        planExpiresAt: u.planExpiresAt,
+        daysLeft:      u.planExpiresAt
+          ? Math.ceil((new Date(u.planExpiresAt).getTime() - now.getTime()) / 86_400_000)
+          : 0,
+      }));
+
+      expiringCount = subscribers.filter((s) => s.daysLeft > 0 && s.daysLeft <= 7).length;
+    } catch { /* leave empty */ }
+
     return NextResponse.json({
       totalUsers,
       premiumUsers,
@@ -245,6 +273,8 @@ export async function GET() {
       planBreakdown,
       revenueThisMonth,
       revenueData,
+      subscribers,
+      expiringCount,
     });
   } catch (err) {
     console.error("[admin/stats]", err);

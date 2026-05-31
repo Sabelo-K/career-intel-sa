@@ -7,6 +7,7 @@ import {
   Star, ArrowRight, CheckCircle, Globe, Shield, Award,
   ChevronRight, Sparkles, Users, Building2, GraduationCap,
 } from "lucide-react";
+import { LanguageSelector } from "@/components/layout/language-selector";
 
 const STATS = [
   { value: "200+", label: "Career Paths Mapped", icon: Target },
@@ -742,7 +743,10 @@ export default function LandingPage() {
           </div>
           <div className="border-t border-white/5 pt-8 flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-white/30">
             <p>© 2026 CareerIntel SA. All rights reserved. Built for South Africa.</p>
-            <p>POPIA Compliant · South African Company</p>
+            <div className="flex items-center gap-4">
+              <p>POPIA Compliant · South African Company</p>
+              <LanguageSelector />
+            </div>
           </div>
         </div>
       </footer>

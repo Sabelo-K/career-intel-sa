@@ -11,6 +11,8 @@ import {
   User, Settings, Zap, ChevronRight, Crown, Menu, X, Coins, Bell, GraduationCap, HeadphonesIcon,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { LanguageSelector } from "@/components/layout/language-selector";
+import { useLanguage } from "@/lib/i18n/LanguageContext";
 
 const NAV_ITEMS = [
   { href: "/dashboard",     icon: LayoutDashboard, label: "Dashboard"      },
@@ -258,6 +260,10 @@ export function Sidebar() {
               </Link>
             );
           })}
+          {/* Language selector */}
+          <div className="mx-3 mb-1 flex items-center justify-center px-2 py-1">
+            <LanguageSelector compact />
+          </div>
           {/* Legal links */}
           <div className="mx-3 mb-1 flex items-center justify-center gap-3 px-2 py-1">
             <Link href="/privacy" className="text-[10px] text-muted-foreground hover:text-foreground transition-colors">Privacy</Link>

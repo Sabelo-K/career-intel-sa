@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import { ClerkProvider } from "@clerk/nextjs";
 import CookieBanner from "@/components/cookie-banner";
+import { LanguageProvider } from "@/lib/i18n/LanguageContext";
 import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
@@ -55,8 +56,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <ClerkProvider>
       <html lang="en" className="dark" suppressHydrationWarning>
         <body className={`${inter.variable} font-sans`}>
-          {children}
-          <CookieBanner />
+          <LanguageProvider>
+            {children}
+            <CookieBanner />
+          </LanguageProvider>
         </body>
       </html>
     </ClerkProvider>

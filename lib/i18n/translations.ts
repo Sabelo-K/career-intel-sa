@@ -1,0 +1,252 @@
+export type Language = "en" | "zu" | "xh" | "af" | "st" | "tn" | "nso";
+
+export const LANGUAGES: { code: Language; label: string; flag: string }[] = [
+  { code: "en",  label: "English",   flag: "🇿🇦" },
+  { code: "zu",  label: "isiZulu",   flag: "🇿🇦" },
+  { code: "xh",  label: "isiXhosa",  flag: "🇿🇦" },
+  { code: "af",  label: "Afrikaans", flag: "🇿🇦" },
+  { code: "st",  label: "Sesotho",   flag: "🇿🇦" },
+  { code: "tn",  label: "Setswana",  flag: "🇿🇦" },
+  { code: "nso", label: "Sepedi",    flag: "🇿🇦" },
+];
+
+export type TranslationKey =
+  | "dashboard"
+  | "cvBuilder"
+  | "careerCoach"
+  | "careerPaths"
+  | "skillsGap"
+  | "jobMarket"
+  | "courses"
+  | "interviewPrep"
+  | "jobAlerts"
+  | "highSchool"
+  | "support"
+  | "profile"
+  | "settings"
+  | "upgrade"
+  | "getStarted"
+  | "learnMore"
+  | "language"
+  | "signIn"
+  | "signUp"
+  | "myAccount"
+  | "privacy"
+  | "terms"
+  | "freePlan"
+  | "goPremium"
+  | "topUp"
+  | "tagline"
+  | "builtForSA";
+
+type Translations = Record<TranslationKey, string>;
+
+export const translations: Record<Language, Translations> = {
+  en: {
+    dashboard:     "Dashboard",
+    cvBuilder:     "CV Builder",
+    careerCoach:   "AI Career Coach",
+    careerPaths:   "Career Paths",
+    skillsGap:     "Skills Gap",
+    jobMarket:     "Job Market",
+    courses:       "Courses",
+    interviewPrep: "Interview Prep",
+    jobAlerts:     "Job Alerts",
+    highSchool:    "High School Hub",
+    support:       "Help & Support",
+    profile:       "Profile",
+    settings:      "Settings",
+    upgrade:       "Upgrade",
+    getStarted:    "Get Started Free",
+    learnMore:     "Learn More",
+    language:      "Language",
+    signIn:        "Sign In",
+    signUp:        "Sign Up",
+    myAccount:     "My Account",
+    privacy:       "Privacy",
+    terms:         "Terms",
+    freePlan:      "Free Plan",
+    goPremium:     "Go Premium",
+    topUp:         "Top up →",
+    tagline:       "South Africa's AI Career Intelligence Platform",
+    builtForSA:    "Built for South Africa",
+  },
+  zu: {
+    dashboard:     "Ideshibhodi",
+    cvBuilder:     "Yakha i-CV",
+    careerCoach:   "uMqeqeshi wezikhundla",
+    careerPaths:   "Izindlela Zomsebenzi",
+    skillsGap:     "Ukuhlolwa Kwamakhono",
+    jobMarket:     "Imakethe Yemisebenzi",
+    courses:       "Izifundo",
+    interviewPrep: "Ukulungiselela Ingxoxo",
+    jobAlerts:     "Izaziso Zemisebenzi",
+    highSchool:    "Izindaba Zesikole",
+    support:       "Usizo",
+    profile:       "Iphrofayili",
+    settings:      "Izilungiselelo",
+    upgrade:       "Thuthukisa",
+    getStarted:    "Qala Mahhala",
+    learnMore:     "Funda Okwengeziwe",
+    language:      "Ulimi",
+    signIn:        "Ngena",
+    signUp:        "Bhalisa",
+    myAccount:     "I-akhawunti Yami",
+    privacy:       "Ubumfihlo",
+    terms:         "Imibandela",
+    freePlan:      "Uhlelo Lwamahhala",
+    goPremium:     "Thola i-Premium",
+    topUp:         "Engeza →",
+    tagline:       "Inkundla ye-AI Yomsebenzi eNingizimu Afrika",
+    builtForSA:    "Yakhiwe eNingizimu Afrika",
+  },
+  xh: {
+    dashboard:     "Ibhodi",
+    cvBuilder:     "Yakha i-CV",
+    careerCoach:   "uMqeqeshi weMisebenzi",
+    careerPaths:   "Iindlela zeMisebenzi",
+    skillsGap:     "Uhlalutyo lweZakhono",
+    jobMarket:     "Imakethe yeMisebenzi",
+    courses:       "Iikosi",
+    interviewPrep: "Ulungiselelo lweNdibano",
+    jobAlerts:     "Iileta zeMisebenzi",
+    highSchool:    "Izinto zeSkolo",
+    support:       "Uncedo",
+    profile:       "Iprofayile",
+    settings:      "Iisetingi",
+    upgrade:       "Yenyusa",
+    getStarted:    "Qala Simahla",
+    learnMore:     "Funda Okungaphezulu",
+    language:      "Ulwimi",
+    signIn:        "Ngena",
+    signUp:        "Bhalisa",
+    myAccount:     "I-Akhawunti Yam",
+    privacy:       "Ubumfihlo",
+    terms:         "Imiqathango",
+    freePlan:      "Icebo Lesimahla",
+    goPremium:     "Fumana i-Premium",
+    topUp:         "Yongeza →",
+    tagline:       "Iqonga le-AI leMisebenzi eMzantsi Afrika",
+    builtForSA:    "Yakhiwe eMzantsi Afrika",
+  },
+  af: {
+    dashboard:     "Paneelbord",
+    cvBuilder:     "CV-bouer",
+    careerCoach:   "KI Loopbaanafrigter",
+    careerPaths:   "Loopbaanpaaie",
+    skillsGap:     "Vaardigheidsanalise",
+    jobMarket:     "Arbeidsmark",
+    courses:       "Kursusse",
+    interviewPrep: "Onderhoudvoorbereiding",
+    jobAlerts:     "Werksalerte",
+    highSchool:    "Hoërskoolsentrum",
+    support:       "Hulp & Ondersteuning",
+    profile:       "Profiel",
+    settings:      "Instellings",
+    upgrade:       "Opgradeer",
+    getStarted:    "Begin Gratis",
+    learnMore:     "Leer Meer",
+    language:      "Taal",
+    signIn:        "Teken In",
+    signUp:        "Registreer",
+    myAccount:     "My Rekening",
+    privacy:       "Privaatheid",
+    terms:         "Bepalings",
+    freePlan:      "Gratis Plan",
+    goPremium:     "Kry Premium",
+    topUp:         "Herlaai →",
+    tagline:       "Suid-Afrika se KI Loopbaanintelligensie Platform",
+    builtForSA:    "Gebou vir Suid-Afrika",
+  },
+  st: {
+    dashboard:     "Setshwantsho",
+    cvBuilder:     "Theha CV",
+    careerCoach:   "Moqoqisi wa Mosebetsi",
+    careerPaths:   "Ditsela tsa Mosebetsi",
+    skillsGap:     "Tlhahlobo ya Bokgoni",
+    jobMarket:     "Mmaraka wa Mesebetsi",
+    courses:       "Dikolo",
+    interviewPrep: "Tokollo ya Tetemelo",
+    jobAlerts:     "Ditlhahiso tsa Mesebetsi",
+    highSchool:    "Setsi sa Sekolo",
+    support:       "Thuso",
+    profile:       "Profaele",
+    settings:      "Ditlhophiso",
+    upgrade:       "Ntlafatsa",
+    getStarted:    "Qala ka Mahala",
+    learnMore:     "Ithuta Haholo",
+    language:      "Puo",
+    signIn:        "Kena",
+    signUp:        "Ngodisa",
+    myAccount:     "Akhaonto ya Ka",
+    privacy:       "Lekunutu",
+    terms:         "Dipehelo",
+    freePlan:      "Leano la Mahala",
+    goPremium:     "Fumana Premium",
+    topUp:         "Eketsa →",
+    tagline:       "Setheo sa AI sa Mosebetsi Afrika Borwa",
+    builtForSA:    "Hahiwa Afrika Borwa",
+  },
+  tn: {
+    dashboard:     "Setshwantsho",
+    cvBuilder:     "Aga CV",
+    careerCoach:   "Mokaedi wa Tiro",
+    careerPaths:   "Ditsela tsa Tiro",
+    skillsGap:     "Tlhahlobo ya Bokgoni",
+    jobMarket:     "Mmaraka wa Ditiro",
+    courses:       "Dikolo",
+    interviewPrep: "Tokollo ya Potsolotso",
+    jobAlerts:     "Dikitsiso tsa Ditiro",
+    highSchool:    "Setsi sa Sekole",
+    support:       "Thuso",
+    profile:       "Profaele",
+    settings:      "Ditlhophiso",
+    upgrade:       "Tokafatsa",
+    getStarted:    "Simolola ka Mahala",
+    learnMore:     "Ithuta Go Feta",
+    language:      "Puo",
+    signIn:        "Tsena",
+    signUp:        "Kwadisa",
+    myAccount:     "Akhaonto ya Me",
+    privacy:       "Lekunutu",
+    terms:         "Melao",
+    freePlan:      "Leano la Mahala",
+    goPremium:     "Bona Premium",
+    topUp:         "Oketsa →",
+    tagline:       "Setheo sa AI sa Tiro mo Afrika Borwa",
+    builtForSA:    "Agiwile mo Afrika Borwa",
+  },
+  nso: {
+    dashboard:     "Setshwantsho",
+    cvBuilder:     "Aga CV",
+    careerCoach:   "Mokoači wa Mošomo",
+    careerPaths:   "Ditsela tša Mošomo",
+    skillsGap:     "Hlahlobo ya Bokgoni",
+    jobMarket:     "Mmaraka wa Mešomo",
+    courses:       "Dikolo",
+    interviewPrep: "Tokollo ya Potšišo",
+    jobAlerts:     "Dipolelo tša Mešomo",
+    highSchool:    "Setsi sa Sekolo",
+    support:       "Thušo",
+    profile:       "Profaele",
+    settings:      "Ditlhophišo",
+    upgrade:       "Ntlafatša",
+    getStarted:    "Thoma ka Mahala",
+    learnMore:     "Ithuta Go Feta",
+    language:      "Polelo",
+    signIn:        "Tsena",
+    signUp:        "Ngwadiša",
+    myAccount:     "Akhaonto ya Ka",
+    privacy:       "Lekunutu",
+    terms:         "Melao",
+    freePlan:      "Leano la Mahala",
+    goPremium:     "Hwetša Premium",
+    topUp:         "Oketša →",
+    tagline:       "Setheo sa AI sa Mošomo Afrika Borwa",
+    builtForSA:    "Agilwe Afrika Borwa",
+  },
+};
+
+export function t(lang: Language, key: TranslationKey): string {
+  return translations[lang]?.[key] ?? translations["en"][key];
+}

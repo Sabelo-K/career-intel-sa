@@ -13,24 +13,25 @@ import {
 import { cn } from "@/lib/utils";
 import { LanguageSelector } from "@/components/layout/language-selector";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
+import { TranslationKey } from "@/lib/i18n/translations";
 
-const NAV_ITEMS = [
-  { href: "/dashboard",     icon: LayoutDashboard, label: "Dashboard"      },
-  { href: "/cv-builder",    icon: FileText,        label: "CV Builder"      },
-  { href: "/career-coach",  icon: MessageCircle,   label: "AI Career Coach" },
-  { href: "/career-paths",  icon: GitBranch,       label: "Career Paths"    },
-  { href: "/skills-gap",    icon: Target,          label: "Skills Gap"      },
-  { href: "/job-market",    icon: BarChart3,       label: "Job Market"      },
-  { href: "/courses",       icon: BookOpen,        label: "Courses"         },
-  { href: "/interview-prep",icon: Mic,             label: "Interview Prep"  },
-  { href: "/job-alerts",    icon: Bell,            label: "Job Alerts"      },
-  { href: "/high-school",   icon: GraduationCap,    label: "High School Hub" },
-  { href: "/support",       icon: HeadphonesIcon,   label: "Help & Support"  },
+const NAV_ITEMS: { href: string; icon: React.ElementType; key: TranslationKey }[] = [
+  { href: "/dashboard",      icon: LayoutDashboard, key: "dashboard"     },
+  { href: "/cv-builder",     icon: FileText,        key: "cvBuilder"     },
+  { href: "/career-coach",   icon: MessageCircle,   key: "careerCoach"   },
+  { href: "/career-paths",   icon: GitBranch,       key: "careerPaths"   },
+  { href: "/skills-gap",     icon: Target,          key: "skillsGap"     },
+  { href: "/job-market",     icon: BarChart3,       key: "jobMarket"     },
+  { href: "/courses",        icon: BookOpen,        key: "courses"       },
+  { href: "/interview-prep", icon: Mic,             key: "interviewPrep" },
+  { href: "/job-alerts",     icon: Bell,            key: "jobAlerts"     },
+  { href: "/high-school",    icon: GraduationCap,   key: "highSchool"    },
+  { href: "/support",        icon: HeadphonesIcon,  key: "support"       },
 ];
 
-const BOTTOM_ITEMS = [
-  { href: "/profile",  icon: User,     label: "Profile"  },
-  { href: "/settings", icon: Settings, label: "Settings" },
+const BOTTOM_ITEMS: { href: string; icon: React.ElementType; key: TranslationKey }[] = [
+  { href: "/profile",  icon: User,     key: "profile"  },
+  { href: "/settings", icon: Settings, key: "settings" },
 ];
 
 function Logo() {
@@ -67,6 +68,7 @@ function getDaysLeft(expiresAt: string): number {
 }
 
 export function Sidebar() {
+  const { t } = useLanguage();
   const [mobileOpen, setMobileOpen]       = useState(false);
   const [isPaid, setIsPaid]               = useState(false);
   const [planLabel, setPlanLabel]         = useState("Free Plan");
@@ -189,7 +191,7 @@ export function Sidebar() {
                           : "text-white/35 group-hover:text-white/70"
                       )}
                     />
-                    <span className="flex-1">{item.label}</span>
+                    <span className="flex-1">{t(item.key)}</span>
                     {isActive && (
                       <div className="w-1.5 h-1.5 rounded-full bg-indigo-400" />
                     )}
@@ -211,7 +213,7 @@ export function Sidebar() {
                       {credits} credit{credits !== 1 ? "s" : ""}
                     </span>
                   </div>
-                  <span className="text-[10px] text-orange-400/70 font-medium">Top up →</span>
+                  <span className="text-[10px] text-orange-400/70 font-medium">{t("topUp")}</span>
                 </div>
               </Link>
             </div>
@@ -223,7 +225,7 @@ export function Sidebar() {
               <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-violet-400/40 to-transparent" />
               <div className="flex items-center gap-2 mb-2">
                 <Crown className="w-4 h-4 text-amber-400" />
-                <span className="text-sm font-semibold text-white">Go Premium</span>
+                <span className="text-sm font-semibold text-white">{t("goPremium")}</span>
               </div>
               <p className="text-xs text-white/40 mb-3 leading-relaxed">
                 Unlock unlimited AI coaching, simulations &amp; salary forecasting.
@@ -255,7 +257,7 @@ export function Sidebar() {
                   )}
                 >
                   <item.icon className="w-4 h-4" />
-                  {item.label}
+                  {t(item.key)}
                 </div>
               </Link>
             );
@@ -266,9 +268,9 @@ export function Sidebar() {
           </div>
           {/* Legal links */}
           <div className="mx-3 mb-1 flex items-center justify-center gap-3 px-2 py-1">
-            <Link href="/privacy" className="text-[10px] text-muted-foreground hover:text-foreground transition-colors">Privacy</Link>
+            <Link href="/privacy" className="text-[10px] text-muted-foreground hover:text-foreground transition-colors">{t("privacy")}</Link>
             <span className="text-[10px] text-muted-foreground/40">·</span>
-            <Link href="/terms" className="text-[10px] text-muted-foreground hover:text-foreground transition-colors">Terms</Link>
+            <Link href="/terms" className="text-[10px] text-muted-foreground hover:text-foreground transition-colors">{t("terms")}</Link>
           </div>
           {/* Plan badge row */}
           <div className="mx-3 mt-1 flex items-center justify-between px-2.5 py-1.5 rounded-lg bg-white/[0.06] border border-white/10">
@@ -290,7 +292,7 @@ export function Sidebar() {
               afterSignOutUrl="/"
               appearance={{ elements: { avatarBox: "w-7 h-7" } }}
             />
-            <span className="text-xs font-medium text-foreground truncate">My Account</span>
+            <span className="text-xs font-medium text-foreground truncate">{t("myAccount")}</span>
           </div>
         </div>
       </aside>

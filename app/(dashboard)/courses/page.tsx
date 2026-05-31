@@ -40,11 +40,13 @@ export default function CoursesPage() {
   }, [searchParams]);
 
   const filtered = SA_COURSES.filter((c) => {
-    // Support comma-separated keywords (passed by roadmap widget skill links)
+    // Split by comma OR " and " so both roadmap skill lists and natural
+    // language queries like "Data Science and Visualization" work correctly.
+    const STOP_WORDS = new Set(["and", "or", "the", "a", "an", "of", "in", "for", "to", "with"]);
     const keywords = search
-      .split(",")
+      .split(/,|\band\b/i)
       .map((k) => k.trim().toLowerCase())
-      .filter(Boolean);
+      .filter((k) => k.length > 1 && !STOP_WORDS.has(k));
 
     const matchSearch =
       keywords.length === 0 ||

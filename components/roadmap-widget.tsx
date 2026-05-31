@@ -237,7 +237,12 @@ export function RoadmapWidget() {
                       href={`/courses?q=${encodeURIComponent(
                         phase.skills.length > 0
                           ? phase.skills.slice(0, 3).join(",")
+                          // No skills — strip stop-words from the phase title and use remaining keywords
                           : phase.title
+                              .split(/\s+/)
+                              .filter((w) => !["of","and","the","a","an","in","for","to","with","foundations","introduction","basics","advanced"].includes(w.toLowerCase()))
+                              .slice(0, 3)
+                              .join(",")
                       )}&phase=${encodeURIComponent(phase.title)}`}
                       onClick={(e) => e.stopPropagation()}
                       className="flex items-center gap-0.5 text-[10px] text-indigo-400 hover:text-indigo-300 border border-indigo-500/30 hover:border-indigo-400/50 bg-indigo-500/10 hover:bg-indigo-500/15 px-1.5 py-0.5 rounded transition-all"

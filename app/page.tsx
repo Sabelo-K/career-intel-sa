@@ -8,6 +8,7 @@ import {
   ChevronRight, Sparkles, Users, Building2, GraduationCap,
 } from "lucide-react";
 import { LanguageSelector } from "@/components/layout/language-selector";
+import { PricingSection } from "@/components/landing/pricing-section";
 
 const STATS = [
   { value: "200+", label: "Career Paths Mapped", icon: Target },
@@ -73,80 +74,7 @@ const FEATURES = [
   },
 ];
 
-const PRICING = [
-  {
-    name: "Free",
-    price: "R0",
-    period: "/month",
-    description: "Start your career journey — no card needed",
-    features: [
-      "CV builder (upload & build from scratch)",
-      "ATS score & recruiter rating",
-      "Career demand insights (120+ SA careers)",
-      "3 skills gap analyses/month",
-      "15 AI coach messages/month",
-      "Province job heatmap",
-      "All 4 CV templates",
-    ],
-    cta: "Get Started Free",
-    highlight: false,
-    badge: null,
-  },
-  {
-    name: "Graduate",
-    price: "R49",
-    period: "/month",
-    description: "Built for students & job seekers",
-    features: [
-      "Everything in Free",
-      "Full career demand access (all sectors)",
-      "Unlimited skills gap analysis",
-      "50 AI coach messages/month",
-      "AI interview prep (role-specific questions)",
-      "1 career path simulation/month",
-      "Trade & artisan career insights",
-    ],
-    cta: "Get Graduate Plan",
-    highlight: false,
-    badge: "For Youth",
-  },
-  {
-    name: "Professional",
-    price: "R99",
-    period: "/month",
-    description: "Serious about your career growth",
-    features: [
-      "Everything in Graduate",
-      "Unlimited AI career coach",
-      "Unlimited career path simulations",
-      "Advanced salary forecasting (ZAR)",
-      "Unlimited skills gap analysis",
-      "Daily job alert digest emails",
-      "Early access to new features",
-    ],
-    cta: "Get Professional Plan",
-    highlight: true,
-    badge: "Most Popular",
-  },
-  {
-    name: "Recruiter",
-    price: "R499",
-    period: "/month",
-    description: "Market intelligence for HR & talent teams",
-    features: [
-      "Everything in Professional",
-      "Province-level salary benchmarking",
-      "Skills demand intelligence dashboard",
-      "Advanced job market analytics",
-      "Unlimited job alert tracking",
-      "SA hiring trend reports",
-      "Priority email support",
-    ],
-    cta: "Get Recruiter Plan",
-    highlight: false,
-    badge: "For Business",
-  },
-];
+
 
 const TESTIMONIALS = [
   {
@@ -576,74 +504,7 @@ export default function LandingPage() {
       </section>
 
       {/* Pricing */}
-      <section id="pricing" className="py-16 sm:py-24 md:py-28 bg-white/[0.02] border-y border-white/5">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-center mb-16"
-          >
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4">Simple, transparent pricing</h2>
-            <p className="text-white/50">Start free, upgrade when you&apos;re ready. No hidden fees.</p>
-          </motion.div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5 sm:gap-6 max-w-6xl mx-auto">
-            {PRICING.map((plan, i) => (
-              <div key={plan.name} className={`relative ${plan.badge ? "pt-5" : ""}`}>
-                {/* Badge lives outside motion.div to avoid animation stacking-context clip */}
-                {plan.badge && (
-                  <div className={`absolute top-0 left-1/2 -translate-x-1/2 z-10 px-3 py-1 rounded-full text-white text-xs font-semibold whitespace-nowrap ${
-                    plan.badge === "Most Popular" ? "bg-indigo-600" :
-                    plan.badge === "For Youth"    ? "bg-violet-600" :
-                    "bg-amber-600"
-                  }`}>
-                    {plan.badge}
-                  </div>
-                )}
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.1 }}
-                className={`relative rounded-2xl p-6 h-full ${
-                  plan.highlight
-                    ? "bg-gradient-to-b from-indigo-600/20 to-violet-600/10 border-2 border-indigo-500/50 shadow-2xl shadow-indigo-500/10"
-                    : "glass-card"
-                }`}
-              >
-                <div className="mb-6">
-                  <h3 className="text-lg font-bold text-white mb-1">{plan.name}</h3>
-                  <p className="text-white/40 text-sm mb-4">{plan.description}</p>
-                  <div className="flex items-end gap-1">
-                    <span className="text-4xl font-bold text-white">{plan.price}</span>
-                    <span className="text-white/40 text-sm mb-1">{plan.period}</span>
-                  </div>
-                </div>
-                <ul className="space-y-3 mb-8">
-                  {plan.features.map((f) => (
-                    <li key={f} className="flex items-center gap-2.5 text-sm text-white/70">
-                      <CheckCircle className="w-4 h-4 text-emerald-400 flex-shrink-0" />
-                      {f}
-                    </li>
-                  ))}
-                </ul>
-                <Link
-                  href="/sign-up"
-                  className={`block text-center py-3 rounded-xl font-semibold text-sm transition-all duration-200 ${
-                    plan.highlight
-                      ? "bg-indigo-600 hover:bg-indigo-500 text-white hover:shadow-lg hover:shadow-indigo-500/25"
-                      : "border border-white/10 hover:border-white/20 text-white hover:bg-white/5"
-                  }`}
-                >
-                  {plan.cta}
-                </Link>
-              </motion.div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+      <PricingSection />
 
       {/* CTA */}
       <section className="py-16 sm:py-24 md:py-28 relative overflow-hidden">

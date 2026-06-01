@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import {
   GraduationCap, BookOpen, Target, MessageCircle,
   ChevronRight, ExternalLink, CheckCircle2, Lightbulb,
-  Star, TrendingUp, Zap, Search, X,
+  Star, TrendingUp, Zap, Search, X, FileText, AlertCircle, Calendar,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -106,7 +106,7 @@ export default function HighSchoolPage() {
   const [profileLoaded, setProfileLoaded] = useState(false);
   const [selectedSubjectFilter, setSelectedSubjectFilter] = useState<string | null>(null);
   const [search, setSearch] = useState("");
-  const [activeTab, setActiveTab] = useState<"careers" | "pathway" | "resources">("careers");
+  const [activeTab, setActiveTab] = useState<"careers" | "pathway" | "resources" | "apply">("careers");
 
   useEffect(() => {
     fetch("/api/profile")
@@ -226,6 +226,7 @@ export default function HighSchoolPage() {
           { key: "careers",   label: "Careers", icon: Target },
           { key: "pathway",   label: "NQF Pathway", icon: TrendingUp },
           { key: "resources", label: "Study Resources", icon: BookOpen },
+          { key: "apply",     label: "Apply to University", icon: FileText },
         ] as const).map((tab) => (
           <button
             key={tab.key}
@@ -586,6 +587,321 @@ export default function HighSchoolPage() {
           </div>
         </div>
       )}
+      {/* ── Apply to University Tab ───────────────────────────────────────────── */}
+      {activeTab === "apply" && (
+        <div className="space-y-6">
+
+          {/* Important notice */}
+          <div className="flex items-start gap-3 bg-amber-500/10 border border-amber-500/25 rounded-xl p-4">
+            <AlertCircle className="w-4 h-4 text-amber-400 flex-shrink-0 mt-0.5" />
+            <p className="text-xs text-amber-200/80 leading-relaxed">
+              Application deadlines vary per institution. Most SA universities open applications in <strong className="text-amber-300">April–June</strong> for the following year. Apply early — popular programmes fill up fast.
+            </p>
+          </div>
+
+          {/* CAO */}
+          <div className="bg-card border border-border rounded-xl overflow-hidden">
+            <div className="bg-gradient-to-r from-indigo-500/10 to-violet-500/10 border-b border-border px-5 py-4 flex items-center gap-3">
+              <div className="w-8 h-8 rounded-lg bg-indigo-500/20 flex items-center justify-center flex-shrink-0">
+                <FileText className="w-4 h-4 text-indigo-400" />
+              </div>
+              <div>
+                <h3 className="text-sm font-semibold text-foreground">CAO — Central Applications Office</h3>
+                <p className="text-xs text-muted-foreground">Apply to multiple universities with one form</p>
+              </div>
+              <span className="ml-auto text-[10px] bg-emerald-500/15 text-emerald-400 border border-emerald-500/25 px-2 py-0.5 rounded-full font-semibold flex-shrink-0">RECOMMENDED</span>
+            </div>
+            <div className="p-5 space-y-3">
+              <p className="text-xs text-muted-foreground leading-relaxed">
+                The CAO allows you to apply to multiple universities in one application. It covers most universities in the Western Cape, KwaZulu-Natal, and other provinces. <strong className="text-foreground">Application fee: R100 (first choice) + R100 per additional choice.</strong>
+              </p>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-2 text-xs">
+                {[
+                  { label: "Opens", value: "April each year" },
+                  { label: "Closes", value: "September 30" },
+                  { label: "Fee", value: "R100–R400" },
+                  { label: "Results", value: "November–January" },
+                ].map((item) => (
+                  <div key={item.label} className="bg-secondary rounded-lg p-2.5 text-center">
+                    <div className="text-muted-foreground mb-0.5">{item.label}</div>
+                    <div className="font-semibold text-foreground">{item.value}</div>
+                  </div>
+                ))}
+              </div>
+              <a
+                href="https://www.cao.ac.za"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold px-4 py-2 rounded-lg transition-colors"
+              >
+                Apply via CAO <ExternalLink className="w-3 h-3" />
+              </a>
+            </div>
+          </div>
+
+          {/* University direct applications */}
+          <div>
+            <h3 className="text-sm font-semibold text-foreground mb-3 flex items-center gap-2">
+              <GraduationCap className="w-4 h-4 text-violet-400" />
+              Direct University Applications
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              {[
+                {
+                  name: "University of Cape Town (UCT)",
+                  short: "UCT",
+                  location: "Cape Town, Western Cape",
+                  deadline: "31 July (some faculties vary)",
+                  fee: "R100",
+                  url: "https://www.uct.ac.za/apply",
+                  color: "indigo",
+                  note: "Apply directly — UCT does not use CAO",
+                },
+                {
+                  name: "University of the Witwatersrand (Wits)",
+                  short: "Wits",
+                  location: "Johannesburg, Gauteng",
+                  deadline: "30 September",
+                  fee: "R200",
+                  url: "https://www.wits.ac.za/apply",
+                  color: "violet",
+                  note: "Apply directly via Wits online portal",
+                },
+                {
+                  name: "University of Pretoria (UP)",
+                  short: "UP / Tuks",
+                  location: "Pretoria, Gauteng",
+                  deadline: "31 August",
+                  fee: "R300",
+                  url: "https://www.up.ac.za/apply",
+                  color: "blue",
+                  note: "Apply directly via UP portal",
+                },
+                {
+                  name: "Stellenbosch University (SU)",
+                  short: "Maties",
+                  location: "Stellenbosch, Western Cape",
+                  deadline: "31 July",
+                  fee: "R100 (via CAO)",
+                  url: "https://www.sun.ac.za/apply",
+                  color: "amber",
+                  note: "Also accepts CAO applications",
+                },
+                {
+                  name: "University of KwaZulu-Natal (UKZN)",
+                  short: "UKZN",
+                  location: "Durban & PMB, KZN",
+                  deadline: "30 September",
+                  fee: "R200",
+                  url: "https://www.ukzn.ac.za/apply",
+                  color: "emerald",
+                  note: "Apply via CAO or directly",
+                },
+                {
+                  name: "University of Johannesburg (UJ)",
+                  short: "UJ",
+                  location: "Johannesburg, Gauteng",
+                  deadline: "30 September",
+                  fee: "R200",
+                  url: "https://www.uj.ac.za/apply",
+                  color: "rose",
+                  note: "Apply directly via UJ online portal",
+                },
+                {
+                  name: "UNISA (Distance Learning)",
+                  short: "UNISA",
+                  location: "Nationwide (Online)",
+                  deadline: "October (Sem 1) / July (Sem 2)",
+                  fee: "Free application",
+                  url: "https://www.unisa.ac.za/apply",
+                  color: "teal",
+                  note: "Largest university in Africa — study while working",
+                },
+                {
+                  name: "University of the Free State (UFS)",
+                  short: "UFS / Kovsies",
+                  location: "Bloemfontein, Free State",
+                  deadline: "30 September",
+                  fee: "R200",
+                  url: "https://www.ufs.ac.za/apply",
+                  color: "orange",
+                  note: "Apply directly via UFS portal",
+                },
+                {
+                  name: "Rhodes University",
+                  short: "Rhodes",
+                  location: "Makhanda, Eastern Cape",
+                  deadline: "30 September",
+                  fee: "R100",
+                  url: "https://www.ru.ac.za/apply",
+                  color: "indigo",
+                  note: "Top-ranked for Law, Journalism, Science",
+                },
+                {
+                  name: "University of Limpopo (UL)",
+                  short: "UL / Turfloop",
+                  location: "Polokwane, Limpopo",
+                  deadline: "30 September",
+                  fee: "R150",
+                  url: "https://www.ul.ac.za/apply",
+                  color: "violet",
+                  note: "Strong in Health Sciences and Agriculture",
+                },
+                {
+                  name: "Walter Sisulu University (WSU)",
+                  short: "WSU",
+                  location: "East London & Mthatha, Eastern Cape",
+                  deadline: "30 September",
+                  fee: "R150",
+                  url: "https://www.wsu.ac.za/apply",
+                  color: "emerald",
+                  note: "Apply via CAO or directly",
+                },
+                {
+                  name: "University of Venda (UNIVEN)",
+                  short: "UNIVEN",
+                  location: "Thohoyandou, Limpopo",
+                  deadline: "30 September",
+                  fee: "R100",
+                  url: "https://www.univen.ac.za/apply",
+                  color: "amber",
+                  note: "Strong in Nursing, Agriculture, Law",
+                },
+              ].map((uni) => (
+                <motion.div
+                  key={uni.short}
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="bg-card border border-border rounded-xl p-4 hover:border-indigo-500/30 transition-colors"
+                >
+                  <div className="flex items-start justify-between mb-2">
+                    <div>
+                      <h4 className="text-sm font-semibold text-foreground">{uni.short}</h4>
+                      <p className="text-[11px] text-muted-foreground">{uni.location}</p>
+                    </div>
+                  </div>
+                  <p className="text-[11px] text-muted-foreground mb-3 leading-relaxed">{uni.note}</p>
+                  <div className="grid grid-cols-2 gap-1.5 mb-3 text-[11px]">
+                    <div className="flex items-center gap-1.5 text-muted-foreground">
+                      <Calendar className="w-3 h-3 text-amber-400 flex-shrink-0" />
+                      Deadline: <span className="text-foreground font-medium">{uni.deadline}</span>
+                    </div>
+                    <div className="flex items-center gap-1.5 text-muted-foreground">
+                      <CheckCircle2 className="w-3 h-3 text-emerald-400 flex-shrink-0" />
+                      Fee: <span className="text-foreground font-medium">{uni.fee}</span>
+                    </div>
+                  </div>
+                  <a
+                    href={uni.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1.5 text-xs text-indigo-400 hover:text-indigo-300 font-medium transition-colors"
+                  >
+                    Apply to {uni.short} <ExternalLink className="w-3 h-3" />
+                  </a>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+
+          {/* TVET Colleges */}
+          <div className="bg-card border border-border rounded-xl p-5">
+            <h3 className="text-sm font-semibold text-foreground mb-1 flex items-center gap-2">
+              <Zap className="w-4 h-4 text-amber-400" />
+              TVET College Applications
+            </h3>
+            <p className="text-xs text-muted-foreground mb-4 leading-relaxed">
+              TVET colleges offer National Certificate (Vocational) and Report 191 programmes. Applications are made directly to each college. Most open in September–October for the following year.
+            </p>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+              {[
+                { name: "DHET TVET Portal", desc: "Central portal to find your nearest TVET college", url: "https://www.dhet.gov.za/tvet" },
+                { name: "Ekurhuleni East TVET", desc: "Gauteng — Engineering, Business, IT programmes", url: "https://www.eec.edu.za" },
+                { name: "False Bay TVET", desc: "Western Cape — wide range of vocational programmes", url: "https://www.falsebay.edu.za" },
+              ].map((tvet) => (
+                <div key={tvet.name} className="bg-secondary rounded-xl p-3">
+                  <h4 className="text-xs font-semibold text-foreground mb-1">{tvet.name}</h4>
+                  <p className="text-[11px] text-muted-foreground mb-2 leading-relaxed">{tvet.desc}</p>
+                  <a href={tvet.url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-[11px] text-indigo-400 hover:text-indigo-300 font-medium">
+                    Visit <ExternalLink className="w-2.5 h-2.5" />
+                  </a>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Bursaries & Funding */}
+          <div className="bg-card border border-border rounded-xl p-5">
+            <h3 className="text-sm font-semibold text-foreground mb-1 flex items-center gap-2">
+              <Star className="w-4 h-4 text-amber-400" />
+              Funding Your Studies
+            </h3>
+            <p className="text-xs text-muted-foreground mb-4">Don&apos;t let money stop you — SA has multiple funding options.</p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              {[
+                {
+                  name: "NSFAS",
+                  desc: "Free funding for households earning below R350,000/year. Covers tuition, accommodation & meals.",
+                  url: "https://www.nsfas.org.za/content/how-to-apply.html",
+                  badge: "Most Students Qualify",
+                  badgeColor: "emerald",
+                },
+                {
+                  name: "Funza Lushaka Bursary",
+                  desc: "Full bursary for teaching degrees. Work at a public school after graduating to repay.",
+                  url: "https://www.funzalushaka.doe.gov.za",
+                  badge: "Teaching",
+                  badgeColor: "indigo",
+                },
+                {
+                  name: "NRDP Bursary (DHET)",
+                  desc: "For scarce skills like Engineering, Science, Agriculture, and Health Sciences.",
+                  url: "https://www.dhet.gov.za/bursaries",
+                  badge: "Scarce Skills",
+                  badgeColor: "violet",
+                },
+                {
+                  name: "SETA Bursaries",
+                  desc: "Each SETA (MERSETA, ETDP, MICT etc.) offers bursaries for qualifications in their sector.",
+                  url: "https://www.qcto.org.za",
+                  badge: "Sector Specific",
+                  badgeColor: "amber",
+                },
+              ].map((fund) => (
+                <div key={fund.name} className="bg-secondary rounded-xl p-4">
+                  <div className="flex items-center justify-between mb-2">
+                    <h4 className="text-xs font-semibold text-foreground">{fund.name}</h4>
+                    <span className={`text-[10px] px-2 py-0.5 rounded-full font-semibold border ${
+                      fund.badgeColor === "emerald" ? "bg-emerald-500/15 text-emerald-400 border-emerald-500/25" :
+                      fund.badgeColor === "indigo" ? "bg-indigo-500/15 text-indigo-400 border-indigo-500/25" :
+                      fund.badgeColor === "violet" ? "bg-violet-500/15 text-violet-400 border-violet-500/25" :
+                      "bg-amber-500/15 text-amber-400 border-amber-500/25"
+                    }`}>{fund.badge}</span>
+                  </div>
+                  <p className="text-[11px] text-muted-foreground leading-relaxed mb-2">{fund.desc}</p>
+                  <a href={fund.url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-[11px] text-indigo-400 hover:text-indigo-300 font-medium">
+                    Apply for {fund.name} <ExternalLink className="w-2.5 h-2.5" />
+                  </a>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* AI Coach CTA */}
+          <div className="bg-card border border-indigo-500/20 rounded-xl p-5 flex items-center justify-between gap-4">
+            <div>
+              <div className="text-sm font-semibold text-foreground mb-1">Not sure which university to choose?</div>
+              <p className="text-xs text-muted-foreground">Ask the AI Career Coach — it knows SA university requirements, APS scores, and which programmes suit your subjects.</p>
+            </div>
+            <Button variant="indigo" size="sm" className="gap-2 flex-shrink-0" onClick={() => router.push("/career-coach")}>
+              <MessageCircle className="w-3.5 h-3.5" />
+              Ask AI Coach
+            </Button>
+          </div>
+
+        </div>
+      )}
+
     </div>
   );
 }

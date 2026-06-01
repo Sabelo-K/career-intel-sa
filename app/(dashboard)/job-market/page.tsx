@@ -570,7 +570,7 @@ export default function JobMarketPage() {
         <div>
           <h1 className="text-2xl font-bold text-foreground">Job Market Analytics</h1>
           <p className="text-muted-foreground text-sm mt-1">
-            SA career demand intelligence · 128 roles across 24 sectors
+            SA career demand intelligence · {SA_CAREERS.length} roles across {new Set(SA_CAREERS.map(c => c.sector)).size} sectors
           </p>
         </div>
         <div className="flex flex-col items-end gap-1.5 flex-shrink-0">

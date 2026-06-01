@@ -41,14 +41,14 @@ const PAYFAST_IPS = [
 export const PLANS = {
   graduate: {
     name:        "Graduate",
-    amount:      "49.00",
+    amount:      "29.00",
     description: "30-day access to CareerIntel SA Graduate Plan",
     dbPlan:      "PREMIUM",
     days:        30,
   },
   professional: {
     name:        "Professional",
-    amount:      "99.00",
+    amount:      "79.00",
     description: "30-day access to CareerIntel SA Professional Plan",
     dbPlan:      "PREMIUM",
     days:        30,
@@ -59,6 +59,38 @@ export const PLANS = {
     description: "30-day access to CareerIntel SA Recruiter Plan",
     dbPlan:      "RECRUITER",
     days:        30,
+  },
+} as const;
+
+// ── Subscription plan definitions (monthly recurring) ────────────────────────
+
+export const SUBSCRIPTION_PLANS = {
+  graduate: {
+    name:             "Graduate",
+    amount:           "24.00",
+    description:      "Monthly subscription — CareerIntel SA Graduate Plan",
+    dbPlan:           "PREMIUM",
+    days:             30,
+    billingDate:      1,          // Day of month to bill (1 = same day each month)
+    cycles:           0,          // 0 = indefinite
+  },
+  professional: {
+    name:             "Professional",
+    amount:           "65.00",
+    description:      "Monthly subscription — CareerIntel SA Professional Plan",
+    dbPlan:           "PREMIUM",
+    days:             30,
+    billingDate:      1,
+    cycles:           0,
+  },
+  recruiter: {
+    name:             "Recruiter",
+    amount:           "399.00",
+    description:      "Monthly subscription — CareerIntel SA Recruiter Plan",
+    dbPlan:           "RECRUITER",
+    days:             30,
+    billingDate:      1,
+    cycles:           0,
   },
 } as const;
 
@@ -73,8 +105,8 @@ interface PlanDef { name: string; amount: string; description: string; dbPlan: s
 
 /** 50 % off prices (rounded to nearest whole rand) */
 export const DISCOUNT_PLANS: Record<PlanKey, PlanDef> = {
-  graduate:     { ...PLANS.graduate,     amount: "25.00",  description: "50% off — 30-day CareerIntel SA Graduate Plan (New User Offer)"     },
-  professional: { ...PLANS.professional, amount: "50.00",  description: "50% off — 30-day CareerIntel SA Professional Plan (New User Offer)" },
+  graduate:     { ...PLANS.graduate,     amount: "15.00",  description: "50% off — 30-day CareerIntel SA Graduate Plan (New User Offer)"     },
+  professional: { ...PLANS.professional, amount: "40.00",  description: "50% off — 30-day CareerIntel SA Professional Plan (New User Offer)" },
   recruiter:    { ...PLANS.recruiter,    amount: "250.00", description: "50% off — 30-day CareerIntel SA Recruiter Plan (New User Offer)"     },
 };
 

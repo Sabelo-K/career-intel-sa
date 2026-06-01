@@ -32,11 +32,25 @@ interface PlanConfig {
 
 // ── Plan definitions ──────────────────────────────────────────────────────────
 
+// Once-off prices
+const ONCE_OFF_PRICES: Record<PlanKey, string> = {
+  graduate:     "R29",
+  professional: "R79",
+  recruiter:    "R499",
+};
+
+// Subscription prices
+const SUBSCRIPTION_PRICES: Record<PlanKey, string> = {
+  graduate:     "R24",
+  professional: "R65",
+  recruiter:    "R399",
+};
+
 const PLANS: PlanConfig[] = [
   {
     key:        "graduate",
     name:       "Graduate",
-    price:      "R49",
+    price:      "R29",
     period:     "/month",
     tagline:    "Perfect for students & job seekers",
     color:      "border-violet-500/30 bg-violet-500/5",
@@ -58,7 +72,7 @@ const PLANS: PlanConfig[] = [
   {
     key:        "professional",
     name:       "Professional",
-    price:      "R99",
+    price:      "R79",
     period:     "/month",
     tagline:    "Serious about your career growth",
     color:      "border-indigo-500/40 bg-indigo-500/10",
@@ -122,6 +136,7 @@ export default function UpgradePage() {
   const [currentPlanKey, setCurrentPlanKey] = useState<string | null>(null);
   const [isNewUser, setIsNewUser]       = useState(false);
   const [daysLeft, setDaysLeft]         = useState(0);
+  const [billingType, setBillingType]   = useState<"once_off" | "subscription">("subscription");
 
   useEffect(() => {
     fetch("/api/dashboard")
@@ -142,7 +157,7 @@ export default function UpgradePage() {
       const res = await fetch("/api/payfast/checkout", {
         method:  "POST",
         headers: { "Content-Type": "application/json" },
-        body:    JSON.stringify({ plan: planKey }),
+        body:    JSON.stringify({ plan: planKey, billingType }),
       });
 
       if (!res.ok) {
@@ -175,8 +190,8 @@ export default function UpgradePage() {
 
   // Discounted prices (50% off) — matches DISCOUNT_PLANS in lib/payfast.ts
   const DISCOUNTED_PRICES: Record<PlanKey, string> = {
-    graduate:     "R25",
-    professional: "R50",
+    graduate:     "R15",
+    professional: "R40",
     recruiter:    "R250",
   };
 
@@ -242,6 +257,38 @@ export default function UpgradePage() {
         </motion.div>
       )}
 
+      {/* Billing toggle */}
+      <div className="flex flex-col items-center gap-2">
+        <div className="flex items-center gap-1 bg-secondary rounded-xl p-1">
+          <button
+            onClick={() => setBillingType("once_off")}
+            className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+              billingType === "once_off"
+                ? "bg-background text-foreground shadow-sm"
+                : "text-muted-foreground hover:text-foreground"
+            }`}
+          >
+            Once-off (30 days)
+          </button>
+          <button
+            onClick={() => setBillingType("subscription")}
+            className={`relative px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+              billingType === "subscription"
+                ? "bg-background text-foreground shadow-sm"
+                : "text-muted-foreground hover:text-foreground"
+            }`}
+          >
+            Monthly Subscription
+            <span className="absolute -top-2.5 -right-2 text-[9px] bg-emerald-500 text-white px-1.5 py-0.5 rounded-full font-semibold">SAVE</span>
+          </button>
+        </div>
+        {billingType === "subscription" ? (
+          <p className="text-xs text-emerald-400">✓ Lower monthly rate · Auto-renews · Cancel anytime</p>
+        ) : (
+          <p className="text-xs text-muted-foreground">Pay once, access for 30 days · No auto-renewal</p>
+        )}
+      </div>
+
       {/* Plan cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mt-4">
         {PLANS.map((plan, i) => {
@@ -281,15 +328,26 @@ export default function UpgradePage() {
               </div>
 
               {/* Price */}
-              <div className="flex items-baseline gap-2 mb-4 flex-wrap">
+              <div className="flex items-baseline gap-2 mb-1 flex-wrap">
                 <span className="text-3xl font-bold text-foreground">
-                  {isNewUser && !isAlreadyPaid ? DISCOUNTED_PRICES[plan.key] : plan.price}
+                  {billingType === "subscription"
+                    ? SUBSCRIPTION_PRICES[plan.key]
+                    : isNewUser && !isAlreadyPaid
+                      ? DISCOUNTED_PRICES[plan.key]
+                      : ONCE_OFF_PRICES[plan.key]}
                 </span>
-                <span className="text-sm text-muted-foreground">{plan.period}</span>
-                {isNewUser && !isAlreadyPaid && (
-                  <span className="text-sm text-muted-foreground line-through">{plan.price}</span>
+                <span className="text-sm text-muted-foreground">/mo</span>
+                {billingType === "once_off" && isNewUser && !isAlreadyPaid && (
+                  <span className="text-sm text-muted-foreground line-through">{ONCE_OFF_PRICES[plan.key]}</span>
                 )}
               </div>
+              {billingType === "subscription" ? (
+                <p className="text-[11px] text-emerald-400 mb-3">
+                  Save {plan.key === "graduate" ? "R5" : plan.key === "professional" ? "R14" : "R100"}/mo vs once-off · Cancel anytime
+                </p>
+              ) : (
+                <p className="text-[11px] text-muted-foreground mb-3">Once-off · 30 days access · No auto-renewal</p>
+              )}
 
               {/* Features */}
               <ul className="space-y-2 flex-1 mb-5">

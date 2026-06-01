@@ -20,6 +20,7 @@ import {
   isValidPayFastIP,
   validateITNWithPayFast,
   PLANS,
+  SUBSCRIPTION_PLANS,
   type PlanKey,
 } from "@/lib/payfast";
 import { sendUpgradeReceipt } from "@/lib/email";
@@ -82,16 +83,22 @@ export async function POST(req: NextRequest) {
       return new NextResponse("INVALID", { status: 400 });
     }
 
-    const planConfig  = PLANS[planKey];
-    const planExpiresAt = new Date();
+    const isSubscription = params.custom_str3 === "subscription";
+    const planConfig     = isSubscription ? SUBSCRIPTION_PLANS[planKey] : PLANS[planKey];
+    const planExpiresAt  = new Date();
     planExpiresAt.setDate(planExpiresAt.getDate() + planConfig.days);
+
+    // For subscriptions, store the PayFast token for future management
+    const payfastToken = params.token ?? null;
 
     const updatedUser = await db.user.update({
       where: { id: dbUserId },
       data:  {
         plan:          planConfig.dbPlan as Plan,
-        planKey,          // "graduate" | "professional" | "recruiter"
+        planKey,
         planExpiresAt,
+        billingType:   isSubscription ? "SUBSCRIPTION" : "ONCE_OFF",
+        ...(payfastToken ? { payfastToken } : {}),
       },
       select: { email: true, name: true },
     });

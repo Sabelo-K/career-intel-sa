@@ -14,10 +14,11 @@ model User {
   email         String   @unique
   name          String?
   avatarUrl     String?
-  plan          Plan     @default(FREE)
-  planKey       String?  // "graduate" | "professional" | "recruiter" — the specific paid tier
-  planExpiresAt DateTime?
-  payfastToken  String?
+  plan             Plan        @default(FREE)
+  planKey          String?     // "graduate" | "professional" | "recruiter" — the specific paid tier
+  planExpiresAt    DateTime?
+  billingType      BillingType @default(ONCE_OFF)  // ONCE_OFF or SUBSCRIPTION
+  payfastToken     String?     // PayFast subscription token for recurring billing
   onboarded     Boolean  @default(false)
   credits       Int      @default(0)   // pay-as-you-go credit balance
   createdAt     DateTime @default(now())
@@ -200,6 +201,11 @@ enum Plan {
   PREMIUM
   RECRUITER
   ENTERPRISE
+}
+
+enum BillingType {
+  ONCE_OFF
+  SUBSCRIPTION
 }
 
 enum Province {

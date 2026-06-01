@@ -7,6 +7,7 @@ import {
   PAYFAST_MERCHANT_KEY,
   generateSignature,
   PLANS,
+  SUBSCRIPTION_PLANS,
   DISCOUNT_PLANS,
   isNewUserDiscountEligible,
   type PlanKey,
@@ -33,8 +34,9 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const body    = await req.json();
-    const planKey = body.plan as PlanKey;
+    const body        = await req.json();
+    const planKey     = body.plan as PlanKey;
+    const isRecurring = body.billingType === "subscription";
 
     if (!planKey || !(planKey in PLANS)) {
       return NextResponse.json({ error: "Invalid plan" }, { status: 400 });
@@ -50,10 +52,13 @@ export async function POST(req: NextRequest) {
       clerkUser?.fullName
     );
 
-    // Apply new-user 50 % discount if eligible (server-side enforcement)
-    const applyDiscount = isNewUserDiscountEligible(dbUser.createdAt, dbUser.plan);
-    const plan = applyDiscount ? DISCOUNT_PLANS[planKey] : PLANS[planKey];
-    console.log(`[PayFast checkout] planKey=${planKey} discount=${applyDiscount} amount=${plan.amount}`);
+    // Subscriptions don't get the new-user discount (already cheaper)
+    const applyDiscount = !isRecurring && isNewUserDiscountEligible(dbUser.createdAt, dbUser.plan);
+    const plan = isRecurring
+      ? SUBSCRIPTION_PLANS[planKey]
+      : applyDiscount ? DISCOUNT_PLANS[planKey] : PLANS[planKey];
+
+    console.log(`[PayFast checkout] planKey=${planKey} billingType=${isRecurring ? "subscription" : "once_off"} discount=${applyDiscount} amount=${plan.amount}`);
 
     // Build PayFast parameters IN ORDER (order matters for signature)
     const params: Record<string, string> = {
@@ -69,10 +74,23 @@ export async function POST(req: NextRequest) {
       amount:           plan.amount,
       item_name:        `CareerIntel SA ${plan.name} Plan${applyDiscount ? " — 50% Off" : ""}`,
       item_description: plan.description,
-      custom_str1:      dbUser.id,                          // DB user ID — used in ITN to update plan
-      custom_str2:      planKey,                            // Plan key  — used in ITN to pick dbPlan
-      custom_str3:      applyDiscount ? "new_user_50pct" : "", // Discount tracking
+      custom_str1:      dbUser.id,
+      custom_str2:      planKey,
+      custom_str3:      isRecurring ? "subscription" : applyDiscount ? "new_user_50pct" : "once_off",
     };
+
+    // ── Subscription-specific PayFast params ─────────────────────────────────
+    if (isRecurring) {
+      const subPlan = SUBSCRIPTION_PLANS[planKey];
+      const today   = new Date();
+      // billing_date: day of the month the recurring charge fires
+      // frequency: 3 = monthly
+      params.subscription_type = "1";
+      params.billing_date      = today.toISOString().split("T")[0]; // start today
+      params.recurring_amount  = subPlan.amount;
+      params.frequency         = "3"; // monthly
+      params.cycles            = String(subPlan.cycles); // 0 = indefinite
+    }
 
     params.signature = generateSignature(params);
 

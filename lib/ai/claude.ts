@@ -317,19 +317,25 @@ Respond with valid JSON ONLY — no markdown, no text outside the JSON block.`,
         content: `Parse and professionally revamp this CV for the South African job market.
 
 INSTRUCTIONS:
-1. Extract ALL information: full name, email, phone, city/town, SA province, LinkedIn URL, website
-2. Rewrite the professional summary to 2–3 powerful sentences — specific, ATS-optimised, SA-relevant
-3. For each job: write EXACTLY 5 to 7 bullet points. Each point must use a strong action verb and include a quantified outcome (numbers, percentages, rand values, team sizes, timeframes). Separate each point with \\n (literal backslash-n in the JSON string). Never write fewer than 5 points per job — expand and infer reasonable metrics if the original CV is thin on detail.
+1. Extract ALL personal information: full name, email, phone, city/town, SA province, LinkedIn URL, website.
+2. Rewrite the professional summary to 2–3 powerful, specific sentences tailored to this person's actual background — mention their industry, years of experience, and key strengths. Make it ATS-optimised and SA-relevant. Do NOT write a generic summary.
+3. For each job role, write EXACTLY 5 to 7 achievement-focused bullet points based on what this person ACTUALLY did. Follow these rules strictly:
+   - Use a DIFFERENT strong action verb to start each bullet point — vary vocabulary widely (e.g. Spearheaded, Streamlined, Championed, Engineered, Negotiated, Deployed, Reduced, Grew, Secured, Delivered, Overhauled, Introduced, Accelerated, Conceptualised, Drove, Established)
+   - Each bullet must reflect the SPECIFIC role, industry, and responsibilities described in the original CV — do not write generic bullets that could apply to any job
+   - Include at least one quantified outcome per bullet (percentages, rand values, headcount, timeframes, volume) — infer plausible SA-market metrics if not stated
+   - Tailor language to the SA market (e.g. reference relevant legislation, tools, or SA-specific context where appropriate)
+   - Separate each bullet with \\n in the JSON string
+   - Never write fewer than 5 bullets per role
 4. Estimate NQF level if not stated (Matric=4, Higher Cert=5, Diploma/ND=6, Degree=7, Honours/PGDip=8, Masters=9, PhD=10)
-5. Extract all skills from the CV and add up to 5 high-demand SA market keywords that match their background
-6. Score the ORIGINAL CV honestly before improvements (be realistic)
+5. Extract all skills from the CV and add up to 5 high-demand SA market keywords relevant to this person's field
+6. Score the ORIGINAL CV honestly (be realistic — most CVs score 40–65 before improvement)
 
 CV TEXT:
 ---
 ${cvText.slice(0, 6000)}
 ---
 
-Return ONLY valid JSON in this exact structure:
+Return ONLY valid JSON in this exact structure (no markdown, no explanation outside the JSON):
 {
   "personal": {
     "fullName": "",
@@ -340,7 +346,7 @@ Return ONLY valid JSON in this exact structure:
     "linkedin": "",
     "website": ""
   },
-  "summary": "2-3 sentence AI-rewritten professional summary",
+  "summary": "Specific 2-3 sentence summary tailored to this person",
   "experience": [
     {
       "jobTitle": "",
@@ -348,7 +354,7 @@ Return ONLY valid JSON in this exact structure:
       "startDate": "Month YYYY",
       "endDate": "Month YYYY",
       "current": false,
-      "description": "Led X initiative that achieved Y, resulting in Z quantified outcome\\nDeveloped and implemented A, improving B by X%\\nManaged team of X people to deliver C within D timeframe\\nCollaborated with E stakeholders to design and roll out F, increasing G by H%\\nOptimised I process, reducing J by K% and saving RX per year"
+      "description": "Bullet 1 specific to this role\\nBullet 2 specific to this role\\nBullet 3 specific to this role\\nBullet 4 specific to this role\\nBullet 5 specific to this role"
     }
   ],
   "education": [
@@ -373,7 +379,7 @@ Return ONLY valid JSON in this exact structure:
     ],
     stream: false,
     max_tokens: 3500,
-    temperature: 0.2,
+    temperature: 0.6,
   });
 
   const raw = extractJSON(response.choices[0]?.message?.content ?? "");

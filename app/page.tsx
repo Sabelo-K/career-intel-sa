@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import Link from "next/link";
 import {
   Brain, TrendingUp, Target, Zap, BarChart3, BookOpen,
-  Star, ArrowRight, CheckCircle, Globe, Shield, Award,
+  ArrowRight, CheckCircle, Globe, Shield, Award,
   ChevronRight, Sparkles, Users, Building2, GraduationCap,
 } from "lucide-react";
 import { LanguageSelector } from "@/components/layout/language-selector";
@@ -76,27 +76,21 @@ const FEATURES = [
 
 
 
-const TESTIMONIALS = [
+const EARLY_ACCESS_CARDS = [
   {
-    name: "Sipho Dlamini",
-    role: "Junior Data Analyst → Senior Data Scientist",
-    company: "Discovery Health",
-    quote: "CareerIntel showed me exactly which skills I was missing. 8 months later I landed a R72k/month role. This platform is a game-changer for SA graduates.",
-    rating: 5,
+    icon: "🎯",
+    title: "Built ground-up for SA",
+    desc: "Every salary range, demand score, and career path is calibrated for the South African market — not copy-pasted from the US or UK.",
   },
   {
-    name: "Aisha Patel",
-    role: "Graduate → Cloud Engineer",
-    company: "Absa Group",
-    quote: "The AI coach understood the South African market perfectly. It knew about B-BBEE, NQF levels, and local employer expectations. Nothing like this existed before.",
-    rating: 5,
+    icon: "🤖",
+    title: "AI that knows NQF & B-BBEE",
+    desc: "Our AI Career Coach understands South African qualifications, SETAs, employment equity, and local employer expectations.",
   },
   {
-    name: "Thabo Molefe",
-    role: "Career Switcher",
-    company: "Sasol Digital",
-    quote: "Switched from mining to software engineering using the career path simulator. The learning roadmap was spot-on. Now earning double my previous salary.",
-    rating: 5,
+    icon: "🚀",
+    title: "Be among the first",
+    desc: "CareerIntel SA just launched. Early users are already using the tools — yours could be the next success story we share here.",
   },
 ];
 
@@ -461,7 +455,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Testimonials */}
+      {/* Why CareerIntel SA */}
       <section id="careers" className="py-16 sm:py-24 md:py-28">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
@@ -471,35 +465,60 @@ export default function LandingPage() {
             className="text-center mb-16"
           >
             <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4">
-              Real SA careers, <span className="gradient-text">transformed</span>
+              Built for <span className="gradient-text">South Africa</span>
             </h2>
-            <p className="text-white/50">Join thousands of South Africans who levelled up their careers with CareerIntel.</p>
+            <p className="text-white/50 max-w-xl mx-auto">
+              CareerIntel SA just launched. Here&apos;s why thousands of South Africans will use it to build better careers.
+            </p>
           </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {TESTIMONIALS.map((testimonial, i) => (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16">
+            {EARLY_ACCESS_CARDS.map((card, i) => (
               <motion.div
-                key={testimonial.name}
+                key={card.title}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1 }}
-                className="glass-card rounded-2xl p-6"
+                className="glass-card rounded-2xl p-6 text-center"
               >
-                <div className="flex gap-0.5 mb-4">
-                  {Array.from({ length: testimonial.rating }).map((_, j) => (
-                    <Star key={j} className="w-4 h-4 fill-amber-400 text-amber-400" />
-                  ))}
-                </div>
-                <p className="text-white/70 text-sm leading-relaxed mb-5">&ldquo;{testimonial.quote}&rdquo;</p>
-                <div className="border-t border-white/5 pt-4">
-                  <div className="font-semibold text-sm text-white">{testimonial.name}</div>
-                  <div className="text-xs text-white/40 mt-0.5">{testimonial.role}</div>
-                  <div className="text-xs text-indigo-400 mt-0.5">{testimonial.company}</div>
-                </div>
+                <div className="text-4xl mb-4">{card.icon}</div>
+                <h3 className="text-base font-bold text-white mb-2">{card.title}</h3>
+                <p className="text-sm text-white/50 leading-relaxed">{card.desc}</p>
               </motion.div>
             ))}
           </div>
+
+          {/* Early access CTA */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-center bg-gradient-to-r from-indigo-500/10 via-violet-500/10 to-purple-500/10 border border-white/10 rounded-2xl px-6 py-10 max-w-2xl mx-auto"
+          >
+            <div className="inline-flex items-center gap-2 bg-indigo-500/20 border border-indigo-500/30 rounded-full px-4 py-1.5 text-xs font-semibold text-indigo-300 mb-4">
+              🇿🇦 Proudly South African
+            </div>
+            <h3 className="text-xl font-bold text-white mb-2">Be an early user</h3>
+            <p className="text-sm text-white/50 mb-6 leading-relaxed">
+              CareerIntel SA is new — and that means you get to shape it. Try it free, give us feedback, and be part of building the career platform SA deserves.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-3 justify-center">
+              <a
+                href="/sign-up"
+                className="inline-flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-sm px-6 py-3 rounded-xl transition-all hover:shadow-lg hover:shadow-indigo-500/25"
+              >
+                Get Started Free
+                <ChevronRight className="w-4 h-4" />
+              </a>
+              <a
+                href="mailto:hello@careerintelsa.co.za"
+                className="inline-flex items-center justify-center gap-2 border border-white/10 hover:border-white/20 text-white/70 hover:text-white font-semibold text-sm px-6 py-3 rounded-xl transition-all"
+              >
+                Share Feedback
+              </a>
+            </div>
+          </motion.div>
         </div>
       </section>
 

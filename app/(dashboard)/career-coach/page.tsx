@@ -168,13 +168,31 @@ export default function CareerCoachPage() {
   const [userMessageCount, setUserMessageCount] = useState(0);
   const [creditsModal, setCreditsModal] = useState(false);
   const [creditBalance, setCreditBalance] = useState(0);
-  const maxFree = 15;
+  const [messageLimit, setMessageLimit] = useState<number>(15); // updated after plan load
+  const [isUnlimited, setIsUnlimited] = useState(false);
 
-  // Load credit balance once
+  // Load credit balance + plan limits
   useEffect(() => {
     fetch("/api/credits/balance")
       .then((r) => r.json())
       .then((d) => setCreditBalance(d.balance ?? 0))
+      .catch(() => {});
+
+    fetch("/api/dashboard")
+      .then((r) => r.json())
+      .then((d) => {
+        const planKey = d.planKey as string | null;
+        const plan    = d.plan as string;
+        if (plan === "PREMIUM" && planKey === "graduate") {
+          setMessageLimit(50);
+          setIsUnlimited(false);
+        } else if (plan === "PREMIUM" || plan === "RECRUITER" || plan === "ENTERPRISE") {
+          setIsUnlimited(true);
+        } else {
+          setMessageLimit(15);
+          setIsUnlimited(false);
+        }
+      })
       .catch(() => {});
   }, []);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -369,7 +387,7 @@ export default function CareerCoachPage() {
     }
   };
 
-  const remainingMessages = maxFree - userMessageCount;
+  const remainingMessages = isUnlimited ? Infinity : messageLimit - userMessageCount;
 
   return (
     <>
@@ -390,11 +408,18 @@ export default function CareerCoachPage() {
           </p>
         </div>
         <div className="flex items-center gap-2 flex-shrink-0">
-          <div className="text-xs text-muted-foreground hidden sm:block">
-            <span className={`font-medium ${remainingMessages <= 3 ? "text-amber-400" : "text-foreground"}`}>
-              {remainingMessages}
-            </span>/{maxFree}
-          </div>
+          {!isUnlimited && (
+            <div className="text-xs text-muted-foreground hidden sm:block">
+              <span className={`font-medium ${remainingMessages <= 3 ? "text-amber-400" : "text-foreground"}`}>
+                {remainingMessages}
+              </span>/{messageLimit}
+            </div>
+          )}
+          {isUnlimited && (
+            <div className="text-xs text-emerald-400 hidden sm:block font-medium">
+              ∞ Unlimited
+            </div>
+          )}
           <Button
             variant="outline"
             size="sm"
@@ -455,17 +480,17 @@ export default function CareerCoachPage() {
               </div>
             )}
 
-            {remainingMessages <= 3 && remainingMessages > 0 && (
+            {!isUnlimited && remainingMessages <= 3 && remainingMessages > 0 && (
               <div className="flex items-center gap-2 text-xs text-amber-400 bg-amber-500/10 border border-amber-500/20 rounded-lg px-3 py-2 mb-3">
                 <AlertCircle className="w-3.5 h-3.5 flex-shrink-0" />
-                Only {remainingMessages} free message{remainingMessages !== 1 ? "s" : ""} remaining. Upgrade for unlimited coaching.
+                Only {remainingMessages} message{remainingMessages !== 1 ? "s" : ""} remaining this month. Upgrade for unlimited coaching.
               </div>
             )}
 
-            {remainingMessages === 0 ? (
+            {!isUnlimited && remainingMessages === 0 ? (
               <div className="flex items-center justify-between bg-indigo-500/10 border border-indigo-500/20 rounded-xl px-4 py-3">
-                <p className="text-sm text-white/70">Free limit reached. Upgrade to keep chatting.</p>
-                <Button variant="indigo" size="sm">Upgrade — R99/mo</Button>
+                <p className="text-sm text-white/70">Monthly limit reached. Upgrade to keep chatting.</p>
+                <Button variant="indigo" size="sm">Upgrade — from R65/mo</Button>
               </div>
             ) : (
               <div className="flex items-end gap-2">
@@ -551,7 +576,7 @@ export default function CareerCoachPage() {
                 <button
                   key={topic}
                   onClick={() => sendMessage(topic)}
-                  disabled={isLoading || remainingMessages === 0}
+                  disabled={isLoading || (!isUnlimited && remainingMessages === 0)}
                   className="w-full text-left text-xs text-muted-foreground hover:text-foreground px-2 py-1.5 rounded hover:bg-secondary transition-colors disabled:opacity-40"
                 >
                   {topic}

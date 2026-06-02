@@ -21,6 +21,31 @@ const EDUCATION_LEVELS = [
   "Honours (NQF 8)", "Master's Degree (NQF 9)", "PhD (NQF 10)",
 ];
 
+// Reverse maps — convert Prisma enum values back to display labels for dropdowns
+const PROVINCE_ENUM_TO_LABEL: Record<string, string> = {
+  GAUTENG:       "Gauteng",
+  WESTERN_CAPE:  "Western Cape",
+  KWAZULU_NATAL: "KwaZulu-Natal",
+  EASTERN_CAPE:  "Eastern Cape",
+  FREE_STATE:    "Free State",
+  LIMPOPO:       "Limpopo",
+  MPUMALANGA:    "Mpumalanga",
+  NORTH_WEST:    "North West",
+  NORTHERN_CAPE: "Northern Cape",
+};
+
+const EDUCATION_ENUM_TO_LABEL: Record<string, string> = {
+  GRADE_10:          "Grade 10/11",
+  GRADE_12_MATRIC:   "Grade 12 / Matric",
+  CERTIFICATE:       "Certificate (NQF 1-5)",
+  DIPLOMA:           "Diploma (NQF 6)",
+  ADVANCED_DIPLOMA:  "Advanced Diploma",
+  DEGREE:            "Bachelor's Degree (NQF 7)",
+  HONOURS:           "Honours (NQF 8)",
+  MASTERS:           "Master's Degree (NQF 9)",
+  PHD:               "PhD (NQF 10)",
+};
+
 const POPULAR_SKILLS = [
   "Python", "JavaScript", "SQL", "Excel", "Power BI", "Tableau",
   "React", "Node.js", "AWS", "Azure", "Machine Learning", "Data Analysis",
@@ -70,8 +95,8 @@ export default function ProfilePage() {
           if (linkedinRef.current     && profile.linkedinUrl)              linkedinRef.current.value       = profile.linkedinUrl;
           if (githubRef.current       && profile.githubUrl)                githubRef.current.value         = profile.githubUrl;
           if (bioRef.current          && profile.bio)                      bioRef.current.value            = profile.bio;
-          if (provinceRef.current     && profile.province)                 provinceRef.current.value       = profile.province;
-          if (educationRef.current    && profile.educationLevel)           educationRef.current.value      = profile.educationLevel;
+          if (provinceRef.current     && profile.province)      provinceRef.current.value  = PROVINCE_ENUM_TO_LABEL[profile.province]  ?? profile.province;
+          if (educationRef.current    && profile.educationLevel) educationRef.current.value = EDUCATION_ENUM_TO_LABEL[profile.educationLevel] ?? profile.educationLevel;
           if (institutionRef.current  && profile.institution)              institutionRef.current.value    = profile.institution;
           if (fieldOfStudyRef.current && profile.fieldOfStudy)             fieldOfStudyRef.current.value   = profile.fieldOfStudy;
           if (yearCompletedRef.current && profile.yearCompleted != null)   yearCompletedRef.current.value  = String(profile.yearCompleted);

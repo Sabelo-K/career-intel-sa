@@ -181,6 +181,29 @@ export default function SettingsPage() {
   const [language, setLanguage] = useState("en");
   const [compactMode, setCompactMode] = useState(false);
 
+  // Apply theme to document and persist to localStorage
+  const applyTheme = (t: "dark" | "light" | "system") => {
+    setTheme(t);
+    localStorage.setItem("careerintel-theme", t);
+    const html = document.documentElement;
+    if (t === "dark") {
+      html.classList.add("dark");
+    } else if (t === "light") {
+      html.classList.remove("dark");
+    } else {
+      // system — follow OS preference
+      const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+      prefersDark ? html.classList.add("dark") : html.classList.remove("dark");
+    }
+  };
+
+  // Restore saved theme on mount
+  useEffect(() => {
+    const saved = localStorage.getItem("careerintel-theme") as "dark" | "light" | "system" | null;
+    if (saved) applyTheme(saved);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   // Career preferences
   const [jobType, setJobType] = useState<string[]>(["full-time"]);
   const [remotePreference, setRemotePreference] = useState("hybrid");
@@ -794,7 +817,7 @@ export default function SettingsPage() {
               {(["dark", "light", "system"] as const).map((t) => (
                 <button
                   key={t}
-                  onClick={() => setTheme(t)}
+                  onClick={() => applyTheme(t)}
                   className={`relative rounded-xl border-2 p-3 transition-all ${
                     theme === t
                       ? "border-indigo-500 bg-indigo-500/10"

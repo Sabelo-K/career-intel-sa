@@ -56,6 +56,21 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <ClerkProvider>
       <html lang="en" className="dark" suppressHydrationWarning>
         <body className={`${inter.variable} font-sans`}>
+          {/* Inline script: apply saved theme before first paint to avoid flash */}
+          <script dangerouslySetInnerHTML={{ __html: `
+            (function() {
+              try {
+                var t = localStorage.getItem('careerintel-theme');
+                var html = document.documentElement;
+                if (t === 'light') { html.classList.remove('dark'); }
+                else if (t === 'system') {
+                  if (!window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                    html.classList.remove('dark');
+                  }
+                }
+              } catch(e) {}
+            })();
+          ` }} />
           <LanguageProvider>
             {children}
             <CookieBanner />

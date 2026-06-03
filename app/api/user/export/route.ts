@@ -21,9 +21,12 @@ export async function GET() {
         profile:           true,
         cvs:               { select: { name: true, atsScore: true, recruiterScore: true, createdAt: true, updatedAt: true } },
         chatSessions:      {
-          orderBy:  { createdAt: "asc" },
-          include:  { messages: { select: { role: true, content: true, createdAt: true }, orderBy: { createdAt: "asc" } } },
-          select:   { title: true, createdAt: true, messages: true },
+          orderBy: { createdAt: "asc" },
+          select:  {
+            title:     true,
+            createdAt: true,
+            messages:  { select: { role: true, content: true, createdAt: true }, orderBy: { createdAt: "asc" } },
+          },
         },
         skillsGaps:        { select: { targetRole: true, currentSkills: true, createdAt: true } },
         careerPaths:       { select: { title: true, currentRole: true, targetRole: true, timeframeYears: true, createdAt: true } },

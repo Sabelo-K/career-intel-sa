@@ -177,19 +177,17 @@ export default function SettingsPage() {
   });
 
   // Appearance
-  const [theme, setTheme] = useState<"dark" | "light" | "system">("dark");
+  const [theme, setTheme] = useState<"dark" | "system">("dark");
   const [language, setLanguage] = useState("en");
   const [compactMode, setCompactMode] = useState(false);
 
   // Apply theme to document and persist to localStorage
-  const applyTheme = (t: "dark" | "light" | "system") => {
+  const applyTheme = (t: "dark" | "system") => {
     setTheme(t);
     localStorage.setItem("careerintel-theme", t);
     const html = document.documentElement;
     if (t === "dark") {
       html.classList.add("dark");
-    } else if (t === "light") {
-      html.classList.remove("dark");
     } else {
       // system — follow OS preference
       const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
@@ -199,7 +197,7 @@ export default function SettingsPage() {
 
   // Restore saved theme on mount
   useEffect(() => {
-    const saved = localStorage.getItem("careerintel-theme") as "dark" | "light" | "system" | null;
+    const saved = localStorage.getItem("careerintel-theme") as "dark" | "system" | null;
     if (saved) applyTheme(saved);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -813,24 +811,28 @@ export default function SettingsPage() {
             iconColor="text-indigo-400"
             description="Choose how CareerIntel SA looks on your device."
           >
-            <div className="grid grid-cols-3 gap-3">
-              {(["dark", "light", "system"] as const).map((t) => (
+            <div className="grid grid-cols-2 gap-3">
+              {(["dark", "system"] as const).map((t) => (
                 <button
                   key={t}
                   onClick={() => applyTheme(t)}
-                  className={`relative rounded-xl border-2 p-3 transition-all ${
+                  className={`relative rounded-xl border-2 p-4 transition-all ${
                     theme === t
                       ? "border-indigo-500 bg-indigo-500/10"
-                      : "border-border bg-secondary hover:border-border/80"
+                      : "border-border bg-secondary hover:border-indigo-500/30"
                   }`}
                 >
                   <div className="flex flex-col items-center gap-2">
                     {t === "dark" && <Moon className="w-5 h-5 text-indigo-300" />}
-                    {t === "light" && <Sun className="w-5 h-5 text-amber-400" />}
                     {t === "system" && (
                       <div className="w-5 h-5 rounded-full bg-gradient-to-r from-slate-800 to-white border border-border" />
                     )}
-                    <span className="text-xs font-medium capitalize text-foreground">{t}</span>
+                    <span className="text-xs font-medium capitalize text-foreground">
+                      {t === "dark" ? "Dark" : "System"}
+                    </span>
+                    <span className="text-[10px] text-muted-foreground">
+                      {t === "dark" ? "Always dark" : "Follow device"}
+                    </span>
                   </div>
                   {theme === t && (
                     <div className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-indigo-500" />
@@ -839,8 +841,8 @@ export default function SettingsPage() {
               ))}
             </div>
             <p className="text-xs text-muted-foreground mt-3 flex items-center gap-1.5">
-              <Info className="w-3.5 h-3.5 text-indigo-400 flex-shrink-0" />
-              Full light mode is coming soon. Dark mode is active by default.
+              <Info className="w-3.5 h-3.5 text-amber-400 flex-shrink-0" />
+              Light mode is coming in a future update.
             </p>
           </SectionCard>
 

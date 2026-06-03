@@ -232,8 +232,11 @@ export default function SettingsPage() {
       const a    = document.createElement("a");
       a.href     = url;
       a.download = `careerintel-data-${new Date().toISOString().split("T")[0]}.json`;
+      document.body.appendChild(a);
       a.click();
-      URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+      // Delay revocation so browser has time to start the download
+      setTimeout(() => URL.revokeObjectURL(url), 5000);
     } catch {
       alert("Export failed — please try again.");
     } finally {

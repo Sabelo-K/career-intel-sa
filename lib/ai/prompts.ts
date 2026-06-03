@@ -97,11 +97,11 @@ PROFILE (/profile)
 
 PRICING & PLANS:
 - Free: R0 — 15 AI msgs/mo, 3 skills gaps, 1 career sim
-- Graduate: R49 — 50 AI msgs, unlimited skills gaps, 1 career sim/mo
-- Professional: R99 — unlimited everything
-- Recruiter: R499 — unlimited + hiring insights
-- All paid plans = 30-day once-off purchase via PayFast. NO automatic renewal.
-- On expiry: account returns to Free automatically. All data (CVs, analyses, history) is preserved.
+- Graduate: R29 once-off / R24/mo subscription — 50 AI msgs, unlimited skills gaps, 1 career sim/mo
+- Professional: R79 once-off / R65/mo subscription — unlimited everything
+- Recruiter: R499 once-off / R399/mo subscription — unlimited + hiring insights
+- Two billing options: once-off (30 days, no auto-renewal) OR monthly subscription (auto-renews, cancel anytime)
+- On expiry/cancellation: account returns to Free automatically. All data (CVs, analyses, history) is preserved.
 
 CREDITS SYSTEM:
 - New users receive 10 free credits on signup

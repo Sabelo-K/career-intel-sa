@@ -441,8 +441,12 @@ export default function UpgradePage() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {[
             {
-              q: "Is this a subscription?",
-              a: "No — each payment gives you 30 days of access. There is no automatic renewal. You choose when to pay again.",
+              q: "Once-off vs subscription — what's the difference?",
+              a: "Once-off gives you 30 days of access with no auto-renewal — you choose when to pay again. Subscription auto-renews monthly at a lower rate and can be cancelled anytime.",
+            },
+            {
+              q: "How do I cancel a subscription?",
+              a: "Email hello@careerintelsa.co.za with your account email and we'll cancel within 24 hours. Your access continues until the end of the current billing period.",
             },
             {
               q: "How do I pay?",
@@ -450,11 +454,11 @@ export default function UpgradePage() {
             },
             {
               q: "What happens when my plan expires?",
-              a: "Your account reverts to the Free tier automatically. All your data (CVs, analyses, history) is preserved.",
+              a: "Your account reverts to the Free tier automatically. All your data (CVs, analyses, history) is fully preserved.",
             },
             {
               q: "Is my data secure?",
-              a: "Yes. We are POPIA compliant. Your data is stored securely and never sold to third parties.",
+              a: "Yes. We are POPIA compliant. Your data is stored securely on South African-based servers and never sold to third parties.",
             },
           ].map((faq) => (
             <div key={faq.q} className="bg-card border border-border rounded-xl p-4">

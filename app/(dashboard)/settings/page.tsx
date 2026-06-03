@@ -475,9 +475,9 @@ export default function SettingsPage() {
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-4">
               {[
-                { name: "Graduate", price: "R49/mo", color: "border-violet-500/30 bg-violet-500/5", textColor: "text-violet-300" },
-                { name: "Professional", price: "R99/mo", color: "border-indigo-500/40 bg-indigo-500/10", textColor: "text-indigo-300", popular: true },
-                { name: "Recruiter", price: "R499/mo", color: "border-amber-500/30 bg-amber-500/5", textColor: "text-amber-300" },
+                { name: "Graduate", price: "R24/mo", color: "border-violet-500/30 bg-violet-500/5", textColor: "text-violet-300" },
+                { name: "Professional", price: "R65/mo", color: "border-indigo-500/40 bg-indigo-500/10", textColor: "text-indigo-300", popular: true },
+                { name: "Recruiter", price: "R399/mo", color: "border-amber-500/30 bg-amber-500/5", textColor: "text-amber-300" },
               ].map((plan) => (
                 <div key={plan.name} className={`relative rounded-xl border ${plan.color} p-3 text-center`}>
                   {plan.popular && (
@@ -499,20 +499,29 @@ export default function SettingsPage() {
                 </Button>
               </Link>
             ) : (
-              <div className="flex items-center justify-between px-4 py-3 rounded-xl bg-indigo-500/8 border border-indigo-500/20 text-sm">
-                <div className="flex items-center gap-2 text-indigo-300">
-                  <Crown className="w-4 h-4 text-amber-400" />
-                  <span className="font-medium">Plan active</span>
+              <div className="space-y-2">
+                <div className="flex items-center justify-between px-4 py-3 rounded-xl bg-indigo-500/8 border border-indigo-500/20 text-sm">
+                  <div className="flex items-center gap-2 text-indigo-300">
+                    <Crown className="w-4 h-4 text-amber-400" />
+                    <span className="font-medium">Plan active</span>
+                  </div>
+                  {planExpiresAt && (() => {
+                    const ms   = new Date(planExpiresAt).getTime() - Date.now();
+                    const days = Math.max(0, Math.ceil(ms / (1000 * 60 * 60 * 24)));
+                    return (
+                      <span className={`text-xs font-semibold ${days <= 5 ? "text-amber-400" : "text-muted-foreground"}`}>
+                        {days}d remaining
+                      </span>
+                    );
+                  })()}
                 </div>
-                {planExpiresAt && (() => {
-                  const ms   = new Date(planExpiresAt).getTime() - Date.now();
-                  const days = Math.max(0, Math.ceil(ms / (1000 * 60 * 60 * 24)));
-                  return (
-                    <span className={`text-xs font-semibold ${days <= 5 ? "text-amber-400" : "text-muted-foreground"}`}>
-                      {days}d remaining
-                    </span>
-                  );
-                })()}
+                <p className="text-xs text-muted-foreground px-1">
+                  To cancel a subscription, email{" "}
+                  <a href="mailto:hello@careerintelsa.co.za" className="text-indigo-400 hover:underline">
+                    hello@careerintelsa.co.za
+                  </a>
+                  {" "}— access continues until end of billing period.
+                </p>
               </div>
             )}
           </SectionCard>

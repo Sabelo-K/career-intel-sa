@@ -11,10 +11,10 @@ import { LanguageSelector } from "@/components/layout/language-selector";
 import { PricingSection } from "@/components/landing/pricing-section";
 
 const STATS = [
-  { value: "200+", label: "Career Paths Mapped", icon: Target },
-  { value: "R800B", label: "Job Market Analysed", icon: BarChart3 },
-  { value: "9", label: "SA Provinces Covered", icon: Globe },
-  { value: "95%", label: "Match Accuracy", icon: Sparkles },
+  { value: "249+", label: "SA Careers Mapped", icon: Target },
+  { value: "26",   label: "Industry Sectors", icon: BarChart3 },
+  { value: "9",    label: "SA Provinces Covered", icon: Globe },
+  { value: "Free", label: "To Get Started", icon: Sparkles },
 ];
 
 const FEATURES = [
@@ -30,7 +30,7 @@ const FEATURES = [
   {
     icon: TrendingUp,
     title: "Career Demand Engine",
-    description: "See real-time demand scores, salary ranges in ZAR, and growth trends for 200+ careers across SA provinces.",
+    description: "See real-time demand scores, salary ranges in ZAR, and growth trends for 249+ careers across SA provinces.",
     color: "emerald",
     gradient: "from-emerald-500/20 to-teal-500/10",
     border: "border-emerald-500/30",
@@ -438,7 +438,7 @@ export default function LandingPage() {
               </h2>
               <div className="space-y-4">
                 {[
-                  "Real-time SA job market demand data for 120+ careers",
+                  "Real-time SA job market demand data for 249+ careers",
                   "AI that understands NQF levels, SETAs, and local employers",
                   "Personalised skills gap analysis with actionable learning paths",
                   "Salary predictions based on SA market data",
@@ -468,7 +468,7 @@ export default function LandingPage() {
               Built for <span className="gradient-text">South Africa</span>
             </h2>
             <p className="text-white/50 max-w-xl mx-auto">
-              CareerIntel SA just launched. Here&apos;s why thousands of South Africans will use it to build better careers.
+              CareerIntel SA just launched. Here&apos;s why it was built specifically for South Africans.
             </p>
           </motion.div>
 
@@ -544,7 +544,7 @@ export default function LandingPage() {
               <span className="gradient-text">Let AI guide you.</span>
             </h2>
             <p className="text-sm sm:text-base lg:text-lg text-white/55 mb-8 sm:mb-10">
-              Join thousands of South Africans using data-driven intelligence to build careers they love.
+              Join South Africans using AI-powered, data-driven intelligence to build careers they love.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
               <Link

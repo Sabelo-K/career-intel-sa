@@ -139,9 +139,9 @@ function PlanOverridePanel() {
             onChange={(e) => setPlanKey(e.target.value)}
             className="w-full h-9 px-3 rounded-lg border border-border bg-secondary text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-indigo-500/40"
           >
-            <option value="graduate">graduate (R49)</option>
-            <option value="professional">professional (R99)</option>
-            <option value="recruiter">recruiter (R499)</option>
+            <option value="graduate">graduate (R29 once-off / R24 sub)</option>
+            <option value="professional">professional (R79 once-off / R65 sub)</option>
+            <option value="recruiter">recruiter (R499 once-off / R399 sub)</option>
           </select>
         </div>
         <div className="sm:col-span-2 lg:col-span-4 flex items-end gap-3">

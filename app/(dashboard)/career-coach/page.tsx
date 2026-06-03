@@ -490,7 +490,7 @@ export default function CareerCoachPage() {
             {!isUnlimited && remainingMessages === 0 ? (
               <div className="flex items-center justify-between bg-indigo-500/10 border border-indigo-500/20 rounded-xl px-4 py-3">
                 <p className="text-sm text-white/70">Monthly limit reached. Upgrade to keep chatting.</p>
-                <Button variant="indigo" size="sm">Upgrade — from R65/mo</Button>
+                <Button variant="indigo" size="sm" onClick={() => window.location.href = "/upgrade"}>Upgrade — from R24/mo</Button>
               </div>
             ) : (
               <div className="flex items-end gap-2">
@@ -595,7 +595,7 @@ export default function CareerCoachPage() {
               Unlimited coaching, career simulations & salary forecasting.
             </p>
             <Button variant="indigo" size="sm" className="w-full text-xs">
-              Upgrade — R99/mo
+              Upgrade — from R24/mo
             </Button>
           </div>
 

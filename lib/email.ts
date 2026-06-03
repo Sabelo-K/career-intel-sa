@@ -135,7 +135,7 @@ export async function sendWelcomeEmail(to: string, name: string) {
 
     ${divider()}
     <p style="margin:0;font-size:12px;color:#9ca3af;">
-      You're on the <strong>Free plan</strong>. Upgrade from R49/mo to unlock unlimited AI coaching, skills gap analyses, and career simulations.
+      You're on the <strong>Free plan</strong>. Upgrade from R24/mo to unlock unlimited AI coaching, skills gap analyses, and career simulations.
       <a href="${BASE_URL}/upgrade" style="color:#6366f1;">See plans →</a>
     </p>
   `);

@@ -211,7 +211,7 @@ export default function BuyCreditsPage() {
         </div>
         <p className="text-xs text-white/60 leading-relaxed">
           A subscription gives you unlimited AI coaching, skills gap analyses, and career simulations —
-          no counting credits. Starting from <strong className="text-white/80">R49/month</strong>.
+          no counting credits. Starting from <strong className="text-white/80">R24/month</strong>.
         </p>
         <Link
           href="/upgrade"

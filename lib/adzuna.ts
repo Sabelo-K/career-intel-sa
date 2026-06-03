@@ -58,16 +58,26 @@ export async function searchAdzunaJobs(opts: AdzunaSearchOptions): Promise<Adzun
   const appKey = process.env.ADZUNA_APP_KEY;
   if (!appId || !appKey) return [];
 
+  // Use the first keyword as an exact phrase match (the role title),
+  // and OR-join any additional keywords for broader coverage.
+  // This prevents "Quality Assurance Analyst" splitting into
+  // "Quality OR Assurance OR Analyst" which matches completely unrelated jobs.
+  const [primaryKeyword, ...extraKeywords] = opts.keywords;
+
   const params = new URLSearchParams({
     app_id:           appId,
     app_key:          appKey,
     results_per_page: String(opts.maxResults ?? 5),
-    // OR-join keywords for broader matching, e.g. "Data Analyst OR SQL Developer"
-    what_or:          opts.keywords.join(" "),
+    what:             primaryKeyword,   // exact phrase match for the role title
     sort_by:          "date",
     // Note: do NOT pass content_type as a query param — Adzuna returns JSON by
     // default and passing it causes a 400 on their SA endpoint.
   });
+
+  // Add extra keywords as OR broadening terms if present
+  if (extraKeywords.length > 0) {
+    params.set("what_or", extraKeywords.join(" "));
+  }
 
   if (opts.province) {
     params.set("where", PROVINCE_TO_ADZUNA[opts.province] ?? opts.province);

@@ -103,6 +103,7 @@ export async function GET() {
       plan: dbUser.plan,
       planKey: dbUser.planKey ?? null,
       planExpiresAt: dbUser.planExpiresAt ?? null,
+      billingType: dbUser.billingType ?? "ONCE_OFF",
       onboarded: dbUser.onboarded,
       isNewUser: isNewUserDiscountEligible(dbUser.createdAt, dbUser.plan),
       daysLeftOnDiscount: discountDaysRemaining(dbUser.createdAt, dbUser.plan),

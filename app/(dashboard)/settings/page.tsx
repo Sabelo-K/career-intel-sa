@@ -243,6 +243,22 @@ export default function SettingsPage() {
     setTimeout(() => setSaved(false), 2500);
   };
 
+  const handleCancelSubscription = async () => {
+    if (!confirm("Are you sure you want to cancel your subscription? You will keep access until your current billing period ends.")) return;
+    setCancelling(true);
+    try {
+      const res = await fetch("/api/payfast/cancel", { method: "POST" });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error ?? "Cancellation failed");
+      setCancelSuccess(true);
+      setBillingType("ONCE_OFF");
+    } catch (err) {
+      alert(err instanceof Error ? err.message : "Cancellation failed. Please email hello@careerintelsa.co.za");
+    } finally {
+      setCancelling(false);
+    }
+  };
+
   const handleExport = async () => {
     setExporting(true);
     try {
@@ -297,8 +313,11 @@ export default function SettingsPage() {
     );
   };
 
-  const [planKey, setPlanKey]           = useState<string>("FREE");
+  const [planKey, setPlanKey]             = useState<string>("FREE");
   const [planExpiresAt, setPlanExpiresAt] = useState<string | null>(null);
+  const [billingType, setBillingType]     = useState<"ONCE_OFF" | "SUBSCRIPTION">("ONCE_OFF");
+  const [cancelling, setCancelling]       = useState(false);
+  const [cancelSuccess, setCancelSuccess] = useState(false);
   const [profileLink, setProfileLink]   = useState<string | null>(null);
   const [linkCopied, setLinkCopied]     = useState(false);
 
@@ -309,6 +328,7 @@ export default function SettingsPage() {
       .then((d) => {
         if (d.plan)          setPlanKey(d.plan);
         if (d.planExpiresAt) setPlanExpiresAt(d.planExpiresAt);
+        if (d.billingType)   setBillingType(d.billingType);
       })
       .catch(() => {});
 
@@ -523,11 +543,24 @@ export default function SettingsPage() {
                 </Button>
               </Link>
             ) : (
-              <div className="space-y-2">
+              <div className="space-y-3">
+                {/* Plan status row */}
                 <div className="flex items-center justify-between px-4 py-3 rounded-xl bg-indigo-500/8 border border-indigo-500/20 text-sm">
                   <div className="flex items-center gap-2 text-indigo-300">
                     <Crown className="w-4 h-4 text-amber-400" />
-                    <span className="font-medium">Plan active</span>
+                    <div>
+                      <span className="font-medium">Plan active</span>
+                      {billingType === "SUBSCRIPTION" && (
+                        <span className="ml-2 text-[10px] bg-emerald-500/15 text-emerald-400 border border-emerald-500/25 px-1.5 py-0.5 rounded-full font-semibold">
+                          Monthly subscription
+                        </span>
+                      )}
+                      {billingType === "ONCE_OFF" && (
+                        <span className="ml-2 text-[10px] bg-white/10 text-white/50 border border-white/15 px-1.5 py-0.5 rounded-full font-semibold">
+                          Once-off
+                        </span>
+                      )}
+                    </div>
                   </div>
                   {planExpiresAt && (() => {
                     const ms   = new Date(planExpiresAt).getTime() - Date.now();
@@ -539,13 +572,28 @@ export default function SettingsPage() {
                     );
                   })()}
                 </div>
-                <p className="text-xs text-muted-foreground px-1">
-                  To cancel a subscription, email{" "}
-                  <a href="mailto:hello@careerintelsa.co.za" className="text-indigo-400 hover:underline">
-                    hello@careerintelsa.co.za
-                  </a>
-                  {" "}— access continues until end of billing period.
-                </p>
+
+                {/* Cancel subscription button — only shown for active subscribers */}
+                {billingType === "SUBSCRIPTION" && !cancelSuccess && (
+                  <button
+                    onClick={handleCancelSubscription}
+                    disabled={cancelling}
+                    className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border border-red-500/30 bg-red-500/5 hover:bg-red-500/10 text-red-400 text-xs font-medium transition-all disabled:opacity-50"
+                  >
+                    {cancelling ? "Cancelling…" : "Cancel Subscription"}
+                  </button>
+                )}
+
+                {/* Success state after cancellation */}
+                {cancelSuccess && (
+                  <div className="flex items-start gap-2 px-4 py-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-xs text-emerald-400">
+                    <CheckCircle2 className="w-4 h-4 flex-shrink-0 mt-0.5" />
+                    <div>
+                      <p className="font-medium">Subscription cancelled</p>
+                      <p className="text-emerald-400/70 mt-0.5">You keep full access until your billing period ends. No further charges.</p>
+                    </div>
+                  </div>
+                )}
               </div>
             )}
           </SectionCard>

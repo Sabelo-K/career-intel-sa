@@ -343,3 +343,60 @@ export async function sendJobAlertDigest(to: string, opts: JobAlertDigestOpts) {
     html,
   });
 }
+
+// ── Owner revenue alert ───────────────────────────────────────────────────────
+
+const OWNER_EMAIL = "bareer57@gmail.com";
+
+export async function sendOwnerRevenueAlert(opts: {
+  userEmail:      string;
+  userName:       string;
+  planName:       string;
+  amountRands:    string;
+  billingType:    "ONCE_OFF" | "SUBSCRIPTION";
+  planExpiresAt:  Date;
+}) {
+  const billingLabel = opts.billingType === "SUBSCRIPTION" ? "Monthly Subscription" : "Once-off (30 days)";
+  const emoji        = opts.billingType === "SUBSCRIPTION" ? "🔄" : "💳";
+  const planEmoji    = opts.planName === "Recruiter" ? "👔" : opts.planName === "Professional" ? "⭐" : "🎓";
+
+  await send({
+    from:    FROM,
+    to:      OWNER_EMAIL,
+    subject: `${planEmoji} New ${opts.planName} subscriber — R${opts.amountRands} — CareerIntel SA`,
+    html: `
+      <div style="font-family:sans-serif;max-width:480px;margin:0 auto;background:#0d1117;border-radius:12px;padding:32px;color:#e5e7eb;">
+        <h2 style="margin:0 0 8px;font-size:20px;color:#ffffff;">💰 New Paid User!</h2>
+        <p style="margin:0 0 24px;color:#9ca3af;font-size:14px;">Someone just upgraded on CareerIntel SA</p>
+
+        <table style="width:100%;border-collapse:collapse;">
+          <tr>
+            <td style="padding:10px 0;border-bottom:1px solid #1f2937;color:#9ca3af;font-size:13px;width:40%;">User</td>
+            <td style="padding:10px 0;border-bottom:1px solid #1f2937;color:#ffffff;font-size:13px;">${opts.userName || "—"}<br/><span style="color:#6366f1;font-size:12px;">${opts.userEmail}</span></td>
+          </tr>
+          <tr>
+            <td style="padding:10px 0;border-bottom:1px solid #1f2937;color:#9ca3af;font-size:13px;">${planEmoji} Plan</td>
+            <td style="padding:10px 0;border-bottom:1px solid #1f2937;color:#ffffff;font-size:13px;">${opts.planName}</td>
+          </tr>
+          <tr>
+            <td style="padding:10px 0;border-bottom:1px solid #1f2937;color:#9ca3af;font-size:13px;">💵 Amount</td>
+            <td style="padding:10px 0;border-bottom:1px solid #1f2937;font-size:18px;font-weight:bold;color:#34d399;">R${opts.amountRands}</td>
+          </tr>
+          <tr>
+            <td style="padding:10px 0;border-bottom:1px solid #1f2937;color:#9ca3af;font-size:13px;">${emoji} Billing</td>
+            <td style="padding:10px 0;border-bottom:1px solid #1f2937;color:#ffffff;font-size:13px;">${billingLabel}</td>
+          </tr>
+          <tr>
+            <td style="padding:10px 0;color:#9ca3af;font-size:13px;">📅 Access until</td>
+            <td style="padding:10px 0;color:#ffffff;font-size:13px;">${opts.planExpiresAt.toLocaleDateString("en-ZA", { day: "numeric", month: "long", year: "numeric" })}</td>
+          </tr>
+        </table>
+
+        <div style="margin-top:24px;padding:16px;background:#111827;border-radius:8px;border-left:3px solid #34d399;">
+          <p style="margin:0;font-size:13px;color:#9ca3af;">View in admin panel</p>
+          <a href="${BASE_URL}/admin" style="color:#6366f1;font-size:13px;">${BASE_URL}/admin</a>
+        </div>
+      </div>
+    `,
+  });
+}

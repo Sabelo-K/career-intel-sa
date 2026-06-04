@@ -23,7 +23,7 @@ import {
   SUBSCRIPTION_PLANS,
   type PlanKey,
 } from "@/lib/payfast";
-import { sendUpgradeReceipt } from "@/lib/email";
+import { sendUpgradeReceipt, sendOwnerRevenueAlert } from "@/lib/email";
 
 export const runtime = "nodejs";
 
@@ -107,12 +107,22 @@ export async function POST(req: NextRequest) {
       `[PayFast ITN] User ${dbUserId} → ${planKey} (${planConfig.dbPlan}) until ${planExpiresAt.toISOString()}`
     );
 
-    // Send payment receipt (fire-and-forget)
+    // Send payment receipt to user (fire-and-forget)
     if (updatedUser.email) {
       sendUpgradeReceipt(updatedUser.email, {
         name:          updatedUser.name ?? "there",
         planName:      planConfig.name,
         amountRands:   planConfig.amount,
+        planExpiresAt,
+      }).catch(() => {});
+
+      // Send revenue alert to owner (fire-and-forget)
+      sendOwnerRevenueAlert({
+        userEmail:     updatedUser.email,
+        userName:      updatedUser.name ?? "Unknown",
+        planName:      planConfig.name,
+        amountRands:   planConfig.amount,
+        billingType:   isSubscription ? "SUBSCRIPTION" : "ONCE_OFF",
         planExpiresAt,
       }).catch(() => {});
     }

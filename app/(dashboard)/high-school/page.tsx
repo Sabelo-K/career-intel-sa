@@ -663,7 +663,7 @@ export default function HighSchoolPage() {
                   location: "Johannesburg, Gauteng",
                   deadline: "30 September",
                   fee: "R200",
-                  url: "https://www.wits.ac.za/study-at-wits/how-to-apply/",
+                  url: "https://www.wits.ac.za/applications/",
                   color: "violet",
                   note: "Apply directly via Wits online portal",
                 },

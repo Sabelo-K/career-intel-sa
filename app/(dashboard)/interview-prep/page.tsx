@@ -393,8 +393,8 @@ export default function InterviewPrepPage() {
         <div className="flex items-start gap-3 bg-emerald-500/10 border border-emerald-500/20 rounded-xl p-4 text-xs text-muted-foreground">
           <Mic className="w-4 h-4 text-emerald-400 flex-shrink-0 mt-0.5" />
           <div>
-            <span className="font-semibold text-foreground">Voice Mode active</span> — click <strong>Read Question</strong> to hear it aloud, then <strong>Record Answer</strong> to speak your response. Your browser will ask for microphone permission on first use. After recording, click <strong>AI Score</strong> for instant feedback.
-            <span className="text-muted-foreground/60"> Works best in Chrome or Edge.</span>
+            <span className="font-semibold text-foreground">Voice Mode active</span> — click <strong>Read Question</strong> to hear the question aloud, then <strong>Record Answer</strong> to speak your response (requires mic permission), or simply <strong>type your answer</strong> in the box below. Either way, click <strong>AI Score</strong> for instant feedback.
+            <span className="text-muted-foreground/60"> Voice recording works best in Chrome or Edge.</span>
           </div>
         </div>
       )}
@@ -505,16 +505,15 @@ export default function InterviewPrepPage() {
                             }}>
                             {recording === q.id ? <><MicOff className="w-3 h-3" /> Stop Recording</> : <><Mic className="w-3 h-3" /> Record Answer</>}
                           </Button>
-                          {/* AI Score */}
-                          {practiceText[q.id] && (
-                            <Button variant="indigo" size="sm" className="gap-2 text-xs"
-                              disabled={!!evaluating}
-                              onClick={(e) => { e.stopPropagation(); evaluateAnswer(q); }}>
-                              {evaluating === q.id
-                                ? <><motion.div animate={{ rotate: 360 }} transition={{ duration: 1, repeat: Infinity, ease: "linear" }}><Sparkles className="w-3 h-3" /></motion.div> Scoring…</>
-                                : <><Sparkles className="w-3 h-3" /> AI Score</>}
-                            </Button>
-                          )}
+                          {/* AI Score — always visible in voice mode; works with typed answers too */}
+                          <Button variant="indigo" size="sm" className="gap-2 text-xs"
+                            disabled={!!evaluating || !practiceText[q.id]?.trim()}
+                            title={!practiceText[q.id]?.trim() ? "Type or record your answer first" : "Score my answer with AI"}
+                            onClick={(e) => { e.stopPropagation(); evaluateAnswer(q); }}>
+                            {evaluating === q.id
+                              ? <><motion.div animate={{ rotate: 360 }} transition={{ duration: 1, repeat: Infinity, ease: "linear" }}><Sparkles className="w-3 h-3" /></motion.div> Scoring…</>
+                              : <><Sparkles className="w-3 h-3" /> AI Score</>}
+                          </Button>
                         </div>
 
                         {/* AI Evaluation result */}

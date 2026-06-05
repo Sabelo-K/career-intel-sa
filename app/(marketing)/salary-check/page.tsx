@@ -100,8 +100,13 @@ export default function SalaryCheckPage() {
   }
 
   async function handleCopy() {
-    const text = selectedRole && result
-      ? `I just checked my salary on CareerIntel SA 🇿🇦\n${selectedRole.title} in ${PROVINCES.find(p => p.code === province)?.name}: market avg is ${fmt(result.avg)}/month${result.verdict === "underpaid" ? " — I might be underpaid! 😬" : result.verdict === "fair" ? " — I'm earning market rate ✅" : " — I'm above market 🎉"}\nCheck yours: https://careerintelsa.co.za/salary-check`;
+    if (!selectedRole || !result) return;
+    const provName = PROVINCES.find(p => p.code === province)?.name ?? province;
+    const suffix =
+      result.verdict === "underpaid" ? " — I might be underpaid!" :
+      result.verdict === "fair"      ? " — I'm earning market rate" :
+                                       " — I'm above market rate";
+    const text = `I just checked my salary on CareerIntel SA\n${selectedRole.title} in ${provName}: market avg is ${fmt(result.avg)}/month${suffix}\nCheck yours: https://careerintelsa.co.za/salary-check`;
     await navigator.clipboard.writeText(text);
     setCopied(true);
     setTimeout(() => setCopied(false), 2500);

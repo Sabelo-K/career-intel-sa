@@ -24,15 +24,43 @@ const SUBJECTS = [
   { id: "lo",          label: "Life Orientation",        required: true,  countForAps: false },
 ];
 
-// Subject name options for subject4-6
-const ELECTIVE_SUBJECTS = [
-  "Physical Sciences", "Life Sciences", "Accounting", "Business Studies",
-  "Economics", "History", "Geography", "Information Technology (IT)",
-  "Computer Applications Technology (CAT)", "Engineering Graphics & Design",
-  "Agricultural Sciences", "Agricultural Technology", "Electrical Technology",
-  "Civil Technology", "Mechanical Technology", "Tourism", "Consumer Studies",
-  "Visual Arts", "Dramatic Arts", "Music",
+// Full CAPS elective subject list — grouped for the dropdown
+const ELECTIVE_SUBJECT_GROUPS: { group: string; subjects: string[] }[] = [
+  {
+    group: "Sciences",
+    subjects: ["Physical Sciences", "Life Sciences", "Agricultural Sciences", "Marine Sciences"],
+  },
+  {
+    group: "Mathematics & Technology",
+    subjects: [
+      "Information Technology (IT)", "Computer Applications Technology (CAT)",
+      "Engineering Graphics & Design", "Technical Mathematics", "Technical Sciences",
+    ],
+  },
+  {
+    group: "Business & Finance",
+    subjects: ["Accounting", "Business Studies", "Economics"],
+  },
+  {
+    group: "Humanities & Languages",
+    subjects: ["History", "Geography", "Religion Studies", "isiZulu", "isiXhosa", "Afrikaans Home Language", "Sepedi", "Setswana", "Sesotho", "Xitsonga", "Siswati", "Tshivenda", "isiNdebele"],
+  },
+  {
+    group: "Vocational & Applied",
+    subjects: [
+      "Agricultural Technology", "Electrical Technology", "Civil Technology",
+      "Mechanical Technology", "Tourism", "Consumer Studies", "Hospitality Studies",
+      "Sport and Exercise Science",
+    ],
+  },
+  {
+    group: "Arts & Culture",
+    subjects: ["Visual Arts", "Dramatic Arts", "Music", "Dance Studies", "Design"],
+  },
 ];
+
+// Flat list for backward compatibility
+const ELECTIVE_SUBJECTS = ELECTIVE_SUBJECT_GROUPS.flatMap(g => g.subjects);
 
 // Minimum APS for common programmes
 const PROGRAMME_APS: { programme: string; university: string; minAps: number; requiredSubjects: string[] }[] = [
@@ -45,6 +73,13 @@ const PROGRAMME_APS: { programme: string; university: string; minAps: number; re
   { programme: "BCom (Business/Finance)", university: "Any university", minAps: 30, requiredSubjects: ["Mathematics"] },
   { programme: "BA (Humanities/Social Science)", university: "Any university", minAps: 28, requiredSubjects: [] },
   { programme: "BEd (Teaching)", university: "Any university", minAps: 26, requiredSubjects: [] },
+  { programme: "BA Fine Arts / Design", university: "UCT / Wits / TUT / VUT", minAps: 28, requiredSubjects: ["Visual Arts"] },
+  { programme: "BMus (Music)", university: "UCT / NWU / UP / Wits", minAps: 26, requiredSubjects: ["Music"] },
+  { programme: "BA Dramatic Arts / Theatre", university: "Wits / UCT / UKZN / Rhodes", minAps: 26, requiredSubjects: ["Dramatic Arts"] },
+  { programme: "BSc Agriculture", university: "UP / SU / UFS / UNIVEN", minAps: 28, requiredSubjects: ["Agricultural Sciences"] },
+  { programme: "National Diploma Tourism / Hospitality", university: "Any TVET / UoT", minAps: 20, requiredSubjects: ["Tourism"] },
+  { programme: "National Diploma IT / Computer Science", university: "Any UoT / TVET", minAps: 22, requiredSubjects: ["Mathematics"] },
+  { programme: "BTech / Diploma Engineering", university: "TUT / CPUT / DUT / VUT", minAps: 24, requiredSubjects: ["Mathematics", "Physical Sciences"] },
   { programme: "National Diploma (TVET N4–N6)", university: "Any TVET College", minAps: 18, requiredSubjects: [] },
   { programme: "Higher Certificate (1-year)", university: "Any university", minAps: 15, requiredSubjects: [] },
 ];
@@ -69,9 +104,9 @@ const MATHS_CAPS_MAP: Record<string, string> = {
 export default function MatricPage() {
   const [grades, setGrades] = useState<Record<string, number>>({});
   const [subjectNames, setSubjectNames] = useState<Record<string, string>>({
-    subject4: "Physical Sciences",
-    subject5: "Life Sciences",
-    subject6: "Accounting",
+    subject4: "",
+    subject5: "",
+    subject6: "",
   });
   const [mathsChoice, setMathsChoice] = useState<"Mathematics" | "Mathematical Literacy">("Mathematics");
   const [showResults, setShowResults] = useState(false);
@@ -110,7 +145,10 @@ export default function MatricPage() {
     });
   }, [showResults, aps, userSubjects]);
 
-  const allFilled = SUBJECTS.filter(s => s.required).every(s => grades[s.id] !== undefined);
+  // All grades filled AND all 3 elective subjects chosen
+  const allFilled =
+    SUBJECTS.filter(s => s.required).every(s => grades[s.id] !== undefined) &&
+    !!subjectNames.subject4 && !!subjectNames.subject5 && !!subjectNames.subject6;
 
   function setGrade(subjectId: string, level: number) {
     setGrades(prev => ({ ...prev, [subjectId]: level }));
@@ -192,25 +230,43 @@ export default function MatricPage() {
           {/* Subject rows */}
           {SUBJECTS.map(subject => (
             <div key={subject.id}>
-              {/* Subject name selector for electives */}
+              {/* Subject name selector for electives — grouped by CAPS stream */}
               {["subject4","subject5","subject6"].includes(subject.id) && (
                 <div className="relative mb-1">
                   <select
                     value={subjectNames[subject.id] ?? ""}
                     onChange={e => { setSubjectNames(prev => ({ ...prev, [subject.id]: e.target.value })); setShowResults(false); }}
-                    className="w-full appearance-none bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-indigo-500/40 pr-7"
+                    className={`w-full appearance-none border rounded-lg px-3 py-2 text-xs focus:outline-none focus:border-indigo-500/40 pr-7 transition-colors ${
+                      subjectNames[subject.id]
+                        ? "bg-white/5 border-indigo-500/30 text-white"
+                        : "bg-amber-500/10 border-amber-500/30 text-amber-300"
+                    }`}
                   >
-                    <option value="" className="bg-zinc-900">Select subject…</option>
-                    {ELECTIVE_SUBJECTS.map(s => <option key={s} value={s} className="bg-zinc-900">{s}</option>)}
+                    <option value="" className="bg-zinc-900 text-white/50">
+                      {subject.id === "subject4" ? "— Choose your 4th subject —" :
+                       subject.id === "subject5" ? "— Choose your 5th subject —" :
+                                                   "— Choose your 6th subject —"}
+                    </option>
+                    {ELECTIVE_SUBJECT_GROUPS.map(group => (
+                      <optgroup key={group.group} label={group.group} className="bg-zinc-900 text-white/50 text-[10px]">
+                        {group.subjects.map(s => (
+                          <option key={s} value={s} className="bg-zinc-900 text-white">{s}</option>
+                        ))}
+                      </optgroup>
+                    ))}
                   </select>
                   <ChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-white/30 pointer-events-none" />
                 </div>
               )}
               <div className="flex items-center gap-2">
-                <div className="w-44 text-xs text-white/60 flex-shrink-0">
-                  {subject.id === "maths" ? mathsChoice :
-                   ["subject4","subject5","subject6"].includes(subject.id) ? (subjectNames[subject.id] ?? subject.label) :
-                   subject.label}
+                <div className="w-44 text-xs flex-shrink-0">
+                  {subject.id === "maths"
+                    ? <span className="text-white/60">{mathsChoice}</span>
+                    : ["subject4","subject5","subject6"].includes(subject.id)
+                    ? subjectNames[subject.id]
+                      ? <span className="text-white/60">{subjectNames[subject.id]}</span>
+                      : <span className="text-amber-400/60 italic">Select subject above ↑</span>
+                    : <span className="text-white/60">{subject.label}</span>}
                   {!subject.countForAps && <span className="text-white/30 ml-1">(excl. APS)</span>}
                 </div>
                 <div className="flex gap-1 flex-1">

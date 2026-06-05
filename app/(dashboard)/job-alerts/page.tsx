@@ -634,6 +634,30 @@ export default function JobAlertsPage() {
           ))}
         </div>
 
+        {/* Government jobs — ESSA portal */}
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 p-4 rounded-xl bg-emerald-500/8 border border-emerald-500/20">
+          <div className="flex items-start gap-3">
+            <div className="w-8 h-8 rounded-lg bg-emerald-500/20 flex items-center justify-center flex-shrink-0">
+              <span className="text-base">🏛️</span>
+            </div>
+            <div>
+              <p className="text-sm font-semibold text-emerald-300">Looking for government jobs?</p>
+              <p className="text-xs text-muted-foreground mt-0.5 leading-relaxed">
+                Search official Department of Labour vacancies on the <strong className="text-foreground">ESSA portal</strong> — South Africa&apos;s government employment service.
+              </p>
+            </div>
+          </div>
+          <a
+            href="https://essa.labour.gov.za"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex-shrink-0 flex items-center gap-1.5 px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold transition-colors whitespace-nowrap"
+          >
+            Search ESSA Jobs
+            <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>
+          </a>
+        </div>
+
         {/* Source attribution — changes based on whether Adzuna is wired in */}
         {adzunaConfigured === false ? (
           <div className="p-3 rounded-lg bg-amber-500/8 border border-amber-500/20 text-xs text-amber-200/80">

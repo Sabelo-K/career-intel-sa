@@ -887,6 +887,30 @@ export default function HighSchoolPage() {
             </div>
           </div>
 
+          {/* Government jobs — ESSA */}
+          <div className="bg-card border border-emerald-500/20 rounded-xl p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div className="flex items-start gap-3">
+              <div className="w-8 h-8 rounded-lg bg-emerald-500/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                <span className="text-base">🏛️</span>
+              </div>
+              <div>
+                <div className="text-sm font-semibold text-foreground mb-1">Looking for government jobs?</div>
+                <p className="text-xs text-muted-foreground leading-relaxed">
+                  Search official Department of Labour vacancies on <strong className="text-foreground">ESSA</strong> — South Africa&apos;s free government employment service with thousands of public sector jobs.
+                </p>
+              </div>
+            </div>
+            <a
+              href="https://essa.labour.gov.za"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex-shrink-0 flex items-center gap-1.5 px-4 py-2.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold transition-colors whitespace-nowrap"
+            >
+              Search ESSA Jobs
+              <ExternalLink className="w-3 h-3" />
+            </a>
+          </div>
+
           {/* AI Coach CTA */}
           <div className="bg-card border border-indigo-500/20 rounded-xl p-5 flex items-center justify-between gap-4">
             <div>

@@ -131,15 +131,36 @@ export default function InterviewPrepPage() {
   const [voiceError, setVoiceError]       = useState<string | null>(null);
   const recognitionRef                    = useRef<any>(null);
 
-  const startRecording = useCallback((questionId: string) => {
+  const startRecording = useCallback(async (questionId: string) => {
     setVoiceError(null);
     const SpeechRecognition = (window as any).SpeechRecognition ?? (window as any).webkitSpeechRecognition;
     if (!SpeechRecognition) {
       setVoiceError("Voice recording requires Chrome or Edge. Please switch browsers.");
       return;
     }
+
+    // Explicitly request mic permission first via getUserMedia — this is more
+    // reliable than letting SpeechRecognition request it internally, and surfaces
+    // a clear browser permission popup if needed.
+    let stream: MediaStream | null = null;
+    try {
+      stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    } catch (err: any) {
+      const name = err?.name ?? "";
+      if (name === "NotAllowedError" || name === "PermissionDeniedError") {
+        setVoiceError("Microphone access denied. Click the camera/mic icon in the address bar and set Microphone to Allow, then try again.");
+      } else if (name === "NotFoundError" || name === "DevicesNotFoundError") {
+        setVoiceError("No microphone found. Please plug in a microphone and try again.");
+      } else {
+        setVoiceError(`Microphone error: ${err?.message ?? name}. Please try again.`);
+      }
+      return;
+    }
+
+    // Permission granted — stop the test stream and start recognition
+    stream.getTracks().forEach(t => t.stop());
+
     const recognition = new SpeechRecognition();
-    // en-US is the most widely supported recognition locale
     recognition.lang = "en-US";
     recognition.continuous = true;
     recognition.interimResults = true;
@@ -160,11 +181,13 @@ export default function InterviewPrepPage() {
     recognition.onerror = (e: any) => {
       setRecording(null);
       if (e.error === "not-allowed") {
-        setVoiceError("Microphone access denied. Please allow microphone access in your browser settings and try again.");
+        setVoiceError("Microphone blocked by browser. Click the mic icon in the address bar → Allow, then try again.");
       } else if (e.error === "no-speech") {
-        setVoiceError("No speech detected. Make sure your microphone is working and try again.");
+        setVoiceError("No speech detected. Speak clearly and make sure your mic isn't muted.");
+      } else if (e.error === "network") {
+        setVoiceError("Network error — Speech Recognition requires internet. Check your connection and try again.");
       } else {
-        setVoiceError(`Recording error: ${e.error}. Please try again.`);
+        setVoiceError(`Recording stopped (${e.error}). Please try again.`);
       }
     };
 

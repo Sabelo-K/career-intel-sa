@@ -124,24 +124,30 @@ export default function InterviewPrepPage() {
 
   // Voice mode
   const [voiceMode, setVoiceMode]         = useState(false);
-  const [recording, setRecording]         = useState<string | null>(null); // questionId being recorded
-  const [speaking, setSpeaking]           = useState<string | null>(null); // questionId being spoken
+  const [recording, setRecording]         = useState<string | null>(null);
+  const [speaking, setSpeaking]           = useState<string | null>(null);
   const [evaluating, setEvaluating]       = useState<string | null>(null);
   const [evaluations, setEvaluations]     = useState<Record<string, AIEvaluation>>({});
+  const [voiceError, setVoiceError]       = useState<string | null>(null);
   const recognitionRef                    = useRef<any>(null);
 
   const startRecording = useCallback((questionId: string) => {
+    setVoiceError(null);
     const SpeechRecognition = (window as any).SpeechRecognition ?? (window as any).webkitSpeechRecognition;
     if (!SpeechRecognition) {
-      alert("Voice recording is not supported in this browser. Please use Chrome.");
+      setVoiceError("Voice recording requires Chrome or Edge. Please switch browsers.");
       return;
     }
     const recognition = new SpeechRecognition();
-    recognition.lang = "en-ZA";
+    // en-US is the most widely supported recognition locale
+    recognition.lang = "en-US";
     recognition.continuous = true;
     recognition.interimResults = true;
     recognitionRef.current = recognition;
     let finalTranscript = "";
+
+    recognition.onstart = () => setRecording(questionId);
+
     recognition.onresult = (e: any) => {
       let interim = "";
       for (let i = e.resultIndex; i < e.results.length; i++) {
@@ -150,9 +156,25 @@ export default function InterviewPrepPage() {
       }
       setPracticeText(prev => ({ ...prev, [questionId]: (finalTranscript + interim).trim() }));
     };
+
+    recognition.onerror = (e: any) => {
+      setRecording(null);
+      if (e.error === "not-allowed") {
+        setVoiceError("Microphone access denied. Please allow microphone access in your browser settings and try again.");
+      } else if (e.error === "no-speech") {
+        setVoiceError("No speech detected. Make sure your microphone is working and try again.");
+      } else {
+        setVoiceError(`Recording error: ${e.error}. Please try again.`);
+      }
+    };
+
     recognition.onend = () => setRecording(null);
-    recognition.start();
-    setRecording(questionId);
+
+    try {
+      recognition.start();
+    } catch (err) {
+      setVoiceError("Could not start recording. Please refresh the page and try again.");
+    }
   }, []);
 
   const stopRecording = useCallback(() => {
@@ -348,9 +370,17 @@ export default function InterviewPrepPage() {
         <div className="flex items-start gap-3 bg-emerald-500/10 border border-emerald-500/20 rounded-xl p-4 text-xs text-muted-foreground">
           <Mic className="w-4 h-4 text-emerald-400 flex-shrink-0 mt-0.5" />
           <div>
-            <span className="font-semibold text-foreground">Voice Mode active</span> — click <strong>▶ Read Question</strong> to hear it aloud, then <strong>🎤 Record Answer</strong> to speak your response. After recording, click <strong>AI Score</strong> for instant feedback.
-            <span className="text-muted-foreground/60"> Works best in Chrome.</span>
+            <span className="font-semibold text-foreground">Voice Mode active</span> — click <strong>Read Question</strong> to hear it aloud, then <strong>Record Answer</strong> to speak your response. Your browser will ask for microphone permission on first use. After recording, click <strong>AI Score</strong> for instant feedback.
+            <span className="text-muted-foreground/60"> Works best in Chrome or Edge.</span>
           </div>
+        </div>
+      )}
+
+      {voiceError && (
+        <div className="flex items-start gap-3 bg-red-500/10 border border-red-500/20 rounded-xl p-4 text-xs text-red-300">
+          <AlertCircle className="w-4 h-4 text-red-400 flex-shrink-0 mt-0.5" />
+          <div className="flex-1">{voiceError}</div>
+          <button onClick={() => setVoiceError(null)} className="text-red-400/60 hover:text-red-300 text-base leading-none flex-shrink-0">✕</button>
         </div>
       )}
 

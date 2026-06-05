@@ -1,11 +1,41 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Mic, ChevronDown, ChevronUp, Zap, CheckCircle2, Star, Brain, Target, Clock, ArrowRight, AlertCircle } from "lucide-react";
+import { Mic, ChevronDown, ChevronUp, Zap, CheckCircle2, Star, Brain, Target, Clock, ArrowRight, AlertCircle, Volume2, Square, MicOff, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
+
+// ── Voice utilities ───────────────────────────────────────────────────────────
+
+function speakText(text: string) {
+  if (typeof window === "undefined" || !window.speechSynthesis) return;
+  window.speechSynthesis.cancel();
+  const utt = new SpeechSynthesisUtterance(text);
+  utt.lang = "en-ZA";
+  utt.rate = 0.95;
+  utt.pitch = 1;
+  // Pick a South African English voice if available
+  const voices = window.speechSynthesis.getVoices();
+  const saVoice = voices.find(v => v.lang === "en-ZA") ?? voices.find(v => v.lang.startsWith("en"));
+  if (saVoice) utt.voice = saVoice;
+  window.speechSynthesis.speak(utt);
+}
+
+function stopSpeaking() {
+  if (typeof window !== "undefined" && window.speechSynthesis) {
+    window.speechSynthesis.cancel();
+  }
+}
+
+interface AIEvaluation {
+  score: number;
+  headline: string;
+  strengths: string[];
+  improvements: string[];
+  saContext: string | null;
+}
 
 interface Question {
   id: string;
@@ -91,6 +121,64 @@ export default function InterviewPrepPage() {
   const [practiceId, setPracticeId] = useState<string | null>(null);
   const [practiceText, setPracticeText] = useState<Record<string, string>>({});
   const [error, setError] = useState<string | null>(null);
+
+  // Voice mode
+  const [voiceMode, setVoiceMode]         = useState(false);
+  const [recording, setRecording]         = useState<string | null>(null); // questionId being recorded
+  const [speaking, setSpeaking]           = useState<string | null>(null); // questionId being spoken
+  const [evaluating, setEvaluating]       = useState<string | null>(null);
+  const [evaluations, setEvaluations]     = useState<Record<string, AIEvaluation>>({});
+  const recognitionRef                    = useRef<any>(null);
+
+  const startRecording = useCallback((questionId: string) => {
+    const SpeechRecognition = (window as any).SpeechRecognition ?? (window as any).webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+      alert("Voice recording is not supported in this browser. Please use Chrome.");
+      return;
+    }
+    const recognition = new SpeechRecognition();
+    recognition.lang = "en-ZA";
+    recognition.continuous = true;
+    recognition.interimResults = true;
+    recognitionRef.current = recognition;
+    let finalTranscript = "";
+    recognition.onresult = (e: any) => {
+      let interim = "";
+      for (let i = e.resultIndex; i < e.results.length; i++) {
+        if (e.results[i].isFinal) finalTranscript += e.results[i][0].transcript + " ";
+        else interim += e.results[i][0].transcript;
+      }
+      setPracticeText(prev => ({ ...prev, [questionId]: (finalTranscript + interim).trim() }));
+    };
+    recognition.onend = () => setRecording(null);
+    recognition.start();
+    setRecording(questionId);
+  }, []);
+
+  const stopRecording = useCallback(() => {
+    recognitionRef.current?.stop();
+    setRecording(null);
+  }, []);
+
+  const evaluateAnswer = useCallback(async (q: Question) => {
+    const answer = practiceText[q.id];
+    if (!answer?.trim()) return;
+    setEvaluating(q.id);
+    try {
+      const res = await fetch("/api/interview/evaluate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ question: q.question, answer, role: role || "General" }),
+      });
+      if (!res.ok) throw new Error("Evaluation failed");
+      const data = await res.json();
+      setEvaluations(prev => ({ ...prev, [q.id]: data }));
+    } catch {
+      // silently fail
+    } finally {
+      setEvaluating(null);
+    }
+  }, [practiceText, role]);
 
   const generate = async () => {
     if (!role.trim()) return;
@@ -226,22 +314,45 @@ export default function InterviewPrepPage() {
         ))}
       </div>
 
-      {/* Filter */}
-      <div className="flex items-center gap-2 flex-wrap">
-        {["all", "behavioral", "technical", "situational", "competency"].map((f) => (
-          <button
-            key={f}
-            onClick={() => setFilter(f)}
-            className={`text-xs px-3 py-1.5 rounded-lg border transition-colors capitalize ${
-              filter === f
-                ? "border-indigo-500/50 bg-indigo-500/15 text-indigo-300"
-                : "border-border text-muted-foreground hover:bg-secondary"
-            }`}
-          >
-            {f === "all" ? "All Questions" : f}
-          </button>
-        ))}
+      {/* Filter + Voice Mode toggle */}
+      <div className="flex items-center justify-between gap-2 flex-wrap">
+        <div className="flex items-center gap-2 flex-wrap">
+          {["all", "behavioral", "technical", "situational", "competency"].map((f) => (
+            <button
+              key={f}
+              onClick={() => setFilter(f)}
+              className={`text-xs px-3 py-1.5 rounded-lg border transition-colors capitalize ${
+                filter === f
+                  ? "border-indigo-500/50 bg-indigo-500/15 text-indigo-300"
+                  : "border-border text-muted-foreground hover:bg-secondary"
+              }`}
+            >
+              {f === "all" ? "All Questions" : f}
+            </button>
+          ))}
+        </div>
+        <button
+          onClick={() => { setVoiceMode(v => !v); stopSpeaking(); stopRecording(); }}
+          className={`flex items-center gap-2 text-xs px-3 py-1.5 rounded-lg border font-medium transition-all ${
+            voiceMode
+              ? "border-emerald-500/50 bg-emerald-500/15 text-emerald-300"
+              : "border-border text-muted-foreground hover:bg-secondary"
+          }`}
+        >
+          <Mic className="w-3.5 h-3.5" />
+          {voiceMode ? "Voice Mode ON" : "Voice Mode"}
+        </button>
       </div>
+
+      {voiceMode && (
+        <div className="flex items-start gap-3 bg-emerald-500/10 border border-emerald-500/20 rounded-xl p-4 text-xs text-muted-foreground">
+          <Mic className="w-4 h-4 text-emerald-400 flex-shrink-0 mt-0.5" />
+          <div>
+            <span className="font-semibold text-foreground">Voice Mode active</span> — click <strong>▶ Read Question</strong> to hear it aloud, then <strong>🎤 Record Answer</strong> to speak your response. After recording, click <strong>AI Score</strong> for instant feedback.
+            <span className="text-muted-foreground/60"> Works best in Chrome.</span>
+          </div>
+        </div>
+      )}
 
       {/* Questions */}
       <div className="space-y-3">
@@ -317,6 +428,82 @@ export default function InterviewPrepPage() {
                         )}
                       </div>
                     )}
+                    {/* Voice Mode controls */}
+                    {voiceMode && (
+                      <div className="space-y-3 pt-1">
+                        <div className="flex gap-2 flex-wrap">
+                          {/* Read Question aloud */}
+                          <Button variant="outline" size="sm" className="gap-2 text-xs"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              if (speaking === q.id) { stopSpeaking(); setSpeaking(null); }
+                              else { speakText(q.question); setSpeaking(q.id); setTimeout(() => setSpeaking(null), 8000); }
+                            }}>
+                            {speaking === q.id ? <><Square className="w-3 h-3" /> Stop</> : <><Volume2 className="w-3 h-3" /> Read Question</>}
+                          </Button>
+                          {/* Record Answer */}
+                          <Button
+                            variant={recording === q.id ? "destructive" : "outline"} size="sm"
+                            className={`gap-2 text-xs ${recording === q.id ? "animate-pulse" : ""}`}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              if (recording === q.id) stopRecording();
+                              else { setPracticeId(q.id); startRecording(q.id); }
+                            }}>
+                            {recording === q.id ? <><MicOff className="w-3 h-3" /> Stop Recording</> : <><Mic className="w-3 h-3" /> Record Answer</>}
+                          </Button>
+                          {/* AI Score */}
+                          {practiceText[q.id] && (
+                            <Button variant="indigo" size="sm" className="gap-2 text-xs"
+                              disabled={!!evaluating}
+                              onClick={(e) => { e.stopPropagation(); evaluateAnswer(q); }}>
+                              {evaluating === q.id
+                                ? <><motion.div animate={{ rotate: 360 }} transition={{ duration: 1, repeat: Infinity, ease: "linear" }}><Sparkles className="w-3 h-3" /></motion.div> Scoring…</>
+                                : <><Sparkles className="w-3 h-3" /> AI Score</>}
+                            </Button>
+                          )}
+                        </div>
+
+                        {/* AI Evaluation result */}
+                        {evaluations[q.id] && (
+                          <motion.div initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }}
+                            className="bg-secondary rounded-xl p-4 space-y-3">
+                            <div className="flex items-center gap-3">
+                              <div className={`text-2xl font-black ${evaluations[q.id].score >= 8 ? "text-emerald-400" : evaluations[q.id].score >= 6 ? "text-indigo-300" : "text-amber-400"}`}>
+                                {evaluations[q.id].score}/10
+                              </div>
+                              <span className="text-sm font-medium text-foreground">{evaluations[q.id].headline}</span>
+                            </div>
+                            {evaluations[q.id].strengths.length > 0 && (
+                              <div>
+                                <div className="text-[10px] font-semibold text-emerald-400 uppercase tracking-wide mb-1">Strengths</div>
+                                {evaluations[q.id].strengths.map((s, i) => (
+                                  <div key={i} className="flex items-start gap-1.5 text-xs text-muted-foreground mb-1">
+                                    <CheckCircle2 className="w-3 h-3 text-emerald-400 flex-shrink-0 mt-0.5" />{s}
+                                  </div>
+                                ))}
+                              </div>
+                            )}
+                            {evaluations[q.id].improvements.length > 0 && (
+                              <div>
+                                <div className="text-[10px] font-semibold text-amber-400 uppercase tracking-wide mb-1">To Improve</div>
+                                {evaluations[q.id].improvements.map((s, i) => (
+                                  <div key={i} className="flex items-start gap-1.5 text-xs text-muted-foreground mb-1">
+                                    <ArrowRight className="w-3 h-3 text-amber-400 flex-shrink-0 mt-0.5" />{s}
+                                  </div>
+                                ))}
+                              </div>
+                            )}
+                            {evaluations[q.id].saContext && (
+                              <div className="bg-indigo-500/10 border border-indigo-500/20 rounded-lg px-3 py-2 text-xs text-indigo-300">
+                                🇿🇦 SA Tip: {evaluations[q.id].saContext}
+                              </div>
+                            )}
+                          </motion.div>
+                        )}
+                      </div>
+                    )}
+
                     <div className="flex gap-2 pt-1">
                       <Button
                         variant={practiceId === q.id ? "indigo" : "outline"}

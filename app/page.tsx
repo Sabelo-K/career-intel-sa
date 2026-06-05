@@ -230,6 +230,26 @@ export default function LandingPage() {
             </Link>
           </motion.div>
 
+          {/* Free Tools strip */}
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.35 }}
+            className="flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-3 text-sm"
+          >
+            <span className="text-white/30 text-xs font-medium uppercase tracking-wider">Free tools — no sign-up</span>
+            {[
+              { href: "/salary-check", label: "Am I underpaid?",        color: "text-emerald-400 border-emerald-500/20 hover:border-emerald-500/40 hover:bg-emerald-500/5" },
+              { href: "/matric",       label: "Matric career matcher",  color: "text-amber-400 border-amber-500/20 hover:border-amber-500/40 hover:bg-amber-500/5"        },
+              { href: "/degree-roi",   label: "Degree ROI calculator",  color: "text-violet-400 border-violet-500/20 hover:border-violet-500/40 hover:bg-violet-500/5"    },
+            ].map(tool => (
+              <Link key={tool.href} href={tool.href}
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg border text-xs font-medium transition-all ${tool.color}`}>
+                {tool.label} <ArrowRight className="w-3 h-3" />
+              </Link>
+            ))}
+          </motion.div>
+
           {/* Stats */}
           <motion.div
             initial={{ opacity: 0, y: 30 }}

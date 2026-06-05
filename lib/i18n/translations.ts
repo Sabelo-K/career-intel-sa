@@ -22,6 +22,8 @@ export type TranslationKey =
   | "jobAlerts"
   | "highSchool"
   | "recruiterHub"
+  | "bbbee"
+  | "wrapped"
   | "support"
   | "profile"
   | "settings"
@@ -55,6 +57,8 @@ export const translations: Record<Language, Translations> = {
     jobAlerts:     "Job Alerts",
     highSchool:    "High School Hub",
     recruiterHub:  "Recruiter Hub",
+    bbbee:         "B-BBEE Intelligence",
+    wrapped:       "My Year Wrapped",
     support:       "Help & Support",
     profile:       "Profile",
     settings:      "Settings",
@@ -85,6 +89,8 @@ export const translations: Record<Language, Translations> = {
     jobAlerts:     "Izaziso Zemisebenzi",
     highSchool:    "Izindaba Zesikole",
     recruiterHub:  "Izindaba Zokucwaninga",
+    bbbee:         "B-BBEE Intelligence",
+    wrapped:       "Unyaka Wami",
     support:       "Usizo",
     profile:       "Iphrofayili",
     settings:      "Izilungiselelo",
@@ -115,6 +121,8 @@ export const translations: Record<Language, Translations> = {
     jobAlerts:     "Iileta zeMisebenzi",
     highSchool:    "Izinto zeSkolo",
     recruiterHub:  "Izinto zokuPhanda",
+    bbbee:         "B-BBEE Intelligence",
+    wrapped:       "Unyaka Wam",
     support:       "Uncedo",
     profile:       "Iprofayile",
     settings:      "Iisetingi",
@@ -145,6 +153,8 @@ export const translations: Record<Language, Translations> = {
     jobAlerts:     "Werksalerte",
     highSchool:    "Hoërskoolsentrum",
     recruiterHub:  "Werwerssentrum",
+    bbbee:         "B-BBEE Intelligensie",
+    wrapped:       "My Jaar Terugblik",
     support:       "Hulp & Ondersteuning",
     profile:       "Profiel",
     settings:      "Instellings",
@@ -175,6 +185,8 @@ export const translations: Record<Language, Translations> = {
     jobAlerts:     "Ditlhahiso tsa Mesebetsi",
     highSchool:    "Setsi sa Sekolo",
     recruiterHub:  "Setsi sa Moqapi",
+    bbbee:         "B-BBEE Intelligence",
+    wrapped:       "Selemo sa Ka",
     support:       "Thuso",
     profile:       "Profaele",
     settings:      "Ditlhophiso",
@@ -205,6 +217,8 @@ export const translations: Record<Language, Translations> = {
     jobAlerts:     "Dikitsiso tsa Ditiro",
     highSchool:    "Setsi sa Sekole",
     recruiterHub:  "Setsi sa Moqapi",
+    bbbee:         "B-BBEE Intelligence",
+    wrapped:       "Selemo sa Me",
     support:       "Thuso",
     profile:       "Profaele",
     settings:      "Ditlhophiso",
@@ -235,6 +249,8 @@ export const translations: Record<Language, Translations> = {
     jobAlerts:     "Dipolelo tša Mešomo",
     highSchool:    "Setsi sa Sekolo",
     recruiterHub:  "Setsi sa Moqapi",
+    bbbee:         "B-BBEE Intelligence",
+    wrapped:       "Selemo sa Ka",
     support:       "Thušo",
     profile:       "Profaele",
     settings:      "Ditlhophišo",

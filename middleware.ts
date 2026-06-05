@@ -4,12 +4,16 @@ const isPublicRoute = createRouteMatcher([
   "/",
   "/sign-in(.*)",
   "/sign-up(.*)",
-  "/p/(.*)",               // public shareable profiles
+  "/p/(.*)",               // public shareable profiles + score cards
   "/privacy",
   "/terms",
+  "/salary-check",         // free viral tool — no auth
+  "/matric",               // free viral tool — no auth
+  "/degree-roi",           // free viral tool — no auth
   "/api/career/demand(.*)",
   "/api/payfast/notify",   // PayFast ITN webhook — unauthenticated POST from PayFast servers
   "/api/cron/(.*)",        // Vercel cron jobs — protected by CRON_SECRET, not Clerk
+  "/api/user/score/(.*)",  // public score card API
 ]);
 
 export default clerkMiddleware((auth, req) => {

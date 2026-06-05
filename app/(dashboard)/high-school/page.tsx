@@ -900,13 +900,15 @@ export default function HighSchoolPage() {
                 </p>
               </div>
             </div>
-            <button
-              onClick={() => window.open("https://essa.labour.gov.za", "_blank", "noopener,noreferrer")}
+            <a
+              href="https://essa.labour.gov.za"
+              target="_blank"
+              rel="noopener noreferrer external"
               className="flex-shrink-0 flex items-center gap-1.5 px-4 py-2.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold transition-colors whitespace-nowrap"
             >
               Search ESSA Jobs
               <ExternalLink className="w-3 h-3" />
-            </button>
+            </a>
           </div>
 
           {/* AI Coach CTA */}

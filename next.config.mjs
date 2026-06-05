@@ -39,6 +39,8 @@ const securityHeaders = [
       "connect-src 'self' https://*.clerk.accounts.dev https://clerk.careerintelsa.co.za https://api.adzuna.com https://o*.ingest.sentry.io",
       // Frames: Clerk hosted pages only
       "frame-src https://clerk.careerintelsa.co.za https://*.clerk.accounts.dev",
+      // Allow navigation to external sites (new tab links)
+      "form-action 'self'",
       // Workers: needed for PDF parsing
       "worker-src 'self' blob:",
     ].join("; "),

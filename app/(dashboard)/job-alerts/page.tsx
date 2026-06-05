@@ -647,13 +647,15 @@ export default function JobAlertsPage() {
               </p>
             </div>
           </div>
-          <button
-            onClick={() => window.open("https://essa.labour.gov.za", "_blank", "noopener,noreferrer")}
+          <a
+            href="https://essa.labour.gov.za"
+            target="_blank"
+            rel="noopener noreferrer external"
             className="flex-shrink-0 flex items-center gap-1.5 px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold transition-colors whitespace-nowrap"
           >
             Search ESSA Jobs
             <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>
-          </button>
+          </a>
         </div>
 
         {/* Source attribution — changes based on whether Adzuna is wired in */}

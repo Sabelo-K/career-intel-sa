@@ -21,6 +21,7 @@ export type TranslationKey =
   | "interviewPrep"
   | "jobAlerts"
   | "highSchool"
+  | "recruiterHub"
   | "support"
   | "profile"
   | "settings"
@@ -53,6 +54,7 @@ export const translations: Record<Language, Translations> = {
     interviewPrep: "Interview Prep",
     jobAlerts:     "Job Alerts",
     highSchool:    "High School Hub",
+    recruiterHub:  "Recruiter Hub",
     support:       "Help & Support",
     profile:       "Profile",
     settings:      "Settings",
@@ -82,6 +84,7 @@ export const translations: Record<Language, Translations> = {
     interviewPrep: "Ukulungiselela Ingxoxo",
     jobAlerts:     "Izaziso Zemisebenzi",
     highSchool:    "Izindaba Zesikole",
+    recruiterHub:  "Izindaba Zokucwaninga",
     support:       "Usizo",
     profile:       "Iphrofayili",
     settings:      "Izilungiselelo",
@@ -111,6 +114,7 @@ export const translations: Record<Language, Translations> = {
     interviewPrep: "Ulungiselelo lweNdibano",
     jobAlerts:     "Iileta zeMisebenzi",
     highSchool:    "Izinto zeSkolo",
+    recruiterHub:  "Izinto zokuPhanda",
     support:       "Uncedo",
     profile:       "Iprofayile",
     settings:      "Iisetingi",
@@ -140,6 +144,7 @@ export const translations: Record<Language, Translations> = {
     interviewPrep: "Onderhoudvoorbereiding",
     jobAlerts:     "Werksalerte",
     highSchool:    "Hoërskoolsentrum",
+    recruiterHub:  "Werwerssentrum",
     support:       "Hulp & Ondersteuning",
     profile:       "Profiel",
     settings:      "Instellings",
@@ -169,6 +174,7 @@ export const translations: Record<Language, Translations> = {
     interviewPrep: "Tokollo ya Tetemelo",
     jobAlerts:     "Ditlhahiso tsa Mesebetsi",
     highSchool:    "Setsi sa Sekolo",
+    recruiterHub:  "Setsi sa Moqapi",
     support:       "Thuso",
     profile:       "Profaele",
     settings:      "Ditlhophiso",
@@ -198,6 +204,7 @@ export const translations: Record<Language, Translations> = {
     interviewPrep: "Tokollo ya Potsolotso",
     jobAlerts:     "Dikitsiso tsa Ditiro",
     highSchool:    "Setsi sa Sekole",
+    recruiterHub:  "Setsi sa Moqapi",
     support:       "Thuso",
     profile:       "Profaele",
     settings:      "Ditlhophiso",
@@ -227,6 +234,7 @@ export const translations: Record<Language, Translations> = {
     interviewPrep: "Tokollo ya Potšišo",
     jobAlerts:     "Dipolelo tša Mešomo",
     highSchool:    "Setsi sa Sekolo",
+    recruiterHub:  "Setsi sa Moqapi",
     support:       "Thušo",
     profile:       "Profaele",
     settings:      "Ditlhophišo",

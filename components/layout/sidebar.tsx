@@ -8,7 +8,7 @@ import { UserButton } from "@clerk/nextjs";
 import {
   Brain, LayoutDashboard, FileText, MessageCircle,
   GitBranch, Target, BarChart3, BookOpen, Mic,
-  User, Settings, Zap, ChevronRight, Crown, Menu, X, Coins, Bell, GraduationCap, HeadphonesIcon,
+  User, Settings, Zap, ChevronRight, Crown, Menu, X, Coins, Bell, GraduationCap, HeadphonesIcon, Briefcase,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { LanguageSelector } from "@/components/layout/language-selector";
@@ -74,6 +74,7 @@ export function Sidebar() {
   const [planLabel, setPlanLabel]         = useState("Free Plan");
   const [planExpiresAt, setPlanExpiresAt] = useState<string | null>(null);
   const [credits, setCredits]             = useState<number | null>(null);
+  const [isRecruiter, setIsRecruiter]     = useState(false);
   const pathname = usePathname();
 
   useEffect(() => {
@@ -86,6 +87,7 @@ export function Sidebar() {
             : (PLAN_LABELS[d.plan] ?? d.plan);
           setPlanLabel(label);
           if (d.plan !== "FREE") setIsPaid(true);
+          if (d.planKey === "recruiter") setIsRecruiter(true);
         }
         if (d.planExpiresAt) setPlanExpiresAt(d.planExpiresAt);
       })
@@ -199,6 +201,28 @@ export function Sidebar() {
                 </Link>
               );
             })}
+
+            {/* Recruiter Hub — only visible to recruiter plan users */}
+            {isRecruiter && (() => {
+              const isActive = pathname === "/recruiter" || pathname.startsWith("/recruiter/");
+              return (
+                <Link href="/recruiter">
+                  <motion.div
+                    whileTap={{ scale: 0.97 }}
+                    className={cn(
+                      "flex items-center gap-3 px-3 py-3 md:py-2.5 rounded-lg text-sm font-medium transition-all duration-150 group",
+                      isActive
+                        ? "bg-amber-500/15 text-amber-300 border border-amber-500/25"
+                        : "text-amber-400/60 hover:text-amber-300 hover:bg-amber-500/10"
+                    )}
+                  >
+                    <Briefcase className={cn("w-4 h-4 flex-shrink-0 transition-colors", isActive ? "text-amber-300" : "text-amber-400/50 group-hover:text-amber-300")} />
+                    <span className="flex-1">{t("recruiterHub")}</span>
+                    {isActive && <div className="w-1.5 h-1.5 rounded-full bg-amber-400" />}
+                  </motion.div>
+                </Link>
+              );
+            })()}
           </div>
 
           {/* Credits balance + buy link — shown for free users */}

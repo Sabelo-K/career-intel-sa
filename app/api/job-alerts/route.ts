@@ -54,10 +54,15 @@ export async function POST(req: NextRequest) {
       clerkUser?.fullName
     );
 
-    // Cap at 5 active alerts per user
+    // Plan-aware alert cap: recruiter = unlimited, professional = 20, graduate/free = 5
+    const planKey = dbUser.planKey ?? "";
+    const alertCap = planKey === "recruiter" ? Infinity : planKey === "professional" ? 20 : 5;
     const existing = await db.jobAlert.count({ where: { userId: dbUser.id, isActive: true } });
-    if (existing >= 5) {
-      return NextResponse.json({ error: "Maximum 5 active job alerts allowed" }, { status: 400 });
+    if (alertCap !== Infinity && existing >= alertCap) {
+      const label = planKey === "professional" ? "20" : "5";
+      return NextResponse.json({
+        error: `Maximum ${label} active job alerts allowed on your plan. Upgrade to Recruiter for unlimited alerts.`,
+      }, { status: 400 });
     }
 
     const alert = await db.jobAlert.create({

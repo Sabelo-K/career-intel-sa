@@ -653,7 +653,7 @@ export default function HighSchoolPage() {
                   location: "Cape Town, Western Cape",
                   deadline: "31 July (some faculties vary)",
                   fee: "R100",
-                  url: "https://www.uct.ac.za/apply-to-uct/undergraduate",
+                  url: "https://www.uct.ac.za/students/applications-apply-undergraduate-qualifications/application-procedure",
                   color: "indigo",
                   note: "Apply directly — UCT does not use CAO",
                 },

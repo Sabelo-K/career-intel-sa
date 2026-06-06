@@ -509,6 +509,34 @@ export default function LandingPage() {
             ))}
           </div>
 
+          {/* Verifiable stats */}
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10 max-w-3xl mx-auto text-center"
+          >
+            {[
+              { value: "249+", label: "SA careers tracked",       note: "Across 24 sectors"            },
+              { value: "9",    label: "Provinces covered",         note: "ZAR salary per province"      },
+              { value: "7",    label: "SA official languages",     note: "AI responds in your language" },
+              { value: "Free", label: "To get started",            note: "No credit card required"      },
+            ].map((stat, i) => (
+              <motion.div
+                key={stat.label}
+                initial={{ opacity: 0, y: 12 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.07 }}
+                className="bg-white/[0.04] border border-white/8 rounded-2xl py-5 px-3"
+              >
+                <div className="text-3xl font-black text-white mb-0.5">{stat.value}</div>
+                <div className="text-xs font-semibold text-white/70 mb-0.5">{stat.label}</div>
+                <div className="text-[10px] text-white/30">{stat.note}</div>
+              </motion.div>
+            ))}
+          </motion.div>
+
           {/* Early access CTA */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -542,78 +570,6 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* What's inside — verifiable platform facts */}
-      <section className="py-16 sm:py-20 relative">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-
-          <motion.div
-            initial={{ opacity: 0, y: 16 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-center mb-12"
-          >
-            <h2 className="text-2xl sm:text-3xl font-bold text-white mb-2">Built specifically for South Africa</h2>
-            <p className="text-white/50 text-sm max-w-xl mx-auto">
-              Every data point, salary range, and career insight is sourced from SA-specific research — not global averages.
-            </p>
-          </motion.div>
-
-          {/* Verifiable stats grid */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12 max-w-3xl mx-auto text-center">
-            {[
-              { value: "249+",  label: "SA careers tracked",        note: "Across 24 sectors"            },
-              { value: "9",     label: "Provinces covered",          note: "ZAR salary per province"      },
-              { value: "7",     label: "SA official languages",      note: "AI responds in your language" },
-              { value: "Free",  label: "To get started",             note: "No credit card required"      },
-            ].map((stat, i) => (
-              <motion.div
-                key={stat.label}
-                initial={{ opacity: 0, y: 16 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.07 }}
-                className="bg-white/[0.04] border border-white/8 rounded-2xl py-5 px-3"
-              >
-                <div className="text-3xl font-black text-white mb-0.5">{stat.value}</div>
-                <div className="text-xs font-semibold text-white/70 mb-0.5">{stat.label}</div>
-                <div className="text-[10px] text-white/30">{stat.note}</div>
-              </motion.div>
-            ))}
-          </div>
-
-          {/* Early adopter CTA */}
-          <motion.div
-            initial={{ opacity: 0, y: 16 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="max-w-2xl mx-auto bg-gradient-to-r from-indigo-500/10 to-violet-500/10 border border-indigo-500/20 rounded-2xl p-6 sm:p-8 text-center"
-          >
-            <div className="inline-flex items-center gap-2 bg-indigo-500/15 border border-indigo-500/20 text-indigo-300 text-xs font-semibold px-3 py-1.5 rounded-full mb-4">
-              <Sparkles className="w-3.5 h-3.5" />
-              Early launch — be among the first
-            </div>
-            <h3 className="text-xl font-bold text-white mb-2">Shape the platform with us</h3>
-            <p className="text-white/50 text-sm leading-relaxed mb-6">
-              CareerIntel SA is new and growing. Sign up free, use it, and tell us what works and what doesn&apos;t.
-              Early users directly influence what gets built next — and get the best pricing forever.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-3 justify-center">
-              <Link
-                href="/sign-up"
-                className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-sm transition-all"
-              >
-                Join free — no card needed <ArrowRight className="w-4 h-4" />
-              </Link>
-              <Link
-                href="/salary-check"
-                className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl border border-white/10 hover:border-white/20 text-white/70 hover:text-white text-sm font-medium transition-all"
-              >
-                Try the salary checker first
-              </Link>
-            </div>
-          </motion.div>
-        </div>
-      </section>
 
       {/* Pricing */}
       <PricingSection />

@@ -88,7 +88,7 @@ export function PricingSection() {
   const [billing, setBilling] = useState<"subscription" | "once_off">("subscription");
 
   return (
-    <section id="pricing" className="py-24 sm:py-32">
+    <section id="pricing" className="pt-10 sm:pt-14 pb-24 sm:pb-32">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Heading */}
         <motion.div

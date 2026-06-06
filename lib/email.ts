@@ -344,6 +344,102 @@ export async function sendJobAlertDigest(to: string, opts: JobAlertDigestOpts) {
   });
 }
 
+// ── 4. Weekly career digest ───────────────────────────────────────────────────
+
+interface WeeklyDigestOpts {
+  name:     string;
+  topCareers: { title: string; sector: string; demandScore: number; avgSalary: number }[];
+  salaryInsight: string;
+  careerTip: string;
+}
+
+export async function sendWeeklyDigest(to: string, opts: WeeklyDigestOpts) {
+  const firstName = opts.name?.split(" ")[0] ?? "there";
+  const weekOf    = new Date().toLocaleDateString("en-ZA", { day: "numeric", month: "long", year: "numeric" });
+
+  const careerRows = opts.topCareers.map((c, i) => `
+  <tr>
+    <td style="padding:12px 0;border-bottom:1px solid #f3f4f6;">
+      <table width="100%" cellpadding="0" cellspacing="0">
+        <tr>
+          <td style="width:28px;vertical-align:top;padding-top:2px;">
+            <span style="font-size:16px;font-weight:800;color:#6366f1;">${i + 1}</span>
+          </td>
+          <td>
+            <p style="margin:0 0 2px;font-size:14px;font-weight:600;color:#111827;">${c.title}</p>
+            <p style="margin:0;font-size:12px;color:#6b7280;">
+              ${c.sector} &nbsp;·&nbsp;
+              <span style="color:#16a34a;">Avg R${Math.round(c.avgSalary / 1000)}k/mo</span> &nbsp;·&nbsp;
+              <span style="color:#6366f1;">Demand: ${c.demandScore}/100</span>
+            </p>
+          </td>
+          <td style="text-align:right;vertical-align:top;">
+            <a href="${BASE_URL}/job-market"
+              style="display:inline-block;padding:5px 12px;background:#eff6ff;color:#4f46e5;font-size:11px;font-weight:600;text-decoration:none;border-radius:6px;border:1px solid #c7d2fe;white-space:nowrap;">
+              Explore →
+            </a>
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>`).join("");
+
+  const html = emailWrapper(`
+    <div style="margin-bottom:8px;">
+      <span style="display:inline-block;background:#f0f9ff;color:#0369a1;font-size:11px;font-weight:600;padding:4px 10px;border-radius:20px;border:1px solid #bae6fd;">
+        Week of ${weekOf}
+      </span>
+    </div>
+    <h1 style="margin:12px 0 6px;font-size:22px;font-weight:800;color:#111827;">
+      Your SA Career Intel — Weekly Digest 🇿🇦
+    </h1>
+    <p style="margin:0 0 24px;font-size:14px;color:#6b7280;line-height:1.6;">
+      Hi ${firstName}, here&apos;s your weekly snapshot of the South African job market.
+    </p>
+
+    <!-- Top careers -->
+    <p style="margin:0 0 8px;font-size:13px;font-weight:700;color:#374151;text-transform:uppercase;letter-spacing:0.05em;">
+      🔥 Top SA Careers This Week
+    </p>
+    <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:24px;">
+      ${careerRows}
+    </table>
+
+    <!-- Salary insight -->
+    <div style="background:#f0fdf4;border-left:3px solid #22c55e;border-radius:8px;padding:14px 16px;margin-bottom:20px;">
+      <p style="margin:0 0 4px;font-size:12px;font-weight:700;color:#15803d;text-transform:uppercase;letter-spacing:0.05em;">
+        💰 Salary Insight
+      </p>
+      <p style="margin:0;font-size:14px;color:#166534;line-height:1.6;">${opts.salaryInsight}</p>
+    </div>
+
+    <!-- Career tip -->
+    <div style="background:#faf5ff;border-left:3px solid #a855f7;border-radius:8px;padding:14px 16px;margin-bottom:24px;">
+      <p style="margin:0 0 4px;font-size:12px;font-weight:700;color:#7e22ce;text-transform:uppercase;letter-spacing:0.05em;">
+        💡 Career Tip
+      </p>
+      <p style="margin:0;font-size:14px;color:#581c87;line-height:1.6;">${opts.careerTip}</p>
+    </div>
+
+    <div style="text-align:center;">
+      ${btn("Open My Dashboard →", `${BASE_URL}/dashboard`)}
+    </div>
+
+    ${divider()}
+    <p style="margin:0;font-size:11px;color:#9ca3af;">
+      You&apos;re receiving this weekly digest as a CareerIntel SA member.
+      <a href="${BASE_URL}/settings" style="color:#9ca3af;">Manage email preferences</a>
+    </p>
+  `);
+
+  await send({
+    from:    FROM,
+    to,
+    subject: `Your weekly SA career intel — ${weekOf}`,
+    html,
+  });
+}
+
 // ── Owner revenue alert ───────────────────────────────────────────────────────
 
 const OWNER_EMAIL = "bareer57@gmail.com";

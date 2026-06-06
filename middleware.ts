@@ -10,6 +10,7 @@ const isPublicRoute = createRouteMatcher([
   "/salary-check",         // free viral tool — no auth
   "/matric",               // free viral tool — no auth
   "/degree-roi",           // free viral tool — no auth
+  "/r/(.*)",               // referral redirect — sets cookie then redirects to sign-up
   "/api/career/demand(.*)",
   "/api/payfast/notify",   // PayFast ITN webhook — unauthenticated POST from PayFast servers
   "/api/cron/(.*)",        // Vercel cron jobs — protected by CRON_SECRET, not Clerk

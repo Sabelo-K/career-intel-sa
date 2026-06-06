@@ -6,6 +6,10 @@
     {
       "path": "/api/cron/job-alerts",
       "schedule": "0 8 * * *"
+    },
+    {
+      "path": "/api/cron/weekly-digest",
+      "schedule": "0 8 * * 1"
     }
   ],
   "functions": {
@@ -13,6 +17,7 @@
     "app/api/cv/analyze/route.ts":       { "maxDuration": 60 },
     "app/api/career/paths/route.ts":     { "maxDuration": 30 },
     "app/api/skills/gap/route.ts":       { "maxDuration": 30 },
-    "app/api/cron/job-alerts/route.ts":  { "maxDuration": 60 }
+    "app/api/cron/job-alerts/route.ts":      { "maxDuration": 60 },
+    "app/api/cron/weekly-digest/route.ts":   { "maxDuration": 60 }
   }
 }

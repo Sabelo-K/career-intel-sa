@@ -89,6 +89,14 @@ export async function POST(req: NextRequest) {
       sendWelcomeEmail(email, clerkUser.fullName).catch(() => {});
     }
 
+    // Claim referral bonus if a ref_by cookie is present (fire-and-forget)
+    if (isFirstOnboarding) {
+      fetch(`${process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000"}/api/referral/claim`, {
+        method:  "POST",
+        headers: { cookie: req.headers.get("cookie") ?? "" },
+      }).catch(() => {});
+    }
+
     return NextResponse.json({ success: true, creditsGranted: isFirstOnboarding ? WELCOME_CREDITS : 0 });
   } catch (err) {
     if (err instanceof z.ZodError) {

@@ -542,116 +542,75 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Social proof — testimonials */}
+      {/* What's inside — verifiable platform facts */}
       <section className="py-16 sm:py-20 relative">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
-          {/* Trust bar */}
           <motion.div
             initial={{ opacity: 0, y: 16 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             className="text-center mb-12"
           >
-            <div className="inline-flex items-center gap-2 bg-white/5 border border-white/10 rounded-full px-4 py-2 mb-4">
-              <div className="flex -space-x-2">
-                {["bg-indigo-500","bg-emerald-500","bg-amber-500","bg-violet-500","bg-rose-500"].map((c,i) => (
-                  <div key={i} className={`w-7 h-7 rounded-full ${c} border-2 border-black flex items-center justify-center text-white text-[10px] font-bold`}>
-                    {["S","N","T","K","L"][i]}
-                  </div>
-                ))}
-              </div>
-              <span className="text-sm text-white/70">Trusted by <strong className="text-white">3,200+</strong> SA professionals</span>
-            </div>
-            <h2 className="text-2xl sm:text-3xl font-bold text-white mb-2">What SA professionals are saying</h2>
-            <p className="text-white/50 text-sm">Real experiences from the SA job market</p>
+            <h2 className="text-2xl sm:text-3xl font-bold text-white mb-2">Built specifically for South Africa</h2>
+            <p className="text-white/50 text-sm max-w-xl mx-auto">
+              Every data point, salary range, and career insight is sourced from SA-specific research — not global averages.
+            </p>
           </motion.div>
 
-          {/* Testimonial cards */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
+          {/* Verifiable stats grid */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12 max-w-3xl mx-auto text-center">
             {[
-              {
-                quote: "I discovered I was being underpaid by R14,000 a month. Used the salary data to negotiate and got a R12k raise at my next review.",
-                name: "Sipho M.",
-                role: "Senior Software Engineer",
-                location: "Johannesburg, GP",
-                initial: "S",
-                color: "bg-indigo-500",
-              },
-              {
-                quote: "As a matric leaner I had no idea what to study. The career matcher showed me exactly which degrees my subjects unlock. It changed everything.",
-                name: "Naledi K.",
-                role: "1st-year BSc Student",
-                location: "Pretoria, GP",
-                initial: "N",
-                color: "bg-emerald-500",
-              },
-              {
-                quote: "The Skills Gap analysis mapped out exactly what I needed to transition from teaching to data analytics. I landed my first analytics role in 8 months.",
-                name: "Thabo D.",
-                role: "Junior Data Analyst",
-                location: "Cape Town, WC",
-                initial: "T",
-                color: "bg-amber-500",
-              },
-              {
-                quote: "The Recruiter Hub gives me province-by-province salary data I used to spend hours building manually. Our hiring is 40% faster now.",
-                name: "Kefilwe R.",
-                role: "HR Manager",
-                location: "Durban, KZN",
-                initial: "K",
-                color: "bg-violet-500",
-              },
-            ].map((t, i) => (
+              { value: "249+",  label: "SA careers tracked",        note: "Across 24 sectors"            },
+              { value: "9",     label: "Provinces covered",          note: "ZAR salary per province"      },
+              { value: "7",     label: "SA official languages",      note: "AI responds in your language" },
+              { value: "Free",  label: "To get started",             note: "No credit card required"      },
+            ].map((stat, i) => (
               <motion.div
-                key={i}
-                initial={{ opacity: 0, y: 20 }}
+                key={stat.label}
+                initial={{ opacity: 0, y: 16 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ delay: i * 0.08 }}
-                className="bg-white/[0.04] border border-white/8 rounded-2xl p-5 flex flex-col"
+                transition={{ delay: i * 0.07 }}
+                className="bg-white/[0.04] border border-white/8 rounded-2xl py-5 px-3"
               >
-                {/* Stars */}
-                <div className="flex gap-0.5 mb-3">
-                  {[...Array(5)].map((_, s) => (
-                    <svg key={s} className="w-3.5 h-3.5 text-amber-400 fill-amber-400" viewBox="0 0 20 20">
-                      <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                    </svg>
-                  ))}
-                </div>
-                <p className="text-sm text-white/70 leading-relaxed flex-1 mb-4">&ldquo;{t.quote}&rdquo;</p>
-                <div className="flex items-center gap-2.5">
-                  <div className={`w-8 h-8 rounded-full ${t.color} flex items-center justify-center text-white text-xs font-bold flex-shrink-0`}>
-                    {t.initial}
-                  </div>
-                  <div>
-                    <div className="text-xs font-semibold text-white">{t.name}</div>
-                    <div className="text-[10px] text-white/40">{t.role} · {t.location}</div>
-                  </div>
-                </div>
+                <div className="text-3xl font-black text-white mb-0.5">{stat.value}</div>
+                <div className="text-xs font-semibold text-white/70 mb-0.5">{stat.label}</div>
+                <div className="text-[10px] text-white/30">{stat.note}</div>
               </motion.div>
             ))}
           </div>
 
-          {/* Stats strip */}
+          {/* Early adopter CTA */}
           <motion.div
             initial={{ opacity: 0, y: 16 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ delay: 0.2 }}
-            className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-12 max-w-3xl mx-auto text-center"
+            className="max-w-2xl mx-auto bg-gradient-to-r from-indigo-500/10 to-violet-500/10 border border-indigo-500/20 rounded-2xl p-6 sm:p-8 text-center"
           >
-            {[
-              { value: "3,200+", label: "SA professionals" },
-              { value: "R18k",   label: "Avg salary increase" },
-              { value: "249+",   label: "SA careers tracked" },
-              { value: "7",      label: "SA languages" },
-            ].map(stat => (
-              <div key={stat.label} className="bg-white/[0.03] border border-white/8 rounded-xl py-4">
-                <div className="text-2xl font-black text-white mb-0.5">{stat.value}</div>
-                <div className="text-xs text-white/40">{stat.label}</div>
-              </div>
-            ))}
+            <div className="inline-flex items-center gap-2 bg-indigo-500/15 border border-indigo-500/20 text-indigo-300 text-xs font-semibold px-3 py-1.5 rounded-full mb-4">
+              <Sparkles className="w-3.5 h-3.5" />
+              Early launch — be among the first
+            </div>
+            <h3 className="text-xl font-bold text-white mb-2">Shape the platform with us</h3>
+            <p className="text-white/50 text-sm leading-relaxed mb-6">
+              CareerIntel SA is new and growing. Sign up free, use it, and tell us what works and what doesn&apos;t.
+              Early users directly influence what gets built next — and get the best pricing forever.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-3 justify-center">
+              <Link
+                href="/sign-up"
+                className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-sm transition-all"
+              >
+                Join free — no card needed <ArrowRight className="w-4 h-4" />
+              </Link>
+              <Link
+                href="/salary-check"
+                className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl border border-white/10 hover:border-white/20 text-white/70 hover:text-white text-sm font-medium transition-all"
+              >
+                Try the salary checker first
+              </Link>
+            </div>
           </motion.div>
         </div>
       </section>

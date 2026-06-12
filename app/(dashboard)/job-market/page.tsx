@@ -540,10 +540,42 @@ export default function JobMarketPage() {
       .catch(() => {});
   }, []);
 
+  // Common search aliases — maps plain-English terms to sectors or keywords
+  const SEARCH_ALIASES: Record<string, string[]> = {
+    "law":        ["Legal & Compliance", "Attorney", "Paralegal", "Labour Relations"],
+    "legal":      ["Legal & Compliance"],
+    "doctor":     ["Healthcare", "Medical"],
+    "medicine":   ["Healthcare", "MBChB"],
+    "nurse":      ["Healthcare", "Nursing"],
+    "coding":     ["Technology", "Software", "Developer"],
+    "programming":["Technology", "Software Engineer", "Developer"],
+    "developer":  ["Software Engineer", "Technology"],
+    "finance":    ["Finance", "Accounting", "Chartered Accountant"],
+    "accounting": ["Finance", "Chartered Accountant", "BCom"],
+    "teaching":   ["Education", "Teacher", "BEd"],
+    "marketing":  ["Marketing", "Media & Creative"],
+    "design":     ["UX", "Graphic", "Media & Creative"],
+    "mining":     ["Mining & Resources"],
+    "trade":      ["Construction & Trades", "Electrician", "Plumber"],
+    "hr":         ["Human Resources"],
+    "it":         ["Technology", "Information Technology"],
+  };
+
   const filtered = SA_CAREERS
     .filter((c) => {
-      const matchSearch = c.title.toLowerCase().includes(search.toLowerCase()) ||
-        c.sector.toLowerCase().includes(search.toLowerCase());
+      const q = search.toLowerCase().trim();
+      // Check aliases first — expand the query to sector/title terms
+      const aliasTerms = SEARCH_ALIASES[q] ?? [];
+      const matchAlias = aliasTerms.some(term =>
+        c.title.toLowerCase().includes(term.toLowerCase()) ||
+        c.sector.toLowerCase().includes(term.toLowerCase())
+      );
+      const matchSearch = !q ? true :
+        matchAlias ||
+        c.title.toLowerCase().includes(q) ||
+        c.sector.toLowerCase().includes(q) ||
+        c.topSkills.some(s => s.toLowerCase().includes(q)) ||
+        (c.relatedCareers ?? []).some(r => r.toLowerCase().includes(q));
       const matchFilter =
         filter === "all" ? true :
         filter === "remote" ? c.remoteFriendly :

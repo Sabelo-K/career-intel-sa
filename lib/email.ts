@@ -440,6 +440,140 @@ export async function sendWeeklyDigest(to: string, opts: WeeklyDigestOpts) {
   });
 }
 
+// ── 5. Quarterly data refresh reminder (owner only) ──────────────────────────
+
+interface DataRefreshReminderOpts {
+  quarter:        string;   // e.g. "Q3 2026"
+  dueDate:        string;   // e.g. "1 September 2026"
+  careerCount:    number;
+  sectorCount:    number;
+  lastUpdated:    string;
+}
+
+export async function sendDataRefreshReminder(opts: DataRefreshReminderOpts) {
+  const SOURCES = [
+    {
+      name:  "Stats SA — Quarterly Employment Statistics (QES)",
+      url:   "https://www.statssa.gov.za/?page_id=1854&PPN=P0277",
+      what:  "Update national unemployment %, youth unemployment %, and sector employment trends",
+    },
+    {
+      name:  "DHET — Scarce & Critical Skills Report",
+      url:   "https://www.dhet.gov.za/Planning%20Monitoring%20and%20Evaluation/Master%20List%20of%20Scarce%20Skills.pdf",
+      what:  "Review which roles moved onto or off the scarce skills list — affects demandScore",
+    },
+    {
+      name:  "Robert Walters / Michael Page SA Salary Guide",
+      url:   "https://www.robertwalters.co.za/salarysurvey.html",
+      what:  "Update ZAR salary ranges (minSalaryZar, maxSalaryZar, avgSalaryZar) for key roles",
+    },
+    {
+      name:  "LinkedIn Economic Graph — SA Workforce Insights",
+      url:   "https://economicgraph.linkedin.com/research/south-africa",
+      what:  "Cross-check top skills per sector, growthTrend direction, remoteFriendly status",
+    },
+    {
+      name:  "Adzuna SA — Live Job Listing Counts",
+      url:   "https://api.adzuna.com/v1/api/jobs/za/search/1",
+      what:  "Already integrated — listing counts auto-inform alert digests. Check for new SA sectors.",
+    },
+    {
+      name:  "MERSETA / ETDP SETA Annual Reports",
+      url:   "https://www.merseta.org.za/sector-skills-plan/",
+      what:  "Update trade/artisan demand scores and NQF level requirements for manufacturing/engineering roles",
+    },
+  ];
+
+  const sourceRows = SOURCES.map((s, i) => `
+  <tr>
+    <td style="padding:14px 0;border-bottom:1px solid #f3f4f6;vertical-align:top;">
+      <table width="100%" cellpadding="0" cellspacing="0">
+        <tr>
+          <td style="width:28px;vertical-align:top;padding-top:2px;">
+            <span style="display:inline-block;width:22px;height:22px;background:#6366f1;border-radius:50%;text-align:center;line-height:22px;font-size:11px;font-weight:700;color:#ffffff;">${i + 1}</span>
+          </td>
+          <td style="padding-left:8px;">
+            <a href="${s.url}" style="font-size:14px;font-weight:600;color:#4f46e5;text-decoration:none;">${s.name}</a>
+            <p style="margin:4px 0 0;font-size:12px;color:#6b7280;line-height:1.5;">${s.what}</p>
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>`).join("");
+
+  const html = emailWrapper(`
+    <div style="margin-bottom:8px;">
+      <span style="display:inline-block;background:#fef3c7;color:#92400e;font-size:11px;font-weight:600;padding:4px 10px;border-radius:20px;border:1px solid #fde68a;">
+        🗓️ Quarterly Refresh Due — ${opts.quarter}
+      </span>
+    </div>
+
+    <h1 style="margin:12px 0 6px;font-size:22px;font-weight:800;color:#111827;">
+      Time to refresh CareerIntel SA data
+    </h1>
+    <p style="margin:0 0 24px;font-size:14px;color:#6b7280;line-height:1.6;">
+      Hi Sabelo, your quarterly career data refresh is due on <strong style="color:#111827;">${opts.dueDate}</strong>.
+      This keeps salary ranges, demand scores, and growth trends accurate for your users.
+    </p>
+
+    <!-- Current data stats -->
+    <table width="100%" cellpadding="0" cellspacing="0"
+      style="background:#f9fafb;border-radius:10px;padding:16px 20px;margin-bottom:24px;">
+      <tr>
+        <td style="font-size:13px;color:#6b7280;padding:4px 0;">Careers tracked</td>
+        <td style="font-size:13px;font-weight:600;color:#111827;text-align:right;padding:4px 0;">${opts.careerCount} roles across ${opts.sectorCount} sectors</td>
+      </tr>
+      <tr>
+        <td style="font-size:13px;color:#6b7280;padding:4px 0;">Last updated</td>
+        <td style="font-size:13px;font-weight:600;color:#111827;text-align:right;padding:4px 0;">${opts.lastUpdated}</td>
+      </tr>
+      <tr>
+        <td style="font-size:13px;color:#6b7280;padding:4px 0;">Refresh quarter</td>
+        <td style="font-size:13px;font-weight:600;color:#4f46e5;text-align:right;padding:4px 0;">${opts.quarter}</td>
+      </tr>
+    </table>
+
+    <!-- Source checklist -->
+    <p style="margin:0 0 8px;font-size:13px;font-weight:700;color:#374151;text-transform:uppercase;letter-spacing:0.05em;">
+      📋 Sources to Check
+    </p>
+    <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:24px;">
+      ${sourceRows}
+    </table>
+
+    <!-- Code changes needed -->
+    <div style="background:#f0f9ff;border-left:3px solid #6366f1;border-radius:8px;padding:14px 16px;margin-bottom:20px;">
+      <p style="margin:0 0 8px;font-size:12px;font-weight:700;color:#1e40af;text-transform:uppercase;letter-spacing:0.05em;">
+        💻 Code Changes After Research
+      </p>
+      <ul style="margin:0;padding-left:16px;font-size:13px;color:#1e3a5f;line-height:1.8;">
+        <li>Update salary ranges in <code style="background:#dbeafe;padding:1px 4px;border-radius:3px;">lib/data/sa-careers.ts</code></li>
+        <li>Adjust <code style="background:#dbeafe;padding:1px 4px;border-radius:3px;">demandScore</code> for roles that moved on/off scarce skills list</li>
+        <li>Update <code style="background:#dbeafe;padding:1px 4px;border-radius:3px;">growthTrend</code> and <code style="background:#dbeafe;padding:1px 4px;border-radius:3px;">futureOutlook</code> for any sector shifts</li>
+        <li>Update <code style="background:#dbeafe;padding:1px 4px;border-radius:3px;">DATA_LAST_UPDATED</code> and <code style="background:#dbeafe;padding:1px 4px;border-radius:3px;">NEXT_UPDATE_DUE</code> constants in <code style="background:#dbeafe;padding:1px 4px;border-radius:3px;">app/(dashboard)/job-market/page.tsx</code></li>
+        <li>Update the quarterly refresh table in your memory file</li>
+      </ul>
+    </div>
+
+    <div style="text-align:center;">
+      ${btn("Open Admin Panel →", `${BASE_URL}/admin`, "#111827")}
+    </div>
+
+    ${divider()}
+    <p style="margin:0;font-size:11px;color:#9ca3af;">
+      This is an automated quarterly reminder from CareerIntel SA.<br/>
+      Estimated time: 2–4 hours of research + 1–2 hours of code updates.
+    </p>
+  `);
+
+  await send({
+    from:    FROM,
+    to:      "bareer57@gmail.com",
+    subject: `⏰ ${opts.quarter} Data Refresh Due — CareerIntel SA`,
+    html,
+  });
+}
+
 // ── Owner revenue alert ───────────────────────────────────────────────────────
 
 const OWNER_EMAIL = "bareer57@gmail.com";

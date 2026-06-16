@@ -21,6 +21,10 @@ model User {
   payfastToken     String?     // PayFast subscription token for recurring billing
   onboarded     Boolean  @default(false)
   credits       Int      @default(0)   // pay-as-you-go credit balance
+  xp               Int       @default(0)
+  streak           Int       @default(0)
+  lastActivityDate DateTime?
+  achievements     String[]  @default([])
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 

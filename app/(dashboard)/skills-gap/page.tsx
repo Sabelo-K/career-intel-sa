@@ -14,6 +14,9 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { OutOfCreditsModal } from "@/components/out-of-credits-modal";
+import { useXp } from "@/hooks/use-xp";
+import { XpToast } from "@/components/gamification-panel";
+import { AnimatePresence as AP } from "framer-motion";
 
 const DEFAULT_SKILLS: string[] = [];
 
@@ -52,6 +55,7 @@ const PRIORITY_COLOR: Record<string, string> = {
 export default function SkillsGapPage() {
   const router = useRouter();
   const { triggerFeedback } = useFeedback();
+  const { awardXp, toast: xpToast, dismissToast } = useXp();
   const [targetRole, setTargetRole] = useState("");
   const [analyzing, setAnalyzing] = useState(false);
   const [result, setResult] = useState<GapResult | null>(null);
@@ -165,6 +169,7 @@ export default function SkillsGapPage() {
       } catch { /* localStorage unavailable */ }
 
       setResult(normalised);
+      awardXp("skills_gap");
 
       // Auto-save roadmap to dashboard (fire-and-forget)
       fetch("/api/roadmap/save", {
@@ -200,6 +205,9 @@ export default function SkillsGapPage() {
 
   return (
     <>
+    <AP mode="wait">
+      {xpToast && <XpToast key="xp" xpGained={xpToast.xpGained} newBadges={xpToast.newBadges} onDismiss={dismissToast} />}
+    </AP>
     <OutOfCreditsModal
       open={creditsModal}
       onClose={() => setCreditsModal(false)}

@@ -6,6 +6,8 @@ import { Mic, ChevronDown, ChevronUp, Zap, CheckCircle2, Star, Brain, Target, Cl
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
+import { useXp } from "@/hooks/use-xp";
+import { XpToast } from "@/components/gamification-panel";
 
 // ── Voice utilities ───────────────────────────────────────────────────────────
 
@@ -124,6 +126,7 @@ export default function InterviewPrepPage() {
 
   // Voice mode
   const [voiceMode, setVoiceMode]         = useState(false);
+  const { awardXp, toast: xpToast, dismissToast } = useXp();
   const [recording, setRecording]         = useState<string | null>(null);
   const [speaking, setSpeaking]           = useState<string | null>(null);
   const [evaluating, setEvaluating]       = useState<string | null>(null);
@@ -218,12 +221,13 @@ export default function InterviewPrepPage() {
       if (!res.ok) throw new Error("Evaluation failed");
       const data = await res.json();
       setEvaluations(prev => ({ ...prev, [q.id]: data }));
+      awardXp("interview_prep");
     } catch {
       // silently fail
     } finally {
       setEvaluating(null);
     }
-  }, [practiceText, role]);
+  }, [practiceText, role, awardXp]);
 
   const generate = async () => {
     if (!role.trim()) return;
@@ -271,6 +275,9 @@ export default function InterviewPrepPage() {
 
   return (
     <div className="space-y-6">
+      <AnimatePresence mode="wait">
+        {xpToast && <XpToast key="xp" xpGained={xpToast.xpGained} newBadges={xpToast.newBadges} onDismiss={dismissToast} />}
+      </AnimatePresence>
       {/* Header */}
       <div>
         <h1 className="text-2xl font-bold text-foreground">Interview Prep System</h1>

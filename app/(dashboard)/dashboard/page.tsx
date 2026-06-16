@@ -20,6 +20,7 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { RoadmapWidget } from "@/components/roadmap-widget";
 import { ReferralWidget } from "@/components/referral-widget";
+import { GamificationPanel } from "@/components/gamification-panel";
 import { SA_CAREERS, TOP_GROWING_CAREERS_2025 } from "@/lib/data/sa-careers";
 import { formatSalaryRange, getDemandBadgeColor, getTrendLabel } from "@/lib/utils";
 
@@ -563,6 +564,9 @@ export default function DashboardPage() {
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.45 }}>
         <ReferralWidget />
       </motion.div>
+
+      {/* Career XP + Achievements */}
+      <GamificationPanel />
 
       {/* Quick actions */}
       <motion.div

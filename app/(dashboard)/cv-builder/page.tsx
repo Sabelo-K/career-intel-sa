@@ -4,6 +4,8 @@ import { generateCV, generateRevampedCV, generateBuiltCV, CVTemplateData, CVBuil
 import { useState, useRef, useEffect } from "react";
 import { useUser } from "@clerk/nextjs";
 import { useFeedback } from "@/components/feedback-provider";
+import { useXp } from "@/hooks/use-xp";
+import { XpToast } from "@/components/gamification-panel";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Upload, FileText, Zap, Download, CheckCircle2, AlertCircle,
@@ -760,6 +762,7 @@ function BuildFromScratch({ isPaid }: { isPaid: boolean }) {
 
 export default function CVBuilderPage() {
   const { triggerFeedback } = useFeedback();
+  const { awardXp, toast: xpToast, dismissToast } = useXp();
   const [stage, setStage] = useState<"upload" | "analyzing" | "results" | "error">("upload");
   const [dragActive, setDragActive] = useState(false);
   const [fileName, setFileName] = useState<string | null>(null);
@@ -812,6 +815,7 @@ export default function CVBuilderPage() {
         weaknesses: Array.isArray(data.weaknesses) ? data.weaknesses : MOCK_ANALYSIS.weaknesses,
       });
       setStage("results");
+      awardXp("cv_analyse");
     } catch (err) {
       const msg = err instanceof Error ? err.message : "Failed to revamp CV";
       setRevampError(msg);
@@ -870,6 +874,9 @@ export default function CVBuilderPage() {
 
   return (
     <div className="space-y-6">
+      <AnimatePresence mode="wait">
+        {xpToast && <XpToast key="xp" xpGained={xpToast.xpGained} newBadges={xpToast.newBadges} onDismiss={dismissToast} />}
+      </AnimatePresence>
       {/* Header */}
       <div className="flex items-start justify-between">
         <div>

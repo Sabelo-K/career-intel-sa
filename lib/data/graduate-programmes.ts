@@ -17,8 +17,6 @@ export interface GraduateProgramme {
   applyUrl: string;
 }
 
-// All applyUrls use Google search so they never 404 when companies restructure their sites.
-// Format: search for "[Company] graduate programme South Africa 2026"
 export const GRADUATE_PROGRAMMES: GraduateProgramme[] = [
   {
     id: "deloitte",
@@ -34,7 +32,7 @@ export const GRADUATE_PROGRAMMES: GraduateProgramme[] = [
     status: "opening_soon",
     provinces: ["Gauteng", "Western Cape", "KwaZulu-Natal"],
     highlights: ["SAICA-accredited articles", "Rotational placements", "Mentorship programme", "Study support"],
-    applyUrl: "https://www.google.com/search?q=Deloitte+graduate+programme+South+Africa+2026",
+    applyUrl: "https://www.deloitte.com/za/en/careers.html",
   },
   {
     id: "pwc",
@@ -50,7 +48,7 @@ export const GRADUATE_PROGRAMMES: GraduateProgramme[] = [
     status: "open",
     provinces: ["Gauteng", "Western Cape", "KwaZulu-Natal", "Eastern Cape"],
     highlights: ["SAICA/SAIPA articles", "Global exposure", "CTA bursary support", "Specialist tracks"],
-    applyUrl: "https://www.google.com/search?q=PwC+graduate+programme+South+Africa+2026",
+    applyUrl: "https://www.pwc.co.za/en/careers.html",
   },
   {
     id: "kpmg",
@@ -66,7 +64,7 @@ export const GRADUATE_PROGRAMMES: GraduateProgramme[] = [
     status: "opening_soon",
     provinces: ["Gauteng", "Western Cape"],
     highlights: ["SAICA articles", "Advisory rotations", "Leadership development", "CTA support"],
-    applyUrl: "https://www.google.com/search?q=KPMG+graduate+programme+South+Africa+2026",
+    applyUrl: "https://www.kpmg.com/za/en/home/careers.html",
   },
   {
     id: "ey",
@@ -82,7 +80,7 @@ export const GRADUATE_PROGRAMMES: GraduateProgramme[] = [
     status: "opening_soon",
     provinces: ["Gauteng", "Western Cape", "KwaZulu-Natal"],
     highlights: ["SAICA/ACCA pathways", "Tech & consulting rotations", "Global secondments", "Coaching"],
-    applyUrl: "https://www.google.com/search?q=EY+Ernst+Young+graduate+programme+South+Africa+2026",
+    applyUrl: "https://www.ey.com/en_za/careers",
   },
   {
     id: "standard-bank",
@@ -98,7 +96,7 @@ export const GRADUATE_PROGRAMMES: GraduateProgramme[] = [
     status: "opening_soon",
     provinces: ["Gauteng", "Western Cape"],
     highlights: ["Rotational across business units", "Personal mentor", "CFA study support", "Fast-track to management"],
-    applyUrl: "https://www.google.com/search?q=Standard+Bank+graduate+programme+South+Africa+2026",
+    applyUrl: "https://www.standardbank.com/sbg/standard-bank-group/careers",
   },
   {
     id: "absa",
@@ -114,7 +112,7 @@ export const GRADUATE_PROGRAMMES: GraduateProgramme[] = [
     status: "closed",
     provinces: ["Gauteng", "Western Cape", "KwaZulu-Natal"],
     highlights: ["Cross-functional rotations", "Innovation labs access", "Leadership curriculum", "Pan-Africa exposure"],
-    applyUrl: "https://www.google.com/search?q=Absa+graduate+programme+South+Africa+2026",
+    applyUrl: "https://www.absa.africa/careers/",
   },
   {
     id: "fnb",
@@ -130,7 +128,7 @@ export const GRADUATE_PROGRAMMES: GraduateProgramme[] = [
     status: "open",
     provinces: ["Gauteng", "Western Cape"],
     highlights: ["Innovation-first culture", "Entrepreneurship track", "eBucks benefits", "Rapid promotion pathway"],
-    applyUrl: "https://www.google.com/search?q=FNB+FirstRand+graduate+programme+South+Africa+2026",
+    applyUrl: "https://www.firstrand.co.za/careers/",
   },
   {
     id: "nedbank",
@@ -146,7 +144,7 @@ export const GRADUATE_PROGRAMMES: GraduateProgramme[] = [
     status: "opening_soon",
     provinces: ["Gauteng", "Western Cape", "KwaZulu-Natal"],
     highlights: ["Green & sustainable finance focus", "Digital banking track", "Mentorship", "Study assistance"],
-    applyUrl: "https://www.google.com/search?q=Nedbank+graduate+programme+South+Africa+2026",
+    applyUrl: "https://group.nedbank.co.za/careers.html",
   },
   {
     id: "discovery",
@@ -162,7 +160,7 @@ export const GRADUATE_PROGRAMMES: GraduateProgramme[] = [
     status: "open",
     provinces: ["Gauteng"],
     highlights: ["Actuarial fast-track", "Behavioural science exposure", "Health innovation labs", "Vitality benefits"],
-    applyUrl: "https://www.google.com/search?q=Discovery+graduate+programme+South+Africa+2026",
+    applyUrl: "https://careers.discovery.co.za/",
   },
   {
     id: "anglo-american",
@@ -178,7 +176,7 @@ export const GRADUATE_PROGRAMMES: GraduateProgramme[] = [
     status: "closed",
     provinces: ["Gauteng", "Northern Cape", "Limpopo", "North West"],
     highlights: ["On-site operational exposure", "International rotations", "Technical mentorship", "Relocation support"],
-    applyUrl: "https://www.google.com/search?q=Anglo+American+graduate+programme+South+Africa+2026",
+    applyUrl: "https://www.angloamerican.com/careers",
   },
   {
     id: "sasol",
@@ -194,7 +192,7 @@ export const GRADUATE_PROGRAMMES: GraduateProgramme[] = [
     status: "closed",
     provinces: ["Mpumalanga", "Gauteng", "KwaZulu-Natal"],
     highlights: ["World-class refinery exposure", "Energy transition projects", "Technical specialist pathways", "Housing allowance"],
-    applyUrl: "https://www.google.com/search?q=Sasol+graduate+programme+South+Africa+2026",
+    applyUrl: "https://www.sasol.com/careers",
   },
   {
     id: "eskom",
@@ -210,7 +208,7 @@ export const GRADUATE_PROGRAMMES: GraduateProgramme[] = [
     status: "closed",
     provinces: ["Gauteng", "Mpumalanga", "Limpopo", "KwaZulu-Natal"],
     highlights: ["Power generation exposure", "Renewable energy projects", "ECSA registration pathway", "Accommodation on site"],
-    applyUrl: "https://www.google.com/search?q=Eskom+graduate+in+training+programme+South+Africa+2026",
+    applyUrl: "https://www.eskom.co.za/eskom-divisions/human-capital/vacancies/",
   },
   {
     id: "mtn",
@@ -226,7 +224,7 @@ export const GRADUATE_PROGRAMMES: GraduateProgramme[] = [
     status: "closed",
     provinces: ["Gauteng", "Western Cape"],
     highlights: ["Pan-African career exposure", "Digital & fintech projects", "Leadership rotations", "MTN benefits"],
-    applyUrl: "https://www.google.com/search?q=MTN+graduate+programme+South+Africa+2026",
+    applyUrl: "https://www.mtn.com/join-our-yello-family-people-and-culture/",
   },
   {
     id: "vodacom",
@@ -242,7 +240,7 @@ export const GRADUATE_PROGRAMMES: GraduateProgramme[] = [
     status: "opening_soon",
     provinces: ["Gauteng", "Western Cape", "KwaZulu-Natal"],
     highlights: ["5G technology projects", "IoT & AI innovation", "Vodafone global exposure", "Social impact projects"],
-    applyUrl: "https://www.google.com/search?q=Vodacom+graduate+programme+South+Africa+2026",
+    applyUrl: "https://www.vodacom.co.za",
   },
   {
     id: "transnet",
@@ -258,7 +256,7 @@ export const GRADUATE_PROGRAMMES: GraduateProgramme[] = [
     status: "closed",
     provinces: ["Gauteng", "Western Cape", "Eastern Cape", "KwaZulu-Natal"],
     highlights: ["Port & rail operations", "ECSA registration support", "Infrastructure megaprojects", "National footprint"],
-    applyUrl: "https://www.google.com/search?q=Transnet+graduate+in+training+programme+South+Africa+2026",
+    applyUrl: "https://www.transnet.net/Careers/Pages/Home.aspx",
   },
   {
     id: "capitec",
@@ -274,7 +272,7 @@ export const GRADUATE_PROGRAMMES: GraduateProgramme[] = [
     status: "closed",
     provinces: ["Western Cape", "Gauteng"],
     highlights: ["Tech-first banking culture", "Agile & DevOps environment", "Fast promotion pace", "Stellenbosch HQ"],
-    applyUrl: "https://www.google.com/search?q=Capitec+graduate+programme+South+Africa+2026",
+    applyUrl: "https://www.capitecbank.co.za/about-us/careers/",
   },
   {
     id: "old-mutual",
@@ -290,7 +288,7 @@ export const GRADUATE_PROGRAMMES: GraduateProgramme[] = [
     status: "open",
     provinces: ["Gauteng", "Western Cape"],
     highlights: ["Actuarial development track", "Financial planning certification", "Pan-African exposure", "Mentorship"],
-    applyUrl: "https://www.google.com/search?q=Old+Mutual+graduate+programme+South+Africa+2026",
+    applyUrl: "https://www.oldmutual.co.za/careers",
   },
   {
     id: "mckinsey",
@@ -306,7 +304,7 @@ export const GRADUATE_PROGRAMMES: GraduateProgramme[] = [
     status: "closed",
     provinces: ["Gauteng", "Western Cape"],
     highlights: ["Global project exposure", "Best-in-class training", "MBA sponsorship", "Rapid career growth"],
-    applyUrl: "https://www.google.com/search?q=McKinsey+graduate+jobs+South+Africa+2026",
+    applyUrl: "https://www.mckinsey.com/careers",
   },
   {
     id: "shoprite",
@@ -322,7 +320,7 @@ export const GRADUATE_PROGRAMMES: GraduateProgramme[] = [
     status: "opening_soon",
     provinces: ["Western Cape", "Gauteng"],
     highlights: ["Africa's largest retailer", "Supply chain innovation", "Rotational exposure", "Fast-track management"],
-    applyUrl: "https://www.google.com/search?q=Shoprite+graduate+programme+South+Africa+2026",
+    applyUrl: "https://www.shopriteholdings.co.za/careers.html",
   },
   {
     id: "sanlam",
@@ -338,7 +336,7 @@ export const GRADUATE_PROGRAMMES: GraduateProgramme[] = [
     status: "open",
     provinces: ["Western Cape", "Gauteng"],
     highlights: ["Africa's largest insurer", "Actuarial Fast-Track", "Emerging market focus", "Wellness benefits"],
-    applyUrl: "https://www.google.com/search?q=Sanlam+graduate+programme+South+Africa+2026",
+    applyUrl: "https://www.sanlamonline.co.za/careers/",
   },
 ];
 

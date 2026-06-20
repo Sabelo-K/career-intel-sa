@@ -16,6 +16,7 @@ export interface Bursary {
   applyUrl: string;
 }
 
+// All applyUrls use Google search so they never 404 when funders restructure their sites.
 export const BURSARIES: Bursary[] = [
   {
     id: "nsfas",
@@ -29,7 +30,7 @@ export const BURSARIES: Bursary[] = [
     deadline: "November – January (annual)",
     status: "opening_soon",
     highlights: ["Covers TVET colleges and 26 public universities", "Living allowance included", "No repayment for graduates earning below threshold", "Must reapply annually"],
-    applyUrl: "https://www.nsfas.org.za/content/apply.html",
+    applyUrl: "https://www.google.com/search?q=NSFAS+bursary+apply+2026+South+Africa",
   },
   {
     id: "sasol-bursary",
@@ -43,7 +44,7 @@ export const BURSARIES: Bursary[] = [
     deadline: "April – June each year",
     status: "closed",
     highlights: ["Full tuition + books + accommodation", "Monthly stipend during studies", "Vacation work at Sasol sites", "Graduate job offer on completion"],
-    applyUrl: "https://www.sasol.com/careers",
+    applyUrl: "https://www.google.com/search?q=Sasol+bursary+South+Africa+2026+apply",
   },
   {
     id: "eskom-bursary",
@@ -57,7 +58,7 @@ export const BURSARIES: Bursary[] = [
     deadline: "March – May each year",
     status: "closed",
     highlights: ["Covers all study costs", "Vacation work placement", "Accommodation allowance", "Bursary-to-employment pipeline"],
-    applyUrl: "https://www.eskom.co.za/careers/",
+    applyUrl: "https://www.google.com/search?q=Eskom+bursary+South+Africa+2026+apply",
   },
   {
     id: "standard-bank-bursary",
@@ -71,7 +72,7 @@ export const BURSARIES: Bursary[] = [
     deadline: "June – August each year",
     status: "open",
     highlights: ["Tuition + residence + books covered", "Monthly living allowance", "Vacation employment at Standard Bank", "Graduate placement preference"],
-    applyUrl: "https://www.standardbank.co.za/southafrica/b2c/about-us/careers",
+    applyUrl: "https://www.google.com/search?q=Standard+Bank+bursary+South+Africa+2026+apply",
   },
   {
     id: "nedbank-bursary",
@@ -85,7 +86,7 @@ export const BURSARIES: Bursary[] = [
     deadline: "July – September each year",
     status: "opening_soon",
     highlights: ["Full academic funding", "Monthly allowance", "Vacation work opportunities", "Graduate programme preference on completion"],
-    applyUrl: "https://www.nedbank.co.za/careers",
+    applyUrl: "https://www.google.com/search?q=Nedbank+bursary+South+Africa+2026+apply",
   },
   {
     id: "absa-bursary",
@@ -99,7 +100,7 @@ export const BURSARIES: Bursary[] = [
     deadline: "August – October each year",
     status: "closed",
     highlights: ["Full tuition and residence", "Study materials covered", "Vacation work placement", "Consideration for graduate programme"],
-    applyUrl: "https://www.absa.africa/careers/",
+    applyUrl: "https://www.google.com/search?q=Absa+bursary+South+Africa+2026+apply",
   },
   {
     id: "telkom-bursary",
@@ -113,7 +114,7 @@ export const BURSARIES: Bursary[] = [
     deadline: "September – November each year",
     status: "opening_soon",
     highlights: ["Focus on ICT and STEM fields", "Tuition and book allowance", "Mentorship programme", "Job placement support"],
-    applyUrl: "https://www.telkom.co.za/today/en/careers",
+    applyUrl: "https://www.google.com/search?q=Telkom+Foundation+bursary+South+Africa+2026+apply",
   },
   {
     id: "transnet-bursary",
@@ -127,7 +128,7 @@ export const BURSARIES: Bursary[] = [
     deadline: "April – June each year",
     status: "closed",
     highlights: ["Covers major engineering disciplines", "Monthly living allowance", "Vacation training at Transnet sites", "Graduate-in-training pipeline"],
-    applyUrl: "https://www.transnet.net/Careers/Pages/Home.aspx",
+    applyUrl: "https://www.google.com/search?q=Transnet+bursary+South+Africa+2026+apply",
   },
   {
     id: "old-mutual-bursary",
@@ -141,7 +142,7 @@ export const BURSARIES: Bursary[] = [
     deadline: "June – August each year",
     status: "open",
     highlights: ["Actuarial and financial services focus", "Living allowance included", "Vacation work at Old Mutual", "Mentorship from senior professionals"],
-    applyUrl: "https://www.oldmutual.co.za/careers",
+    applyUrl: "https://www.google.com/search?q=Old+Mutual+bursary+South+Africa+2026+apply",
   },
   {
     id: "discovery-bursary",
@@ -155,7 +156,7 @@ export const BURSARIES: Bursary[] = [
     deadline: "June – August each year",
     status: "open",
     highlights: ["One of the largest private healthcare bursaries in SA", "Covers all healthcare disciplines", "Vitality programme access", "Graduate employment preference"],
-    applyUrl: "https://www.discovery.co.za/portal/individual/careers",
+    applyUrl: "https://www.google.com/search?q=Discovery+Foundation+bursary+South+Africa+2026+apply",
   },
   {
     id: "nrf",
@@ -169,7 +170,7 @@ export const BURSARIES: Bursary[] = [
     deadline: "July – October each year",
     status: "opening_soon",
     highlights: ["Covers Honours through PhD", "Merit-based, not means-tested", "Multiple award categories", "Prestigious for academic careers"],
-    applyUrl: "https://www.nrf.ac.za/funding/",
+    applyUrl: "https://www.google.com/search?q=NRF+postgraduate+scholarship+South+Africa+2026+apply",
   },
   {
     id: "Anglo-bursary",
@@ -183,7 +184,7 @@ export const BURSARIES: Bursary[] = [
     deadline: "March – May each year",
     status: "closed",
     highlights: ["Top mining bursary in SA", "Vacation work at mine sites", "International project exposure", "Graduate employment pipeline"],
-    applyUrl: "https://www.angloamerican.com/careers",
+    applyUrl: "https://www.google.com/search?q=Anglo+American+bursary+South+Africa+2026+apply",
   },
   {
     id: "harmony-bursary",
@@ -197,7 +198,7 @@ export const BURSARIES: Bursary[] = [
     deadline: "April – July each year",
     status: "closed",
     highlights: ["SA's third largest gold producer", "Vacation employment underground", "Mentorship from engineers", "Bursary-to-employment pipeline"],
-    applyUrl: "https://www.harmony.co.za/people/careers",
+    applyUrl: "https://www.google.com/search?q=Harmony+Gold+bursary+South+Africa+2026+apply",
   },
   {
     id: "investec-bursary",
@@ -211,7 +212,7 @@ export const BURSARIES: Bursary[] = [
     deadline: "June – August each year",
     status: "open",
     highlights: ["Highly selective — very competitive", "Top-tier financial services exposure", "London or Sydney secondment possible", "Graduate analyst offer on completion"],
-    applyUrl: "https://www.investec.com/en_za/careers.html",
+    applyUrl: "https://www.google.com/search?q=Investec+bursary+South+Africa+2026+apply",
   },
   {
     id: "dept-health-bursary",
@@ -225,7 +226,7 @@ export const BURSARIES: Bursary[] = [
     deadline: "Varies by province — check provincial DoH website",
     status: "open",
     highlights: ["Service obligation: work in public sector post-qualification", "Full tuition and living allowance", "Addresses SA healthcare worker shortage", "Pathway to permanent government employment"],
-    applyUrl: "https://www.health.gov.za/",
+    applyUrl: "https://www.google.com/search?q=Department+of+Health+bursary+South+Africa+2026+apply",
   },
   {
     id: "murray-roberts-bursary",
@@ -239,7 +240,7 @@ export const BURSARIES: Bursary[] = [
     deadline: "June – August each year",
     status: "open",
     highlights: ["Leading SA construction group", "Exposure to mega infrastructure projects", "Practical on-site training", "Graduate placement on completion"],
-    applyUrl: "https://www.murrob.com/careers",
+    applyUrl: "https://www.google.com/search?q=Murray+Roberts+bursary+South+Africa+2026+apply",
   },
   {
     id: "mintek-bursary",
@@ -253,7 +254,7 @@ export const BURSARIES: Bursary[] = [
     deadline: "May – August each year",
     status: "opening_soon",
     highlights: ["State-owned minerals research institute", "Cutting-edge lab access", "Vacation research projects", "Possible permanent employment"],
-    applyUrl: "https://www.mintek.co.za/careers/",
+    applyUrl: "https://www.google.com/search?q=Mintek+bursary+South+Africa+2026+apply",
   },
   {
     id: "volkswagen-bursary",
@@ -267,7 +268,7 @@ export const BURSARIES: Bursary[] = [
     deadline: "July – September each year",
     status: "opening_soon",
     highlights: ["Germany's VW — Uitenhage plant", "Automotive manufacturing focus", "Hands-on engineering training", "Graduate employment highly likely"],
-    applyUrl: "https://www.vw.co.za/en/volkswagen-experience/careers.html",
+    applyUrl: "https://www.google.com/search?q=Volkswagen+South+Africa+bursary+2026+apply",
   },
   {
     id: "mtnsaf-bursary",
@@ -281,7 +282,7 @@ export const BURSARIES: Bursary[] = [
     deadline: "August – October each year",
     status: "closed",
     highlights: ["Covers partial tuition and books", "Monthly living allowance", "Mentorship from MTN professionals", "Community development focus"],
-    applyUrl: "https://careers.mtn.com",
+    applyUrl: "https://www.google.com/search?q=MTN+Foundation+bursary+South+Africa+2026+apply",
   },
   {
     id: "sanlam-bursary",
@@ -295,7 +296,7 @@ export const BURSARIES: Bursary[] = [
     deadline: "May – July each year",
     status: "closed",
     highlights: ["Africa's largest insurer backing", "Actuarial fast-track pathway", "Stellenbosch-based headquarters", "Graduate placement highly likely"],
-    applyUrl: "https://www.sanlam.co.za/wps/portal/sanlam_za/sanlam_za/top-navigation/careers",
+    applyUrl: "https://www.google.com/search?q=Sanlam+bursary+South+Africa+2026+apply",
   },
 ];
 

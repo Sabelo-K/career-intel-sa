@@ -43,7 +43,7 @@ export const BURSARIES: Bursary[] = [
     deadline: "April – June each year",
     status: "closed",
     highlights: ["Full tuition + books + accommodation", "Monthly stipend during studies", "Vacation work at Sasol sites", "Graduate job offer on completion"],
-    applyUrl: "https://www.sasol.com/careers",
+    applyUrl: "https://www.zabursaries.co.za/engineering-bursaries-south-africa/sasol-bursary/",
   },
   {
     id: "eskom-bursary",
@@ -57,7 +57,7 @@ export const BURSARIES: Bursary[] = [
     deadline: "March – May each year",
     status: "closed",
     highlights: ["Covers all study costs", "Vacation work placement", "Accommodation allowance", "Bursary-to-employment pipeline"],
-    applyUrl: "https://www.eskom.co.za/eskom-divisions/human-capital/vacancies/",
+    applyUrl: "https://www.zabursaries.co.za/engineering-bursaries-south-africa/eskom-bursaries/",
   },
   {
     id: "standard-bank-bursary",
@@ -85,7 +85,7 @@ export const BURSARIES: Bursary[] = [
     deadline: "July – September each year",
     status: "opening_soon",
     highlights: ["Full academic funding", "Monthly allowance", "Vacation work opportunities", "Graduate programme preference on completion"],
-    applyUrl: "https://group.nedbank.co.za/careers.html",
+    applyUrl: "https://www.zabursaries.co.za/general-bursaries-south-africa/nedbank-bursary-south-africa/",
   },
   {
     id: "absa-bursary",
@@ -99,7 +99,7 @@ export const BURSARIES: Bursary[] = [
     deadline: "August – October each year",
     status: "closed",
     highlights: ["Full tuition and residence", "Study materials covered", "Vacation work placement", "Consideration for graduate programme"],
-    applyUrl: "https://www.absa.africa/careers/",
+    applyUrl: "https://www.zabursaries.co.za/general-bursaries-south-africa/absa-fellowship-scholarship-programme/",
   },
   {
     id: "telkom-bursary",
@@ -126,7 +126,7 @@ export const BURSARIES: Bursary[] = [
     deadline: "April – June each year",
     status: "closed",
     highlights: ["Covers major engineering disciplines", "Monthly living allowance", "Vacation training at Transnet sites", "Graduate-in-training pipeline"],
-    applyUrl: "https://www.transnet.net/Careers/Pages/Home.aspx",
+    applyUrl: "https://www.zabursaries.co.za/engineering-bursaries-south-africa/transnet-bursary-south-africa/",
   },
   {
     id: "old-mutual-bursary",
@@ -168,7 +168,7 @@ export const BURSARIES: Bursary[] = [
     deadline: "July – October each year",
     status: "opening_soon",
     highlights: ["Covers Honours through PhD", "Merit-based, not means-tested", "Multiple award categories", "Prestigious for academic careers"],
-    applyUrl: "https://www.nrf.ac.za/funding/",
+    applyUrl: "https://www.zabursaries.co.za/mba-postgraduate/dsi-nrf-postgraduate-scholarship/",
   },
   {
     id: "Anglo-bursary",
@@ -182,7 +182,7 @@ export const BURSARIES: Bursary[] = [
     deadline: "March – May each year",
     status: "closed",
     highlights: ["Top mining bursary in SA", "Vacation work at mine sites", "International project exposure", "Graduate employment pipeline"],
-    applyUrl: "https://www.angloamerican.com/careers",
+    applyUrl: "https://www.zabursaries.co.za/engineering-bursaries-south-africa/anglo-american-coal-bursary/",
   },
   {
     id: "harmony-bursary",
@@ -196,7 +196,7 @@ export const BURSARIES: Bursary[] = [
     deadline: "April – July each year",
     status: "closed",
     highlights: ["SA's third largest gold producer", "Vacation employment underground", "Mentorship from engineers", "Bursary-to-employment pipeline"],
-    applyUrl: "https://www.harmony.co.za/careers",
+    applyUrl: "https://www.zabursaries.co.za/general-bursaries-south-africa/harmony-gold-bursary/",
   },
   {
     id: "investec-bursary",
@@ -210,7 +210,7 @@ export const BURSARIES: Bursary[] = [
     deadline: "June – August each year",
     status: "open",
     highlights: ["Highly selective — very competitive", "Top-tier financial services exposure", "London or Sydney secondment possible", "Graduate analyst offer on completion"],
-    applyUrl: "https://www.investec.com/en_za/careers.html",
+    applyUrl: "https://studytrust.org.za/investec/",
   },
   {
     id: "dept-health-bursary",
@@ -238,7 +238,7 @@ export const BURSARIES: Bursary[] = [
     deadline: "June – August each year",
     status: "closed",
     highlights: ["Leading SA construction group", "Exposure to mega infrastructure projects", "Practical on-site training", "Graduate placement on completion"],
-    applyUrl: "https://www.murrob.com",
+    applyUrl: "https://www.zabursaries.co.za/engineering-bursaries-south-africa/murrary-roberts-bursary/",
   },
   {
     id: "mintek-bursary",
@@ -266,7 +266,7 @@ export const BURSARIES: Bursary[] = [
     deadline: "July – September each year",
     status: "opening_soon",
     highlights: ["Germany's VW — Uitenhage plant", "Automotive manufacturing focus", "Hands-on engineering training", "Graduate employment highly likely"],
-    applyUrl: "https://www.vw.co.za/en/volkswagen-experience/careers.html",
+    applyUrl: "https://www.zabursaries.co.za/computer-science-it-bursaries-south-africa/volkswagen-group-south-africa-vwsa-bursary/",
   },
   {
     id: "mtnsaf-bursary",
@@ -280,7 +280,7 @@ export const BURSARIES: Bursary[] = [
     deadline: "August – October each year",
     status: "closed",
     highlights: ["Covers partial tuition and books", "Monthly living allowance", "Mentorship from MTN professionals", "Community development focus"],
-    applyUrl: "https://www.mtn.com/join-our-yello-family-people-and-culture/",
+    applyUrl: "https://www.zabursaries.co.za/general-bursaries-south-africa/mtn-bursary-south-africa/",
   },
   {
     id: "sanlam-bursary",
@@ -294,7 +294,7 @@ export const BURSARIES: Bursary[] = [
     deadline: "May – July each year",
     status: "closed",
     highlights: ["Africa's largest insurer backing", "Actuarial fast-track pathway", "Stellenbosch-based headquarters", "Graduate placement highly likely"],
-    applyUrl: "https://www.sanlamonline.co.za/careers/",
+    applyUrl: "https://www.zabursaries.co.za/computer-science-it-bursaries-south-africa/sanlam-it-bursary/",
   },
 ];
 

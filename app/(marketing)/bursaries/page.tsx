@@ -69,7 +69,7 @@ function BursaryCard({ bursary }: { bursary: Bursary }) {
 
       {/* Value */}
       <div className="mb-3 px-3 py-2 rounded-lg bg-emerald-500/8 border border-emerald-500/15">
-        <p className="text-xs text-muted-foreground">Value</p>
+        <p className="text-xs text-muted-foreground">Value <span className="text-[10px] font-normal">(est.)</span></p>
         <p className="text-sm font-semibold text-emerald-300">{bursary.value}</p>
       </div>
 
@@ -287,7 +287,7 @@ export default function BursariesPage() {
 
         {/* Disclaimer */}
         <div className="mt-10 p-4 rounded-xl bg-secondary border border-border text-xs text-muted-foreground">
-          <strong className="text-foreground">Disclaimer:</strong> Bursary values, eligibility criteria, and deadlines change annually. Always verify on the official funder website before applying. CareerIntel SA is not affiliated with any listed funders.
+          <strong className="text-foreground">Disclaimer:</strong> Bursary values, stipend amounts, eligibility criteria, and deadlines change annually. Values shown are market estimates — actual amounts vary by funder and year. Always verify on the official funder website before applying. CareerIntel SA is not affiliated with any listed funders.
         </div>
 
         {/* CTA */}

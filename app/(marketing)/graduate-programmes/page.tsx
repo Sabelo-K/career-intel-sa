@@ -77,7 +77,7 @@ function ProgrammeCard({ prog }: { prog: GraduateProgramme }) {
           <span className="text-muted-foreground">Intake: </span>
           <span className="font-semibold text-foreground">{prog.intake}</span>
         </div>
-        <div className="text-xs font-semibold text-emerald-400">{prog.stipend}</div>
+        <div className="text-xs font-semibold text-emerald-400">~{prog.stipend} <span className="text-muted-foreground font-normal">(est.)</span></div>
       </div>
 
       <div className="flex flex-wrap gap-1.5 mb-3">
@@ -283,7 +283,7 @@ export default function GraduateProgrammesPage() {
 
         {/* Disclaimer */}
         <div className="mt-10 p-4 rounded-xl bg-secondary border border-border text-xs text-muted-foreground">
-          <strong className="text-foreground">Important:</strong> Application dates and stipends change annually. Always verify on the company&apos;s official careers page before applying. CareerIntel SA is not affiliated with any of the listed companies.
+          <strong className="text-foreground">Important:</strong> Application dates and stipends change annually. Stipend figures shown are market estimates only — actual amounts vary by company and year. Always verify on the company&apos;s official careers page before applying. CareerIntel SA is not affiliated with any of the listed companies.
         </div>
 
         {/* CTA */}

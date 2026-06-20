@@ -71,7 +71,7 @@ export const BURSARIES: Bursary[] = [
     deadline: "June – August each year",
     status: "open",
     highlights: ["Tuition + residence + books covered", "Monthly living allowance", "Vacation employment at Standard Bank", "Graduate placement preference"],
-    applyUrl: "https://www.standardbank.com/sbg/standard-bank-group/careers",
+    applyUrl: "https://www.standardbank.com/sbg/standard-bank-group/careers/early-careers/bursaries",
   },
   {
     id: "nedbank-bursary",
@@ -140,7 +140,7 @@ export const BURSARIES: Bursary[] = [
     deadline: "June – August each year",
     status: "open",
     highlights: ["Actuarial and financial services focus", "Living allowance included", "Vacation work at Old Mutual", "Mentorship from senior professionals"],
-    applyUrl: "https://www.oldmutual.co.za/careers",
+    applyUrl: "https://www.oldmutual.co.za/careers/bursaries",
   },
   {
     id: "discovery-bursary",
@@ -154,7 +154,7 @@ export const BURSARIES: Bursary[] = [
     deadline: "June – August each year",
     status: "open",
     highlights: ["One of the largest private healthcare bursaries in SA", "Covers all healthcare disciplines", "Vitality programme access", "Graduate employment preference"],
-    applyUrl: "https://careers.discovery.co.za/",
+    applyUrl: "https://careers.discovery.co.za/go/Bursaries/9406801/",
   },
   {
     id: "nrf",

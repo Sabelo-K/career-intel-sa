@@ -1,6 +1,6 @@
 import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
+import { db as prisma } from "@/lib/db";
 import { BADGES, getLevel, getLevelProgress, getNextLevelThreshold } from "@/lib/gamification";
 
 export async function GET() {

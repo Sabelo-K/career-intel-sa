@@ -14,7 +14,7 @@ export interface GraduateProgramme {
   status: ProgrammeStatus;
   provinces: string[];
   highlights: string[];
-  applyUrl: string;
+  applyUrl?: string;
 }
 
 export const GRADUATE_PROGRAMMES: GraduateProgramme[] = [
@@ -240,7 +240,6 @@ export const GRADUATE_PROGRAMMES: GraduateProgramme[] = [
     status: "opening_soon",
     provinces: ["Gauteng", "Western Cape", "KwaZulu-Natal"],
     highlights: ["5G technology projects", "IoT & AI innovation", "Vodafone global exposure", "Social impact projects"],
-    applyUrl: "https://www.vodacom.co.za",
   },
   {
     id: "transnet",

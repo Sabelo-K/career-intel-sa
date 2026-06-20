@@ -120,7 +120,7 @@ function ProgrammeCard({ prog }: { prog: GraduateProgramme }) {
           {expanded ? "Show less" : "View highlights"}
         </button>
         <div className="flex-1" />
-        {prog.status !== "closed" && (
+        {prog.applyUrl && prog.status !== "closed" && (
           <a
             href={prog.applyUrl}
             target="_blank"
@@ -130,7 +130,7 @@ function ProgrammeCard({ prog }: { prog: GraduateProgramme }) {
             Apply Now <ExternalLink className="w-3 h-3" />
           </a>
         )}
-        {prog.status === "closed" && (
+        {prog.applyUrl && prog.status === "closed" && (
           <a
             href={prog.applyUrl}
             target="_blank"

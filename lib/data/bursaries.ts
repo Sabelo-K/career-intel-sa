@@ -13,7 +13,7 @@ export interface Bursary {
   deadline: string;
   status: BursaryStatus;
   highlights: string[];
-  applyUrl: string;
+  applyUrl?: string;
 }
 
 export const BURSARIES: Bursary[] = [
@@ -113,7 +113,6 @@ export const BURSARIES: Bursary[] = [
     deadline: "September – November each year",
     status: "opening_soon",
     highlights: ["Focus on ICT and STEM fields", "Tuition and book allowance", "Mentorship programme", "Job placement support"],
-    applyUrl: "https://www.telkom.co.za",
   },
   {
     id: "transnet-bursary",

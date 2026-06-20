@@ -137,21 +137,23 @@ function BursaryCard({ bursary }: { bursary: Bursary }) {
           {expanded ? "Show less" : "View eligibility"}
         </button>
         <div className="flex-1" />
-        <a
-          href={bursary.applyUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors ${
-            bursary.status === "open"
-              ? "bg-emerald-600 hover:bg-emerald-500 text-white"
-              : bursary.status === "opening_soon"
-              ? "bg-amber-600 hover:bg-amber-500 text-white"
-              : "bg-secondary border border-border text-muted-foreground hover:text-foreground"
-          }`}
-        >
-          {bursary.status === "closed" ? "Visit Website" : "Apply Now"}
-          <ExternalLink className="w-3 h-3" />
-        </a>
+        {bursary.applyUrl && (
+          <a
+            href={bursary.applyUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors ${
+              bursary.status === "open"
+                ? "bg-emerald-600 hover:bg-emerald-500 text-white"
+                : bursary.status === "opening_soon"
+                ? "bg-amber-600 hover:bg-amber-500 text-white"
+                : "bg-secondary border border-border text-muted-foreground hover:text-foreground"
+            }`}
+          >
+            {bursary.status === "closed" ? "Visit Website" : "Apply Now"}
+            <ExternalLink className="w-3 h-3" />
+          </a>
+        )}
       </div>
     </motion.div>
   );

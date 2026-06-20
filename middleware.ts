@@ -7,9 +7,11 @@ const isPublicRoute = createRouteMatcher([
   "/p/(.*)",               // public shareable profiles + score cards
   "/privacy",
   "/terms",
-  "/salary-check",         // free viral tool — no auth
-  "/matric",               // free viral tool — no auth
-  "/degree-roi",           // free viral tool — no auth
+  "/salary-check",            // free viral tool — no auth
+  "/matric",                  // free viral tool — no auth
+  "/degree-roi",              // free viral tool — no auth
+  "/graduate-programmes",     // free SA resource — no auth
+  "/bursaries",               // free SA resource — no auth
   "/r/(.*)",               // referral redirect — sets cookie then redirects to sign-up
   "/api/career/demand(.*)",
   "/api/payfast/notify",   // PayFast ITN webhook — unauthenticated POST from PayFast servers

@@ -8,7 +8,7 @@ import { UserButton } from "@clerk/nextjs";
 import {
   Brain, LayoutDashboard, FileText, MessageCircle,
   GitBranch, Target, BarChart3, BookOpen, Mic,
-  User, Settings, Zap, ChevronRight, Crown, Menu, X, Coins, Bell, GraduationCap, HeadphonesIcon, Briefcase, Users, Sparkles,
+  User, Settings, Zap, ChevronRight, Crown, Menu, X, Coins, Bell, GraduationCap, HeadphonesIcon, Briefcase, Users, Sparkles, Award, Gift,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { LanguageSelector } from "@/components/layout/language-selector";
@@ -27,8 +27,10 @@ const NAV_ITEMS: { href: string; icon: React.ElementType; key: TranslationKey }[
   { href: "/job-alerts",     icon: Bell,            key: "jobAlerts"     },
   { href: "/high-school",    icon: GraduationCap,   key: "highSchool"    },
   { href: "/bbbee",          icon: Users,           key: "bbbee"         },
-  { href: "/wrapped",        icon: Sparkles,        key: "wrapped"       },
-  { href: "/support",        icon: HeadphonesIcon,  key: "support"       },
+  { href: "/wrapped",              icon: Sparkles,        key: "wrapped"             },
+  { href: "/graduate-programmes", icon: Award,           key: "graduateProgrammes"  },
+  { href: "/bursaries",           icon: Gift,            key: "bursaries"           },
+  { href: "/support",             icon: HeadphonesIcon,  key: "support"             },
 ];
 
 const BOTTOM_ITEMS: { href: string; icon: React.ElementType; key: TranslationKey }[] = [

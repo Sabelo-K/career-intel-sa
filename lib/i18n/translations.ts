@@ -40,7 +40,9 @@ export type TranslationKey =
   | "goPremium"
   | "topUp"
   | "tagline"
-  | "builtForSA";
+  | "builtForSA"
+  | "graduateProgrammes"
+  | "bursaries";
 
 type Translations = Record<TranslationKey, string>;
 
@@ -74,8 +76,10 @@ export const translations: Record<Language, Translations> = {
     freePlan:      "Free Plan",
     goPremium:     "Go Premium",
     topUp:         "Top up →",
-    tagline:       "South Africa's AI Career Intelligence Platform",
-    builtForSA:    "Built for South Africa",
+    tagline:            "South Africa's AI Career Intelligence Platform",
+    builtForSA:         "Built for South Africa",
+    graduateProgrammes: "Graduate Programmes",
+    bursaries:          "Bursary Directory",
   },
   zu: {
     dashboard:     "Ideshibhodi",
@@ -106,8 +110,10 @@ export const translations: Record<Language, Translations> = {
     freePlan:      "Uhlelo Lwamahhala",
     goPremium:     "Thola i-Premium",
     topUp:         "Engeza →",
-    tagline:       "Inkundla ye-AI Yomsebenzi eNingizimu Afrika",
-    builtForSA:    "Yakhiwe eNingizimu Afrika",
+    tagline:            "Inkundla ye-AI Yomsebenzi eNingizimu Afrika",
+    builtForSA:         "Yakhiwe eNingizimu Afrika",
+    graduateProgrammes: "Izinhlelo Zezitshudeni",
+    bursaries:          "Ubhaliselo Lwezibonelelo",
   },
   xh: {
     dashboard:     "Ibhodi",
@@ -138,8 +144,10 @@ export const translations: Record<Language, Translations> = {
     freePlan:      "Icebo Lesimahla",
     goPremium:     "Fumana i-Premium",
     topUp:         "Yongeza →",
-    tagline:       "Iqonga le-AI leMisebenzi eMzantsi Afrika",
-    builtForSA:    "Yakhiwe eMzantsi Afrika",
+    tagline:            "Iqonga le-AI leMisebenzi eMzantsi Afrika",
+    builtForSA:         "Yakhiwe eMzantsi Afrika",
+    graduateProgrammes: "Iinkqubo Zezifundi",
+    bursaries:          "Uluhlu lweeBhasi",
   },
   af: {
     dashboard:     "Paneelbord",
@@ -170,8 +178,10 @@ export const translations: Record<Language, Translations> = {
     freePlan:      "Gratis Plan",
     goPremium:     "Kry Premium",
     topUp:         "Herlaai →",
-    tagline:       "Suid-Afrika se KI Loopbaanintelligensie Platform",
-    builtForSA:    "Gebou vir Suid-Afrika",
+    tagline:            "Suid-Afrika se KI Loopbaanintelligensie Platform",
+    builtForSA:         "Gebou vir Suid-Afrika",
+    graduateProgrammes: "Graduaatprogramme",
+    bursaries:          "Beursgids",
   },
   st: {
     dashboard:     "Setshwantsho",
@@ -202,8 +212,10 @@ export const translations: Record<Language, Translations> = {
     freePlan:      "Leano la Mahala",
     goPremium:     "Fumana Premium",
     topUp:         "Eketsa →",
-    tagline:       "Setheo sa AI sa Mosebetsi Afrika Borwa",
-    builtForSA:    "Hahiwa Afrika Borwa",
+    tagline:            "Setheo sa AI sa Mosebetsi Afrika Borwa",
+    builtForSA:         "Hahiwa Afrika Borwa",
+    graduateProgrammes: "Mananeo a Baithuti",
+    bursaries:          "Tlhahiso ya Dibursari",
   },
   tn: {
     dashboard:     "Setshwantsho",
@@ -234,8 +246,10 @@ export const translations: Record<Language, Translations> = {
     freePlan:      "Leano la Mahala",
     goPremium:     "Bona Premium",
     topUp:         "Oketsa →",
-    tagline:       "Setheo sa AI sa Tiro mo Afrika Borwa",
-    builtForSA:    "Agiwile mo Afrika Borwa",
+    tagline:            "Setheo sa AI sa Tiro mo Afrika Borwa",
+    builtForSA:         "Agiwile mo Afrika Borwa",
+    graduateProgrammes: "Mananeo a Baithuti",
+    bursaries:          "Tlhahiso ya Dibursari",
   },
   nso: {
     dashboard:     "Setshwantsho",
@@ -266,8 +280,10 @@ export const translations: Record<Language, Translations> = {
     freePlan:      "Leano la Mahala",
     goPremium:     "Hwetša Premium",
     topUp:         "Oketša →",
-    tagline:       "Setheo sa AI sa Mošomo Afrika Borwa",
-    builtForSA:    "Agilwe Afrika Borwa",
+    tagline:            "Setheo sa AI sa Mošomo Afrika Borwa",
+    builtForSA:         "Agilwe Afrika Borwa",
+    graduateProgrammes: "Mananeo a Baithuti",
+    bursaries:          "Tlhahišo ya Dibursari",
   },
 };
 

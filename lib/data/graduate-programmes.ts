@@ -32,7 +32,7 @@ export const GRADUATE_PROGRAMMES: GraduateProgramme[] = [
     status: "opening_soon",
     provinces: ["Gauteng", "Western Cape", "KwaZulu-Natal"],
     highlights: ["SAICA-accredited articles", "Rotational placements", "Mentorship programme", "Study support"],
-    applyUrl: "https://www.deloitte.com/za/en/careers/students.html",
+    applyUrl: "https://www.deloitte.com/za/en/careers.html",
   },
   {
     id: "pwc",
@@ -48,7 +48,7 @@ export const GRADUATE_PROGRAMMES: GraduateProgramme[] = [
     status: "open",
     provinces: ["Gauteng", "Western Cape", "KwaZulu-Natal", "Eastern Cape"],
     highlights: ["SAICA/SAIPA articles", "Global exposure", "CTA bursary support", "Specialist tracks"],
-    applyUrl: "https://www.pwc.com/za/en/careers/student-careers.html",
+    applyUrl: "https://www.pwc.co.za/en/careers.html",
   },
   {
     id: "kpmg",
@@ -64,7 +64,7 @@ export const GRADUATE_PROGRAMMES: GraduateProgramme[] = [
     status: "opening_soon",
     provinces: ["Gauteng", "Western Cape"],
     highlights: ["SAICA articles", "Advisory rotations", "Leadership development", "CTA support"],
-    applyUrl: "https://kpmg.com/za/en/home/careers/students.html",
+    applyUrl: "https://kpmg.com/za/en/home/careers.html",
   },
   {
     id: "ey",
@@ -80,7 +80,7 @@ export const GRADUATE_PROGRAMMES: GraduateProgramme[] = [
     status: "opening_soon",
     provinces: ["Gauteng", "Western Cape", "KwaZulu-Natal"],
     highlights: ["SAICA/ACCA pathways", "Tech & consulting rotations", "Global secondments", "Coaching"],
-    applyUrl: "https://www.ey.com/en_za/careers/students",
+    applyUrl: "https://www.ey.com/en_za/careers",
   },
   {
     id: "standard-bank",
@@ -96,7 +96,7 @@ export const GRADUATE_PROGRAMMES: GraduateProgramme[] = [
     status: "opening_soon",
     provinces: ["Gauteng", "Western Cape"],
     highlights: ["Rotational across business units", "Personal mentor", "CFA study support", "Fast-track to management"],
-    applyUrl: "https://www.standardbank.co.za/southafrica/b2c/career/graduate-programmes",
+    applyUrl: "https://www.standardbank.co.za/southafrica/b2c/about-us/careers",
   },
   {
     id: "absa",
@@ -112,7 +112,7 @@ export const GRADUATE_PROGRAMMES: GraduateProgramme[] = [
     status: "closed",
     provinces: ["Gauteng", "Western Cape", "KwaZulu-Natal"],
     highlights: ["Cross-functional rotations", "Innovation labs access", "Leadership curriculum", "Panfrika exposure"],
-    applyUrl: "https://www.absa.africa/absaafrica/careers/graduates/",
+    applyUrl: "https://www.absa.africa/careers/",
   },
   {
     id: "fnb",
@@ -128,7 +128,7 @@ export const GRADUATE_PROGRAMMES: GraduateProgramme[] = [
     status: "open",
     provinces: ["Gauteng", "Western Cape"],
     highlights: ["Innovation-first culture", "Entrepreneurship track", "eBucks benefits", "Rapid promotion pathway"],
-    applyUrl: "https://www.fnb.co.za/careers/graduate-programme.html",
+    applyUrl: "https://www.fnb.co.za/nav/Personal/About/Careers",
   },
   {
     id: "nedbank",
@@ -144,7 +144,7 @@ export const GRADUATE_PROGRAMMES: GraduateProgramme[] = [
     status: "opening_soon",
     provinces: ["Gauteng", "Western Cape", "KwaZulu-Natal"],
     highlights: ["Green & sustainable finance focus", "Digital banking track", "Mentorship", "Study assistance"],
-    applyUrl: "https://www.nedbank.co.za/content/nedbank/desktop/gt/en/careers/graduates.html",
+    applyUrl: "https://www.nedbank.co.za/careers",
   },
   {
     id: "discovery",
@@ -160,7 +160,7 @@ export const GRADUATE_PROGRAMMES: GraduateProgramme[] = [
     status: "open",
     provinces: ["Gauteng"],
     highlights: ["Actuarial fast-track", "Behavioural science exposure", "Health innovation labs", "Vitality benefits"],
-    applyUrl: "https://www.discovery.co.za/corporate/graduate-programme",
+    applyUrl: "https://www.discovery.co.za/portal/individual/careers",
   },
   {
     id: "anglo-american",
@@ -176,7 +176,7 @@ export const GRADUATE_PROGRAMMES: GraduateProgramme[] = [
     status: "closed",
     provinces: ["Gauteng", "Northern Cape", "Limpopo", "North West"],
     highlights: ["On-site operational exposure", "International rotations", "Technical mentorship", "Relocation support"],
-    applyUrl: "https://www.angloamerican.com/careers/graduates",
+    applyUrl: "https://www.angloamerican.com/careers",
   },
   {
     id: "sasol",
@@ -192,7 +192,7 @@ export const GRADUATE_PROGRAMMES: GraduateProgramme[] = [
     status: "closed",
     provinces: ["Mpumalanga", "Gauteng", "KwaZulu-Natal"],
     highlights: ["World-class refinery exposure", "Energy transition projects", "Technical specialist pathways", "Housing allowance"],
-    applyUrl: "https://www.sasol.com/careers/graduates",
+    applyUrl: "https://www.sasol.com/careers",
   },
   {
     id: "eskom",
@@ -208,7 +208,7 @@ export const GRADUATE_PROGRAMMES: GraduateProgramme[] = [
     status: "closed",
     provinces: ["Gauteng", "Mpumalanga", "Limpopo", "KwaZulu-Natal"],
     highlights: ["Power generation exposure", "Renewable energy projects", "ECSA registration pathway", "Accommodation on site"],
-    applyUrl: "https://www.eskom.co.za/careers/graduate-development/",
+    applyUrl: "https://www.eskom.co.za/careers/",
   },
   {
     id: "mtn",
@@ -224,7 +224,7 @@ export const GRADUATE_PROGRAMMES: GraduateProgramme[] = [
     status: "closed",
     provinces: ["Gauteng", "Western Cape"],
     highlights: ["Pan-African career exposure", "Digital & fintech projects", "Leadership rotations", "MTN benefits"],
-    applyUrl: "https://www.mtn.co.za/careers/graduates",
+    applyUrl: "https://careers.mtn.com",
   },
   {
     id: "vodacom",
@@ -240,7 +240,7 @@ export const GRADUATE_PROGRAMMES: GraduateProgramme[] = [
     status: "opening_soon",
     provinces: ["Gauteng", "Western Cape", "KwaZulu-Natal"],
     highlights: ["5G technology projects", "IoT & AI innovation", "Vodafone global exposure", "Social impact projects"],
-    applyUrl: "https://www.vodacom.co.za/vodacom/about-us/careers",
+    applyUrl: "https://careers.vodacom.co.za",
   },
   {
     id: "transnet",
@@ -256,7 +256,7 @@ export const GRADUATE_PROGRAMMES: GraduateProgramme[] = [
     status: "closed",
     provinces: ["Gauteng", "Western Cape", "Eastern Cape", "KwaZulu-Natal"],
     highlights: ["Port & rail operations", "ECSA registration support", "Infrastructure megaprojects", "National footprint"],
-    applyUrl: "https://www.transnet.net/careers",
+    applyUrl: "https://www.transnet.net/Careers/Pages/Home.aspx",
   },
   {
     id: "capitec",
@@ -272,7 +272,7 @@ export const GRADUATE_PROGRAMMES: GraduateProgramme[] = [
     status: "closed",
     provinces: ["Western Cape", "Gauteng"],
     highlights: ["Tech-first banking culture", "Agile & DevOps environment", "Fast promotion pace", "Stellenbosch HQ"],
-    applyUrl: "https://www.capitecbank.co.za/careers/students",
+    applyUrl: "https://www.capitecbank.co.za/careers",
   },
   {
     id: "old-mutual",
@@ -288,7 +288,7 @@ export const GRADUATE_PROGRAMMES: GraduateProgramme[] = [
     status: "open",
     provinces: ["Gauteng", "Western Cape"],
     highlights: ["Actuarial development track", "Financial planning certification", "Pan-African exposure", "Mentorship"],
-    applyUrl: "https://www.oldmutual.co.za/careers/graduates",
+    applyUrl: "https://www.oldmutual.co.za/careers",
   },
   {
     id: "mckinsey",
@@ -304,7 +304,7 @@ export const GRADUATE_PROGRAMMES: GraduateProgramme[] = [
     status: "closed",
     provinces: ["Gauteng", "Western Cape"],
     highlights: ["Global project exposure", "Best-in-class training", "MBA sponsorship", "Rapid career growth"],
-    applyUrl: "https://www.mckinsey.com/za/careers",
+    applyUrl: "https://www.mckinsey.com/careers/search-jobs",
   },
   {
     id: "shoprite",
@@ -336,7 +336,7 @@ export const GRADUATE_PROGRAMMES: GraduateProgramme[] = [
     status: "open",
     provinces: ["Western Cape", "Gauteng"],
     highlights: ["Africa's largest insurer", "Actuarial Fast-Track", "Emerging market focus", "Wellness benefits"],
-    applyUrl: "https://www.sanlam.co.za/careers",
+    applyUrl: "https://www.sanlam.co.za/wps/portal/sanlam_za/sanlam_za/top-navigation/careers",
   },
 ];
 

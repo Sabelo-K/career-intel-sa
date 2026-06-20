@@ -22,12 +22,23 @@ interface Message {
   streaming?: boolean;
 }
 
-const STARTER_QUESTIONS = [
+const DEFAULT_STARTERS = [
   { icon: TrendingUp, text: "What are the top 5 scarce skills in SA for 2026?" },
-  { icon: Target, text: "How do I transition from Finance to Data Science in SA?" },
+  { icon: Target, text: "How do I transition into a new career in SA?" },
   { icon: BookOpen, text: "What NQF qualifications do I need for cybersecurity?" },
-  { icon: Zap, text: "What is a realistic salary for a mid-level software engineer in Joburg?" },
+  { icon: Zap, text: "What is a realistic salary for a mid-level role in Joburg?" },
 ];
+
+function getPersonalisedStarters(targetRole: string | null, currentRole: string | null) {
+  if (!targetRole && !currentRole) return DEFAULT_STARTERS;
+  const role = targetRole ?? currentRole;
+  return [
+    { icon: TrendingUp, text: `What skills do I need to become a ${role} in SA?` },
+    { icon: Zap,        text: `What is the salary range for a ${role} in South Africa?` },
+    { icon: Target,     text: `How do I break into the ${role} field from my current role?` },
+    { icon: BookOpen,   text: `What certifications or qualifications help a ${role} in SA?` },
+  ];
+}
 
 const SUGGESTED_TOPICS = [
   "Scarce skills & SETA funding",
@@ -170,8 +181,10 @@ export default function CareerCoachPage() {
   const [creditBalance, setCreditBalance] = useState(0);
   const [messageLimit, setMessageLimit] = useState<number>(15); // updated after plan load
   const [isUnlimited, setIsUnlimited] = useState(false);
+  const [targetRole, setTargetRole]   = useState<string | null>(null);
+  const [currentRole, setCurrentRole] = useState<string | null>(null);
 
-  // Load credit balance + plan limits
+  // Load credit balance + plan limits + profile context for personalised prompts
   useEffect(() => {
     fetch("/api/credits/balance")
       .then((r) => r.json())
@@ -192,9 +205,13 @@ export default function CareerCoachPage() {
           setMessageLimit(15);
           setIsUnlimited(false);
         }
+        if (d.targetRole)  setTargetRole(d.targetRole);
+        if (d.currentRole) setCurrentRole(d.currentRole);
       })
       .catch(() => {});
   }, []);
+
+  const starterQuestions = getPersonalisedStarters(targetRole, currentRole);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const lastUserMessageRef = useRef<string>("");
@@ -466,7 +483,7 @@ export default function CareerCoachPage() {
             {/* Quick starters — shown only before first user message */}
             {userMessageCount === 0 && (
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-3">
-                {STARTER_QUESTIONS.map((q) => (
+                {starterQuestions.map((q) => (
                   <button
                     key={q.text}
                     onClick={() => sendMessage(q.text)}

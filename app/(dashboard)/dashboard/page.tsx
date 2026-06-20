@@ -21,6 +21,7 @@ import { Progress } from "@/components/ui/progress";
 import { RoadmapWidget } from "@/components/roadmap-widget";
 import { ReferralWidget } from "@/components/referral-widget";
 import { GamificationPanel } from "@/components/gamification-panel";
+import { ProfileCompletionNudge } from "@/components/profile-completion-nudge";
 import { SA_CAREERS, TOP_GROWING_CAREERS_2025 } from "@/lib/data/sa-careers";
 import { formatSalaryRange, getDemandBadgeColor, getTrendLabel } from "@/lib/utils";
 
@@ -43,6 +44,7 @@ interface DashboardStats {
   hasCV: boolean;
   plan: string;
   onboarded: boolean;
+  profileMissing: { label: string; href: string }[];
 }
 
 const DEMAND_TREND_DATA = [
@@ -157,6 +159,7 @@ export default function DashboardPage() {
     hasCV: false,
     plan: "FREE",
     onboarded: true,
+    profileMissing: [],
   });
   const [statsLoaded, setStatsLoaded] = useState(false);
 
@@ -260,6 +263,14 @@ export default function DashboardPage() {
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* Profile completion nudge */}
+      {statsLoaded && (
+        <ProfileCompletionNudge
+          profileStrength={profileStrength}
+          profileMissing={stats.profileMissing}
+        />
+      )}
 
       {/* Header */}
       <motion.div {...fadeUp} className="flex items-start justify-between">

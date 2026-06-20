@@ -42,19 +42,20 @@ export async function GET() {
     const p = dbUser.profile;
 
     // ── Profile strength (0–100) ──────────────────────────────────────────────
-    const checks = [
-      !!(p?.currentRole),
-      !!(p?.targetRole),
-      !!(p?.province),
-      (p?.skills?.length ?? 0) >= 3,
-      !!(p?.bio),
-      !!(p?.educationLevel),
-      (p?.yearsExperience ?? -1) >= 0,
-      !!(p?.linkedinUrl),
-      !!(p?.industry),
-      !!(dbUser.cvs?.length),
+    const PROFILE_STEPS = [
+      { key: "currentRole",    done: !!(p?.currentRole),                      label: "Current role",         href: "/profile#current-role"   },
+      { key: "targetRole",     done: !!(p?.targetRole),                       label: "Target role",          href: "/profile#target-role"    },
+      { key: "province",       done: !!(p?.province),                         label: "Province",             href: "/profile#province"       },
+      { key: "skills",         done: (p?.skills?.length ?? 0) >= 3,           label: "At least 3 skills",    href: "/profile#skills"         },
+      { key: "bio",            done: !!(p?.bio),                              label: "Short bio",            href: "/profile#bio"            },
+      { key: "education",      done: !!(p?.educationLevel),                   label: "Education level",      href: "/profile#education"      },
+      { key: "experience",     done: (p?.yearsExperience ?? -1) >= 0,         label: "Years of experience",  href: "/profile#experience"     },
+      { key: "linkedin",       done: !!(p?.linkedinUrl),                      label: "LinkedIn URL",         href: "/profile#linkedin"       },
+      { key: "industry",       done: !!(p?.industry),                         label: "Industry",             href: "/profile#industry"       },
+      { key: "cv",             done: !!(dbUser.cvs?.length),                  label: "Upload your CV",       href: "/cv-builder"             },
     ];
-    const profileStrength = Math.round((checks.filter(Boolean).length / checks.length) * 100);
+    const profileStrength = Math.round((PROFILE_STEPS.filter((s) => s.done).length / PROFILE_STEPS.length) * 100);
+    const profileMissing = PROFILE_STEPS.filter((s) => !s.done).map(({ label, href }) => ({ label, href }));
 
     // ── Employability score (weighted) ────────────────────────────────────────
     const skillsScore   = Math.min((p?.skills?.length ?? 0) * 5, 40);   // up to 40 pts
@@ -105,6 +106,7 @@ export async function GET() {
       planExpiresAt: dbUser.planExpiresAt ?? null,
       billingType: dbUser.billingType ?? "ONCE_OFF",
       onboarded: dbUser.onboarded,
+      profileMissing,
       isNewUser: isNewUserDiscountEligible(dbUser.createdAt, dbUser.plan),
       daysLeftOnDiscount: discountDaysRemaining(dbUser.createdAt, dbUser.plan),
     });

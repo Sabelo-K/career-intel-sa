@@ -20,6 +20,12 @@ const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
 
 export async function POST(req: NextRequest) {
   try {
+    // Validate required PayFast env vars early
+    if (!PAYFAST_MERCHANT_ID || !PAYFAST_MERCHANT_KEY) {
+      console.error("[credits/purchase] Missing PAYFAST_MERCHANT_ID or PAYFAST_MERCHANT_KEY env vars");
+      return NextResponse.json({ error: "Payment provider not configured. Please contact support." }, { status: 500 });
+    }
+
     const { userId } = await auth();
     if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
@@ -38,13 +44,15 @@ export async function POST(req: NextRequest) {
       clerkUser?.fullName
     );
 
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL?.replace(/\/$/, "") ?? "http://localhost:3000";
+
     // Build PayFast params IN ORDER (signature is order-sensitive)
     const params: Record<string, string> = {
       merchant_id:      PAYFAST_MERCHANT_ID,
       merchant_key:     PAYFAST_MERCHANT_KEY,
-      return_url:       `${APP_URL}/buy-credits/success`,
-      cancel_url:       `${APP_URL}/buy-credits`,
-      notify_url:       `${APP_URL}/api/credits/itn`,
+      return_url:       `${appUrl}/buy-credits/success`,
+      cancel_url:       `${appUrl}/buy-credits`,
+      notify_url:       `${appUrl}/api/credits/itn`,
       name_first:       clerkUser?.firstName ?? "",
       name_last:        clerkUser?.lastName  ?? "",
       email_address:    clerkUser?.primaryEmailAddress?.emailAddress ?? "",
@@ -59,9 +67,11 @@ export async function POST(req: NextRequest) {
 
     params.signature = generateSignature(params);
 
+    console.log(`[credits/purchase] packId=${packId} user=${dbUser.id} url=${PAYFAST_URL}`);
     return NextResponse.json({ url: PAYFAST_URL, params });
   } catch (err) {
-    console.error("[credits/purchase]", err);
-    return NextResponse.json({ error: "Purchase failed" }, { status: 500 });
+    const message = err instanceof Error ? err.message : String(err);
+    console.error("[credits/purchase] Error:", message);
+    return NextResponse.json({ error: `Purchase failed: ${message}` }, { status: 500 });
   }
 }

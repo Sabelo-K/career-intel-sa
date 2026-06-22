@@ -77,10 +77,11 @@ const PRICING = [
       "SA hiring trend reports",
       "Priority email support",
     ],
-    cta: "Get Recruiter Plan",
+    cta: "Join Waitlist",
     highlight: false,
-    badge: "For Business",
-    saving: "Save R100/mo",
+    badge: "Coming Soon",
+    saving: null,
+    comingSoon: true,
   },
 ];
 
@@ -141,6 +142,7 @@ export function PricingSection() {
                 <div className={`absolute top-0 left-1/2 -translate-x-1/2 z-10 px-3 py-1 rounded-full text-white text-xs font-semibold whitespace-nowrap ${
                   plan.badge === "Most Popular" ? "bg-indigo-600" :
                   plan.badge === "For Youth"    ? "bg-violet-600" :
+                  plan.badge === "Coming Soon"  ? "bg-white/20 text-white/70" :
                   "bg-amber-600"
                 }`}>
                   {plan.badge}
@@ -151,48 +153,67 @@ export function PricingSection() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1 }}
-                className={`relative rounded-2xl p-6 h-full flex flex-col ${
-                  plan.highlight
+                className={`relative rounded-2xl p-6 h-full flex flex-col ${"comingSoon" in plan && plan.comingSoon
+                    ? "bg-white/[0.02] border border-white/5 opacity-55"
+                    : plan.highlight
                     ? "bg-gradient-to-b from-indigo-600/20 to-violet-600/10 border-2 border-indigo-500/50 shadow-2xl shadow-indigo-500/10"
                     : "bg-white/[0.03] border border-white/10"
                 }`}
               >
                 <div className="mb-5">
-                  <h3 className="text-lg font-bold text-white mb-1">{plan.name}</h3>
+                  <h3 className={`text-lg font-bold mb-1 ${"comingSoon" in plan && plan.comingSoon ? "text-white/40" : "text-white"}`}>{plan.name}</h3>
                   <p className="text-white/40 text-sm mb-4">{plan.description}</p>
-                  <div className="flex items-end gap-1.5">
-                    <span className="text-4xl font-bold text-white">
-                      {billing === "subscription" ? plan.subscription : plan.onceOff}
-                    </span>
-                    <span className="text-white/40 text-sm mb-1">/mo</span>
-                  </div>
-                  {billing === "subscription" && plan.saving && (
-                    <p className="text-xs text-emerald-400 mt-1">{plan.saving} vs once-off</p>
-                  )}
-                  {billing === "once_off" && plan.name !== "Free" && (
-                    <p className="text-xs text-white/30 mt-1">30 days · no auto-renewal</p>
+                  {"comingSoon" in plan && plan.comingSoon ? (
+                    <div>
+                      <p className="text-2xl font-bold text-white/30">Coming Soon</p>
+                      <p className="text-xs text-white/25 mt-1">Join the waitlist to be first in line</p>
+                    </div>
+                  ) : (
+                    <>
+                      <div className="flex items-end gap-1.5">
+                        <span className="text-4xl font-bold text-white">
+                          {billing === "subscription" ? plan.subscription : plan.onceOff}
+                        </span>
+                        <span className="text-white/40 text-sm mb-1">/mo</span>
+                      </div>
+                      {billing === "subscription" && plan.saving && (
+                        <p className="text-xs text-emerald-400 mt-1">{plan.saving} vs once-off</p>
+                      )}
+                      {billing === "once_off" && plan.name !== "Free" && (
+                        <p className="text-xs text-white/30 mt-1">30 days · no auto-renewal</p>
+                      )}
+                    </>
                   )}
                 </div>
 
                 <ul className="space-y-3 mb-8 flex-1">
                   {plan.features.map((f) => (
                     <li key={f} className="flex items-center gap-2.5 text-sm text-white/70">
-                      <CheckCircle className="w-4 h-4 text-emerald-400 flex-shrink-0" />
+                      <CheckCircle className={`w-4 h-4 flex-shrink-0 ${"comingSoon" in plan && plan.comingSoon ? "text-white/20" : "text-emerald-400"}`} />
                       {f}
                     </li>
                   ))}
                 </ul>
 
-                <Link
-                  href="/sign-up"
-                  className={`block text-center py-3 rounded-xl font-semibold text-sm transition-all duration-200 ${
-                    plan.highlight
-                      ? "bg-indigo-600 hover:bg-indigo-500 text-white hover:shadow-lg hover:shadow-indigo-500/25"
-                      : "border border-white/10 hover:border-white/20 text-white hover:bg-white/5"
-                  }`}
-                >
-                  {plan.cta}
-                </Link>
+                {"comingSoon" in plan && plan.comingSoon ? (
+                  <a
+                    href="mailto:hello@careerintelsa.co.za?subject=Recruiter Plan Waitlist"
+                    className="block text-center py-3 rounded-xl font-semibold text-sm border border-white/10 text-white/40 hover:border-white/20 hover:text-white/60 transition-all duration-200"
+                  >
+                    Join Waitlist
+                  </a>
+                ) : (
+                  <Link
+                    href="/sign-up"
+                    className={`block text-center py-3 rounded-xl font-semibold text-sm transition-all duration-200 ${
+                      plan.highlight
+                        ? "bg-indigo-600 hover:bg-indigo-500 text-white hover:shadow-lg hover:shadow-indigo-500/25"
+                        : "border border-white/10 hover:border-white/20 text-white hover:bg-white/5"
+                    }`}
+                  >
+                    {plan.cta}
+                  </Link>
+                )}
               </motion.div>
             </div>
           ))}

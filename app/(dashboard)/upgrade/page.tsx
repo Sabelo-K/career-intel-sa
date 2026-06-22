@@ -94,14 +94,14 @@ const PLANS: PlanConfig[] = [
   {
     key:        "recruiter",
     name:       "Recruiter",
-    price:      "R499",
+    price:      "R399",
     period:     "/month",
     tagline:    "Market intelligence for HR & talent teams",
-    color:      "border-amber-500/30 bg-amber-500/5",
-    badgeColor: "bg-amber-600",
-    textColor:  "text-amber-300",
+    color:      "border-white/10 bg-white/3",
+    badgeColor: "bg-white/20",
+    textColor:  "text-white/40",
     icon:       Users,
-    badge:      "For Business",
+    badge:      "Coming Soon",
     highlight:  false,
     features: [
       "Everything in Professional",
@@ -293,7 +293,8 @@ export default function UpgradePage() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mt-4">
         {PLANS.map((plan, i) => {
           const Icon      = plan.icon;
-          const isLoading = loading === plan.key;
+          const isLoading    = loading === plan.key;
+          const isComingSoon = plan.key === "recruiter";
           // Use planKey for exact match; fall back to tier for legacy records
           const isCurrent = currentPlanKey
             ? plan.key === currentPlanKey
@@ -307,7 +308,7 @@ export default function UpgradePage() {
               transition={{ delay: i * 0.08 }}
               className={`relative rounded-2xl border p-5 flex flex-col ${plan.color} ${
                 plan.highlight ? "ring-1 ring-indigo-500/40 shadow-lg shadow-indigo-500/10" : ""
-              } ${plan.badge ? "mt-3" : ""}`}
+              } ${plan.badge ? "mt-3" : ""} ${isComingSoon ? "opacity-60" : ""}`}
             >
               {/* Badge */}
               {plan.badge && (
@@ -328,25 +329,34 @@ export default function UpgradePage() {
               </div>
 
               {/* Price */}
-              <div className="flex items-baseline gap-2 mb-1 flex-wrap">
-                <span className="text-3xl font-bold text-foreground">
-                  {billingType === "subscription"
-                    ? SUBSCRIPTION_PRICES[plan.key]
-                    : isNewUser && !isAlreadyPaid
-                      ? DISCOUNTED_PRICES[plan.key]
-                      : ONCE_OFF_PRICES[plan.key]}
-                </span>
-                <span className="text-sm text-muted-foreground">/mo</span>
-                {billingType === "once_off" && isNewUser && !isAlreadyPaid && (
-                  <span className="text-sm text-muted-foreground line-through">{ONCE_OFF_PRICES[plan.key]}</span>
-                )}
-              </div>
-              {billingType === "subscription" ? (
-                <p className="text-[11px] text-emerald-400 mb-3">
-                  Save {plan.key === "graduate" ? "R5" : plan.key === "professional" ? "R14" : "R100"}/mo vs once-off · Cancel anytime
-                </p>
+              {isComingSoon ? (
+                <div className="mb-4">
+                  <p className="text-2xl font-bold text-white/30">Coming Soon</p>
+                  <p className="text-[11px] text-white/25 mt-1">We&apos;re building this — join the waitlist to be first in line</p>
+                </div>
               ) : (
-                <p className="text-[11px] text-muted-foreground mb-3">Once-off · 30 days access · No auto-renewal</p>
+                <>
+                  <div className="flex items-baseline gap-2 mb-1 flex-wrap">
+                    <span className="text-3xl font-bold text-foreground">
+                      {billingType === "subscription"
+                        ? SUBSCRIPTION_PRICES[plan.key]
+                        : isNewUser && !isAlreadyPaid
+                          ? DISCOUNTED_PRICES[plan.key]
+                          : ONCE_OFF_PRICES[plan.key]}
+                    </span>
+                    <span className="text-sm text-muted-foreground">/mo</span>
+                    {billingType === "once_off" && isNewUser && !isAlreadyPaid && (
+                      <span className="text-sm text-muted-foreground line-through">{ONCE_OFF_PRICES[plan.key]}</span>
+                    )}
+                  </div>
+                  {billingType === "subscription" ? (
+                    <p className="text-[11px] text-emerald-400 mb-3">
+                      Save {plan.key === "graduate" ? "R5" : plan.key === "professional" ? "R14" : "R100"}/mo vs once-off · Cancel anytime
+                    </p>
+                  ) : (
+                    <p className="text-[11px] text-muted-foreground mb-3">Once-off · 30 days access · No auto-renewal</p>
+                  )}
+                </>
               )}
 
               {/* Features */}
@@ -360,7 +370,15 @@ export default function UpgradePage() {
               </ul>
 
               {/* CTA */}
-              {isCurrent ? (
+              {isComingSoon ? (
+                <a
+                  href="mailto:hello@careerintelsa.co.za?subject=Recruiter Plan Waitlist"
+                  className="w-full flex items-center justify-center gap-1.5 py-2 px-4 rounded-lg border border-white/15 text-white/40 text-sm font-medium hover:border-white/25 hover:text-white/60 transition-colors"
+                >
+                  Join Waitlist
+                  <ChevronRight className="w-3.5 h-3.5" />
+                </a>
+              ) : isCurrent ? (
                 <Button variant="outline" size="sm" disabled className="w-full opacity-60">
                   <Check className="w-3.5 h-3.5 mr-1.5" />
                   Current Plan

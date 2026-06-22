@@ -15,6 +15,7 @@ const isPublicRoute = createRouteMatcher([
   "/r/(.*)",               // referral redirect — sets cookie then redirects to sign-up
   "/api/career/demand(.*)",
   "/api/payfast/notify",   // PayFast ITN webhook — unauthenticated POST from PayFast servers
+  "/api/credits/itn",     // PayFast ITN for credit pack purchases — unauthenticated POST from PayFast servers
   "/api/cron/(.*)",        // Vercel cron jobs — protected by CRON_SECRET, not Clerk
   "/api/user/score/(.*)",  // public score card API
 ]);

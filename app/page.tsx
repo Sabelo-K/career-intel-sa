@@ -173,7 +173,7 @@ export default function LandingPage() {
         {/* Background effects */}
         <div className="absolute inset-0 grid-bg opacity-50" />
         <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] rounded-full bg-indigo-600/8 blur-[120px]" />
-        <div className="absolute top-0 right-0 w-96 h-96 rounded-full bg-violet-600/10 blur-[100px] animate-blob" />
+        <div className="absolute top-0 right-0 w-96 h-96 rounded-full bg-[rgba(165,66,63,0.14)] blur-[100px] animate-blob" />
         <div className="absolute bottom-0 left-0 w-80 h-80 rounded-full bg-indigo-600/8 blur-[100px] animate-blob animation-delay-4000" />
 
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">

@@ -4,51 +4,64 @@
 
 @layer base {
   :root {
-    /* ── Highveld Glass colour tokens ─────────────────────────────────────── */
-    --background:        263 50%  3%;   /* #09060f  deep cosmic black        */
-    --foreground:        250 30% 94%;   /* near-white with a violet tint      */
+    /* ── Shweshwe Frost colour tokens ─────────────────────────────────────── */
+    /* Deep indigo ink, the shweshwe discharge-print's ground colour, with a  */
+    /* seal-red ember reserved for warmth and destructive states.            */
+    --background:        231 42%  5%;   /* #090b16  indigo-black ink         */
+    --foreground:        228 28% 94%;   /* near-white, faint indigo tint     */
 
-    --card:              263 45%  8%;   /* #110d1f  dark glass base           */
-    --card-foreground:   250 30% 94%;
+    --card:              231 36% 10%;   /* #12152a  dark indigo glass base   */
+    --card-foreground:   228 28% 94%;
 
-    --popover:           263 45%  8%;
-    --popover-foreground:250 30% 94%;
+    --popover:           231 36% 10%;
+    --popover-foreground:228 28% 94%;
 
-    --primary:           262 83% 67%;   /* violet #8b5cf6                    */
+    --primary:           231 58% 56%;   /* shweshwe indigo #4A5FC7           */
     --primary-foreground:  0  0% 100%;
 
-    --secondary:         263 40% 11%;   /* slightly lighter glass             */
-    --secondary-foreground: 250 25% 85%;
+    --secondary:         231 32% 13%;   /* slightly lighter indigo glass     */
+    --secondary-foreground: 228 22% 85%;
 
-    --muted:             263 40% 11%;
-    --muted-foreground:  263 15% 62%;   /* readable lavender-grey             */
+    --muted:             231 32% 13%;
+    --muted-foreground:  228 14% 64%;   /* readable indigo-grey              */
 
-    --accent:            262 83% 67%;
+    --accent:            231 58% 56%;
     --accent-foreground:   0  0% 100%;
 
-    --destructive:         0 84% 60%;
+    --destructive:         4 55% 51%;   /* seal red #a5423f                  */
     --destructive-foreground: 0 0% 100%;
 
-    --border:            263 30% 14%;   /* subtle purple border               */
-    --input:             263 40% 11%;
-    --ring:              262 83% 67%;
+    --border:            231 24% 18%;   /* subtle indigo border              */
+    --input:             231 32% 13%;
+    --ring:              231 58% 56%;
     --radius:            0.75rem;
   }
 }
 
-/* ── Cosmic background — fixed so it shows through all glass panels ───────── */
+/* ── Shweshwe backdrop — fixed so it shows through all glass panels ───────── */
+/* Ambient indigo/seal bloom plus the discharge-print rosette weave, rendered */
+/* as pale dots on ink so it reads as woven texture rather than pattern noise.*/
 body::before {
   content: '';
   position: fixed;
   inset: 0;
-  background:
-    radial-gradient(ellipse at 18% 35%,  rgba(139, 92, 246, 0.38) 0%, transparent 50%),
-    radial-gradient(ellipse at 82% 10%,  rgba(249,115,  22, 0.34) 0%, transparent 45%),
-    radial-gradient(ellipse at 60% 90%,  rgba( 16,185, 129, 0.20) 0%, transparent 42%),
-    radial-gradient(ellipse at 78% 52%,  rgba(236, 72, 153, 0.16) 0%, transparent 38%),
-    radial-gradient(ellipse at 28% 78%,  rgba(139, 92, 246, 0.18) 0%, transparent 40%),
-    radial-gradient(ellipse at 50% 50%,  rgba( 99,102, 241, 0.08) 0%, transparent 70%),
-    #09060f;
+  background-color: #090b16;
+  background-image:
+    radial-gradient(ellipse at 82% 6%,   rgba( 74, 95,199, 0.34) 0%, transparent 52%),
+    radial-gradient(ellipse at 12% 88%,  rgba(165, 66, 63, 0.16) 0%, transparent 46%),
+    radial-gradient(ellipse at 50% 45%,  rgba( 40, 57,156, 0.14) 0%, transparent 65%),
+    radial-gradient(circle at 50% 50%,   rgba(255,255,255,0.045) 1.4px, transparent 1.8px),
+    radial-gradient(circle at 0% 0%,     rgba(255,255,255,0.032) 1.1px, transparent 1.5px),
+    radial-gradient(circle at 100% 100%, rgba(255,255,255,0.032) 1.1px, transparent 1.5px);
+  background-size:
+    100% 100%, 100% 100%, 100% 100%,
+    30px 30px, 30px 30px, 30px 30px;
+  background-position:
+    0 0, 0 0, 0 0,
+    0 0, 0 0, 15px 15px;
+  background-repeat:
+    no-repeat, no-repeat, no-repeat,
+    repeat, repeat, repeat;
   z-index: 0;
   pointer-events: none;
 }
@@ -72,14 +85,15 @@ body::before {
 
   ::-webkit-scrollbar        { width: 5px; height: 5px; }
   ::-webkit-scrollbar-track  { background: transparent; }
-  ::-webkit-scrollbar-thumb  { background: rgba(139,92,246,0.25); border-radius: 99px; }
-  ::-webkit-scrollbar-thumb:hover { background: rgba(139,92,246,0.45); }
+  ::-webkit-scrollbar-thumb  { background: rgba(74,95,199,0.28); border-radius: 99px; }
+  ::-webkit-scrollbar-thumb:hover { background: rgba(74,95,199,0.48); }
 }
 
 /* ── Glass card override — applies to all bg-card elements ───────────────── */
-/* Dark frosted glass: dark base lets gradient show as soft tint, not flood.  */
+/* Dark frosted glass: indigo-ink base lets the shweshwe backdrop show as a   */
+/* soft tint through the frost, not flood the panel.                         */
 .bg-card {
-  background-color: rgba(9, 6, 15, 0.62) !important;
+  background-color: rgba(9, 11, 22, 0.62) !important;
   backdrop-filter: blur(24px) saturate(160%);
   -webkit-backdrop-filter: blur(24px) saturate(160%);
 }
@@ -105,7 +119,7 @@ body::before {
 
 /* Secondary / muted panels (used inside cards) */
 .bg-secondary {
-  background-color: rgba(9, 6, 15, 0.45) !important;
+  background-color: rgba(9, 11, 22, 0.45) !important;
   backdrop-filter: blur(14px) saturate(150%);
   -webkit-backdrop-filter: blur(14px) saturate(150%);
 }
@@ -115,7 +129,7 @@ body::before {
   position: relative;
   border-radius: var(--radius);
   border: 1px solid rgba(255,255,255,0.10);
-  background: rgba(9, 6, 15, 0.62);
+  background: rgba(9, 11, 22, 0.62);
   backdrop-filter: blur(24px) saturate(160%);
   -webkit-backdrop-filter: blur(24px) saturate(160%);
   padding: 1.25rem;
@@ -132,16 +146,17 @@ body::before {
 }
 
 .stat-card:hover {
-  border-color: rgba(139,92,246,0.35);
+  border-color: rgba(74,95,199,0.40);
   background: rgba(255, 255, 255, 0.08);
-  box-shadow: 0 0 32px rgba(139,92,246,0.12);
+  box-shadow: 0 0 32px rgba(74,95,199,0.14);
 }
 
 @layer utilities {
   /* ── Gradient text helpers ─────────────────────────────────────────────── */
+  /* Shweshwe pairing: indigo → seal red, the discharge-print's two inks.     */
   .gradient-text {
     @apply bg-clip-text text-transparent;
-    background-image: linear-gradient(90deg, #a78bfa, #fb923c);
+    background-image: linear-gradient(90deg, #7C8EE8, #C6605C);
   }
 
   .gradient-text-gold {
@@ -154,7 +169,7 @@ body::before {
 
   /* ── Glass utility ─────────────────────────────────────────────────────── */
   .glass-card {
-    background: rgba(9, 6, 15, 0.62) !important;
+    background: rgba(9, 11, 22, 0.62) !important;
     backdrop-filter: blur(24px) saturate(160%);
     -webkit-backdrop-filter: blur(24px) saturate(160%);
     border: 1px solid rgba(255,255,255,0.12) !important;
@@ -178,11 +193,12 @@ body::before {
   }
 
   /* ── Glow helpers ──────────────────────────────────────────────────────── */
-  .glow-violet  { box-shadow: 0 0 40px rgba(139, 92,246,0.20); }
-  .glow-orange  { box-shadow: 0 0 40px rgba(249,115, 22,0.18); }
-  .glow-indigo  { box-shadow: 0 0 40px rgba( 99,102,241,0.18); }
+  .glow-violet  { box-shadow: 0 0 40px rgba( 74, 95,199,0.22); }
+  .glow-orange  { box-shadow: 0 0 40px rgba(165, 66, 63,0.20); }
+  .glow-indigo  { box-shadow: 0 0 40px rgba( 74, 95,199,0.22); }
   .glow-gold    { box-shadow: 0 0 40px rgba(245,158, 11,0.18); }
   .glow-emerald { box-shadow: 0 0 40px rgba( 16,185,129,0.18); }
+  .glow-seal    { box-shadow: 0 0 40px rgba(165, 66, 63,0.22); }
 
   /* ── Cosmic orb helper (decorative blobs) ──────────────────────────────── */
   .cosmic-orb {
@@ -228,7 +244,7 @@ body::before {
 }
 
 .recharts-tooltip-wrapper .recharts-default-tooltip {
-  background: rgba(17,13,31,0.92) !important;
+  background: rgba(18,21,42,0.92) !important;
   border: 1px solid rgba(255,255,255,0.12) !important;
   border-radius: 10px !important;
   padding: 12px !important;
@@ -238,21 +254,21 @@ body::before {
 /* ── Clerk overrides ──────────────────────────────────────────────────────── */
 .cl-rootBox  { width: 100%; }
 .cl-card {
-  background: rgba(17,13,31,0.85) !important;
+  background: rgba(18,21,42,0.85) !important;
   backdrop-filter: blur(24px) !important;
   border: 1px solid rgba(255,255,255,0.10) !important;
 }
 .cl-headerTitle, .cl-headerSubtitle, .cl-formFieldLabel {
-  color: hsl(250 30% 94%) !important;
+  color: hsl(228 28% 94%) !important;
 }
 .cl-formFieldInput {
   background: rgba(255,255,255,0.07) !important;
   border-color: rgba(255,255,255,0.12) !important;
-  color: hsl(250 30% 94%) !important;
+  color: hsl(228 28% 94%) !important;
   backdrop-filter: blur(10px) !important;
 }
-.cl-footerActionLink { color: #a78bfa !important; }
+.cl-footerActionLink { color: #7C8EE8 !important; }
 .cl-formButtonPrimary {
-  background: linear-gradient(135deg, #8b5cf6, #f97316) !important;
+  background: linear-gradient(135deg, #4A5FC7, #A5423F) !important;
   border: none !important;
 }

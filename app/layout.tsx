@@ -51,10 +51,40 @@ export const viewport: Viewport = {
   themeColor: "#050B1A",
 };
 
+const JSON_LD = {
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  name: "CareerIntel SA",
+  url: "https://careerintelsa.co.za",
+  applicationCategory: "BusinessApplication",
+  operatingSystem: "Web",
+  description:
+    "South Africa's AI-powered career intelligence platform. Build CVs, benchmark salaries in ZAR, analyse skills gaps, and get AI career coaching for 249+ SA careers.",
+  inLanguage: ["en-ZA", "zu", "xh", "af", "st", "tn", "nso"],
+  offers: {
+    "@type": "Offer",
+    price: "0",
+    priceCurrency: "ZAR",
+    description: "Free tier — no credit card required",
+  },
+  publisher: {
+    "@type": "Organization",
+    name: "CareerIntel SA",
+    url: "https://careerintelsa.co.za",
+    areaServed: "ZA",
+  },
+};
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <ClerkProvider>
       <html lang="en" className="dark" suppressHydrationWarning>
+        <head>
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{ __html: JSON.stringify(JSON_LD) }}
+          />
+        </head>
         <body className={`${inter.variable} font-sans`}>
           {/* Inline script: apply saved theme before first paint to avoid flash */}
           <script dangerouslySetInnerHTML={{ __html: `

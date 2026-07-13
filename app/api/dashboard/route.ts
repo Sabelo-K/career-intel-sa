@@ -6,6 +6,7 @@ import { NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { db } from "@/lib/db";
 import { isNewUserDiscountEligible, discountDaysRemaining } from "@/lib/payfast";
+import { getEffectivePlan } from "@/lib/plan-gate";
 
 export async function GET() {
   try {
@@ -40,6 +41,13 @@ export async function GET() {
     }
 
     const p = dbUser.profile;
+
+    // ── Effective plan (auto-downgrades an expired paid plan to FREE) ──────────
+    // Without this the UI would keep showing the stale DB plan until the user
+    // next hit a gated feature. getEffectivePlan also self-heals the DB row.
+    const effective = await getEffectivePlan(dbUser.id);
+    const planExpired = dbUser.plan !== "FREE" && effective.plan === "FREE";
+    const effectivePlanExpiresAt = effective.plan === "FREE" ? null : dbUser.planExpiresAt;
 
     // ── Profile strength (0–100) ──────────────────────────────────────────────
     const PROFILE_STEPS = [
@@ -101,14 +109,15 @@ export async function GET() {
       hasCV: (dbUser.cvs?.length ?? 0) > 0,
       recentSessions,
       recentSkillsGaps,
-      plan: dbUser.plan,
-      planKey: dbUser.planKey ?? null,
-      planExpiresAt: dbUser.planExpiresAt ?? null,
+      plan: effective.plan,
+      planKey: effective.planKey,
+      planExpiresAt: effectivePlanExpiresAt ?? null,
+      planExpired,   // true if a paid plan just lapsed → UI can show a "your plan expired" notice
       billingType: dbUser.billingType ?? "ONCE_OFF",
       onboarded: dbUser.onboarded,
       profileMissing,
-      isNewUser: isNewUserDiscountEligible(dbUser.createdAt, dbUser.plan),
-      daysLeftOnDiscount: discountDaysRemaining(dbUser.createdAt, dbUser.plan),
+      isNewUser: isNewUserDiscountEligible(dbUser.createdAt, effective.plan),
+      daysLeftOnDiscount: discountDaysRemaining(dbUser.createdAt, effective.plan),
     });
   } catch (err) {
     console.error("Dashboard GET error:", err);

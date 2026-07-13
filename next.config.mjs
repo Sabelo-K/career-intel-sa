@@ -39,8 +39,10 @@ const securityHeaders = [
       "connect-src 'self' https://*.clerk.accounts.dev https://clerk.careerintelsa.co.za https://api.adzuna.com https://o*.ingest.sentry.io",
       // Frames: Clerk hosted pages only
       "frame-src https://clerk.careerintelsa.co.za https://*.clerk.accounts.dev",
-      // Allow navigation to external sites (new tab links)
-      "form-action 'self'",
+      // Form POSTs: same-origin + PayFast checkout (live + sandbox).
+      // Credits & subscription checkout auto-submit a form to PayFast; without
+      // these the browser silently blocks the redirect and the button hangs.
+      "form-action 'self' https://www.payfast.co.za https://sandbox.payfast.co.za",
       // Workers: needed for PDF parsing
       "worker-src 'self' blob:",
     ].join("; "),

@@ -132,6 +132,7 @@ export default function UpgradePage() {
   const router         = useRouter();
   const [loading, setLoading]           = useState<PlanKey | null>(null);
   const [error, setError]               = useState<string | null>(null);
+  const [pending, setPending]           = useState<{ url: string; params: Record<string, unknown> } | null>(null);
   const [currentPlan, setCurrentPlan]   = useState<string>("FREE");
   const [currentPlanKey, setCurrentPlanKey] = useState<string | null>(null);
   const [isNewUser, setIsNewUser]       = useState(false);
@@ -149,15 +150,35 @@ export default function UpgradePage() {
       .catch(() => {});
   }, []);
 
+  const submitCheckoutForm = (url: string, params: Record<string, unknown>) => {
+    const form = document.createElement("form");
+    form.method = "POST";
+    form.action = url;
+    for (const [k, v] of Object.entries(params)) {
+      const input    = document.createElement("input");
+      input.type     = "hidden";
+      input.name     = k;
+      input.value    = String(v);
+      form.appendChild(input);
+    }
+    document.body.appendChild(form);
+    form.submit();
+  };
+
   const handleUpgrade = async (planKey: PlanKey) => {
     setLoading(planKey);
     setError(null);
+    setPending(null);
+
+    const controller = new AbortController();
+    const timeout    = setTimeout(() => controller.abort(), 15000);
 
     try {
       const res = await fetch("/api/payfast/checkout", {
         method:  "POST",
         headers: { "Content-Type": "application/json" },
         body:    JSON.stringify({ plan: planKey, billingType }),
+        signal:  controller.signal,
       });
 
       if (!res.ok) {
@@ -166,22 +187,22 @@ export default function UpgradePage() {
       }
 
       const { url, params } = await res.json();
+      if (!url || !params) throw new Error("Payment could not be prepared. Please try again.");
 
-      // Auto-submit a hidden form to PayFast (required for POST redirect)
-      const form = document.createElement("form");
-      form.method = "POST";
-      form.action = url;
-      for (const [k, v] of Object.entries(params)) {
-        const input    = document.createElement("input");
-        input.type     = "hidden";
-        input.name     = k;
-        input.value    = String(v);
-        form.appendChild(input);
-      }
-      document.body.appendChild(form);
-      form.submit();
+      // Attempt immediate redirect; if the browser blocks a programmatic
+      // submit after the await (transient-activation loss), the "Continue"
+      // button lets the user finish with a real click.
+      setPending({ url, params });
+      submitCheckoutForm(url, params);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Something went wrong");
+      const aborted = err instanceof DOMException && err.name === "AbortError";
+      setError(
+        aborted
+          ? "The payment service took too long to respond. Please try again."
+          : err instanceof Error ? err.message : "Something went wrong"
+      );
+    } finally {
+      clearTimeout(timeout);
       setLoading(null);
     }
   };
@@ -416,6 +437,25 @@ export default function UpgradePage() {
       {error && (
         <div className="text-center text-sm text-red-400 bg-red-500/10 border border-red-500/20 rounded-xl px-4 py-3">
           {error} — please try again or contact support@careerintel.co.za
+        </div>
+      )}
+
+      {/* Continue-to-payment fallback if the automatic redirect was blocked */}
+      {pending && (
+        <div className="flex flex-col sm:flex-row sm:items-center gap-3 bg-emerald-500/10 border border-emerald-500/25 rounded-xl px-4 py-3.5">
+          <div className="flex-1 text-center sm:text-left">
+            <p className="text-sm font-semibold text-foreground">Almost there</p>
+            <p className="text-xs text-muted-foreground mt-0.5">
+              If you weren&apos;t redirected automatically, continue to PayFast&rsquo;s secure checkout.
+            </p>
+          </div>
+          <button
+            onClick={() => submitCheckoutForm(pending.url, pending.params)}
+            className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-semibold transition-colors active:scale-95 whitespace-nowrap"
+          >
+            <Zap className="w-4 h-4" />
+            Continue to secure payment
+          </button>
         </div>
       )}
 

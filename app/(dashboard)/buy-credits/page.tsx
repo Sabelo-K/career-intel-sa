@@ -28,11 +28,14 @@ function submitPayFastForm(url: string, params: Record<string, string>) {
   form.submit();
 }
 
+interface PendingPay { url: string; params: Record<string, string>; packName: string; }
+
 export default function BuyCreditsPage() {
   const [balance,   setBalance]   = useState<number | null>(null);
-  const [loading,   setLoading]   = useState<string | null>(null); // packId being purchased
+  const [loading,   setLoading]   = useState<string | null>(null); // packId being fetched
   const [isPaid,    setIsPaid]    = useState(false);
   const [buyError,  setBuyError]  = useState<string | null>(null);
+  const [pending,   setPending]   = useState<PendingPay | null>(null); // ready-to-submit payment
 
   useEffect(() => {
     // Load current balance + plan status
@@ -48,18 +51,39 @@ export default function BuyCreditsPage() {
   async function handleBuy(packId: string) {
     setLoading(packId);
     setBuyError(null);
+    setPending(null);
+
+    // Abort a hung request instead of leaving the button spinning forever
+    const controller = new AbortController();
+    const timeout    = setTimeout(() => controller.abort(), 15000);
+
     try {
       const res  = await fetch("/api/credits/purchase", {
         method:  "POST",
         headers: { "Content-Type": "application/json" },
         body:    JSON.stringify({ packId }),
+        signal:  controller.signal,
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error ?? "Purchase failed");
+      if (!data.url || !data.params) throw new Error("Payment could not be prepared. Please try again.");
+
+      const packName = CREDIT_PACKS[packId as keyof typeof CREDIT_PACKS]?.name ?? "your credits";
+      // Try to redirect immediately. If the browser blocks a programmatic
+      // submit after the await (transient-activation loss), the "Continue"
+      // button below lets the user complete it with a real click.
+      setPending({ url: data.url, params: data.params, packName });
       submitPayFastForm(data.url, data.params);
     } catch (err) {
-      console.error(err);
-      setBuyError(err instanceof Error ? err.message : "Could not initiate payment. Please try again.");
+      console.error("[buy-credits]", err);
+      const aborted = err instanceof DOMException && err.name === "AbortError";
+      setBuyError(
+        aborted
+          ? "The payment service took too long to respond. Please try again."
+          : err instanceof Error ? err.message : "Could not initiate payment. Please try again."
+      );
+    } finally {
+      clearTimeout(timeout);
       setLoading(null);
     }
   }
@@ -94,6 +118,26 @@ export default function BuyCreditsPage() {
           <span className="flex-1">{buyError}</span>
           <button onClick={() => setBuyError(null)} className="text-red-400 hover:text-red-200">
             <X className="w-4 h-4" />
+          </button>
+        </div>
+      )}
+
+      {/* Continue-to-payment prompt — guarantees the redirect happens on a
+          real user click if the automatic submit was blocked by the browser */}
+      {pending && (
+        <div className="flex flex-col sm:flex-row sm:items-center gap-3 p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/25">
+          <div className="flex-1">
+            <p className="text-sm font-semibold text-foreground">Ready to pay for {pending.packName}</p>
+            <p className="text-xs text-muted-foreground mt-0.5">
+              If you weren&apos;t redirected automatically, continue to PayFast&rsquo;s secure checkout below.
+            </p>
+          </div>
+          <button
+            onClick={() => submitPayFastForm(pending.url, pending.params)}
+            className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-semibold transition-colors active:scale-95 whitespace-nowrap"
+          >
+            <Zap className="w-4 h-4" />
+            Continue to secure payment
           </button>
         </div>
       )}
@@ -172,7 +216,7 @@ export default function BuyCreditsPage() {
               {loading === pack.id ? (
                 <>
                   <Loader2 className="w-4 h-4 animate-spin" />
-                  Redirecting…
+                  Preparing…
                 </>
               ) : (
                 <>

@@ -818,8 +818,39 @@ body { font-family: 'Segoe UI', Arial, sans-serif; background: #f1f5f9; }
 
 // ─── Template dispatcher ──────────────────────────────────────────────────────
 
+// ATS-safe render for the thin-data fallback path (no extracted personal /
+// experience / education — e.g. analysis-only). Single column, standard headings.
+function generateAtsSafeThin(data: CVTemplateData, showWatermark = true): string {
+  const skills = (data.extractedSkills ?? []).filter(Boolean);
+  const keywords = (data.missingKeywords ?? []).filter(Boolean);
+  return `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"/>
+<title>CV — ATS-Safe</title>
+<style>
+${PRINT_BASE}
+body { font-family: Arial, Calibri, Helvetica, sans-serif; background: #fff; color: #111; }
+.page { max-width: 210mm; min-height: 297mm; margin: 0 auto; background: #fff; padding: 22mm 20mm; }
+.name { font-size: 22px; font-weight: 700; color: #000; margin-bottom: 4px; }
+.contact { font-size: 11px; color: #222; margin-bottom: 18px; }
+h2 { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: #000; border-bottom: 1px solid #000; padding-bottom: 3px; margin: 18px 0 9px; }
+.summary, .plain { font-size: 11.5px; line-height: 1.6; color: #111; }
+.foot { margin-top: 20px; font-size: 9.5px; color: #666; }
+@media print { .page { padding: 16mm 18mm; } }
+</style></head><body>
+<div class="page">
+  <div class="name">Your Name</div>
+  <div class="contact">Email  |  Phone  |  City, Province  |  LinkedIn</div>
+  ${data.improvedSummary ? `<h2>Professional Summary</h2><p class="summary">${esc(data.improvedSummary)}</p>` : ""}
+  ${skills.length ? `<h2>Skills</h2><p class="plain">${skills.map(esc).join(", ")}</p>` : ""}
+  ${keywords.length ? `<h2>Keywords to Add</h2><p class="plain">${keywords.map(esc).join(", ")}</p>` : ""}
+  ${showWatermark ? `<div class="foot">Created with CareerIntel SA · careerintelsa.co.za</div>` : ""}
+</div>
+<script>window.onload = function(){ window.print(); }<\/script>
+</body></html>`;
+}
+
 export function generateCV(templateId: string, data: CVTemplateData, showWatermark = true): string {
   switch (templateId) {
+    case "ats":        return generateAtsSafeThin(data, showWatermark);
     case "executive":  return generateExecutive(data, showWatermark);
     case "tech":       return generateTechFocus(data, showWatermark);
     case "graduate":   return generateGraduate(data, showWatermark);

@@ -771,6 +771,8 @@ export default function CVBuilderPage() {
   const [selectedTemplate, setSelectedTemplate] = useState("modern");
   const [expandedSection, setExpandedSection] = useState<string | null>("suggestions");
   const [isPaid, setIsPaid] = useState(false);
+  const [targetRole, setTargetRole] = useState("");
+  const [jobDescription, setJobDescription] = useState("");
   const fileRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -789,6 +791,8 @@ export default function CVBuilderPage() {
     try {
       const formData = new FormData();
       formData.append("file", file);
+      if (targetRole.trim())     formData.append("targetRole", targetRole.trim());
+      if (jobDescription.trim()) formData.append("jobDescription", jobDescription.trim());
 
       const res = await fetch("/api/cv/revamp", { method: "POST", body: formData });
       const data = await res.json();
@@ -943,6 +947,28 @@ export default function CVBuilderPage() {
             <div className="lg:col-span-3 space-y-5">
               {stage === "upload" && (
                 <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+                  {/* Optional ATS targeting — drives keyword match & score */}
+                  <div className="mb-4 bg-card border border-border rounded-2xl p-4 sm:p-5">
+                    <div className="flex items-center gap-2 mb-1">
+                      <Target className="w-4 h-4 text-indigo-400" />
+                      <h3 className="text-sm font-semibold text-foreground">Optimise for a specific job <span className="font-normal text-muted-foreground">(optional, but boosts your ATS score)</span></h3>
+                    </div>
+                    <p className="text-xs text-muted-foreground mb-3">Tell us the role and paste the job ad — we&apos;ll match your CV to its keywords and score the fit.</p>
+                    <input
+                      type="text"
+                      value={targetRole}
+                      onChange={(e) => setTargetRole(e.target.value)}
+                      placeholder="Target role — e.g. Data Analyst, Financial Manager"
+                      className="w-full mb-2 px-3 py-2 rounded-lg bg-secondary border border-input text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+                    />
+                    <textarea
+                      value={jobDescription}
+                      onChange={(e) => setJobDescription(e.target.value)}
+                      placeholder="Paste the job description here (optional) — we extract the keywords ATS software scans for."
+                      rows={3}
+                      className="w-full px-3 py-2 rounded-lg bg-secondary border border-input text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring resize-y"
+                    />
+                  </div>
                   <div
                     className={`relative border-2 border-dashed rounded-2xl p-12 text-center transition-all cursor-pointer ${
                       dragActive ? "border-indigo-500 bg-indigo-500/8" : "border-border hover:border-indigo-500/50 hover:bg-indigo-500/4"

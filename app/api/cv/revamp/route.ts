@@ -20,6 +20,8 @@ export async function POST(req: NextRequest) {
 
     const formData = await req.formData();
     const file = formData.get("file") as File | null;
+    const targetRole     = (formData.get("targetRole")     as string | null)?.trim() || undefined;
+    const jobDescription = (formData.get("jobDescription") as string | null)?.trim() || undefined;
 
     if (!file) {
       return NextResponse.json({ error: "No file provided" }, { status: 400 });
@@ -56,8 +58,8 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // ── AI parse + revamp ─────────────────────────────────────────────────────
-    const revamped = await parseAndRevampCV(text);
+    // ── AI parse + revamp (optimised against target role + job description) ───
+    const revamped = await parseAndRevampCV(text, { targetRole, jobDescription });
 
     // ── Save to DB (non-blocking) ─────────────────────────────────────────────
     try {

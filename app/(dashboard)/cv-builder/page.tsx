@@ -9,7 +9,7 @@ import { XpToast } from "@/components/gamification-panel";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Upload, FileText, Zap, Download, CheckCircle2, AlertCircle,
-  Star, RefreshCw, Sparkles, Target, Award,
+  Star, RefreshCw, Sparkles, Target, Award, TrendingUp,
   ChevronDown, ChevronUp, Plus, Trash2, ChevronRight, ChevronLeft,
   User, Briefcase, GraduationCap, Wrench,
 } from "lucide-react";
@@ -23,6 +23,10 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 interface CVAnalysisResult {
   atsScore: number;
   recruiterScore: number;
+  originalAtsScore?: number;
+  originalRecruiterScore?: number;
+  keywordMatch?: number;
+  matchedKeywords?: string[];
   suggestions: string[];
   strengths: string[];
   weaknesses: string[];
@@ -103,7 +107,8 @@ const MOCK_ANALYSIS: CVAnalysisResult = {
 };
 
 const CV_TEMPLATES = [
-  { id: "modern", name: "Modern Pro", description: "Clean, ATS-optimised, SA market proven", recommended: true },
+  { id: "ats", name: "ATS-Safe", description: "Single-column, machine-parseable — best for online applications", recommended: true },
+  { id: "modern", name: "Modern Pro", description: "Two-column design — best for email/hand delivery", recommended: false },
   { id: "executive", name: "Executive", description: "Premium design for senior roles R80k+", recommended: false },
   { id: "tech", name: "Tech Focus", description: "Developer-optimised with skills showcase", recommended: false },
   { id: "graduate", name: "Graduate", description: "Perfect for entry-level & internship applications", recommended: false },
@@ -768,7 +773,7 @@ export default function CVBuilderPage() {
   const [fileName, setFileName] = useState<string | null>(null);
   const [analysis, setAnalysis] = useState<RevampedCV | null>(null);
   const [revampError, setRevampError] = useState<string | null>(null);
-  const [selectedTemplate, setSelectedTemplate] = useState("modern");
+  const [selectedTemplate, setSelectedTemplate] = useState("ats");
   const [expandedSection, setExpandedSection] = useState<string | null>("suggestions");
   const [isPaid, setIsPaid] = useState(false);
   const [targetRole, setTargetRole] = useState("");
@@ -814,6 +819,10 @@ export default function CVBuilderPage() {
         missingKeywords: Array.isArray(data.missingKeywords) ? data.missingKeywords : MOCK_ANALYSIS.missingKeywords,
         atsScore: typeof data.atsScore === "number" ? data.atsScore : MOCK_ANALYSIS.atsScore,
         recruiterScore: typeof data.recruiterScore === "number" ? data.recruiterScore : MOCK_ANALYSIS.recruiterScore,
+        originalAtsScore: typeof data.originalAtsScore === "number" ? data.originalAtsScore : undefined,
+        originalRecruiterScore: typeof data.originalRecruiterScore === "number" ? data.originalRecruiterScore : undefined,
+        keywordMatch: typeof data.keywordMatch === "number" ? data.keywordMatch : undefined,
+        matchedKeywords: Array.isArray(data.matchedKeywords) ? data.matchedKeywords : undefined,
         suggestions: Array.isArray(data.suggestions) ? data.suggestions : MOCK_ANALYSIS.suggestions,
         strengths: Array.isArray(data.strengths) ? data.strengths : MOCK_ANALYSIS.strengths,
         weaknesses: Array.isArray(data.weaknesses) ? data.weaknesses : MOCK_ANALYSIS.weaknesses,
@@ -942,6 +951,32 @@ export default function CVBuilderPage() {
               </motion.div>
             )}
           </AnimatePresence>
+
+          {/* Before → after improvement (real, computed delta) */}
+          {stage === "results" && analysis && typeof analysis.originalAtsScore === "number" && (
+            <motion.div
+              initial={{ opacity: 0, y: -8 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="mb-5 flex flex-col sm:flex-row sm:items-center gap-3 bg-emerald-500/8 border border-emerald-500/20 rounded-2xl px-4 py-3.5"
+            >
+              <div className="flex items-center gap-3 flex-1">
+                <TrendingUp className="w-5 h-5 text-emerald-400 flex-shrink-0" />
+                <div>
+                  <div className="text-sm font-semibold text-foreground">
+                    ATS score improved {analysis.originalAtsScore} <span className="text-emerald-400">→ {analysis.atsScore}</span>
+                    {analysis.atsScore > analysis.originalAtsScore && (
+                      <span className="ml-2 text-xs font-bold text-emerald-400">+{analysis.atsScore - analysis.originalAtsScore}</span>
+                    )}
+                  </div>
+                  <div className="text-xs text-muted-foreground">
+                    {typeof analysis.keywordMatch === "number"
+                      ? `${analysis.keywordMatch}% match to your target job's keywords`
+                      : "Add a target role or job description above for keyword-matched scoring"}
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          )}
 
           <div className="grid grid-cols-1 lg:grid-cols-5 gap-5">
             <div className="lg:col-span-3 space-y-5">

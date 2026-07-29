@@ -988,11 +988,88 @@ body { font-family: 'Segoe UI', Arial, sans-serif; background: #f3f4f6; }
 </body></html>`;
 }
 
-// ─── Revamped CV dispatcher (all 4 templates with real data) ─────────────────
+// ─── ATS-Safe template (single column, machine-parseable) ─────────────────────
+// Deliberately plain: one column, standard sans font, standard section headings,
+// no tables / sidebars / columns / icons / graphics / background colours. This is
+// what actually maximises the parse an ATS performs — the pretty templates score
+// worse inside real applicant-tracking software regardless of content.
+
+function esc(s: string): string {
+  return (s ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+}
+
+export function generateAtsSafe(data: CVBuiltData, showWatermark = true): string {
+  const { personal, summary, experience, education, skills, certifications } = data;
+  const fullName = personal.fullName.trim() || "Your Name";
+  const contactLine = [
+    personal.email, personal.phone,
+    [personal.location, personal.province].filter(Boolean).join(", "),
+    personal.linkedin, personal.website,
+  ].filter(Boolean).map(esc).join("  |  ");
+
+  const expHtml = experience.map((exp) => {
+    const lines = exp.description ? exp.description.split("\n").map((l) => l.trim()).filter(Boolean) : [];
+    const bullets = lines.map((l) => `<li>${esc(l.replace(/^[•\-–]\s*/, ""))}</li>`).join("");
+    const dates = `${esc(exp.startDate || "")}${(exp.startDate || exp.endDate || exp.current) ? " – " : ""}${exp.current ? "Present" : esc(exp.endDate || "")}`;
+    return `<div class="item">
+      <div class="item-head"><span class="role">${esc(exp.jobTitle || "Position")}</span><span class="dates">${dates}</span></div>
+      <div class="org">${esc(exp.company || "Company")}</div>
+      ${bullets ? `<ul>${bullets}</ul>` : ""}
+    </div>`;
+  }).join("");
+
+  const eduHtml = education.map((edu) => `<div class="item">
+      <div class="item-head"><span class="role">${esc(edu.qualification || "Qualification")}</span><span class="dates">${esc(edu.yearCompleted || "")}</span></div>
+      <div class="org">${esc(edu.institution || "Institution")}${edu.fieldOfStudy ? ` — ${esc(edu.fieldOfStudy)}` : ""}${edu.nqfLevel ? ` (NQF Level ${esc(edu.nqfLevel)})` : ""}</div>
+    </div>`).join("");
+
+  return `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"/>
+<title>CV — ${esc(fullName)}</title>
+<style>
+${PRINT_BASE}
+body { font-family: Arial, Calibri, Helvetica, sans-serif; background: #fff; color: #111; }
+.page { max-width: 210mm; min-height: 297mm; margin: 0 auto; background: #fff; padding: 22mm 20mm; }
+.name { font-size: 22px; font-weight: 700; color: #000; margin-bottom: 4px; letter-spacing: .3px; }
+.contact { font-size: 11px; color: #222; margin-bottom: 18px; }
+h2 { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: #000; border-bottom: 1px solid #000; padding-bottom: 3px; margin: 18px 0 9px; }
+.summary { font-size: 11.5px; line-height: 1.55; color: #111; }
+.item { margin-bottom: 12px; }
+.item-head { display: flex; justify-content: space-between; align-items: baseline; }
+.role { font-size: 12px; font-weight: 700; color: #000; }
+.dates { font-size: 10.5px; color: #333; white-space: nowrap; padding-left: 10px; }
+.org { font-size: 11px; font-style: italic; color: #222; margin: 1px 0 4px; }
+ul { margin: 4px 0 0 16px; padding: 0; }
+li { font-size: 11px; line-height: 1.5; color: #111; margin-bottom: 2px; }
+.plain { font-size: 11px; line-height: 1.7; color: #111; }
+.foot { margin-top: 20px; font-size: 9.5px; color: #666; }
+@media print { .page { padding: 16mm 18mm; } }
+</style></head><body>
+<div class="page">
+  <div class="name">${esc(fullName)}</div>
+  <div class="contact">${contactLine}</div>
+
+  ${summary ? `<h2>Professional Summary</h2><p class="summary">${esc(summary)}</p>` : ""}
+
+  ${experience.length > 0 ? `<h2>Work Experience</h2>${expHtml}` : ""}
+
+  ${education.length > 0 ? `<h2>Education</h2>${eduHtml}` : ""}
+
+  ${skills.length > 0 ? `<h2>Skills</h2><p class="plain">${skills.map(esc).join(", ")}</p>` : ""}
+
+  ${certifications.length > 0 ? `<h2>Certifications</h2><p class="plain">${certifications.map(esc).join(", ")}</p>` : ""}
+
+  ${showWatermark ? `<div class="foot">Created with CareerIntel SA · careerintelsa.co.za</div>` : ""}
+</div>
+<script>window.onload = function(){ window.print(); }<\/script>
+</body></html>`;
+}
+
+// ─── Revamped CV dispatcher (all templates with real data) ────────────────────
 // Used by the AI revamp flow where the user's actual data has been extracted.
 
 export function generateRevampedCV(templateId: string, data: CVBuiltData, showWatermark = true): string {
   switch (templateId) {
+    case "ats":       return generateAtsSafe(data, showWatermark);
     case "executive": return generateExecutiveFull(data, showWatermark);
     case "tech":      return generateTechFull(data, showWatermark);
     case "graduate":  return generateGraduateFull(data, showWatermark);

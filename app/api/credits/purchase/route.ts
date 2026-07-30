@@ -67,7 +67,10 @@ export async function POST(req: NextRequest) {
 
     params.signature = generateSignature(params);
 
-    console.log(`[credits/purchase] packId=${packId} user=${dbUser.id} url=${PAYFAST_URL}`);
+    console.log(
+      `[credits/purchase] packId=${packId} user=${dbUser.id} url=${PAYFAST_URL} ` +
+      `amount=${params.amount} passphraseSet=${Boolean(process.env.PAYFAST_PASSPHRASE)} sigLen=${params.signature.length}`
+    );
     return NextResponse.json({ url: PAYFAST_URL, params });
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err);

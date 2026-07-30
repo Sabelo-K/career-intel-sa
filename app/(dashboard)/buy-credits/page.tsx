@@ -163,13 +163,13 @@ export default function BuyCreditsPage() {
             transition={{ delay: i * 0.08 }}
             className={`relative bg-card border rounded-2xl p-5 flex flex-col gap-4 ${
               pack.popular
-                ? "border-amber-500/40 shadow-lg shadow-amber-500/10"
+                ? "border-amber-500/40 shadow-lg shadow-amber-500/10 mt-3 pt-7"
                 : "border-border"
             }`}
           >
             {pack.popular && (
-              <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                <span className="bg-amber-500 text-black text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-wide">
+              <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10">
+                <span className="block whitespace-nowrap bg-amber-500 text-black text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-wide shadow">
                   Most Popular
                 </span>
               </div>

@@ -133,9 +133,24 @@ export function discountDaysRemaining(createdAt: Date, plan: string): number {
 // ── Signature generation ──────────────────────────────────────────────────────
 
 /**
+ * URL-encode a value EXACTLY like PHP's urlencode(), which is what PayFast's
+ * own reference implementation uses to build the signature string. This differs
+ * from JS encodeURIComponent(), which leaves ! ' ( ) * ~ unencoded — PayFast
+ * encodes them. If we don't match, PayFast recomputes a different signature
+ * from the posted data and rejects the payment ("signature mismatch") for any
+ * value containing those characters (e.g. a surname like O'Brien, or an em-dash
+ * in an item description).
+ */
+export function payfastEncode(value: string): string {
+  return encodeURIComponent(value)
+    .replace(/%20/g, "+")
+    .replace(/[!'()*~]/g, (c) => "%" + c.charCodeAt(0).toString(16).toUpperCase());
+}
+
+/**
  * Generates a PayFast MD5 signature from a parameter object.
  * Params must be in the ORDER they will appear in the form / ITN post.
- * Empty values are excluded.
+ * Empty values are excluded (checkout); included for ITN verification.
  */
 export function generateSignature(
   data: Record<string, string>,
@@ -148,14 +163,14 @@ export function generateSignature(
     if (key === "signature") continue;
     const strVal = String(val ?? "").trim();
     if (skipEmpty && strVal === "") continue;
-    payload += `${key}=${encodeURIComponent(strVal).replace(/%20/g, "+")}&`;
+    payload += `${key}=${payfastEncode(strVal)}&`;
   }
 
   // Remove trailing &
   payload = payload.slice(0, -1);
 
   if (passphrase) {
-    payload += `&passphrase=${encodeURIComponent(passphrase.trim()).replace(/%20/g, "+")}`;
+    payload += `&passphrase=${payfastEncode(passphrase.trim())}`;
   }
 
   return crypto.createHash("md5").update(payload).digest("hex");

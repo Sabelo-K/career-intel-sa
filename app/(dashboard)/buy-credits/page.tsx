@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import { Zap, Crown, CheckCircle2, Coins, MessageCircle, Target, GitBranch, Loader2, AlertCircle, X } from "lucide-react";
 import Link from "next/link";
@@ -13,21 +13,6 @@ const CREDIT_USES = [
   { icon: GitBranch,     label: "Career Path simulation",cost: 3, color: "text-amber-400"  },
 ];
 
-function submitPayFastForm(url: string, params: Record<string, string>) {
-  const form = document.createElement("form");
-  form.method  = "POST";
-  form.action  = url;
-  for (const [key, value] of Object.entries(params)) {
-    const input = document.createElement("input");
-    input.type  = "hidden";
-    input.name  = key;
-    input.value = value;
-    form.appendChild(input);
-  }
-  document.body.appendChild(form);
-  form.submit();
-}
-
 interface PendingPay { url: string; params: Record<string, string>; packName: string; }
 
 export default function BuyCreditsPage() {
@@ -36,6 +21,7 @@ export default function BuyCreditsPage() {
   const [isPaid,    setIsPaid]    = useState(false);
   const [buyError,  setBuyError]  = useState<string | null>(null);
   const [pending,   setPending]   = useState<PendingPay | null>(null); // ready-to-submit payment
+  const payFormRef = useRef<HTMLFormElement>(null);
 
   useEffect(() => {
     // Load current balance + plan status
@@ -47,6 +33,14 @@ export default function BuyCreditsPage() {
       if (dash.plan && dash.plan !== "FREE") setIsPaid(true);
     }).catch(() => setBalance(0));
   }, []);
+
+  // Best-effort auto-redirect once the payment is prepared. The visible submit
+  // button below is the guaranteed path if the browser blocks this.
+  useEffect(() => {
+    if (pending && payFormRef.current) {
+      try { payFormRef.current.submit(); } catch { /* user clicks the button */ }
+    }
+  }, [pending]);
 
   async function handleBuy(packId: string) {
     setLoading(packId);
@@ -69,11 +63,9 @@ export default function BuyCreditsPage() {
       if (!data.url || !data.params) throw new Error("Payment could not be prepared. Please try again.");
 
       const packName = CREDIT_PACKS[packId as keyof typeof CREDIT_PACKS]?.name ?? "your credits";
-      // Try to redirect immediately. If the browser blocks a programmatic
-      // submit after the await (transient-activation loss), the "Continue"
-      // button below lets the user complete it with a real click.
+      // Render a real <form> to PayFast (below). An effect auto-submits it, and
+      // the visible submit button is the guaranteed fallback.
       setPending({ url: data.url, params: data.params, packName });
-      submitPayFastForm(data.url, data.params);
     } catch (err) {
       console.error("[buy-credits]", err);
       const aborted = err instanceof DOMException && err.name === "AbortError";
@@ -122,10 +114,20 @@ export default function BuyCreditsPage() {
         </div>
       )}
 
-      {/* Continue-to-payment prompt — guarantees the redirect happens on a
-          real user click if the automatic submit was blocked by the browser */}
+      {/* Continue-to-payment — a REAL form posting straight to PayFast. Native
+          submit is the most reliable redirect and is immune to JS/gesture
+          quirks; an effect also auto-submits it for instant redirect. */}
       {pending && (
-        <div className="flex flex-col sm:flex-row sm:items-center gap-3 p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/25">
+        <form
+          ref={payFormRef}
+          action={pending.url}
+          method="POST"
+          target="_top"
+          className="flex flex-col sm:flex-row sm:items-center gap-3 p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/25"
+        >
+          {Object.entries(pending.params).map(([k, v]) => (
+            <input key={k} type="hidden" name={k} value={v} />
+          ))}
           <div className="flex-1">
             <p className="text-sm font-semibold text-foreground">Ready to pay for {pending.packName}</p>
             <p className="text-xs text-muted-foreground mt-0.5">
@@ -133,13 +135,13 @@ export default function BuyCreditsPage() {
             </p>
           </div>
           <button
-            onClick={() => submitPayFastForm(pending.url, pending.params)}
+            type="submit"
             className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-semibold transition-colors active:scale-95 whitespace-nowrap"
           >
             <Zap className="w-4 h-4" />
             Continue to secure payment
           </button>
-        </div>
+        </form>
       )}
 
       {/* Paid user notice */}

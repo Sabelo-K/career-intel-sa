@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import {
@@ -150,20 +150,15 @@ export default function UpgradePage() {
       .catch(() => {});
   }, []);
 
-  const submitCheckoutForm = (url: string, params: Record<string, unknown>) => {
-    const form = document.createElement("form");
-    form.method = "POST";
-    form.action = url;
-    for (const [k, v] of Object.entries(params)) {
-      const input    = document.createElement("input");
-      input.type     = "hidden";
-      input.name     = k;
-      input.value    = String(v);
-      form.appendChild(input);
+  const payFormRef = useRef<HTMLFormElement>(null);
+
+  // Best-effort auto-redirect once checkout params are ready; the visible
+  // submit button on the rendered form is the guaranteed fallback.
+  useEffect(() => {
+    if (pending && payFormRef.current) {
+      try { payFormRef.current.submit(); } catch { /* user clicks the button */ }
     }
-    document.body.appendChild(form);
-    form.submit();
-  };
+  }, [pending]);
 
   const handleUpgrade = async (planKey: PlanKey) => {
     setLoading(planKey);
@@ -189,11 +184,9 @@ export default function UpgradePage() {
       const { url, params } = await res.json();
       if (!url || !params) throw new Error("Payment could not be prepared. Please try again.");
 
-      // Attempt immediate redirect; if the browser blocks a programmatic
-      // submit after the await (transient-activation loss), the "Continue"
-      // button lets the user finish with a real click.
+      // Render a real <form> to PayFast (below). An effect auto-submits it and
+      // the visible submit button is the guaranteed fallback.
       setPending({ url, params });
-      submitCheckoutForm(url, params);
     } catch (err) {
       const aborted = err instanceof DOMException && err.name === "AbortError";
       setError(
@@ -440,9 +433,19 @@ export default function UpgradePage() {
         </div>
       )}
 
-      {/* Continue-to-payment fallback if the automatic redirect was blocked */}
+      {/* Continue-to-payment — real form posting straight to PayFast (native
+          submit is the reliable redirect; an effect also auto-submits it). */}
       {pending && (
-        <div className="flex flex-col sm:flex-row sm:items-center gap-3 bg-emerald-500/10 border border-emerald-500/25 rounded-xl px-4 py-3.5">
+        <form
+          ref={payFormRef}
+          action={pending.url}
+          method="POST"
+          target="_top"
+          className="flex flex-col sm:flex-row sm:items-center gap-3 bg-emerald-500/10 border border-emerald-500/25 rounded-xl px-4 py-3.5"
+        >
+          {Object.entries(pending.params).map(([k, v]) => (
+            <input key={k} type="hidden" name={k} value={String(v)} />
+          ))}
           <div className="flex-1 text-center sm:text-left">
             <p className="text-sm font-semibold text-foreground">Almost there</p>
             <p className="text-xs text-muted-foreground mt-0.5">
@@ -450,13 +453,13 @@ export default function UpgradePage() {
             </p>
           </div>
           <button
-            onClick={() => submitCheckoutForm(pending.url, pending.params)}
+            type="submit"
             className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-semibold transition-colors active:scale-95 whitespace-nowrap"
           >
             <Zap className="w-4 h-4" />
             Continue to secure payment
           </button>
-        </div>
+        </form>
       )}
 
       {/* Trust signals */}

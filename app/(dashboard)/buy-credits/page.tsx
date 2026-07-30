@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Zap, Crown, CheckCircle2, Coins, MessageCircle, Target, GitBranch, Loader2, AlertCircle, X } from "lucide-react";
 import Link from "next/link";
@@ -13,15 +13,12 @@ const CREDIT_USES = [
   { icon: GitBranch,     label: "Career Path simulation",cost: 3, color: "text-amber-400"  },
 ];
 
-interface PendingPay { url: string; params: Record<string, string>; packName: string; }
 
 export default function BuyCreditsPage() {
   const [balance,   setBalance]   = useState<number | null>(null);
   const [loading,   setLoading]   = useState<string | null>(null); // packId being fetched
   const [isPaid,    setIsPaid]    = useState(false);
   const [buyError,  setBuyError]  = useState<string | null>(null);
-  const [pending,   setPending]   = useState<PendingPay | null>(null); // ready-to-submit payment
-  const payFormRef = useRef<HTMLFormElement>(null);
 
   useEffect(() => {
     // Load current balance + plan status
@@ -34,50 +31,13 @@ export default function BuyCreditsPage() {
     }).catch(() => setBalance(0));
   }, []);
 
-  // Best-effort auto-redirect once the payment is prepared. The visible submit
-  // button below is the guaranteed path if the browser blocks this.
-  useEffect(() => {
-    if (pending && payFormRef.current) {
-      try { payFormRef.current.submit(); } catch { /* user clicks the button */ }
-    }
-  }, [pending]);
-
-  async function handleBuy(packId: string) {
+  function handleBuy(packId: string) {
     setLoading(packId);
     setBuyError(null);
-    setPending(null);
-
-    // Abort a hung request instead of leaving the button spinning forever
-    const controller = new AbortController();
-    const timeout    = setTimeout(() => controller.abort(), 15000);
-
-    try {
-      const res  = await fetch("/api/credits/purchase", {
-        method:  "POST",
-        headers: { "Content-Type": "application/json" },
-        body:    JSON.stringify({ packId }),
-        signal:  controller.signal,
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error ?? "Purchase failed");
-      if (!data.url || !data.params) throw new Error("Payment could not be prepared. Please try again.");
-
-      const packName = CREDIT_PACKS[packId as keyof typeof CREDIT_PACKS]?.name ?? "your credits";
-      // Render a real <form> to PayFast (below). An effect auto-submits it, and
-      // the visible submit button is the guaranteed fallback.
-      setPending({ url: data.url, params: data.params, packName });
-    } catch (err) {
-      console.error("[buy-credits]", err);
-      const aborted = err instanceof DOMException && err.name === "AbortError";
-      setBuyError(
-        aborted
-          ? "The payment service took too long to respond. Please try again."
-          : err instanceof Error ? err.message : "Could not initiate payment. Please try again."
-      );
-    } finally {
-      clearTimeout(timeout);
-      setLoading(null);
-    }
+    // Full-page navigation to the server-driven checkout. A fresh top-level
+    // document gets the current CSP and reliably posts to PayFast — no in-app
+    // fetch/form that a stale SPA-session CSP could block.
+    window.location.href = `/api/credits/checkout?packId=${encodeURIComponent(packId)}`;
   }
 
   return (
@@ -114,35 +74,6 @@ export default function BuyCreditsPage() {
         </div>
       )}
 
-      {/* Continue-to-payment — a REAL form posting straight to PayFast. Native
-          submit is the most reliable redirect and is immune to JS/gesture
-          quirks; an effect also auto-submits it for instant redirect. */}
-      {pending && (
-        <form
-          ref={payFormRef}
-          action={pending.url}
-          method="POST"
-          target="_top"
-          className="flex flex-col sm:flex-row sm:items-center gap-3 p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/25"
-        >
-          {Object.entries(pending.params).map(([k, v]) => (
-            <input key={k} type="hidden" name={k} value={v} />
-          ))}
-          <div className="flex-1">
-            <p className="text-sm font-semibold text-foreground">Ready to pay for {pending.packName}</p>
-            <p className="text-xs text-muted-foreground mt-0.5">
-              If you weren&apos;t redirected automatically, continue to PayFast&rsquo;s secure checkout below.
-            </p>
-          </div>
-          <button
-            type="submit"
-            className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-semibold transition-colors active:scale-95 whitespace-nowrap"
-          >
-            <Zap className="w-4 h-4" />
-            Continue to secure payment
-          </button>
-        </form>
-      )}
 
       {/* Paid user notice */}
       {isPaid && (

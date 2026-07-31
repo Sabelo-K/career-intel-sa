@@ -93,16 +93,22 @@ export async function GET(req: NextRequest) {
 
     const html = `<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Redirecting to secure payment…</title></head>
-<body style="font-family:system-ui,sans-serif;background:#0b0b12;color:#e9e9f2;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;margin:0;gap:20px;text-align:center;padding:24px">
-<div style="width:34px;height:34px;border:3px solid rgba(255,255,255,.2);border-top-color:#8b9bff;border-radius:50%;animation:spin 1s linear infinite"></div>
-<p style="font-size:15px">Taking you to PayFast’s secure checkout…</p>
+<title>Continue to secure payment</title></head>
+<body style="font-family:system-ui,sans-serif;background:#0b0b12;color:#e9e9f2;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;margin:0;gap:18px;text-align:center;padding:24px">
+<p style="font-size:16px;font-weight:600;margin:0">You’re paying R${attr(pack.amountRands.toString())} for the ${attr(pack.name)}</p>
+<p style="font-size:13px;color:#9b9fb0;margin:0;max-width:24rem">Click below to continue to PayFast’s secure checkout. You’ll be redirected to complete your payment.</p>
 <form id="pf" action="${attr(PAYFAST_URL)}" method="POST">
 ${inputs}
-<button type="submit" style="margin-top:8px;background:#5b5bd6;color:#fff;border:0;border-radius:10px;padding:12px 22px;font-size:14px;font-weight:600;cursor:pointer">Continue to PayFast</button>
+<button type="submit" style="background:#5b5bd6;color:#fff;border:0;border-radius:12px;padding:15px 32px;font-size:16px;font-weight:700;cursor:pointer;box-shadow:0 8px 24px -8px rgba(91,91,214,.6)">Continue to PayFast →</button>
 </form>
-<style>@keyframes spin{to{transform:rotate(360deg)}}</style>
-<script>setTimeout(function(){document.getElementById('pf').submit();},250);</script>
+<a href="/buy-credits" style="color:#8b9bff;font-size:13px;text-decoration:none">← Cancel</a>
+<p id="hint" style="font-size:12px;color:#6b6f80;margin-top:8px;max-width:26rem;display:none">Nothing happened? A browser ad-blocker or privacy extension may be blocking the payment. Try again in a private/incognito window.</p>
+<script>
+  // Auto-submit for a smooth redirect; if it's blocked, the button + hint remain.
+  var f = document.getElementById('pf');
+  try { f.submit(); } catch (e) {}
+  setTimeout(function(){ var h = document.getElementById('hint'); if (h) h.style.display = 'block'; }, 4000);
+</script>
 </body></html>`;
 
     return new NextResponse(html, {

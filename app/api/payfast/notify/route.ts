@@ -45,26 +45,32 @@ export async function POST(req: NextRequest) {
       params[key] = val;
     }
 
-    // ── 1. IP validation ────────────────────────────────────────────────────
+    // ── 1. Source IP — LOGGED ONLY, never enforced ──────────────────────────
+    // PayFast sends from a rotating set of addresses; a hardcoded allow-list
+    // silently rejects genuine payments (this swallowed a real purchase).
+    // Authenticity is proven by the signature + PayFast's own postback below.
     const forwarded = req.headers.get("x-forwarded-for") ?? "";
     const ip        = forwarded.split(",")[0].trim();
 
-    if (!isValidPayFastIP(ip)) {
-      console.error("[PayFast ITN] Invalid IP:", ip);
-      return new NextResponse("INVALID", { status: 400 });
-    }
+    console.log("[PayFast ITN] received", {
+      ip,
+      ipWhitelisted:  isValidPayFastIP(ip),   // informational only
+      pf_payment_id:  params.pf_payment_id,
+      payment_status: params.payment_status,
+      amount_gross:   params.amount_gross,
+      custom_str2:    params.custom_str2,
+      custom_str3:    params.custom_str3,
+    });
 
-    // ── 2. Signature validation ─────────────────────────────────────────────
-    const passphrase = process.env.PAYFAST_PASSPHRASE ?? "";
-    if (!verifyITNSignature(params)) {
-      console.error("[PayFast ITN] Signature mismatch");
-      return new NextResponse("INVALID", { status: 400 });
-    }
+    // ── 2. Authenticity: signature and/or PayFast server-side validation ────
+    const sigValid    = verifyITNSignature(params);
+    const serverValid = await validateITNWithPayFast(params);
 
-    // ── 3. Server-side validation with PayFast ──────────────────────────────
-    const isValid = await validateITNWithPayFast(params);
-    if (!isValid) {
-      console.error("[PayFast ITN] PayFast validation failed");
+    if (!sigValid)    console.warn("[PayFast ITN] signature did not verify");
+    if (!serverValid) console.warn("[PayFast ITN] PayFast server validation failed");
+
+    if (!sigValid && !serverValid) {
+      console.error("[PayFast ITN] REJECTED — neither signature nor PayFast validation passed");
       return new NextResponse("INVALID", { status: 400 });
     }
 

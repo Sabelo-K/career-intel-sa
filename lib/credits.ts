@@ -96,12 +96,31 @@ export async function spendCredits(
 
 /**
  * Add credits to a user's balance (called after a successful PayFast payment).
+ *
+ * `reference` should be the PayFast payment id (pf_payment_id / m_payment_id).
+ * When supplied, crediting is IDEMPOTENT: PayFast retries an ITN until it gets
+ * a 200, so without this a single purchase could be credited several times.
+ *
+ * Returns true if credits were added, false if this reference was already applied.
  */
 export async function addCredits(
   dbUserId:    string,
   packId:      CreditPackId,
-): Promise<void> {
+  reference?:  string,
+): Promise<boolean> {
   const pack = CREDIT_PACKS[packId];
+  const ref  = reference?.trim();
+
+  if (ref) {
+    const already = await db.creditTransaction.findFirst({
+      where: { userId: dbUserId, description: { contains: ref } },
+      select: { id: true },
+    });
+    if (already) return false;   // already credited — ignore the retry
+  }
+
+  const description =
+    `Purchased ${pack.name} (R${pack.amountRands})` + (ref ? ` [ref:${ref}]` : "");
 
   await db.$transaction([
     db.user.update({
@@ -109,12 +128,9 @@ export async function addCredits(
       data:  { credits: { increment: pack.credits } },
     }),
     db.creditTransaction.create({
-      data: {
-        userId:      dbUserId,
-        amount:      pack.credits,
-        description: `Purchased ${pack.name} (R${pack.amountRands})`,
-        packId,
-      },
+      data: { userId: dbUserId, amount: pack.credits, description, packId },
     }),
   ]);
+
+  return true;
 }

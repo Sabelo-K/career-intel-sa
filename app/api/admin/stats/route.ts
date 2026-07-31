@@ -48,12 +48,20 @@ export async function GET() {
     const revenueWindowEnd = new Date(nextMonthStart);
     revenueWindowEnd.setDate(revenueWindowEnd.getDate() + 31);
 
-    // Plan prices in ZAR
-    const PLAN_PRICES: Record<string, number> = {
-      graduate:     49,
-      professional: 99,
-      recruiter:    499,
+    // Plan prices in ZAR — must match lib/payfast.ts PLANS / SUBSCRIPTION_PLANS
+    const PLAN_PRICES_ONCE_OFF: Record<string, number> = {
+      graduate: 29, professional: 79, recruiter: 499,
     };
+    const PLAN_PRICES_SUBSCRIPTION: Record<string, number> = {
+      graduate: 24, professional: 65, recruiter: 399,
+    };
+    const planPrice = (planKey: string | null, billingType: string | null): number => {
+      const table = billingType === "SUBSCRIPTION" ? PLAN_PRICES_SUBSCRIPTION : PLAN_PRICES_ONCE_OFF;
+      return table[planKey ?? ""] ?? 0;
+    };
+
+    // Rand value of each credit pack — must match lib/credits.ts CREDIT_PACKS
+    const PACK_PRICES: Record<string, number> = { starter: 20, popular: 35, value: 60 };
 
     // ── Helper: safe count — accepts a THUNK so sync throws are also caught ──
     const safeCount = async (fn: () => Promise<number>): Promise<number> => {
@@ -80,8 +88,31 @@ export async function GET() {
       safeCount(() => db.careerPath.count()),
     ]);
 
+    // ── Credit-pack revenue (REAL data — from recorded purchases) ────────────
+    // Every credit purchase writes a CreditTransaction with the pack id and a
+    // positive amount. Referral bonuses and usage deductions are excluded
+    // because their packId is not a real pack.
+    let creditRevenueTotal     = 0;
+    let creditRevenueThisMonth = 0;
+    let creditPurchaseCount    = 0;
+    let creditTxns: { packId: string | null; createdAt: Date }[] = [];
+
+    try {
+      creditTxns = await db.creditTransaction.findMany({
+        where:  { amount: { gt: 0 }, packId: { in: Object.keys(PACK_PRICES) } },
+        select: { packId: true, createdAt: true },
+      });
+
+      creditPurchaseCount = creditTxns.length;
+      creditRevenueTotal  = creditTxns.reduce((s, t) => s + (PACK_PRICES[t.packId ?? ""] ?? 0), 0);
+      creditRevenueThisMonth = creditTxns
+        .filter((t) => new Date(t.createdAt) >= startOfMonth)
+        .reduce((s, t) => s + (PACK_PRICES[t.packId ?? ""] ?? 0), 0);
+    } catch { /* leave zeros */ }
+
     // ── Plan breakdown + revenue ─────────────────────────────────────────────
     let planBreakdown = { graduate: 0, professional: 0, recruiter: 0 };
+    let planRevenueThisMonth = 0;
     let revenueThisMonth = 0;
     let revenueData: { month: string; revenue: number; users: number }[] = [];
 
@@ -98,10 +129,13 @@ export async function GET() {
         recruiter:    activePaid.filter((u) => u.planKey === "recruiter").length,
       };
 
-      // All paid users with expiry for revenue calculations
+      // All paid users with expiry for revenue calculations.
+      // NB: this is an APPROXIMATION — plan revenue is inferred from
+      // planExpiresAt, and the expire-plans cron nulls that field, so plan
+      // revenue history fades as plans lapse. Credit revenue below is exact.
       const allPaid = await db.user.findMany({
         where: { plan: { not: "FREE" }, planExpiresAt: { not: null } },
-        select: { planKey: true, planExpiresAt: true },
+        select: { planKey: true, planExpiresAt: true, billingType: true },
       });
 
       // Revenue this calendar month (approximated via planExpiresAt window)
@@ -110,11 +144,12 @@ export async function GET() {
         const exp = new Date(u.planExpiresAt);
         return exp >= revenueWindowStart && exp < revenueWindowEnd;
       });
-      revenueThisMonth = paidThisMonth.reduce(
-        (sum, u) => sum + (PLAN_PRICES[u.planKey ?? ""] ?? 99), 0
+      planRevenueThisMonth = paidThisMonth.reduce(
+        (sum, u) => sum + planPrice(u.planKey, u.billingType), 0
       );
+      revenueThisMonth = planRevenueThisMonth + creditRevenueThisMonth;
 
-      // Revenue trend — last 6 months
+      // Revenue trend — last 6 months (plans + credits)
       revenueData = Array.from({ length: 6 }, (_, i) => {
         const tgt = new Date();
         tgt.setMonth(tgt.getMonth() - (5 - i));
@@ -128,13 +163,27 @@ export async function GET() {
           const exp = new Date(u.planExpiresAt);
           return exp >= wStart && exp < wEnd;
         });
+
+        // Exact credit revenue for this calendar month
+        const monthCredits = creditTxns
+          .filter((t) => {
+            const d = new Date(t.createdAt);
+            return d >= tgt && d < tgtNext;
+          })
+          .reduce((s, t) => s + (PACK_PRICES[t.packId ?? ""] ?? 0), 0);
+
         return {
           month:   tgt.toLocaleDateString("en-ZA", { month: "short" }),
-          revenue: monthUsers.reduce((s, u) => s + (PLAN_PRICES[u.planKey ?? ""] ?? 99), 0),
+          revenue: monthUsers.reduce((s, u) => s + planPrice(u.planKey, u.billingType), 0) + monthCredits,
           users:   monthUsers.length,
         };
       });
     } catch { /* leave zeros */ }
+
+    // If the plan block threw, still surface credit revenue.
+    if (revenueThisMonth === 0 && creditRevenueThisMonth > 0) {
+      revenueThisMonth = creditRevenueThisMonth;
+    }
 
     // ── Active today ─────────────────────────────────────────────────────────
     let activeToday = 0;
@@ -272,6 +321,10 @@ export async function GET() {
       featureUsage,
       planBreakdown,
       revenueThisMonth,
+      planRevenueThisMonth,
+      creditRevenueThisMonth,
+      creditRevenueTotal,
+      creditPurchaseCount,
       revenueData,
       subscribers,
       expiringCount,

@@ -33,7 +33,11 @@ interface AdminStats {
   topRoles:          { career: string; queries: number; color: string }[];
   featureUsage:      { type: string; count: number; color: string; pct: number }[];
   planBreakdown:     { graduate: number; professional: number; recruiter: number };
-  revenueThisMonth:  number;
+  revenueThisMonth:       number;
+  planRevenueThisMonth?:   number;
+  creditRevenueThisMonth?: number;
+  creditRevenueTotal?:     number;
+  creditPurchaseCount?:    number;
   revenueData:       { month: string; revenue: number; users: number }[];
   subscribers:       Subscriber[];
   expiringCount:     number;
@@ -497,11 +501,34 @@ export default function AdminPage() {
               </AreaChart>
             </ResponsiveContainer>
           )}
-          {/* Month total annotation */}
+          {/* Month total + source breakdown */}
           {!loading && s && (
-            <div className="flex items-center justify-between text-xs text-muted-foreground mt-3 pt-3 border-t border-border">
-              <span>This month so far</span>
-              <span className="font-semibold text-green-400">R{(s.revenueThisMonth ?? 0).toLocaleString()}</span>
+            <div className="mt-3 pt-3 border-t border-border space-y-1.5">
+              <div className="flex items-center justify-between text-xs">
+                <span className="text-muted-foreground">Subscriptions &amp; plans</span>
+                <span className="font-medium text-foreground">R{(s.planRevenueThisMonth ?? 0).toLocaleString()}</span>
+              </div>
+              <div className="flex items-center justify-between text-xs">
+                <span className="text-muted-foreground">
+                  Credit packs
+                  {typeof s.creditPurchaseCount === "number" && s.creditPurchaseCount > 0 && (
+                    <span className="ml-1 text-[10px] text-muted-foreground/70">
+                      ({s.creditPurchaseCount} purchase{s.creditPurchaseCount !== 1 ? "s" : ""} all-time)
+                    </span>
+                  )}
+                </span>
+                <span className="font-medium text-amber-400">R{(s.creditRevenueThisMonth ?? 0).toLocaleString()}</span>
+              </div>
+              <div className="flex items-center justify-between text-xs pt-1.5 border-t border-border/60">
+                <span className="text-muted-foreground">This month so far</span>
+                <span className="font-semibold text-green-400">R{(s.revenueThisMonth ?? 0).toLocaleString()}</span>
+              </div>
+              {typeof s.creditRevenueTotal === "number" && s.creditRevenueTotal > 0 && (
+                <div className="flex items-center justify-between text-[11px] text-muted-foreground/80">
+                  <span>Credit revenue all-time</span>
+                  <span>R{s.creditRevenueTotal.toLocaleString()}</span>
+                </div>
+              )}
             </div>
           )}
         </div>

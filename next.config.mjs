@@ -39,12 +39,12 @@ const securityHeaders = [
       "connect-src 'self' https://*.clerk.accounts.dev https://clerk.careerintelsa.co.za https://api.adzuna.com https://o*.ingest.sentry.io",
       // Frames: Clerk hosted pages only
       "frame-src https://clerk.careerintelsa.co.za https://*.clerk.accounts.dev",
-      // Form POSTs: same-origin + PayFast checkout. Must cover the WHOLE
-      // payfast.co.za domain (apex + all subdomains), because a valid payment
-      // POST to www.payfast.co.za redirects to a payment subdomain, and the
-      // browser checks form-action against the redirect target too — a narrow
-      // www-only rule silently blocks that hop and the checkout never lands.
-      "form-action 'self' https://payfast.co.za https://*.payfast.co.za https://www.payfast.co.za https://sandbox.payfast.co.za",
+      // NB: no `form-action` directive on purpose. A PayFast payment POST
+      // redirects onward to banks / 3-D Secure / instant-EFT providers whose
+      // domains can't be enumerated, and the browser enforces form-action
+      // against every redirect hop — so ANY allow-list silently blocks a valid
+      // payment. Omitting form-action (it does NOT fall back to default-src)
+      // lets payment redirects work while the rest of the CSP stays strict.
       // Workers: needed for PDF parsing
       "worker-src 'self' blob:",
     ].join("; "),

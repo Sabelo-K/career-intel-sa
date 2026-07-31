@@ -94,20 +94,39 @@ export async function GET(req: NextRequest) {
     const html = `<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
 <title>Continue to secure payment</title></head>
-<body style="font-family:system-ui,sans-serif;background:#0b0b12;color:#e9e9f2;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;margin:0;gap:18px;text-align:center;padding:24px">
+<body style="font-family:system-ui,sans-serif;background:#0b0b12;color:#e9e9f2;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;margin:0;gap:16px;text-align:center;padding:24px">
 <p style="font-size:16px;font-weight:600;margin:0">You’re paying R${attr(pack.amountRands.toString())} for the ${attr(pack.name)}</p>
-<p style="font-size:13px;color:#9b9fb0;margin:0;max-width:24rem">Click below to continue to PayFast’s secure checkout. You’ll be redirected to complete your payment.</p>
+<p style="font-size:13px;color:#9b9fb0;margin:0;max-width:24rem">Click below to continue to PayFast’s secure checkout.</p>
 <form id="pf" action="${attr(PAYFAST_URL)}" method="POST">
 ${inputs}
 <button type="submit" style="background:#5b5bd6;color:#fff;border:0;border-radius:12px;padding:15px 32px;font-size:16px;font-weight:700;cursor:pointer;box-shadow:0 8px 24px -8px rgba(91,91,214,.6)">Continue to PayFast →</button>
 </form>
 <a href="/buy-credits" style="color:#8b9bff;font-size:13px;text-decoration:none">← Cancel</a>
-<p id="hint" style="font-size:12px;color:#6b6f80;margin-top:8px;max-width:26rem;display:none">Nothing happened? A browser ad-blocker or privacy extension may be blocking the payment. Try again in a private/incognito window.</p>
+<div id="diag" style="margin-top:14px;max-width:32rem;font-size:12px;line-height:1.5;color:#8a8f9e"></div>
+<pre id="err" style="display:none;margin-top:8px;max-width:34rem;white-space:pre-wrap;word-break:break-word;background:#1a0f14;border:1px solid #7f1d1d;color:#fca5a5;border-radius:8px;padding:12px;font-size:12px;text-align:left"></pre>
 <script>
-  // Auto-submit for a smooth redirect; if it's blocked, the button + hint remain.
   var f = document.getElementById('pf');
-  try { f.submit(); } catch (e) {}
-  setTimeout(function(){ var h = document.getElementById('hint'); if (h) h.style.display = 'block'; }, 4000);
+  var diag = document.getElementById('diag');
+  var errBox = document.getElementById('err');
+  function showErr(msg){ errBox.style.display='block'; errBox.textContent += msg + "\\n"; }
+
+  // Report where we're posting so we can confirm the target.
+  diag.textContent = 'Posting to: ' + f.action;
+
+  // Capture ANY CSP violation and show it on-screen (no devtools needed).
+  document.addEventListener('securitypolicyviolation', function(e){
+    showErr('BLOCKED BY CSP\\n  directive: ' + e.violatedDirective + '\\n  blocked:   ' + e.blockedURI + '\\n  policy:    ' + (e.originalPolicy||'').slice(0,200));
+  });
+  // Surface any other JS error too.
+  window.addEventListener('error', function(e){ showErr('JS error: ' + (e.message||e)); });
+
+  // If we're still on this page 3s after load, the submit didn't navigate.
+  setTimeout(function(){
+    showErr('Still on the checkout page after 3s — the PayFast submission did not navigate. If no CSP line appears above, the POST was silently blocked by the browser/network.');
+  }, 3000);
+
+  // Try the auto-submit last, so listeners are already attached.
+  try { f.submit(); } catch (e) { showErr('submit() threw: ' + (e && e.message)); }
 </script>
 </body></html>`;
 

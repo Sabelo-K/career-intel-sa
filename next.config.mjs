@@ -39,10 +39,12 @@ const securityHeaders = [
       "connect-src 'self' https://*.clerk.accounts.dev https://clerk.careerintelsa.co.za https://api.adzuna.com https://o*.ingest.sentry.io",
       // Frames: Clerk hosted pages only
       "frame-src https://clerk.careerintelsa.co.za https://*.clerk.accounts.dev",
-      // Form POSTs: same-origin + PayFast checkout (live + sandbox).
-      // Credits & subscription checkout auto-submit a form to PayFast; without
-      // these the browser silently blocks the redirect and the button hangs.
-      "form-action 'self' https://www.payfast.co.za https://sandbox.payfast.co.za",
+      // Form POSTs: same-origin + PayFast checkout. Must cover the WHOLE
+      // payfast.co.za domain (apex + all subdomains), because a valid payment
+      // POST to www.payfast.co.za redirects to a payment subdomain, and the
+      // browser checks form-action against the redirect target too — a narrow
+      // www-only rule silently blocks that hop and the checkout never lands.
+      "form-action 'self' https://payfast.co.za https://*.payfast.co.za https://www.payfast.co.za https://sandbox.payfast.co.za",
       // Workers: needed for PDF parsing
       "worker-src 'self' blob:",
     ].join("; "),

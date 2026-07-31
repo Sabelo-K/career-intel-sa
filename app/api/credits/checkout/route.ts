@@ -115,7 +115,9 @@ ${inputs}
 
   // Capture ANY CSP violation and show it on-screen (no devtools needed).
   document.addEventListener('securitypolicyviolation', function(e){
-    showErr('BLOCKED BY CSP\\n  directive: ' + e.violatedDirective + '\\n  blocked:   ' + e.blockedURI + '\\n  policy:    ' + (e.originalPolicy||'').slice(0,200));
+    var pol = e.originalPolicy || '';
+    var fa = (pol.split(';').filter(function(d){ return d.indexOf('form-action') !== -1; })[0] || '(no form-action directive found)').trim();
+    showErr('BLOCKED BY CSP\\n  directive: ' + e.violatedDirective + '\\n  blocked:   ' + e.blockedURI + '\\n  enforced form-action: ' + fa);
   });
   // Surface any other JS error too.
   window.addEventListener('error', function(e){ showErr('JS error: ' + (e.message||e)); });

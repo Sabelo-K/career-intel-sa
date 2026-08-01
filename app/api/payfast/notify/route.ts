@@ -23,7 +23,8 @@ import {
   SUBSCRIPTION_PLANS,
   type PlanKey,
 } from "@/lib/payfast";
-import { sendUpgradeReceipt, sendOwnerRevenueAlert } from "@/lib/email";
+import { sendUpgradeReceipt, sendOwnerRevenueAlert, sendPaymentFailureAlert } from "@/lib/email";
+import { markPaymentComplete, markPaymentFailed } from "@/lib/payments";
 
 export const runtime = "nodejs";
 
@@ -71,6 +72,20 @@ export async function POST(req: NextRequest) {
 
     if (!sigValid && !serverValid) {
       console.error("[PayFast ITN] REJECTED — neither signature nor PayFast validation passed");
+      if (params.m_payment_id) {
+        await markPaymentFailed({
+          mPaymentId: params.m_payment_id,
+          status:     "FAILED",
+          reason:     "ITN rejected: signature and PayFast validation both failed",
+        });
+      }
+      // Tell the owner immediately — a customer may have paid and got nothing.
+      void sendPaymentFailureAlert({
+        subject:   "PayFast notification REJECTED — possible unactivated plan",
+        detail:    "A subscription/plan ITN failed both signature and PayFast server validation, so the plan was NOT activated. If the customer was charged, activate it via /api/admin/set-plan.",
+        reference: params.pf_payment_id || params.m_payment_id || "(none)",
+        amount:    params.amount_gross,
+      });
       return new NextResponse("INVALID", { status: 400 });
     }
 
@@ -108,6 +123,15 @@ export async function POST(req: NextRequest) {
       },
       select: { email: true, name: true },
     });
+
+    // Close out the payment record so reconciliation knows it was fulfilled.
+    if (params.m_payment_id) {
+      await markPaymentComplete({
+        mPaymentId:  params.m_payment_id,
+        pfPaymentId: params.pf_payment_id,
+        fulfilled:   true,
+      });
+    }
 
     console.log(
       `[PayFast ITN] User ${dbUserId} → ${planKey} (${planConfig.dbPlan}) until ${planExpiresAt.toISOString()}`

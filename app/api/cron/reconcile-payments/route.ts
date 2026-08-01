@@ -17,7 +17,9 @@
  */
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { Plan } from "@prisma/client";
 import { addCredits, CREDIT_PACKS, type CreditPackId } from "@/lib/credits";
+import { PLANS, type PlanKey } from "@/lib/payfast";
 import { sendReconciliationReport } from "@/lib/email";
 import { rands } from "@/lib/payments";
 
@@ -42,28 +44,59 @@ export async function GET(req: NextRequest) {
   try {
     // ── 1. Self-heal: confirmed by PayFast but never fulfilled ──────────────
     const unfulfilled = await db.payment.findMany({
-      where: { status: "COMPLETE", fulfilled: false, type: "credits" },
+      where: { status: "COMPLETE", fulfilled: false },
       take:  50,
     });
 
     for (const p of unfulfilled) {
-      const packId = p.packId as CreditPackId | null;
-      if (!packId || !(packId in CREDIT_PACKS)) {
-        console.error("[cron/reconcile-payments] unknown pack on payment", p.id, p.packId);
-        continue;
-      }
       try {
-        // Idempotent on the PayFast reference — safe if the ITN also lands.
-        await addCredits(p.userId, packId, p.pfPaymentId ?? p.mPaymentId);
-        await db.payment.update({
-          where: { id: p.id },
-          data:  { fulfilled: true },
-        });
+        if (p.type === "credits") {
+          const packId = p.packId as CreditPackId | null;
+          if (!packId || !(packId in CREDIT_PACKS)) {
+            console.error("[cron/reconcile-payments] unknown pack on payment", p.id, p.packId);
+            continue;
+          }
+          // Idempotent on the PayFast reference — safe if the ITN also lands.
+          await addCredits(p.userId, packId, p.pfPaymentId ?? p.mPaymentId);
+          console.log(`[cron/reconcile-payments] healed credits ${p.mPaymentId} (+${CREDIT_PACKS[packId].credits})`);
+
+        } else if (p.type === "plan") {
+          const planKey = p.planKey as PlanKey | null;
+          if (!planKey || !(planKey in PLANS)) {
+            console.error("[cron/reconcile-payments] unknown plan on payment", p.id, p.planKey);
+            continue;
+          }
+          const user = await db.user.findUnique({
+            where:  { id: p.userId },
+            select: { planExpiresAt: true },
+          });
+          // Extend from the later of (now, existing expiry) so we never shorten
+          // access, and never stack a duplicate month on an already-active plan.
+          const base = user?.planExpiresAt && user.planExpiresAt > new Date()
+            ? new Date(user.planExpiresAt)
+            : new Date();
+          const cfg = PLANS[planKey];
+          if (user?.planExpiresAt && user.planExpiresAt > new Date()) {
+            console.log(`[cron/reconcile-payments] plan already active for ${p.userId}; marking fulfilled only`);
+          } else {
+            base.setDate(base.getDate() + cfg.days);
+            await db.user.update({
+              where: { id: p.userId },
+              data:  { plan: cfg.dbPlan as Plan, planKey, planExpiresAt: base },
+            });
+            console.log(`[cron/reconcile-payments] healed plan ${p.mPaymentId} → ${planKey}`);
+          }
+
+        } else {
+          console.error("[cron/reconcile-payments] unknown payment type", p.id, p.type);
+          continue;
+        }
+
+        await db.payment.update({ where: { id: p.id }, data: { fulfilled: true } });
         healed.push({
           reference:   p.pfPaymentId ?? p.mPaymentId,
           amountRands: rands(p.amountCents),
         });
-        console.log(`[cron/reconcile-payments] healed ${p.mPaymentId} (+${CREDIT_PACKS[packId].credits} credits)`);
       } catch (err) {
         console.error("[cron/reconcile-payments] heal failed for", p.mPaymentId, err);
       }

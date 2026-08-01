@@ -12,6 +12,7 @@ import {
   isNewUserDiscountEligible,
   type PlanKey,
 } from "@/lib/payfast";
+import { recordPaymentIntent } from "@/lib/payments";
 
 export const runtime = "nodejs";
 
@@ -93,6 +94,15 @@ export async function POST(req: NextRequest) {
     }
 
     params.signature = generateSignature(params);
+
+    // Record the attempt BEFORE handing off, so a lost ITN is detectable.
+    await recordPaymentIntent({
+      userId:      dbUser.id,
+      mPaymentId:  params.m_payment_id,
+      type:        "plan",
+      planKey:     planKey,
+      amountRands: plan.amount,
+    });
 
     return NextResponse.json({ url: PAYFAST_URL, params });
   } catch (err) {

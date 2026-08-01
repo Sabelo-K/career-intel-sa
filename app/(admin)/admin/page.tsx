@@ -34,6 +34,7 @@ interface AdminStats {
   featureUsage:      { type: string; count: number; color: string; pct: number }[];
   planBreakdown:     { graduate: number; professional: number; recruiter: number };
   revenueThisMonth:       number;
+  revenueSource?:          "ledger" | "estimated";
   planRevenueThisMonth?:   number;
   creditRevenueThisMonth?: number;
   creditRevenueTotal?:     number;
@@ -529,6 +530,11 @@ export default function AdminPage() {
                   <span>R{s.creditRevenueTotal.toLocaleString()}</span>
                 </div>
               )}
+              <p className="text-[10px] text-muted-foreground/60 pt-1">
+                {s.revenueSource === "ledger"
+                  ? "Exact — from settled payment records."
+                  : "Estimated — plan revenue inferred from expiry dates until the payment ledger has history."}
+              </p>
             </div>
           )}
         </div>

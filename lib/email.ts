@@ -630,3 +630,82 @@ export async function sendOwnerRevenueAlert(opts: {
     `,
   });
 }
+
+// ─── Payment failure / reconciliation alerts (owner only) ────────────────────
+
+/**
+ * Immediate alert when a payment may have been taken but not fulfilled.
+ * Fire-and-forget — never block or fail the payment path.
+ */
+export async function sendPaymentFailureAlert(opts: {
+  subject:   string;
+  detail:    string;
+  reference?: string;
+  amount?:   string;
+}) {
+  try {
+    await send({
+      from:    FROM,
+      to:      OWNER_EMAIL,
+      subject: `🚨 ${opts.subject} — CareerIntel SA`,
+      html: `
+        <div style="font-family:sans-serif;max-width:520px;margin:0 auto;background:#0d1117;border-radius:12px;padding:32px;color:#e5e7eb;">
+          <h2 style="margin:0 0 8px;font-size:19px;color:#f87171;">🚨 Payment needs attention</h2>
+          <p style="margin:0 0 20px;color:#9ca3af;font-size:14px;line-height:1.6;">${opts.detail}</p>
+          <div style="background:#161b22;border-radius:8px;padding:16px;font-size:13px;line-height:1.9;">
+            ${opts.reference ? `<div><span style="color:#9ca3af;">Reference:</span> <strong>${opts.reference}</strong></div>` : ""}
+            ${opts.amount ? `<div><span style="color:#9ca3af;">Amount:</span> <strong>R${opts.amount}</strong></div>` : ""}
+            <div><span style="color:#9ca3af;">Time:</span> ${new Date().toLocaleString("en-ZA")}</div>
+          </div>
+          <p style="margin:20px 0 0;color:#6b7280;font-size:12px;line-height:1.6;">
+            Check Vercel logs for <code>[credits/itn]</code> or <code>[cron/reconcile-payments]</code>.
+            To credit a customer manually, use <code>/api/admin/grant-credits</code>.
+          </p>
+        </div>
+      `,
+    });
+  } catch (err) {
+    console.error("[email] payment alert failed (non-fatal):", err);
+  }
+}
+
+/** Digest of unresolved payment issues found by the reconciliation cron. */
+export async function sendReconciliationReport(opts: {
+  healed:  { reference: string; amountRands: number }[];
+  stuck:   { reference: string; amountRands: number; ageMinutes: number; email: string }[];
+}) {
+  try {
+    const row = (label: string, val: string) =>
+      `<div><span style="color:#9ca3af;">${label}:</span> <strong>${val}</strong></div>`;
+
+    await send({
+      from:    FROM,
+      to:      OWNER_EMAIL,
+      subject: `⚠️ Payment reconciliation — ${opts.healed.length} auto-fixed, ${opts.stuck.length} need review — CareerIntel SA`,
+      html: `
+        <div style="font-family:sans-serif;max-width:560px;margin:0 auto;background:#0d1117;border-radius:12px;padding:32px;color:#e5e7eb;">
+          <h2 style="margin:0 0 20px;font-size:19px;color:#ffffff;">Payment reconciliation report</h2>
+
+          ${opts.healed.length ? `
+            <h3 style="font-size:14px;color:#4ade80;margin:0 0 8px;">✅ Automatically fixed (${opts.healed.length})</h3>
+            <div style="background:#161b22;border-radius:8px;padding:14px;font-size:13px;line-height:1.9;margin-bottom:20px;">
+              ${opts.healed.map(h => row(h.reference, `R${h.amountRands} — credits granted`)).join("")}
+            </div>` : ""}
+
+          ${opts.stuck.length ? `
+            <h3 style="font-size:14px;color:#fbbf24;margin:0 0 8px;">⚠️ Needs your review (${opts.stuck.length})</h3>
+            <p style="margin:0 0 10px;color:#9ca3af;font-size:13px;line-height:1.6;">
+              These payments were started but never confirmed by PayFast. Most are simply abandoned checkouts —
+              but check your PayFast dashboard: if any were actually charged, credit the user via
+              <code>/api/admin/grant-credits</code>.
+            </p>
+            <div style="background:#161b22;border-radius:8px;padding:14px;font-size:13px;line-height:1.9;">
+              ${opts.stuck.map(s => row(s.email, `R${s.amountRands} — ${s.ageMinutes} min ago — ${s.reference}`)).join("")}
+            </div>` : ""}
+        </div>
+      `,
+    });
+  } catch (err) {
+    console.error("[email] reconciliation report failed (non-fatal):", err);
+  }
+}

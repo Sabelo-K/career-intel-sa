@@ -18,6 +18,10 @@
     {
       "path": "/api/cron/expire-plans",
       "schedule": "0 1 * * *"
+    },
+    {
+      "path": "/api/cron/reconcile-payments",
+      "schedule": "*/15 * * * *"
     }
   ],
   "functions": {
@@ -28,6 +32,7 @@
     "app/api/cron/job-alerts/route.ts":      { "maxDuration": 60 },
     "app/api/cron/weekly-digest/route.ts":          { "maxDuration": 60 },
     "app/api/cron/data-refresh-reminder/route.ts":  { "maxDuration": 30 },
-    "app/api/cron/expire-plans/route.ts":           { "maxDuration": 30 }
+    "app/api/cron/expire-plans/route.ts":           { "maxDuration": 30 },
+    "app/api/cron/reconcile-payments/route.ts":     { "maxDuration": 60 }
   }
 }

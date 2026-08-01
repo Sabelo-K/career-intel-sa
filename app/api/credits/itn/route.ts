@@ -23,6 +23,8 @@ import {
   validateITNWithPayFast,
 } from "@/lib/payfast";
 import { type CreditPackId, CREDIT_PACKS } from "@/lib/credits";
+import { markPaymentComplete, markPaymentFailed } from "@/lib/payments";
+import { sendPaymentFailureAlert } from "@/lib/email";
 
 export const runtime  = "nodejs";
 export const dynamic  = "force-dynamic";
@@ -66,6 +68,20 @@ export async function POST(req: NextRequest) {
     // Require at least one strong proof of authenticity.
     if (!sigValid && !serverValid) {
       console.error("[credits/itn] REJECTED — neither signature nor PayFast validation passed");
+      if (params.m_payment_id) {
+        await markPaymentFailed({
+          mPaymentId: params.m_payment_id,
+          status:     "FAILED",
+          reason:     "ITN rejected: signature and PayFast validation both failed",
+        });
+      }
+      // Tell the owner immediately — a customer may have paid and got nothing.
+      void sendPaymentFailureAlert({
+        subject: "PayFast notification REJECTED — possible uncredited payment",
+        detail:  "A credits ITN failed both signature and PayFast server validation, so no credits were granted. If the customer was charged, credit them via /api/admin/grant-credits.",
+        reference: params.pf_payment_id || params.m_payment_id || "(none)",
+        amount:  params.amount_gross,
+      });
       return new NextResponse("INVALID", { status: 400 });
     }
 
@@ -98,6 +114,16 @@ export async function POST(req: NextRequest) {
 
     // ── Credit (idempotent on the PayFast payment id) ───────────────────────
     const credited = await addCredits(dbUserId, packId, pfId);
+
+    // Close out the payment record (fulfilled covers duplicates too — a repeat
+    // ITN means it was already credited).
+    if (params.m_payment_id) {
+      await markPaymentComplete({
+        mPaymentId:  params.m_payment_id,
+        pfPaymentId: params.pf_payment_id,
+        fulfilled:   true,
+      });
+    }
 
     console.log(
       credited

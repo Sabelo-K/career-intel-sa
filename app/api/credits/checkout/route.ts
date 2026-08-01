@@ -17,6 +17,7 @@ import {
   generateSignature,
 } from "@/lib/payfast";
 import { CREDIT_PACKS, type CreditPackId } from "@/lib/credits";
+import { recordPaymentIntent } from "@/lib/payments";
 
 export const runtime  = "nodejs";
 export const dynamic  = "force-dynamic";
@@ -81,6 +82,15 @@ export async function GET(req: NextRequest) {
       custom_str3:      "credits",
     };
     params.signature = generateSignature(params);
+
+    // Record the attempt BEFORE handing off, so a lost ITN is detectable.
+    await recordPaymentIntent({
+      userId:      dbUser.id,
+      mPaymentId:  params.m_payment_id,
+      type:        "credits",
+      packId:      packId,
+      amountRands: pack.amount,
+    });
 
     console.log(
       `[credits/checkout] packId=${packId} user=${dbUser.id} url=${PAYFAST_URL} ` +

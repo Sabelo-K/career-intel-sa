@@ -24,20 +24,31 @@ export async function GET() {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
-    // ── Dates ────────────────────────────────────────────────────────────────
-    const now = new Date();
+    // ── Dates — anchored to SAST (UTC+2), NOT server time ────────────────────
+    // Vercel runs in UTC, so using server-local boundaries rolled the month over
+    // at 02:00 SAST: a sale just after SA midnight on the 1st was counted in the
+    // previous month. SA has no DST, so a fixed +2 offset is exact.
+    const SAST_OFFSET_MS = 2 * 60 * 60 * 1000;
 
-    const todayStart = new Date();
-    todayStart.setHours(0, 0, 0, 0);
+    /** UTC instant of SAST midnight, `monthsBack` months before the current SA month. */
+    const sastMonthStart = (monthsBack = 0): Date => {
+      const sa = new Date(Date.now() + SAST_OFFSET_MS);
+      return new Date(Date.UTC(sa.getUTCFullYear(), sa.getUTCMonth() - monthsBack, 1) - SAST_OFFSET_MS);
+    };
+    /** UTC instant of SAST midnight today. */
+    const sastDayStart = (): Date => {
+      const sa = new Date(Date.now() + SAST_OFFSET_MS);
+      return new Date(Date.UTC(sa.getUTCFullYear(), sa.getUTCMonth(), sa.getUTCDate()) - SAST_OFFSET_MS);
+    };
+    /** Short month label for a SAST month start. */
+    const sastMonthLabel = (d: Date): string =>
+      new Date(d.getTime() + SAST_OFFSET_MS).toLocaleDateString("en-ZA", { month: "short", timeZone: "UTC" });
 
-    const sixMonthsAgo = new Date();
-    sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
-    sixMonthsAgo.setDate(1);
-    sixMonthsAgo.setHours(0, 0, 0, 0);
-
-    const startOfMonth = new Date();
-    startOfMonth.setDate(1);
-    startOfMonth.setHours(0, 0, 0, 0);
+    const now          = new Date();
+    const todayStart   = sastDayStart();
+    const startOfMonth = sastMonthStart(0);
+    const sixMonthsAgo = sastMonthStart(6);
+    const last30Days   = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
 
     // PayFast grants exactly 30 days → planExpiresAt = paymentDate + 30 days
     // So "paid this month" = planExpiresAt between (startOfMonth+29d) and (startOfNextMonth+31d)
@@ -98,6 +109,7 @@ export async function GET() {
     let ledgerPlanRevenue   = 0;
     let ledgerCreditMonth   = 0;
     let ledgerPlanMonth     = 0;
+    let ledgerLast30        = 0;
     let ledgerPurchaseCount = 0;
     let ledgerRows: { type: string; amountCents: number; completedAt: Date | null; createdAt: Date }[] = [];
     let ledgerAvailable = false;
@@ -112,8 +124,10 @@ export async function GET() {
       const at = (r: { completedAt: Date | null; createdAt: Date }) => new Date(r.completedAt ?? r.createdAt);
 
       for (const r of ledgerRows) {
-        const v = r.amountCents / 100;
-        const inMonth = at(r) >= startOfMonth;
+        const v  = r.amountCents / 100;
+        const ts = at(r);
+        const inMonth = ts >= startOfMonth;
+        if (ts >= last30Days) ledgerLast30 += v;
         if (r.type === "credits") {
           ledgerCreditRevenue += v;
           if (inMonth) ledgerCreditMonth += v;
@@ -154,6 +168,11 @@ export async function GET() {
       creditRevenueThisMonth = Math.max(creditRevenueThisMonth, ledgerCreditMonth);
       creditPurchaseCount    = Math.max(creditPurchaseCount, ledgerPurchaseCount);
     }
+
+    // Credit revenue in the trailing 30 days (fallback path)
+    const creditRevenueLast30 = creditTxns
+      .filter((t) => new Date(t.createdAt) >= last30Days)
+      .reduce((s, t) => s + (PACK_PRICES[t.packId ?? ""] ?? 0), 0);
 
     // ── Plan breakdown + revenue ─────────────────────────────────────────────
     let planBreakdown = { graduate: 0, professional: 0, recruiter: 0 };
@@ -201,10 +220,8 @@ export async function GET() {
 
       // Revenue trend — last 6 months (plans + credits)
       revenueData = Array.from({ length: 6 }, (_, i) => {
-        const tgt = new Date();
-        tgt.setMonth(tgt.getMonth() - (5 - i));
-        tgt.setDate(1); tgt.setHours(0, 0, 0, 0);
-        const tgtNext = new Date(tgt); tgtNext.setMonth(tgtNext.getMonth() + 1);
+        const tgt     = sastMonthStart(5 - i);
+        const tgtNext = sastMonthStart(4 - i);
         const wStart = new Date(tgt);  wStart.setDate(wStart.getDate() + 29);
         const wEnd   = new Date(tgtNext); wEnd.setDate(wEnd.getDate() + 31);
 
@@ -230,7 +247,7 @@ export async function GET() {
             .reduce((s, t) => s + (PACK_PRICES[t.packId ?? ""] ?? 0), 0);
 
         return {
-          month:   tgt.toLocaleDateString("en-ZA", { month: "short" }),
+          month:   sastMonthLabel(tgt),
           revenue: Math.max(ledgerMonth, estimatedMonth),
           users:   monthUsers.length,
         };
@@ -378,6 +395,10 @@ export async function GET() {
       featureUsage,
       planBreakdown,
       revenueThisMonth,
+      // All-time and trailing-30-day totals — so a fresh calendar month never
+      // reads as "zero revenue" when the platform is in fact making sales.
+      revenueAllTime:    Math.max(ledgerCreditRevenue + ledgerPlanRevenue, creditRevenueTotal),
+      revenueLast30Days: Math.max(ledgerLast30, creditRevenueLast30),
       // "ledger" = exact settled payments; "estimated" = inferred from plan
       // expiry dates (pre-migration history only).
       revenueSource: ledgerAvailable && (ledgerPlanRevenue > 0 || ledgerCreditRevenue > 0)

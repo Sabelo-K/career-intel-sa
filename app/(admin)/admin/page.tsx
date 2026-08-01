@@ -34,6 +34,8 @@ interface AdminStats {
   featureUsage:      { type: string; count: number; color: string; pct: number }[];
   planBreakdown:     { graduate: number; professional: number; recruiter: number };
   revenueThisMonth:       number;
+  revenueAllTime?:         number;
+  revenueLast30Days?:      number;
   revenueSource?:          "ledger" | "estimated";
   planRevenueThisMonth?:   number;
   creditRevenueThisMonth?: number;
@@ -341,14 +343,16 @@ export default function AdminPage() {
       </div>
 
       {/* ── Stat cards ────────────────────────────────────────────────────── */}
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {[
-          { label: "Total Users",    value: s?.totalUsers,       icon: Users,         color: "indigo",  prefix: ""  },
-          { label: "Active Today",   value: s?.activeToday,      icon: Activity,      color: "emerald", prefix: ""  },
-          { label: "Paid Users",     value: s?.premiumUsers,     icon: Shield,        color: "amber",   prefix: ""  },
-          { label: "Revenue MTD",    value: s?.revenueThisMonth, icon: DollarSign,    color: "green",   prefix: "R" },
-          { label: "Expiring Soon",  value: s?.expiringCount,    icon: AlertTriangle, color: "red",     prefix: ""  },
-          { label: "CVs Uploaded",   value: s?.cvCount,          icon: Database,      color: "blue",    prefix: ""  },
+          { label: "Total Users",      value: s?.totalUsers,          icon: Users,         color: "indigo",  prefix: ""  },
+          { label: "Active Today",     value: s?.activeToday,         icon: Activity,      color: "emerald", prefix: ""  },
+          { label: "Paid Users",       value: s?.premiumUsers,        icon: Shield,        color: "amber",   prefix: ""  },
+          { label: "Revenue All-Time", value: s?.revenueAllTime,      icon: DollarSign,    color: "green",   prefix: "R" },
+          { label: "Revenue 30 Days",  value: s?.revenueLast30Days,   icon: TrendingUp,    color: "green",   prefix: "R" },
+          { label: "Revenue MTD",      value: s?.revenueThisMonth,    icon: CalendarClock, color: "violet",  prefix: "R" },
+          { label: "Expiring Soon",    value: s?.expiringCount,       icon: AlertTriangle, color: "red",     prefix: ""  },
+          { label: "CVs Uploaded",     value: s?.cvCount,             icon: Database,      color: "blue",    prefix: ""  },
         ].map((stat) => (
           <div key={stat.label} className="stat-card">
             <div className={`w-8 h-8 rounded-lg flex items-center justify-center mb-2 ${

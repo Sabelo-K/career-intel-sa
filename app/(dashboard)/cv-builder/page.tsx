@@ -1,6 +1,7 @@
 "use client";
 
 import { generateCV, generateRevampedCV, generateBuiltCV, CVTemplateData, CVBuiltData } from "@/lib/cv-templates";
+import { track } from "@/lib/analytics";
 import { useState, useRef, useEffect } from "react";
 import { useUser } from "@clerk/nextjs";
 import { useFeedback } from "@/components/feedback-provider";
@@ -828,6 +829,13 @@ export default function CVBuilderPage() {
         weaknesses: Array.isArray(data.weaknesses) ? data.weaknesses : MOCK_ANALYSIS.weaknesses,
       });
       setStage("results");
+      track("cv_revamp_completed", {
+        hasTargetRole:  Boolean(targetRole.trim()),
+        hasJobDesc:     Boolean(jobDescription.trim()),
+        atsScore:       typeof data.atsScore === "number" ? data.atsScore : null,
+        improvement:    typeof data.originalAtsScore === "number" && typeof data.atsScore === "number"
+                          ? data.atsScore - data.originalAtsScore : null,
+      });
       awardXp("cv_analyse");
     } catch (err) {
       const msg = err instanceof Error ? err.message : "Failed to revamp CV";

@@ -4,6 +4,7 @@ import { useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { Brain, ArrowRight, DollarSign, Clock, TrendingUp, Award, ChevronDown, Zap } from "lucide-react";
+import { track } from "@/lib/analytics";
 import { AreaChart, Area, XAxis, YAxis, ResponsiveContainer, Tooltip, CartesianGrid } from "recharts";
 
 // ── SA Degree dataset ─────────────────────────────────────────────────────────
@@ -331,7 +332,7 @@ export default function DegreeROIPage() {
         )}
 
         {selectedField && (
-          <button onClick={() => setShowResults(true)}
+          <button onClick={() => { setShowResults(true); track("tool_degree_roi_run", { field: selectedField.field ?? "unknown" }); }}
             className="w-full py-3.5 rounded-xl font-semibold text-sm bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 text-white flex items-center justify-center gap-2 transition-all mb-6">
             Calculate ROI <ArrowRight className="w-4 h-4" />
           </button>

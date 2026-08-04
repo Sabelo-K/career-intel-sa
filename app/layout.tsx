@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import { ClerkProvider } from "@clerk/nextjs";
 import CookieBanner from "@/components/cookie-banner";
+import { Analytics } from "@vercel/analytics/next";
 import { LanguageProvider } from "@/lib/i18n/LanguageContext";
 import "./globals.css";
 
@@ -105,6 +106,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             {children}
             <CookieBanner />
           </LanguageProvider>
+          {/* Cookieless page + event analytics — keeps our "no tracking
+              cookies" promise true, so no extra consent gate is required. */}
+          <Analytics />
         </body>
       </html>
     </ClerkProvider>

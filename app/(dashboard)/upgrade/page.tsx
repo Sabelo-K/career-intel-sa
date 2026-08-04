@@ -10,6 +10,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
+import { track } from "@/lib/analytics";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -140,6 +141,7 @@ export default function UpgradePage() {
   const [billingType, setBillingType]   = useState<"once_off" | "subscription">("subscription");
 
   useEffect(() => {
+    track("upgrade_viewed");
     fetch("/api/dashboard")
       .then((r) => r.json())
       .then((d) => {
@@ -164,6 +166,7 @@ export default function UpgradePage() {
     setLoading(planKey);
     setError(null);
     setPending(null);
+    track("plan_checkout_started", { planKey, billingType });
 
     const controller = new AbortController();
     const timeout    = setTimeout(() => controller.abort(), 15000);

@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { Zap, Crown, CheckCircle2, Coins, MessageCircle, Target, GitBranch, Loader2, AlertCircle, X } from "lucide-react";
 import Link from "next/link";
 import { CREDIT_PACKS } from "@/lib/credits";
+import { track } from "@/lib/analytics";
 
 // What each credit buys — shown below the packs
 const CREDIT_USES = [
@@ -21,6 +22,7 @@ export default function BuyCreditsPage() {
   const [buyError,  setBuyError]  = useState<string | null>(null);
 
   useEffect(() => {
+    track("buy_credits_viewed");
     // Load current balance + plan status
     Promise.all([
       fetch("/api/credits/balance").then((r) => r.json()),
@@ -34,6 +36,7 @@ export default function BuyCreditsPage() {
   function handleBuy(packId: string) {
     setLoading(packId);
     setBuyError(null);
+    track("credits_checkout_started", { packId });
     // Full-page navigation to the server-driven checkout. A fresh top-level
     // document gets the current CSP and reliably posts to PayFast — no in-app
     // fetch/form that a stale SPA-session CSP could block.

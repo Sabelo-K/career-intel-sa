@@ -8,6 +8,7 @@ import {
   Share2, CheckCircle, AlertCircle, ChevronDown, Search,
 } from "lucide-react";
 import { SA_CAREERS } from "@/lib/data/sa-careers";
+import { track } from "@/lib/analytics";
 
 const PROVINCES = [
   { code: "GAUTENG",       name: "Gauteng"        },
@@ -97,6 +98,7 @@ export default function SalaryCheckPage() {
   function handleCheck() {
     if (!selectedRole) return;
     setShowResults(true);
+    track("tool_salary_check_run", { role: selectedRole.title ?? "unknown" });
   }
 
   async function handleCopy() {

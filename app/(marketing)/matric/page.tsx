@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 import { SA_CAREERS } from "@/lib/data/sa-careers";
 import { CAREER_SUBJECTS } from "@/lib/data/sa-subjects";
+import { track } from "@/lib/analytics";
 
 // ── APS system ────────────────────────────────────────────────────────────────
 // Achievement level 1-7 maps to APS points (standard NSC system)
@@ -287,7 +288,7 @@ export default function MatricPage() {
             </div>
           ))}
 
-          <button onClick={() => setShowResults(true)} disabled={!allFilled}
+          <button onClick={() => { setShowResults(true); track("tool_matric_run"); }} disabled={!allFilled}
             className="w-full py-3.5 rounded-xl font-semibold text-sm transition-all bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 disabled:opacity-30 disabled:cursor-not-allowed text-white flex items-center justify-center gap-2 mt-2">
             Show my career matches <ArrowRight className="w-4 h-4" />
           </button>

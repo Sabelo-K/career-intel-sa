@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { track } from "@/lib/analytics";
 import { useUser } from "@clerk/nextjs";
 import { motion, AnimatePresence } from "framer-motion";
 import { Sparkles, Briefcase, Target, Code, ArrowRight, CheckCircle2, Zap, BookOpen } from "lucide-react";
@@ -129,6 +130,11 @@ export default function OnboardingPage() {
       }
 
       const data = await res.json().catch(() => ({}));
+      track("onboarding_completed", {
+        hasTargetRole: Boolean(targetRole.trim()),
+        skillCount:    skills.length,
+        isLearner:     showSubjectStep,
+      });
       const destination = showSubjectStep ? "/high-school" : "/dashboard";
       // Pass credits granted as a query param so the dashboard can show a toast
       router.push(data.creditsGranted ? `${destination}?welcome=1` : destination);

@@ -1,8 +1,10 @@
 "use client";
 
+import { useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Zap, Crown, X, Coins } from "lucide-react";
 import Link from "next/link";
+import { track } from "@/lib/analytics";
 
 interface OutOfCreditsModalProps {
   open:         boolean;
@@ -19,6 +21,11 @@ export function OutOfCreditsModal({
   creditCost,
   currentBalance,
 }: OutOfCreditsModalProps) {
+  // One place captures the paywall moment for every feature that uses it.
+  useEffect(() => {
+    if (open) track("limit_reached", { feature: featureLabel, creditCost });
+  }, [open, featureLabel, creditCost]);
+
   return (
     <AnimatePresence>
       {open && (

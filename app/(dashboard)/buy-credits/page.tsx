@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Zap, Crown, CheckCircle2, Coins, MessageCircle, Target, GitBranch, Loader2, AlertCircle, X } from "lucide-react";
+import { Zap, Crown, CheckCircle2, Coins, MessageCircle, Target, GitBranch, Loader2, AlertCircle, X, Info } from "lucide-react";
 import Link from "next/link";
 import { CREDIT_PACKS } from "@/lib/credits";
 import { track } from "@/lib/analytics";
@@ -15,23 +15,36 @@ const CREDIT_USES = [
 ];
 
 
+interface Allowance {
+  key: string; label: string; used: number;
+  limit: number | null; remaining: number | null; creditCost: number;
+}
+
 export default function BuyCreditsPage() {
   const [balance,   setBalance]   = useState<number | null>(null);
   const [loading,   setLoading]   = useState<string | null>(null); // packId being fetched
   const [isPaid,    setIsPaid]    = useState(false);
   const [buyError,  setBuyError]  = useState<string | null>(null);
+  const [allowance, setAllowance] = useState<Allowance[]>([]);
+  const [unlimited, setUnlimited] = useState(false);
 
   useEffect(() => {
     track("buy_credits_viewed");
-    // Load current balance + plan status
+    // Load current balance + free allowance + plan status
     Promise.all([
       fetch("/api/credits/balance").then((r) => r.json()),
       fetch("/api/dashboard").then((r) => r.json()),
     ]).then(([bal, dash]) => {
       setBalance(bal.balance ?? 0);
+      setAllowance(Array.isArray(bal.allowance) ? bal.allowance : []);
+      setUnlimited(Boolean(bal.unlimited));
       if (dash.plan && dash.plan !== "FREE") setIsPaid(true);
     }).catch(() => setBalance(0));
   }, []);
+
+  // Anything still free this month? Used to tell the user they may not need
+  // to buy yet — better than quietly taking money for unused capacity.
+  const hasFreeLeft = allowance.some((a) => a.remaining === null || a.remaining > 0);
 
   function handleBuy(packId: string) {
     setLoading(packId);
@@ -65,6 +78,78 @@ export default function BuyCreditsPage() {
           </div>
         )}
       </div>
+
+      {/* Free allowance — explains why credits may not be moving yet */}
+      {allowance.length > 0 && (
+        <div className="bg-card border border-border rounded-2xl p-5 space-y-4">
+          <div className="flex items-start gap-3">
+            <Info className="w-4 h-4 text-indigo-400 flex-shrink-0 mt-0.5" />
+            <div>
+              <h3 className="text-sm font-semibold text-foreground">
+                Your free allowance this month
+              </h3>
+              <p className="text-xs text-muted-foreground mt-0.5 leading-relaxed">
+                Credits are a top-up. They&apos;re only used <strong className="text-foreground">after</strong> your
+                free monthly allowance runs out — so your balance won&apos;t change until then.
+              </p>
+            </div>
+          </div>
+
+          <div className="space-y-2.5">
+            {allowance.map((a) => {
+              const isUnlimited = a.remaining === null;
+              const exhausted   = !isUnlimited && a.remaining === 0;
+              const pct = isUnlimited || !a.limit ? 0 : Math.min(100, (a.used / a.limit) * 100);
+              return (
+                <div key={a.key} className="space-y-1">
+                  <div className="flex items-center justify-between text-xs">
+                    <span className="text-muted-foreground">
+                      {a.label}
+                      <span className="ml-1.5 text-[10px] text-muted-foreground/70">
+                        then {a.creditCost} credit{a.creditCost !== 1 ? "s" : ""} each
+                      </span>
+                    </span>
+                    <span className={`font-semibold ${exhausted ? "text-amber-400" : "text-foreground"}`}>
+                      {isUnlimited
+                        ? "Unlimited"
+                        : exhausted
+                          ? "Using credits now"
+                          : `${a.remaining} of ${a.limit} left`}
+                    </span>
+                  </div>
+                  {!isUnlimited && (
+                    <div className="h-1.5 rounded-full bg-secondary overflow-hidden">
+                      <div
+                        className={`h-full rounded-full transition-all ${exhausted ? "bg-amber-500" : "bg-indigo-500"}`}
+                        style={{ width: `${pct}%` }}
+                      />
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+
+          {hasFreeLeft && (
+            <p className="text-xs text-emerald-300/90 bg-emerald-500/10 border border-emerald-500/20 rounded-lg px-3 py-2 leading-relaxed">
+              You still have free usage left this month — you may not need credits yet.
+              Buy them now only if you want them ready in advance. Credits never expire.
+            </p>
+          )}
+        </div>
+      )}
+
+      {/* Unlimited plans don't consume credits at all */}
+      {unlimited && (
+        <div className="bg-card border border-border rounded-2xl p-4 flex items-start gap-3">
+          <Info className="w-4 h-4 text-indigo-400 flex-shrink-0 mt-0.5" />
+          <p className="text-xs text-muted-foreground leading-relaxed">
+            Your plan includes <strong className="text-foreground">unlimited</strong> AI coaching, skills gap
+            analyses and career simulations, so credits aren&apos;t consumed while it&apos;s active.
+            Any credits you buy stay banked for when your plan ends.
+          </p>
+        </div>
+      )}
 
       {/* Payment error */}
       {buyError && (
@@ -168,6 +253,10 @@ export default function BuyCreditsPage() {
       {/* What credits buy */}
       <div className="bg-card border border-border rounded-2xl p-5 space-y-4">
         <h3 className="text-sm font-semibold text-foreground">What do credits buy?</h3>
+        <p className="text-xs text-muted-foreground -mt-2 leading-relaxed">
+          Used only once your free monthly allowance is finished. The CV Builder is free
+          for everyone and never costs credits.
+        </p>
         <div className="space-y-3">
           {CREDIT_USES.map((item) => (
             <div key={item.label} className="flex items-center justify-between">

@@ -54,16 +54,24 @@ export default function SubjectChoicePage() {
   const result = useMemo(() => {
     if (chosen.length === 0) return null;
 
-    const open: typeof MAPPED = [];
+    // `required` decides whether a door is open. `recommended` decides how
+    // GOOD a fit it is — without it, choosing Tourism vs Visual Arts would
+    // give identical results, since electives never gate entry.
+    const open: { career: (typeof MAPPED)[0]; fit: number }[] = [];
     const oneAway: { career: (typeof MAPPED)[0]; missing: string }[] = [];
     const closed: typeof MAPPED = [];
 
     for (const c of MAPPED) {
-      const required = CAREER_SUBJECTS[c.id].required;
+      const { required, recommended } = CAREER_SUBJECTS[c.id];
       const missing = required.filter((r) => !satisfies(chosen, r));
-      if (missing.length === 0) open.push(c);
-      else if (missing.length === 1) oneAway.push({ career: c, missing: missing[0] });
-      else closed.push(c);
+      if (missing.length === 0) {
+        const fit = recommended.filter((r) => chosen.includes(r)).length;
+        open.push({ career: c, fit });
+      } else if (missing.length === 1) {
+        oneAway.push({ career: c, missing: missing[0] });
+      } else {
+        closed.push(c);
+      }
     }
 
     // Which single subject would unlock the most additional careers?
@@ -77,10 +85,12 @@ export default function SubjectChoicePage() {
     const bestAdd = Object.entries(gains).sort(([, a], [, b]) => b - a)[0] ?? null;
 
     return {
-      open: open.sort((a, b) => b.demandScore - a.demandScore),
+      // Best fit first (your electives matter), then market demand.
+      open: open.sort((a, b) => b.fit - a.fit || b.career.demandScore - a.career.demandScore),
       oneAway: oneAway.sort((a, b) => b.career.demandScore - a.career.demandScore),
       closed,
       bestAdd,
+      strongFits: open.filter((o) => o.fit >= 2).length,
     };
   }, [chosen]);
 
@@ -242,6 +252,9 @@ export default function SubjectChoicePage() {
                   <Unlock className="w-4 h-4 text-emerald-400 mx-auto mb-1.5" />
                   <p className="text-3xl font-bold text-foreground">{result.open.length}</p>
                   <p className="text-xs text-muted-foreground mt-0.5">careers open to you</p>
+                  {result.strongFits > 0 && (
+                    <p className="text-[11px] text-emerald-400 mt-1">{result.strongFits} a strong fit</p>
+                  )}
                 </div>
                 <div className="bg-card border border-border rounded-2xl p-4 text-center">
                   <Lock className="w-4 h-4 text-muted-foreground mx-auto mb-1.5" />
@@ -273,10 +286,17 @@ export default function SubjectChoicePage() {
                     Careers your subjects open ({result.open.length})
                   </h3>
                   <div className="space-y-2">
-                    {result.open.slice(0, 12).map((c) => (
+                    {result.open.slice(0, 12).map(({ career: c, fit }) => (
                       <div key={c.id} className="bg-card border border-border rounded-xl px-4 py-3 flex items-center justify-between gap-3">
                         <div className="min-w-0">
-                          <p className="text-sm font-medium text-foreground truncate">{c.title}</p>
+                          <div className="flex items-center gap-2">
+                            <p className="text-sm font-medium text-foreground truncate">{c.title}</p>
+                            {fit >= 2 && (
+                              <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-emerald-500/15 text-emerald-300 border border-emerald-500/25 whitespace-nowrap flex-shrink-0">
+                                Strong fit
+                              </span>
+                            )}
+                          </div>
                           <p className="text-xs text-muted-foreground">{c.sector}</p>
                         </div>
                         <div className="text-right flex-shrink-0">

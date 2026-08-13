@@ -224,6 +224,186 @@ export const CAREER_SUBJECTS: Record<string, SubjectRequirements> = {
   // ── Digital Marketing ────────────────────────────────────────────────────────
   "digital-marketing-specialist":{ required: ["Mathematical Literacy"], recommended: ["Business Studies", "Computer Applications Technology (CAT)", "Economics"] },
   "retail-manager":            { required: ["Mathematical Literacy"], recommended: ["Business Studies", "Economics", "Consumer Studies"] },
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // Expansion — remaining careers.
+  // "Mathematical Literacy" as REQUIRED means "a numeracy subject is needed";
+  // because Mathematics satisfies a Maths Lit requirement (see satisfies() in
+  // the subject-choice tool), learners taking Mathematics also qualify.
+  // Reserve "Mathematics" as required only where real Maths is genuinely
+  // demanded for entry — over-requiring wrongly closes doors for learners.
+  // ═══════════════════════════════════════════════════════════════════════════
+
+  // ── Technology ───────────────────────────────────────────────────────────────
+  "ai-engineer":               { required: ["Mathematics"], recommended: ["Information Technology (IT)", "Physical Sciences"] },
+  "penetration-tester":        { required: ["Mathematics"], recommended: ["Information Technology (IT)", "Computer Applications Technology (CAT)"] },
+  "soc-analyst":               { required: ["Mathematics"], recommended: ["Information Technology (IT)", "Computer Applications Technology (CAT)"] },
+  "platform-engineer":         { required: ["Mathematics"], recommended: ["Information Technology (IT)", "Computer Applications Technology (CAT)"] },
+  "data-governance-analyst":   { required: ["Mathematics"], recommended: ["Information Technology (IT)", "Accounting"] },
+  "erp-consultant":            { required: ["Mathematics"], recommended: ["Information Technology (IT)", "Accounting", "Business Studies"] },
+  "it-project-manager":        { required: ["Mathematical Literacy"], recommended: ["Information Technology (IT)", "Business Studies", "Computer Applications Technology (CAT)"] },
+  "business-analyst":          { required: ["Mathematics"], recommended: ["Information Technology (IT)", "Business Studies", "Accounting"] },
+  "startup-founder":           { required: ["Mathematical Literacy"], recommended: ["Business Studies", "Economics", "Accounting"] },
+
+  // ── Engineering ──────────────────────────────────────────────────────────────
+  "mechatronics-engineer":     { required: ["Mathematics", "Physical Sciences"], recommended: ["Engineering Graphics & Design", "Mechanical Technology", "Electrical Technology"] },
+  "automation-engineer":       { required: ["Mathematics", "Physical Sciences"], recommended: ["Electrical Technology", "Information Technology (IT)"] },
+  "biomedical-engineer":       { required: ["Mathematics", "Physical Sciences"], recommended: ["Life Sciences", "Engineering Graphics & Design"] },
+  "petroleum-engineer":        { required: ["Mathematics", "Physical Sciences"], recommended: ["Geography", "Engineering Graphics & Design"] },
+  "telecommunications-engineer":{ required: ["Mathematics", "Physical Sciences"], recommended: ["Electrical Technology", "Information Technology (IT)"] },
+
+  // ── Finance & Banking ────────────────────────────────────────────────────────
+  "risk-manager":              { required: ["Mathematics"], recommended: ["Accounting", "Economics", "Business Studies"] },
+  "forex-trader":              { required: ["Mathematics"], recommended: ["Economics", "Accounting"] },
+  "portfolio-manager":         { required: ["Mathematics"], recommended: ["Accounting", "Economics"] },
+  "internal-auditor":          { required: ["Mathematics", "Accounting"], recommended: ["Business Studies", "Economics"] },
+  "credit-analyst":            { required: ["Mathematics"], recommended: ["Accounting", "Economics"] },
+  "treasury-analyst":          { required: ["Mathematics"], recommended: ["Accounting", "Economics"] },
+  "management-accountant":     { required: ["Mathematics", "Accounting"], recommended: ["Business Studies", "Economics"] },
+  "sars-tax-practitioner":     { required: ["Mathematics", "Accounting"], recommended: ["Business Studies", "Economics"] },
+  "venture-capital-analyst":   { required: ["Mathematics"], recommended: ["Accounting", "Economics", "Business Studies"] },
+
+  // ── Fraud & Financial Crime ──────────────────────────────────────────────────
+  "fraud-analyst":             { required: ["Mathematics"], recommended: ["Accounting", "Information Technology (IT)"] },
+  "fraud-investigator":        { required: ["Mathematical Literacy"], recommended: ["Accounting", "Business Studies"] },
+  "forensic-accountant":       { required: ["Mathematics", "Accounting"], recommended: ["Business Studies", "Information Technology (IT)"] },
+  "aml-analyst":               { required: ["Mathematics"], recommended: ["Accounting", "Business Studies"] },
+  "kyc-officer":               { required: ["Mathematical Literacy"], recommended: ["Accounting", "Business Studies"] },
+  "cybercrime-investigator":   { required: ["Mathematics"], recommended: ["Information Technology (IT)", "Computer Applications Technology (CAT)"] },
+  "financial-crime-manager":   { required: ["Mathematics"], recommended: ["Accounting", "Business Studies"] },
+  "fraud-risk-manager":        { required: ["Mathematics"], recommended: ["Accounting", "Business Studies"] },
+
+  // ── Healthcare ───────────────────────────────────────────────────────────────
+  "clinical-psychologist":     { required: ["Life Sciences"], recommended: ["Mathematics", "Life Orientation"] },
+  "dietitian":                 { required: ["Mathematics", "Physical Sciences", "Life Sciences"], recommended: ["Consumer Studies"] },
+  "speech-therapist":          { required: ["Life Sciences"], recommended: ["Mathematics", "Physical Sciences"] },
+  "audiologist":               { required: ["Mathematics", "Life Sciences"], recommended: ["Physical Sciences"] },
+  "emergency-care-practitioner":{ required: ["Life Sciences"], recommended: ["Mathematics", "Physical Sciences", "Life Orientation"] },
+  "medical-scientist":         { required: ["Mathematics", "Physical Sciences", "Life Sciences"], recommended: [] },
+  "sports-scientist":          { required: ["Life Sciences"], recommended: ["Mathematics", "Physical Sciences", "Life Orientation"] },
+  "wellness-coach":            { required: ["Mathematical Literacy"], recommended: ["Life Sciences", "Life Orientation", "Consumer Studies"] },
+
+  // ── Government & Public Sector ───────────────────────────────────────────────
+  "municipal-manager":         { required: ["Mathematical Literacy"], recommended: ["Business Studies", "Economics", "Geography"] },
+  "government-procurement":    { required: ["Mathematical Literacy"], recommended: ["Accounting", "Business Studies", "Economics"] },
+  "diplomat":                  { required: ["Mathematical Literacy"], recommended: ["History", "Geography", "Economics"] },
+  "statistician":              { required: ["Mathematics"], recommended: ["Information Technology (IT)", "Economics"] },
+  "urban-planner":             { required: ["Mathematics"], recommended: ["Geography", "Engineering Graphics & Design"] },
+
+  // ── Environment & Sustainability ─────────────────────────────────────────────
+  "sustainability-manager":    { required: ["Mathematical Literacy"], recommended: ["Geography", "Life Sciences", "Business Studies"] },
+  "water-engineer":            { required: ["Mathematics", "Physical Sciences"], recommended: ["Geography", "Civil Technology"] },
+  "climate-change-analyst":    { required: ["Mathematics"], recommended: ["Geography", "Life Sciences"] },
+  "waste-management-specialist":{ required: ["Mathematical Literacy"], recommended: ["Geography", "Life Sciences"] },
+
+  // ── Energy ───────────────────────────────────────────────────────────────────
+  "energy-manager":            { required: ["Mathematics"], recommended: ["Physical Sciences", "Electrical Technology"] },
+  "wind-energy-technician":    { required: ["Mathematics", "Physical Sciences"], recommended: ["Electrical Technology", "Mechanical Technology"] },
+  "battery-storage-specialist":{ required: ["Mathematics", "Physical Sciences"], recommended: ["Electrical Technology"] },
+
+  // ── Education ────────────────────────────────────────────────────────────────
+  "education-psychologist":    { required: ["Mathematical Literacy"], recommended: ["Life Sciences", "Life Orientation"] },
+  "curriculum-developer":      { required: ["Mathematical Literacy"], recommended: ["Life Orientation", "History"] },
+  "tvet-lecturer":             { required: ["Mathematical Literacy"], recommended: ["Mechanical Technology", "Electrical Technology", "Business Studies"] },
+  "special-needs-educator":    { required: ["Mathematical Literacy"], recommended: ["Life Sciences", "Life Orientation"] },
+
+  // ── Design & Creative ────────────────────────────────────────────────────────
+  "motion-designer":           { required: ["Mathematical Literacy"], recommended: ["Visual Arts", "Computer Applications Technology (CAT)", "Information Technology (IT)"] },
+  "ui-designer":               { required: ["Mathematical Literacy"], recommended: ["Visual Arts", "Computer Applications Technology (CAT)", "Information Technology (IT)"] },
+  "3d-visualiser":             { required: ["Mathematical Literacy"], recommended: ["Visual Arts", "Engineering Graphics & Design", "Computer Applications Technology (CAT)"] },
+  "interior-designer":         { required: ["Mathematical Literacy"], recommended: ["Visual Arts", "Engineering Graphics & Design", "Consumer Studies"] },
+  "creative-director":         { required: ["Mathematical Literacy"], recommended: ["Visual Arts", "Dramatic Arts", "Business Studies"] },
+
+  // ── Media & Creative ─────────────────────────────────────────────────────────
+  "podcast-producer":          { required: ["Mathematical Literacy"], recommended: ["Dramatic Arts", "Music", "Computer Applications Technology (CAT)"] },
+  "data-journalist":           { required: ["Mathematics"], recommended: ["Information Technology (IT)", "History"] },
+  "documentary-filmmaker":     { required: ["Mathematical Literacy"], recommended: ["Dramatic Arts", "Visual Arts", "History"] },
+
+  // ── Marketing & Communications ───────────────────────────────────────────────
+  "brand-manager":             { required: ["Mathematical Literacy"], recommended: ["Business Studies", "Economics", "Visual Arts"] },
+  "social-media-manager":      { required: ["Mathematical Literacy"], recommended: ["Business Studies", "Computer Applications Technology (CAT)", "Visual Arts"] },
+  "seo-specialist":            { required: ["Mathematical Literacy"], recommended: ["Information Technology (IT)", "Computer Applications Technology (CAT)", "Business Studies"] },
+  "media-planner":             { required: ["Mathematics"], recommended: ["Business Studies", "Economics"] },
+  "communications-manager":    { required: ["Mathematical Literacy"], recommended: ["Business Studies", "Dramatic Arts", "History"] },
+  "performance-marketer":      { required: ["Mathematics"], recommended: ["Business Studies", "Information Technology (IT)", "Economics"] },
+
+  // ── Human Resources ──────────────────────────────────────────────────────────
+  "hrbp":                      { required: ["Mathematical Literacy"], recommended: ["Business Studies", "Life Orientation", "Economics"] },
+  "learning-development":      { required: ["Mathematical Literacy"], recommended: ["Business Studies", "Life Orientation"] },
+  "compensation-benefits":     { required: ["Mathematics"], recommended: ["Accounting", "Business Studies"] },
+  "payroll-administrator":     { required: ["Mathematical Literacy"], recommended: ["Accounting", "Business Studies", "Computer Applications Technology (CAT)"] },
+  "talent-acquisition":        { required: ["Mathematical Literacy"], recommended: ["Business Studies", "Life Orientation"] },
+
+  // ── Insurance ────────────────────────────────────────────────────────────────
+  "short-term-underwriter":    { required: ["Mathematics"], recommended: ["Accounting", "Business Studies"] },
+  "claims-manager":            { required: ["Mathematical Literacy"], recommended: ["Business Studies", "Accounting"] },
+  "life-insurance-advisor":    { required: ["Mathematical Literacy"], recommended: ["Business Studies", "Accounting", "Economics"] },
+
+  // ── Legal & Compliance ───────────────────────────────────────────────────────
+  "conveyancer":               { required: ["Mathematical Literacy"], recommended: ["Business Studies", "History"] },
+  "data-privacy-officer":      { required: ["Mathematical Literacy"], recommended: ["Information Technology (IT)", "Business Studies"] },
+  "anti-money-laundering":     { required: ["Mathematical Literacy"], recommended: ["Accounting", "Business Studies"] },
+
+  // ── Logistics & Supply Chain ─────────────────────────────────────────────────
+  "customs-clearing-agent":    { required: ["Mathematical Literacy"], recommended: ["Business Studies", "Geography", "Economics"] },
+  "demand-planner":            { required: ["Mathematics"], recommended: ["Business Studies", "Economics"] },
+  "fleet-manager":             { required: ["Mathematical Literacy"], recommended: ["Business Studies", "Mechanical Technology"] },
+
+  // ── Mining & Resources ───────────────────────────────────────────────────────
+  "mine-surveyor":             { required: ["Mathematics", "Physical Sciences"], recommended: ["Geography", "Engineering Graphics & Design"] },
+  "ventilation-officer":       { required: ["Mathematics", "Physical Sciences"], recommended: ["Mechanical Technology"] },
+  "metallurgical-technician":  { required: ["Mathematics", "Physical Sciences"], recommended: ["Engineering Graphics & Design"] },
+
+  // ── Property & Construction ──────────────────────────────────────────────────
+  "facilities-manager":        { required: ["Mathematical Literacy"], recommended: ["Business Studies", "Civil Technology"] },
+  "property-developer":        { required: ["Mathematics"], recommended: ["Business Studies", "Accounting", "Engineering Graphics & Design"] },
+  "building-inspector":        { required: ["Mathematics"], recommended: ["Civil Technology", "Engineering Graphics & Design"] },
+  "property-valuer":           { required: ["Mathematics"], recommended: ["Accounting", "Business Studies", "Geography"] },
+
+  // ── Retail & FMCG ────────────────────────────────────────────────────────────
+  "category-manager":          { required: ["Mathematics"], recommended: ["Business Studies", "Economics"] },
+  "merchandiser":              { required: ["Mathematical Literacy"], recommended: ["Business Studies", "Consumer Studies"] },
+  "fmcg-sales-rep":            { required: ["Mathematical Literacy"], recommended: ["Business Studies", "Economics"] },
+  "key-account-manager":       { required: ["Mathematical Literacy"], recommended: ["Business Studies", "Economics"] },
+  "supply-planner":            { required: ["Mathematics"], recommended: ["Business Studies", "Economics"] },
+  "trade-marketer":            { required: ["Mathematical Literacy"], recommended: ["Business Studies", "Visual Arts"] },
+  "e-commerce-manager":        { required: ["Mathematical Literacy"], recommended: ["Business Studies", "Information Technology (IT)", "Computer Applications Technology (CAT)"] },
+
+  // ── Security & Safety ────────────────────────────────────────────────────────
+  "security-manager":          { required: ["Mathematical Literacy"], recommended: ["Business Studies", "Life Orientation"] },
+  "ohs-officer":               { required: ["Mathematical Literacy"], recommended: ["Life Sciences", "Physical Sciences"] },
+  "fire-protection-specialist":{ required: ["Mathematics"], recommended: ["Physical Sciences", "Civil Technology"] },
+  "investigations-officer":    { required: ["Mathematical Literacy"], recommended: ["Life Orientation", "History"] },
+
+  // ── Social Services & NGO ────────────────────────────────────────────────────
+  "monitoring-evaluation":     { required: ["Mathematics"], recommended: ["Geography", "Economics", "Life Orientation"] },
+  "development-practitioner":  { required: ["Mathematical Literacy"], recommended: ["Geography", "History", "Life Orientation"] },
+  "fundraising-manager":       { required: ["Mathematical Literacy"], recommended: ["Business Studies", "Economics"] },
+
+  // ── Hospitality & Tourism ────────────────────────────────────────────────────
+  "revenue-manager":           { required: ["Mathematics"], recommended: ["Business Studies", "Tourism", "Economics"] },
+  "safari-guide":              { required: ["Mathematical Literacy"], recommended: ["Life Sciences", "Geography", "Tourism"] },
+  "travel-consultant":         { required: ["Mathematical Literacy"], recommended: ["Tourism", "Geography", "Business Studies"] },
+
+  // ── Trades & Artisans ────────────────────────────────────────────────────────
+  "boilermaker":               { required: ["Mathematics"], recommended: ["Mechanical Technology", "Engineering Graphics & Design", "Physical Sciences"] },
+  "millwright":                { required: ["Mathematics", "Physical Sciences"], recommended: ["Electrical Technology", "Mechanical Technology"] },
+  "instrumentation-technician":{ required: ["Mathematics", "Physical Sciences"], recommended: ["Electrical Technology"] },
+  "sheet-metal-worker":        { required: ["Mathematical Literacy"], recommended: ["Mechanical Technology", "Engineering Graphics & Design"] },
+  "rigger":                    { required: ["Mathematical Literacy"], recommended: ["Mechanical Technology", "Physical Sciences"] },
+  "tiler":                     { required: ["Mathematical Literacy"], recommended: ["Civil Technology", "Engineering Graphics & Design"] },
+
+  // ── BPO & Customer Service ───────────────────────────────────────────────────
+  "contact-centre-manager":    { required: ["Mathematical Literacy"], recommended: ["Business Studies", "Computer Applications Technology (CAT)"] },
+  "customer-success-manager":  { required: ["Mathematical Literacy"], recommended: ["Business Studies", "Computer Applications Technology (CAT)"] },
+  "quality-assurance-bpo":     { required: ["Mathematical Literacy"], recommended: ["Business Studies", "Computer Applications Technology (CAT)"] },
+  "business-development-manager":{ required: ["Mathematical Literacy"], recommended: ["Business Studies", "Economics"] },
+
+  // ── Agriculture & Agri-processing ────────────────────────────────────────────
+  "agronomist":                { required: ["Mathematics", "Life Sciences"], recommended: ["Agricultural Sciences", "Physical Sciences", "Geography"] },
+  "agricultural-economist":    { required: ["Mathematics"], recommended: ["Agricultural Sciences", "Economics", "Accounting"] },
+  "food-technologist":         { required: ["Mathematics", "Physical Sciences"], recommended: ["Life Sciences", "Consumer Studies", "Agricultural Sciences"] },
+  "viticulturist":             { required: ["Mathematics", "Life Sciences"], recommended: ["Agricultural Sciences", "Physical Sciences"] },
 };
 
 // ── NQF pathway by career (minimum NQF entry level from Grade 12) ─────────────

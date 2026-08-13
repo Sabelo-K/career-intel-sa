@@ -53,6 +53,48 @@ export interface AdzunaSearchOptions {
  * Returns an empty array on any error so callers can degrade gracefully.
  * Results are cached by Next.js for 1 hour per unique query.
  */
+/**
+ * Total number of live SA listings matching a role title.
+ *
+ * Adzuna returns a `count` (total matches) on every search, which the job
+ * listing path throws away. That count is a genuine, current demand signal —
+ * far fresher than our quarterly static demandScore.
+ *
+ * Uses results_per_page=1 to keep the payload tiny; we only want the count.
+ * Returns null when Adzuna is unconfigured or the request fails, so callers can
+ * tell "no data" apart from a real zero.
+ */
+export async function getAdzunaListingCount(
+  roleTitle: string,
+  opts: { province?: string; maxDaysOld?: number } = {}
+): Promise<number | null> {
+  const appId  = process.env.ADZUNA_APP_ID;
+  const appKey = process.env.ADZUNA_APP_KEY;
+  if (!appId || !appKey) return null;
+
+  const params = new URLSearchParams({
+    app_id:           appId,
+    app_key:          appKey,
+    results_per_page: "1",
+    what:             roleTitle,
+  });
+  if (opts.province)  params.set("where", PROVINCE_TO_ADZUNA[opts.province] ?? opts.province);
+  if (opts.maxDaysOld) params.set("max_days_old", String(opts.maxDaysOld));
+
+  try {
+    const res = await fetch(
+      `https://api.adzuna.com/v1/api/jobs/za/search/1?${params}`,
+      { next: { revalidate: 3600 } }
+    );
+    if (!res.ok) return null;
+    const data = await res.json() as { count?: number };
+    return typeof data.count === "number" ? data.count : null;
+  } catch (err) {
+    console.error("[adzuna] count fetch failed:", err);
+    return null;
+  }
+}
+
 export async function searchAdzunaJobs(opts: AdzunaSearchOptions): Promise<AdzunaJob[]> {
   const appId  = process.env.ADZUNA_APP_ID;
   const appKey = process.env.ADZUNA_APP_KEY;

@@ -66,7 +66,7 @@ export interface AdzunaSearchOptions {
  */
 export async function getAdzunaListingCount(
   roleTitle: string,
-  opts: { province?: string; maxDaysOld?: number } = {}
+  opts: { province?: string; maxDaysOld?: number; exactPhrase?: boolean } = {}
 ): Promise<number | null> {
   const appId  = process.env.ADZUNA_APP_ID;
   const appKey = process.env.ADZUNA_APP_KEY;
@@ -76,8 +76,14 @@ export async function getAdzunaListingCount(
     app_id:           appId,
     app_key:          appKey,
     results_per_page: "1",
-    what:             roleTitle,
   });
+
+  // `what` is KEYWORD matching — "Product Manager" matches any ad containing
+  // those words anywhere, which massively inflates counts for generic
+  // multi-word titles while specific ones stay honest. `what_phrase` requires
+  // the exact phrase, which is what we actually mean by a job title.
+  if (opts.exactPhrase) params.set("what_phrase", roleTitle);
+  else                  params.set("what", roleTitle);
   if (opts.province)  params.set("where", PROVINCE_TO_ADZUNA[opts.province] ?? opts.province);
   if (opts.maxDaysOld) params.set("max_days_old", String(opts.maxDaysOld));
 

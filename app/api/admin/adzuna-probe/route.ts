@@ -61,13 +61,21 @@ export async function GET(req: NextRequest) {
   const step   = Math.max(1, Math.floor(sorted.length / sampleSize));
   const sample = sorted.filter((_, i) => i % step === 0).slice(0, sampleSize);
 
-  const rows: { title: string; sector: string; demandScore: number; listings: number | null }[] = [];
+  const rows: {
+    title: string; sector: string; demandScore: number;
+    listings: number | null;      // keyword match (loose)
+    listingsExact: number | null; // exact-phrase match
+  }[] = [];
 
-  // Sequential with a small delay — friendlier to Adzuna's rate limit than a burst.
+  // Measure BOTH matching modes so we can tell a genuine data problem apart
+  // from a measurement artifact. Sequential with a small delay — friendlier to
+  // Adzuna's rate limit than a burst.
   for (const c of sample) {
-    const listings = await getAdzunaListingCount(c.title);
-    rows.push({ title: c.title, sector: c.sector, demandScore: c.demandScore, listings });
+    const listings      = await getAdzunaListingCount(c.title);
     await new Promise((r) => setTimeout(r, 120));
+    const listingsExact = await getAdzunaListingCount(c.title, { exactPhrase: true });
+    await new Promise((r) => setTimeout(r, 120));
+    rows.push({ title: c.title, sector: c.sector, demandScore: c.demandScore, listings, listingsExact });
   }
 
   const usable  = rows.filter((r) => r.listings !== null && r.listings > 0);
@@ -77,6 +85,20 @@ export async function GET(req: NextRequest) {
   const rho = usable.length >= 4
     ? spearman(usable.map((r) => r.demandScore), usable.map((r) => r.listings as number))
     : null;
+
+  // Same correlation, but using exact-phrase counts
+  const usableExact = rows.filter((r) => r.listingsExact !== null && r.listingsExact > 0);
+  const rhoExact = usableExact.length >= 4
+    ? spearman(usableExact.map((r) => r.demandScore), usableExact.map((r) => r.listingsExact as number))
+    : null;
+
+  // How much does loose matching inflate each count? A high median ratio is
+  // strong evidence the keyword mode is the problem, not our scores.
+  const ratios = rows
+    .filter((r) => r.listings && r.listingsExact && r.listingsExact > 0)
+    .map((r) => (r.listings as number) / (r.listingsExact as number))
+    .sort((a, b) => a - b);
+  const medianInflation = ratios.length ? ratios[Math.floor(ratios.length / 2)] : null;
 
   // Where our static score disagrees most with the live market
   const byListings = [...usable].sort((a, b) => (b.listings! - a.listings!));
@@ -101,13 +123,23 @@ export async function GET(req: NextRequest) {
             ? `MIXED — weak positive correlation (rho ${rho.toFixed(2)}). Usable as a secondary signal, not a replacement.`
             : `POOR — little/no correlation (rho ${rho.toFixed(2)}). Either our scores or the title matching need work before trusting it.`;
 
+  const verdictExact =
+    rhoExact === null ? "INCONCLUSIVE"
+    : rhoExact >= 0.5 ? `USABLE with exact-phrase matching (rho ${rhoExact.toFixed(2)})`
+    : rhoExact >= 0.2 ? `MIXED with exact-phrase matching (rho ${rhoExact.toFixed(2)})`
+    : `POOR even with exact-phrase matching (rho ${rhoExact.toFixed(2)}) — the demand scores themselves are the problem, not the matching.`;
+
   return NextResponse.json({
     sampled:        rows.length,
     usable:         usable.length,
+    usableExact:    usableExact.length,
     zeroListings:   zero.length,
     failedRequests: failed.length,
-    spearmanRho:    rho,
+    spearmanRho:      rho,
+    spearmanRhoExact: rhoExact,
+    medianInflation,   // keyword count ÷ exact-phrase count
     verdict,
+    verdictExact,
     totalLiveListings: usable.reduce((s, r) => s + (r.listings ?? 0), 0),
     biggestMismatches: mismatches.map((m) => ({
       title: m.title, demandScore: m.demandScore, listings: m.listings,

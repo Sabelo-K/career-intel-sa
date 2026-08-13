@@ -252,7 +252,12 @@ export default function BuyCreditsPage() {
 
       {/* What credits buy */}
       <div className="bg-card border border-border rounded-2xl p-5 space-y-4">
-        <h3 className="text-sm font-semibold text-foreground">What do credits buy?</h3>
+        <div className="flex items-center justify-between gap-3">
+          <h3 className="text-sm font-semibold text-foreground">What do credits buy?</h3>
+          <Link href="/how-credits-work" className="text-xs text-indigo-400 hover:underline whitespace-nowrap">
+            Full breakdown →
+          </Link>
+        </div>
         <p className="text-xs text-muted-foreground -mt-2 leading-relaxed">
           Used only once your free monthly allowance is finished. The CV Builder is free
           for everyone and never costs credits.

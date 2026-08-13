@@ -643,7 +643,7 @@ export default function LandingPage() {
                   { label: "Career Guides", href: "/#features" },
                   { label: "Salary Reports", href: "/job-market" },
                   { label: "SETA Learnerships", href: "/courses" },
-                  { label: "Interview Prep", href: "/interview-prep" },
+                  { label: "How Credits Work", href: "/how-credits-work" },
                 ],
               },
               {

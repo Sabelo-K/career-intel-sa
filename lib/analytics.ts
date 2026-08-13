@@ -23,6 +23,7 @@ export type AnalyticsEvent =
   | "tool_salary_check_run"
   | "tool_matric_run"
   | "tool_degree_roi_run"
+  | "tool_subject_choice_run"
   // ── Activation ────────────────────────────────────────────────────────────
   | "onboarding_completed"
   // ── Core feature usage ────────────────────────────────────────────────────

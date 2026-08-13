@@ -17,6 +17,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${BASE}/degree-roi`,            lastModified: now, changeFrequency: "monthly",   priority: 0.8  },
     { url: `${BASE}/graduate-programmes`,   lastModified: now, changeFrequency: "monthly",   priority: 0.95 },
     { url: `${BASE}/bursaries`,             lastModified: now, changeFrequency: "monthly",   priority: 0.95 },
+    { url: `${BASE}/subject-choice`,        lastModified: now, changeFrequency: "monthly",   priority: 0.95 },
     { url: `${BASE}/how-credits-work`,      lastModified: now, changeFrequency: "monthly",   priority: 0.6  },
 
     // ── Auth ───────────────────────────────────────────────────────────────

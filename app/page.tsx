@@ -241,6 +241,7 @@ export default function LandingPage() {
             {[
               { href: "/salary-check", label: "Am I underpaid?",        color: "text-emerald-400 border-emerald-500/20 hover:border-emerald-500/40 hover:bg-emerald-500/5" },
               { href: "/matric",       label: "Matric career matcher",  color: "text-amber-400 border-amber-500/20 hover:border-amber-500/40 hover:bg-amber-500/5"        },
+              { href: "/subject-choice", label: "Subject choice guide", color: "text-indigo-400 border-indigo-500/20 hover:border-indigo-500/40 hover:bg-indigo-500/5"   },
               { href: "/degree-roi",   label: "Degree ROI calculator",  color: "text-violet-400 border-violet-500/20 hover:border-violet-500/40 hover:bg-violet-500/5"    },
             ].map(tool => (
               <Link key={tool.href} href={tool.href}

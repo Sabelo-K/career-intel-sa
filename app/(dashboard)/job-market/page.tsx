@@ -20,8 +20,9 @@ import { formatSalaryRange, getDemandBadgeColor, getTrendLabel, getAutomationRis
 
 // ── Data freshness ─────────────────────────────────────────────────────────────
 // Update this string each quarter when career data is refreshed.
-// Sources: Stats SA QES · DHET Scarce Skills List · Adzuna SA · Robert Walters SA Salary Guide
-const DATA_LAST_UPDATED = "May 2026";
+// Sources: National Minimum Wage Act (gazetted rates) · Stats SA QES · DHET Scarce
+// Skills List · Adzuna SA · Robert Walters SA Salary Guide
+const DATA_LAST_UPDATED = "August 2026";
 const NEXT_UPDATE_DUE   = "September 2026";
 
 // Shared tooltip style — dark background with white text for all charts

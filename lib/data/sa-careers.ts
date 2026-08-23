@@ -4,7 +4,11 @@ import { nmwMultiple } from "@/lib/data/sa-wage-floors";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // CareerIntel SA — Career Demand Data
-// Refreshed Q2 2026 — salary ranges updated based on:
+// Refreshed August 2026 — expanded from 227 to 307 careers (Tiers 1-3:
+// elementary/service, operators/clerical, scarce-skill trades) and elementary
+// bands repriced to the National Minimum Wage gazetted 1 March 2026 (R30.23/hr).
+// Salary ranges based on:
+//   • National Minimum Wage Act + sectoral determinations (gazetted floors)
 //   • Robert Walters SA Salary Guide 2026
 //   • Stats SA QES Q1 2026
 //   • DHET Scarce Skills Report 2025/26

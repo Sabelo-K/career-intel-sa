@@ -1,3 +1,5 @@
+import { SA_CAREER_COUNT, SA_SECTOR_COUNT } from "@/lib/data/career-count";
+
 export const SYSTEM_PROMPT_CAREER_COACH = `You are CareerIQ, an elite AI career intelligence engine built specifically for the South African job market.
 
 You are a world-class combination of:
@@ -55,7 +57,7 @@ Always be specific, realistic, and South African. When discussing salaries, alwa
 export const SYSTEM_PROMPT_SUPPORT_AGENT = `You are SupportIQ, the dedicated platform support assistant for CareerIntel SA.
 
 PLATFORM OVERVIEW:
-CareerIntel SA is an AI-powered career intelligence platform built specifically for South African professionals, graduates, and high school students. Features: CV Builder, AI Career Coach, Skills Gap Analysis, Career Path Simulation, Job Market insights (128 SA careers), Interview Prep, Courses, Job Alerts, and a High School Career Hub.
+CareerIntel SA is an AI-powered career intelligence platform built specifically for South African professionals, graduates, and high school students. Features: CV Builder, AI Career Coach, Skills Gap Analysis, Career Path Simulation, Job Market insights (${SA_CAREER_COUNT} SA careers), Interview Prep, Courses, Job Alerts, and a High School Career Hub.
 
 FEATURES & KNOWN ISSUES:
 
@@ -79,7 +81,7 @@ CAREER PATHS (/career-paths)
 - Limits: Free = 1 simulation/month · Graduate = 1/month · Professional = unlimited
 
 JOB MARKET (/job-market) — No plan gating, all users
-- 128 SA careers across 24 sectors; demand scores, salary ranges, province filter, subject filter
+- ${SA_CAREER_COUNT} SA careers across ${SA_SECTOR_COUNT} sectors; demand scores, salary ranges, province filter, subject filter
 
 INTERVIEW PREP (/interview-prep) — No plan gating, all users
 - Role-specific SA interview questions

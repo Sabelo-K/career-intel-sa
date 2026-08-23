@@ -9,9 +9,10 @@ import {
 } from "lucide-react";
 import { LanguageSelector } from "@/components/layout/language-selector";
 import { PricingSection } from "@/components/landing/pricing-section";
+import { SA_CAREER_COUNT, SA_SECTOR_COUNT } from "@/lib/data/career-count";
 
 const STATS = [
-  { value: "249+", label: "SA Careers Mapped", icon: Target },
+  { value: String(SA_CAREER_COUNT), label: "SA Careers Mapped", icon: Target },
   { value: "26",   label: "Industry Sectors", icon: BarChart3 },
   { value: "9",    label: "SA Provinces Covered", icon: Globe },
   { value: "Free", label: "To Get Started", icon: Sparkles },
@@ -30,7 +31,7 @@ const FEATURES = [
   {
     icon: TrendingUp,
     title: "Career Demand Engine",
-    description: "See real-time demand scores, salary ranges in ZAR, and growth trends for 249+ careers across SA provinces.",
+    description: `See real-time demand scores, salary ranges in ZAR, and growth trends for ${SA_CAREER_COUNT} careers across SA provinces.`,
     color: "emerald",
     gradient: "from-emerald-500/20 to-teal-500/10",
     border: "border-emerald-500/30",
@@ -459,7 +460,7 @@ export default function LandingPage() {
               </h2>
               <div className="space-y-4">
                 {[
-                  "Real-time SA job market demand data for 249+ careers",
+                  `Real-time SA job market demand data for ${SA_CAREER_COUNT} careers`,
                   "AI that understands NQF levels, SETAs, and local employers",
                   "Personalised skills gap analysis with actionable learning paths",
                   "Salary predictions based on SA market data",
@@ -518,7 +519,7 @@ export default function LandingPage() {
             className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10 max-w-3xl mx-auto text-center"
           >
             {[
-              { value: "249+", label: "SA careers tracked",       note: "Across 24 sectors"            },
+              { value: String(SA_CAREER_COUNT), label: "SA careers tracked", note: `Across ${SA_SECTOR_COUNT} sectors` },
               { value: "9",    label: "Provinces covered",         note: "ZAR salary per province"      },
               { value: "7",    label: "SA official languages",     note: "AI responds in your language" },
               { value: "Free", label: "To get started",            note: "No credit card required"      },

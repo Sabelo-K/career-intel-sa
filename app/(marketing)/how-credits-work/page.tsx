@@ -5,6 +5,7 @@ import {
 } from "lucide-react";
 import { CREDIT_COSTS, CREDIT_PACKS } from "@/lib/credits";
 import { FREE_LIMITS } from "@/lib/plan-gate";
+import { SA_CAREER_COUNT } from "@/lib/data/career-count";
 
 // Costs and limits are read from the SAME constants the platform enforces, so
 // this page can never drift out of sync with what users are actually charged.
@@ -38,7 +39,7 @@ const CREDIT_ACTIONS = [
 
 const ALWAYS_FREE = [
   "CV Builder — upload, ATS score, recruiter rating and AI rewrite",
-  "Job Market — 249+ SA careers, demand scores and ZAR salary ranges",
+  `Job Market — ${SA_CAREER_COUNT} SA careers, demand scores and ZAR salary ranges`,
   "Interview Prep — SA-specific questions and voice mock interviews",
   "Bursaries and Graduate Programmes directories",
   "Salary Checker, Matric Career Matcher and Degree ROI Calculator",

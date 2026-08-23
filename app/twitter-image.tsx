@@ -1,4 +1,5 @@
 import { renderOgImage, OG_SIZE, OG_CONTENT_TYPE } from "@/lib/og";
+import { SA_CAREER_COUNT } from "@/lib/data/career-count";
 
 export const runtime = "edge";
 export const alt = "CareerIntel SA — AI Career Intelligence Platform";
@@ -9,7 +10,7 @@ export default function Image() {
   return renderOgImage({
     eyebrow: "AI Career Intelligence",
     title: "Your Career, Intelligently Engineered for SA",
-    subtitle: "Salary benchmarks, skills gap analysis & AI coaching for 249+ SA careers. Free to start.",
+    subtitle: `Salary benchmarks, skills gap analysis & AI coaching for ${SA_CAREER_COUNT} SA careers. Free to start.`,
     accent: "#818cf8",
   });
 }

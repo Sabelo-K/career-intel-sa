@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import { ClerkProvider } from "@clerk/nextjs";
 import CookieBanner from "@/components/cookie-banner";
 import { Analytics } from "@vercel/analytics/next";
+import { SA_CAREER_COUNT } from "@/lib/data/career-count";
 import { LanguageProvider } from "@/lib/i18n/LanguageContext";
 import "./globals.css";
 
@@ -60,7 +61,7 @@ const JSON_LD = {
   applicationCategory: "BusinessApplication",
   operatingSystem: "Web",
   description:
-    "South Africa's AI-powered career intelligence platform. Build CVs, benchmark salaries in ZAR, analyse skills gaps, and get AI career coaching for 249+ SA careers.",
+    `South Africa's AI-powered career intelligence platform. Build CVs, benchmark salaries in ZAR, analyse skills gaps, and get AI career coaching for ${SA_CAREER_COUNT} SA careers.`,
   inLanguage: ["en-ZA", "zu", "xh", "af", "st", "tn", "nso"],
   offers: {
     "@type": "Offer",

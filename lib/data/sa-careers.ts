@@ -1,4 +1,5 @@
 import type { CareerDemandData } from "@/lib/types";
+import { SA_CAREER_COUNT, SA_SECTOR_COUNT } from "@/lib/data/career-count";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // CareerIntel SA — Career Demand Data
@@ -4303,3 +4304,20 @@ export const TOP_GROWING_CAREERS_2025 = [
   { title: "Solar PV Installer",     growth: "+36%", demand: 86 },
   { title: "Social Worker",          growth: "+28%", demand: 80 },
 ];
+
+// ── Drift guard ──────────────────────────────────────────────────────────────
+// Marketing copy, metadata and AI prompts read the counts from
+// lib/data/career-count.ts so they don't have to import this whole dataset.
+// If careers are added/removed without updating those literals, warn loudly in
+// development rather than let the site quietly overstate itself.
+if (process.env.NODE_ENV !== "production") {
+  const actualCareers = SA_CAREERS.length;
+  const actualSectors = new Set(SA_CAREERS.map((c) => c.sector)).size;
+  if (actualCareers !== SA_CAREER_COUNT || actualSectors !== SA_SECTOR_COUNT) {
+    console.warn(
+      `[sa-careers] Count drift — update lib/data/career-count.ts:\n` +
+      `  careers: literal ${SA_CAREER_COUNT} vs actual ${actualCareers}\n` +
+      `  sectors: literal ${SA_SECTOR_COUNT} vs actual ${actualSectors}`
+    );
+  }
+}

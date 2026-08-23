@@ -4,6 +4,7 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { CheckCircle } from "lucide-react";
 import Link from "next/link";
+import { SA_CAREER_COUNT } from "@/lib/data/career-count";
 
 const PRICING = [
   {
@@ -14,7 +15,7 @@ const PRICING = [
     features: [
       "CV builder (upload & build from scratch)",
       "ATS score & recruiter rating",
-      "Career demand insights (249+ SA careers)",
+      `Career demand insights (${SA_CAREER_COUNT} SA careers)`,
       "3 skills gap analyses/month",
       "15 AI coach messages/month",
       "Province job heatmap",

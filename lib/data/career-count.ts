@@ -11,5 +11,5 @@
  * site previously advertised "249+ careers" while holding 227, and the AI
  * support agent claimed 128.
  */
-export const SA_CAREER_COUNT = 267;
-export const SA_SECTOR_COUNT = 30;
+export const SA_CAREER_COUNT = 307;
+export const SA_SECTOR_COUNT = 31;

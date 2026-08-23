@@ -475,6 +475,58 @@ export const CAREER_SUBJECTS: Record<string, SubjectRequirements> = {
   "community-health-worker":   { required: [], recommended: ["Life Sciences", "Life Orientation"] },
   "ecd-assistant":             { required: [], recommended: ["Life Orientation", "Life Sciences", "Consumer Studies"] },
   "receptionist":              { required: ["Mathematical Literacy"], recommended: ["Computer Applications Technology (CAT)", "Business Studies"] },
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // TIER 2 — OPERATORS, DRIVERS & CLERICAL
+  // Clerical roles need real numeracy; operator roles need a licence/permit
+  // rather than a specific school subject.
+  // ═══════════════════════════════════════════════════════════════════════════
+  "bus-driver":                { required: ["Mathematical Literacy"], recommended: ["Life Orientation", "Geography"] },
+  "ambulance-driver":          { required: ["Mathematical Literacy"], recommended: ["Life Sciences", "Life Orientation"] },
+  "train-driver":              { required: ["Mathematical Literacy"], recommended: ["Physical Sciences", "Mechanical Technology"] },
+  "crane-operator":            { required: ["Mathematical Literacy"], recommended: ["Mechanical Technology", "Physical Sciences", "Engineering Graphics & Design"] },
+  "earthmoving-operator":      { required: ["Mathematical Literacy"], recommended: ["Mechanical Technology", "Civil Technology"] },
+  "tractor-operator":          { required: [], recommended: ["Agricultural Sciences", "Mechanical Technology", "Agricultural Technology"] },
+  "admin-clerk":               { required: ["Mathematical Literacy"], recommended: ["Computer Applications Technology (CAT)", "Business Studies"] },
+  "office-administrator":      { required: ["Mathematical Literacy"], recommended: ["Business Studies", "Computer Applications Technology (CAT)", "Accounting"] },
+  "personal-assistant":        { required: ["Mathematical Literacy"], recommended: ["Business Studies", "Computer Applications Technology (CAT)"] },
+  "data-capturer":             { required: ["Mathematical Literacy"], recommended: ["Computer Applications Technology (CAT)", "Information Technology (IT)"] },
+  "debtors-clerk":             { required: ["Mathematical Literacy"], recommended: ["Accounting", "Business Studies", "Economics"] },
+  "creditors-clerk":           { required: ["Mathematical Literacy"], recommended: ["Accounting", "Business Studies", "Economics"] },
+  "bank-teller":               { required: ["Mathematical Literacy"], recommended: ["Accounting", "Business Studies", "Economics"] },
+  "dispatch-clerk":            { required: ["Mathematical Literacy"], recommended: ["Business Studies", "Computer Applications Technology (CAT)"] },
+  "stock-controller":          { required: ["Mathematical Literacy"], recommended: ["Business Studies", "Accounting", "Computer Applications Technology (CAT)"] },
+  "messenger":                 { required: [], recommended: ["Life Orientation", "Geography"] },
+  "traffic-officer":           { required: ["Mathematical Literacy"], recommended: ["Life Orientation", "Life Sciences"] },
+  "refuse-collector":          { required: [], recommended: ["Life Orientation"] },
+  "meter-reader":              { required: ["Mathematical Literacy"], recommended: ["Computer Applications Technology (CAT)"] },
+  "postal-worker":             { required: ["Mathematical Literacy"], recommended: ["Geography", "Computer Applications Technology (CAT)"] },
+  "toll-operator":             { required: ["Mathematical Literacy"], recommended: ["Business Studies"] },
+  "library-assistant":         { required: ["Mathematical Literacy"], recommended: ["History", "Computer Applications Technology (CAT)"] },
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // TIER 3 — TRADES & ARTISANS
+  // Trade tests and N-courses need Mathematics + a technical subject for the
+  // engineering trades; building/finishing trades are more accessible.
+  // ═══════════════════════════════════════════════════════════════════════════
+  "fitter-turner":             { required: ["Mathematics"], recommended: ["Mechanical Technology", "Engineering Graphics & Design", "Physical Sciences"] },
+  "toolmaker":                 { required: ["Mathematics"], recommended: ["Mechanical Technology", "Engineering Graphics & Design", "Physical Sciences"] },
+  "cnc-machinist":             { required: ["Mathematics"], recommended: ["Mechanical Technology", "Engineering Graphics & Design", "Information Technology (IT)"] },
+  "auto-electrician":          { required: ["Mathematics"], recommended: ["Electrical Technology", "Physical Sciences", "Mechanical Technology"] },
+  "panel-beater":              { required: ["Mathematical Literacy"], recommended: ["Mechanical Technology", "Engineering Graphics & Design"] },
+  "spray-painter":             { required: ["Mathematical Literacy"], recommended: ["Mechanical Technology", "Visual Arts"] },
+  "pipe-fitter":               { required: ["Mathematics"], recommended: ["Mechanical Technology", "Engineering Graphics & Design", "Physical Sciences"] },
+  "steel-fixer":               { required: ["Mathematical Literacy"], recommended: ["Civil Technology", "Engineering Graphics & Design"] },
+  "scaffolder":                { required: ["Mathematical Literacy"], recommended: ["Civil Technology", "Physical Sciences"] },
+  "plasterer":                 { required: [], recommended: ["Civil Technology", "Engineering Graphics & Design"] },
+  "roofer":                    { required: ["Mathematical Literacy"], recommended: ["Civil Technology", "Engineering Graphics & Design"] },
+  "glazier":                   { required: ["Mathematical Literacy"], recommended: ["Civil Technology", "Engineering Graphics & Design"] },
+  "cabinet-maker":             { required: ["Mathematical Literacy"], recommended: ["Civil Technology", "Engineering Graphics & Design", "Visual Arts"] },
+  "upholsterer":               { required: [], recommended: ["Consumer Studies", "Visual Arts"] },
+  "paving-installer":          { required: [], recommended: ["Civil Technology"] },
+  "locksmith":                 { required: ["Mathematical Literacy"], recommended: ["Mechanical Technology", "Engineering Graphics & Design"] },
+  "baker":                     { required: [], recommended: ["Consumer Studies", "Life Sciences"] },
+  "butcher":                   { required: [], recommended: ["Consumer Studies", "Life Sciences", "Agricultural Sciences"] },
 };
 
 // ── NQF pathway by career (minimum NQF entry level from Grade 12) ─────────────

@@ -292,7 +292,33 @@ function CareerDetailDrawer({ career, onClose }: { career: (typeof SA_CAREERS)[0
 
           {/* Salary breakdown */}
           <div className="bg-card border border-border rounded-xl p-4">
-            <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-3">Salary Range (ZAR/month)</h3>
+            <div className="flex items-center justify-between gap-2 mb-3">
+              <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Salary Range (ZAR/month)</h3>
+              {/* Where these figures come from — statutory floors are far more
+                  reliable than a market estimate, and users deserve to know. */}
+              {career.dataConfidence === "gazetted" ? (
+                <span
+                  title="Anchored to legally published SA rates — National Minimum Wage Act, a sectoral determination, or a bargaining council agreement."
+                  className="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-emerald-500/15 text-emerald-300 border border-emerald-500/25 whitespace-nowrap"
+                >
+                  Gazetted rate
+                </span>
+              ) : career.dataConfidence === "surveyed" ? (
+                <span
+                  title="Taken from a published SA salary survey."
+                  className="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-indigo-500/15 text-indigo-300 border border-indigo-500/25 whitespace-nowrap"
+                >
+                  Survey data
+                </span>
+              ) : (
+                <span
+                  title="Market estimate — not traceable to a single published source. Verify before relying on it."
+                  className="text-[10px] font-medium px-1.5 py-0.5 rounded bg-secondary text-muted-foreground border border-border whitespace-nowrap"
+                >
+                  Estimate
+                </span>
+              )}
+            </div>
             <div className="space-y-2">
               {[
                 { label: "Entry level", value: career.minSalaryZar, pct: 30 },

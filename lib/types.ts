@@ -36,6 +36,21 @@ export interface CareerDemandData {
   topProvinces: string[];
   nqfLevel?: number;
   relatedCareers: string[];
+
+  /**
+   * How well-grounded this entry's salary figures are. Absent = "estimated".
+   *
+   *  "gazetted"  — anchored to legally published SA rates: the National Minimum
+   *                Wage Act, a sectoral determination, or a bargaining council
+   *                agreement. The strongest basis we have.
+   *  "surveyed"  — taken from a published salary survey (e.g. Robert Walters SA).
+   *  "estimated" — a market estimate, not traceable to a single source.
+   *
+   * Deliberately optional and conservative: the original 227 careers are a blend
+   * of sources with no per-row provenance, so they stay unlabelled and are shown
+   * as estimates rather than being retroactively over-claimed.
+   */
+  dataConfidence?: "gazetted" | "surveyed" | "estimated";
 }
 
 export interface SkillsGapResult {

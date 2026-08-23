@@ -404,6 +404,77 @@ export const CAREER_SUBJECTS: Record<string, SubjectRequirements> = {
   "agricultural-economist":    { required: ["Mathematics"], recommended: ["Agricultural Sciences", "Economics", "Accounting"] },
   "food-technologist":         { required: ["Mathematics", "Physical Sciences"], recommended: ["Life Sciences", "Consumer Studies", "Agricultural Sciences"] },
   "viticulturist":             { required: ["Mathematics", "Life Sciences"], recommended: ["Agricultural Sciences", "Physical Sciences"] },
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // TIER 1 — ELEMENTARY & SERVICE OCCUPATIONS
+  // Most have NO school-subject gate: they're open on a Grade 9–12 pass, and
+  // pretending otherwise would wrongly close doors for the learners who most
+  // need to see them. `required: []` is the honest encoding — the fit ranking
+  // (via `recommended`) still surfaces the ones that match a learner's
+  // interests, so they don't crowd out better-matched careers.
+  // ═══════════════════════════════════════════════════════════════════════════
+
+  // Domestic & care work
+  "domestic-worker":           { required: [], recommended: ["Consumer Studies", "Life Orientation"] },
+  "childminder":               { required: [], recommended: ["Life Orientation", "Life Sciences", "Consumer Studies"] },
+  "elderly-caregiver":         { required: [], recommended: ["Life Sciences", "Life Orientation"] },
+
+  // Cleaning, grounds & facilities
+  "cleaner":                   { required: [], recommended: ["Consumer Studies", "Life Orientation"] },
+  "gardener":                  { required: [], recommended: ["Agricultural Sciences", "Life Sciences"] },
+  "car-guard":                 { required: [], recommended: ["Life Orientation"] },
+  "general-worker":            { required: [], recommended: ["Life Orientation"] },
+
+  // Private security
+  "security-guard":            { required: [], recommended: ["Life Orientation", "Physical Sciences"] },
+  "access-control-officer":    { required: ["Mathematical Literacy"], recommended: ["Computer Applications Technology (CAT)", "Life Orientation"] },
+  "cash-in-transit-officer":   { required: ["Mathematical Literacy"], recommended: ["Life Orientation"] },
+
+  // Agriculture
+  "farm-worker":               { required: [], recommended: ["Agricultural Sciences", "Life Sciences"] },
+  "packhouse-worker":          { required: [], recommended: ["Agricultural Sciences", "Consumer Studies"] },
+  "livestock-handler":         { required: [], recommended: ["Agricultural Sciences", "Life Sciences"] },
+
+  // Wholesale & retail
+  "cashier":                   { required: ["Mathematical Literacy"], recommended: ["Business Studies", "Consumer Studies"] },
+  "shop-assistant":            { required: ["Mathematical Literacy"], recommended: ["Business Studies", "Consumer Studies"] },
+  "shelf-packer":              { required: [], recommended: ["Business Studies"] },
+  "store-supervisor":          { required: ["Mathematical Literacy"], recommended: ["Business Studies", "Accounting", "Economics"] },
+  "petrol-attendant":          { required: ["Mathematical Literacy"], recommended: ["Business Studies"] },
+  "car-wash-attendant":        { required: [], recommended: ["Life Orientation"] },
+
+  // Food service & hospitality
+  "waiter":                    { required: ["Mathematical Literacy"], recommended: ["Consumer Studies", "Tourism", "Business Studies"] },
+  "kitchen-assistant":         { required: [], recommended: ["Consumer Studies", "Life Sciences"] },
+  "barista":                   { required: ["Mathematical Literacy"], recommended: ["Consumer Studies", "Tourism"] },
+  "fast-food-crew":            { required: ["Mathematical Literacy"], recommended: ["Consumer Studies", "Business Studies"] },
+  "housekeeping-attendant":    { required: [], recommended: ["Consumer Studies", "Tourism"] },
+
+  // Construction & manual
+  "construction-labourer":     { required: [], recommended: ["Civil Technology", "Engineering Graphics & Design"] },
+
+  // Transport, warehousing & logistics
+  "delivery-driver":           { required: ["Mathematical Literacy"], recommended: ["Life Orientation", "Geography"] },
+  "courier":                   { required: ["Mathematical Literacy"], recommended: ["Geography", "Business Studies"] },
+  "taxi-driver":               { required: ["Mathematical Literacy"], recommended: ["Life Orientation", "Geography"] },
+  "warehouse-assistant":       { required: ["Mathematical Literacy"], recommended: ["Business Studies", "Computer Applications Technology (CAT)"] },
+  "forklift-operator":         { required: ["Mathematical Literacy"], recommended: ["Mechanical Technology", "Business Studies"] },
+
+  // Manufacturing & production
+  "machine-operator":          { required: ["Mathematical Literacy"], recommended: ["Mechanical Technology", "Engineering Graphics & Design", "Physical Sciences"] },
+  "production-line-worker":    { required: [], recommended: ["Mechanical Technology", "Consumer Studies"] },
+  "quality-control-checker":   { required: ["Mathematical Literacy"], recommended: ["Physical Sciences", "Mechanical Technology", "Consumer Studies"] },
+
+  // Informal & self-employed
+  "street-vendor":             { required: ["Mathematical Literacy"], recommended: ["Business Studies", "Economics"] },
+  "spaza-shop-operator":       { required: ["Mathematical Literacy"], recommended: ["Business Studies", "Accounting", "Economics"] },
+  "hair-stylist":              { required: [], recommended: ["Consumer Studies", "Visual Arts", "Business Studies"] },
+  "seamstress":                { required: [], recommended: ["Consumer Studies", "Visual Arts"] },
+
+  // Community, care & front-office
+  "community-health-worker":   { required: [], recommended: ["Life Sciences", "Life Orientation"] },
+  "ecd-assistant":             { required: [], recommended: ["Life Orientation", "Life Sciences", "Consumer Studies"] },
+  "receptionist":              { required: ["Mathematical Literacy"], recommended: ["Computer Applications Technology (CAT)", "Business Studies"] },
 };
 
 // ── NQF pathway by career (minimum NQF entry level from Grade 12) ─────────────

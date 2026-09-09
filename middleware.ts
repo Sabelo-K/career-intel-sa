@@ -36,6 +36,7 @@ const isPublicRoute = createRouteMatcher([
   "/twitter-image(.*)",
   "/(.*)/opengraph-image(.*)",   // per-route cards, e.g. /subject-choice/opengraph-image
   "/(.*)/twitter-image(.*)",
+  "/api/og/(.*)",                // dynamic share cards (e.g. the salary Probe result)
 ]);
 
 export default clerkMiddleware((auth, req) => {

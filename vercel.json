@@ -1,5 +1,5 @@
 {
-  "buildCommand": "prisma generate && next build",
+  "buildCommand": "prisma generate && tsx scripts/build-career-index.ts && next build",
   "framework": "nextjs",
   "regions": ["iad1"],
   "crons": [

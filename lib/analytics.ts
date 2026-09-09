@@ -21,6 +21,9 @@ import { track as vercelTrack } from "@vercel/analytics";
 export type AnalyticsEvent =
   // ── Acquisition: free tools (no sign-up required) ──────────────────────────
   | "tool_salary_check_run"
+  /** The landing-page hero Probe. Kept separate from the /salary-check tool so
+   *  we can see whether the hero converts better than the standalone page. */
+  | "tool_salary_probe_run"
   | "tool_matric_run"
   | "tool_degree_roi_run"
   | "tool_subject_choice_run"

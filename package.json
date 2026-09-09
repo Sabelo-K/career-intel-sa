@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "prisma generate && next build",
+    "build": "prisma generate && tsx scripts/build-career-index.ts && next build",
+    "build:career-index": "tsx scripts/build-career-index.ts",
     "postinstall": "prisma generate",
     "start": "next start",
     "lint": "next lint",

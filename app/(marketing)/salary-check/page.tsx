@@ -78,7 +78,7 @@ export async function generateMetadata({
       : `The SA market average for ${role}${where}. Check yours free on CareerIntel SA — no sign-up.`;
 
   return {
-    title: `${title} | CareerIntel SA`,
+    title, // root layout template appends " | CareerIntel SA"
     description,
     openGraph: {
       title,

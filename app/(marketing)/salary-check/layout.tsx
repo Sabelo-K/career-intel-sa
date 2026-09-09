@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Am I Underpaid? Free SA Salary Checker | CareerIntel SA",
+  title: "Am I Underpaid? Free SA Salary Checker",
   description:
     "Check your salary against the South African market in 30 seconds. Enter your role, province, and experience — get an instant ZAR salary benchmark. Free, no sign-up required.",
   keywords: [

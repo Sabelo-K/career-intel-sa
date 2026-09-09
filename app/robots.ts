@@ -5,7 +5,13 @@ export default function robots(): MetadataRoute.Robots {
     rules: [
       {
         userAgent: "*",
-        allow: ["/", "/salary-check", "/matric", "/degree-roi", "/privacy", "/terms", "/sign-up", "/sign-in"],
+        allow: [
+          "/", "/salary-check", "/matric", "/degree-roi", "/subject-choice",
+          "/bursaries", "/graduate-programmes", "/how-credits-work",
+          "/explore",      // career map + one page per career
+          "/api/og/",      // share cards — a longer allow beats the /api/ disallow
+          "/privacy", "/terms", "/sign-up", "/sign-in",
+        ],
         disallow: [
           "/dashboard",
           "/cv-builder",

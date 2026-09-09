@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 import { LanguageSelector } from "@/components/layout/language-selector";
 import { PricingSection } from "@/components/landing/pricing-section";
+import { SalaryProbe } from "@/components/landing/salary-probe";
 import { SA_CAREER_COUNT, SA_SECTOR_COUNT } from "@/lib/data/career-count";
 
 const STATS = [
@@ -101,34 +102,6 @@ const USERS = [
   { icon: TrendingUp, label: "Career Switchers" },
   { icon: Building2, label: "HR & Recruiters" },
 ];
-
-const TOP_CAREERS = [
-  { title: "AI/ML Engineer", score: 95, growth: "+67%", salary: "R55k–R160k" },
-  { title: "Cloud Architect", score: 91, growth: "+48%", salary: "R60k–R180k" },
-  { title: "Cybersecurity Analyst", score: 90, growth: "+38%", salary: "R35k–R130k" },
-  { title: "Data Scientist", score: 94, growth: "+34%", salary: "R35k–R120k" },
-  { title: "Renewable Energy Eng", score: 91, growth: "+45%", salary: "R35k–R120k" },
-];
-
-function DemandBar({ score, color = "indigo" }: { score: number; color?: string }) {
-  const colorMap: Record<string, string> = {
-    indigo: "bg-indigo-500",
-    emerald: "bg-emerald-500",
-    amber: "bg-amber-500",
-    violet: "bg-violet-500",
-    blue: "bg-blue-500",
-  };
-  return (
-    <div className="h-1.5 w-full rounded-full bg-white/10">
-      <motion.div
-        initial={{ width: 0 }}
-        whileInView={{ width: `${score}%` }}
-        transition={{ duration: 1, ease: "easeOut" }}
-        className={`h-full rounded-full ${colorMap[color] || "bg-indigo-500"}`}
-      />
-    </div>
-  );
-}
 
 export default function LandingPage() {
   return (
@@ -238,9 +211,8 @@ export default function LandingPage() {
             transition={{ delay: 0.35 }}
             className="flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-3 text-sm"
           >
-            <span className="text-white/30 text-xs font-medium uppercase tracking-wider">Free tools — no sign-up</span>
+            <span className="text-white/30 text-xs font-medium uppercase tracking-wider">More free tools — no sign-up</span>
             {[
-              { href: "/salary-check", label: "Am I underpaid?",        color: "text-emerald-400 border-emerald-500/20 hover:border-emerald-500/40 hover:bg-emerald-500/5" },
               { href: "/matric",       label: "Matric career matcher",  color: "text-amber-400 border-amber-500/20 hover:border-amber-500/40 hover:bg-amber-500/5"        },
               { href: "/subject-choice", label: "Subject choice guide", color: "text-indigo-400 border-indigo-500/20 hover:border-indigo-500/40 hover:bg-indigo-500/5"   },
               { href: "/degree-roi",   label: "Degree ROI calculator",  color: "text-violet-400 border-violet-500/20 hover:border-violet-500/40 hover:bg-violet-500/5"    },
@@ -269,78 +241,19 @@ export default function LandingPage() {
           </motion.div>
         </div>
 
-        {/* Hero dashboard mockup */}
+        {/* Hero — the live salary Probe. Replaces the static dashboard mockup:
+            the first interaction on the site is now a real result, not a picture
+            of one. Animates from a VISIBLE resting state so a fast scroll or a
+            slow device never shows an empty hero. */}
         <motion.div
-          initial={{ opacity: 0, y: 60 }}
+          initial={{ opacity: 1, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.5, duration: 0.8 }}
+          transition={{ delay: 0.45, duration: 0.7 }}
           className="relative max-w-5xl mx-auto mt-10 sm:mt-16 md:mt-20 px-3 sm:px-4"
         >
-          <div className="relative rounded-xl sm:rounded-2xl border border-white/10 bg-[#0D1526]/90 backdrop-blur-sm overflow-hidden shadow-2xl shadow-black/50">
-            {/* Faux window bar */}
-            <div className="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 sm:py-3 border-b border-white/5 bg-white/2">
-              <div className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-red-500/60" />
-              <div className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-yellow-500/60" />
-              <div className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-green-500/60" />
-              <span className="ml-3 sm:ml-4 text-white/30 text-[10px] sm:text-xs">CareerIntel SA — Dashboard</span>
-            </div>
-
-            <div className="p-3 sm:p-6 grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
-              {/* Score card — full width on mobile, 1/3 on sm+ */}
-              <div className="col-span-1 bg-white/3 rounded-xl p-3 sm:p-5 border border-white/5 flex sm:flex-col items-center sm:items-stretch gap-4 sm:gap-0">
-                <div className="text-xs text-white/40 font-medium uppercase tracking-wide hidden sm:block mb-3">Employability Score</div>
-                <div className="flex items-center justify-center sm:justify-center">
-                  <div className="relative w-20 h-20 sm:w-28 sm:h-28">
-                    <svg className="w-full h-full -rotate-90" viewBox="0 0 100 100">
-                      <circle cx="50" cy="50" r="40" fill="none" stroke="rgba(99,102,241,0.15)" strokeWidth="8" />
-                      <circle
-                        cx="50" cy="50" r="40" fill="none"
-                        stroke="url(#scoreGrad)" strokeWidth="8"
-                        strokeLinecap="round"
-                        strokeDasharray={`${2 * Math.PI * 40 * 0.78} ${2 * Math.PI * 40}`}
-                      />
-                      <defs>
-                        <linearGradient id="scoreGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-                          <stop offset="0%" stopColor="#6366f1" />
-                          <stop offset="100%" stopColor="#a855f7" />
-                        </linearGradient>
-                      </defs>
-                    </svg>
-                    <div className="absolute inset-0 flex flex-col items-center justify-center">
-                      <span className="text-2xl sm:text-3xl font-bold text-white">78</span>
-                      <span className="text-xs text-white/40">/ 100</span>
-                    </div>
-                  </div>
-                </div>
-                <div className="flex-1 sm:flex-none">
-                  <div className="text-xs text-white/40 font-medium uppercase tracking-wide sm:hidden mb-0.5">Employability Score</div>
-                  <div className="text-xs sm:text-center sm:mt-3 text-emerald-400 font-medium">Strong Market Fit</div>
-                </div>
-              </div>
-
-              {/* Top careers — full width on mobile, 2/3 on sm+ */}
-              <div className="col-span-1 sm:col-span-2 bg-white/3 rounded-xl p-3 sm:p-5 border border-white/5">
-                <div className="text-xs text-white/40 mb-3 sm:mb-4 font-medium uppercase tracking-wide">Top Demand Careers 2025</div>
-                <div className="space-y-2.5 sm:space-y-3">
-                  {TOP_CAREERS.map((career, i) => (
-                    <div key={career.title} className="flex items-center gap-2 sm:gap-3">
-                      <span className="text-xs text-white/30 w-3 sm:w-4 flex-shrink-0">{i + 1}</span>
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center justify-between mb-1">
-                          <span className="text-[11px] sm:text-xs text-white/80 font-medium truncate pr-1">{career.title}</span>
-                          <span className="text-[11px] sm:text-xs text-emerald-400 font-medium flex-shrink-0">{career.growth}</span>
-                        </div>
-                        <DemandBar score={career.score} />
-                      </div>
-                      <span className="hidden sm:block text-xs text-white/40 w-20 lg:w-24 text-right flex-shrink-0">{career.salary}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </div>
-          {/* Glow under mockup */}
-          <div className="absolute -bottom-10 left-1/2 -translate-x-1/2 w-3/4 h-20 bg-indigo-600/20 blur-3xl" />
+          <SalaryProbe />
+          {/* Glow under the panel */}
+          <div className="absolute -bottom-10 left-1/2 -translate-x-1/2 w-3/4 h-20 bg-indigo-600/20 blur-3xl -z-10" />
         </motion.div>
       </section>
 

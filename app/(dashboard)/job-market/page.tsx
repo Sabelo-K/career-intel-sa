@@ -14,6 +14,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { SA_CAREERS, SA_SECTORS, SCARCE_SKILLS } from "@/lib/data/sa-careers";
+import { matchesQuery } from "@/lib/data/search-aliases";
 import { CAREER_SUBJECTS } from "@/lib/data/sa-subjects";
 import { SA_MARKET_STATS } from "@/lib/data/sa-provinces";
 import { formatSalaryRange, getDemandBadgeColor, getTrendLabel, getAutomationRiskLabel } from "@/lib/utils";
@@ -567,67 +568,12 @@ export default function JobMarketPage() {
       .catch(() => {});
   }, []);
 
-  // Common search aliases — maps plain-English terms to sectors or keywords
-  const SEARCH_ALIASES: Record<string, string[]> = {
-    "law":        ["Legal & Compliance", "Attorney", "Paralegal", "Labour Relations"],
-    "lawyer":     ["Legal & Compliance", "Attorney", "Paralegal", "Labour Relations"],
-    "advocate":   ["Legal & Compliance", "Attorney"],
-    "legal":      ["Legal & Compliance"],
-    "doctor":       ["Healthcare", "Medical", "MBChB"],
-    "medicine":     ["Healthcare", "MBChB", "Clinical"],
-    "physician":    ["Healthcare", "Medical"],
-    "nurse":        ["Healthcare", "Nursing"],
-    "nursing":      ["Healthcare", "Nursing", "Nurse"],
-    "coding":       ["Technology", "Software", "Developer"],
-    "programming":  ["Technology", "Software Engineer", "Developer"],
-    "programmer":   ["Technology", "Software Engineer", "Developer"],
-    "developer":    ["Software Engineer", "Technology"],
-    "coder":        ["Technology", "Software Engineer"],
-    "finance":      ["Finance", "Accounting", "Chartered Accountant"],
-    "accounting":   ["Finance", "Chartered Accountant", "BCom"],
-    "accountant":   ["Finance", "Chartered Accountant", "Accounting"],
-    "ca":           ["Chartered Accountant", "Finance"],
-    "teaching":     ["Education", "Teacher", "BEd"],
-    "teacher":      ["Education", "BEd"],
-    "marketing":    ["Marketing", "Media & Creative", "Digital Marketing"],
-    "design":       ["UX", "Graphic", "Media & Creative"],
-    "designer":     ["UX", "Graphic", "Media & Creative"],
-    "mining":       ["Mining & Resources"],
-    "trade":        ["Construction & Trades", "Electrician", "Plumber"],
-    "electrician":  ["Electrical", "Construction & Trades"],
-    "plumber":      ["Construction & Trades", "Plumbing"],
-    "hr":           ["Human Resources"],
-    "it":           ["Technology", "Information Technology"],
-    "tech":         ["Technology"],
-    "cyber":        ["Cybersecurity"],
-    "security":     ["Cybersecurity", "Security"],
-    "data":         ["Data Scientist", "Data Analyst", "Technology"],
-    "engineering":  ["Engineering"],
-    "engineer":     ["Engineering", "Technology"],
-    "psychology":   ["Industrial Psychology", "Psychology"],
-    "social work":  ["Social Worker", "Social"],
-    "pharmacy":     ["Pharmacy", "Healthcare"],
-    "pharmacist":   ["Pharmacy", "Healthcare"],
-    "architect":    ["Architecture", "Cloud Architect"],
-    "journalism":   ["Media & Creative", "Journalist"],
-    "journalist":   ["Media & Creative", "Journalist"],
-  };
-
   const filtered = SA_CAREERS
     .filter((c) => {
       const q = search.toLowerCase().trim();
-      // Check aliases first — expand the query to sector/title terms
-      const aliasTerms = SEARCH_ALIASES[q] ?? [];
-      const matchAlias = aliasTerms.some(term =>
-        c.title.toLowerCase().includes(term.toLowerCase()) ||
-        c.sector.toLowerCase().includes(term.toLowerCase())
-      );
-      const matchSearch = !q ? true :
-        matchAlias ||
-        c.title.toLowerCase().includes(q) ||
-        c.sector.toLowerCase().includes(q) ||
-        c.topSkills.some(s => s.toLowerCase().includes(q)) ||
-        (c.relatedCareers ?? []).some(r => r.toLowerCase().includes(q));
+      // Alias-aware matching lives in lib/data/search-aliases.ts so the landing
+      // page hero and this page can never disagree about what a query means.
+      const matchSearch = matchesQuery(c, q);
       const matchFilter =
         filter === "all" ? true :
         filter === "remote" ? c.remoteFriendly :

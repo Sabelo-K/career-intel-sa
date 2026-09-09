@@ -8,45 +8,21 @@ import {
   Share2, CheckCircle, AlertCircle, ChevronDown, Search,
 } from "lucide-react";
 import { SA_CAREERS } from "@/lib/data/sa-careers";
+import {
+  PROVINCES,
+  EXPERIENCE_BANDS,
+  PROVINCE_PREMIUM,
+  formatZar,
+} from "@/lib/data/salary-model";
 import { track } from "@/lib/analytics";
 
-const PROVINCES = [
-  { code: "GAUTENG",       name: "Gauteng"        },
-  { code: "WESTERN_CAPE",  name: "Western Cape"   },
-  { code: "KWAZULU_NATAL", name: "KwaZulu-Natal"  },
-  { code: "EASTERN_CAPE",  name: "Eastern Cape"   },
-  { code: "FREE_STATE",    name: "Free State"     },
-  { code: "LIMPOPO",       name: "Limpopo"        },
-  { code: "MPUMALANGA",    name: "Mpumalanga"     },
-  { code: "NORTH_WEST",    name: "North West"     },
-  { code: "NORTHERN_CAPE", name: "Northern Cape"  },
-];
-
-const EXPERIENCE_BANDS = [
-  { value: "0-2",  label: "0 – 2 years",  multiplier: 0.72 },
-  { value: "3-5",  label: "3 – 5 years",  multiplier: 0.97 },
-  { value: "6-10", label: "6 – 10 years", multiplier: 1.18 },
-  { value: "10+",  label: "10+ years",    multiplier: 1.38 },
-];
-
-// Province premium: top hiring provinces pay more
-const PROVINCE_PREMIUM: Record<string, number> = {
-  GAUTENG:        1.08,
-  WESTERN_CAPE:   1.05,
-  KWAZULU_NATAL:  0.97,
-  EASTERN_CAPE:   0.93,
-  FREE_STATE:     0.90,
-  LIMPOPO:        0.88,
-  MPUMALANGA:     0.91,
-  NORTH_WEST:     0.89,
-  NORTHERN_CAPE:  0.87,
-};
-
-function fmt(n: number) {
-  return `R${Math.round(n / 1000) * 1000 < 10000
-    ? n.toLocaleString("en-ZA")
-    : (Math.round(n / 500) * 500).toLocaleString("en-ZA")}`;
-}
+/**
+ * Provinces, experience bands, province premiums and ZAR formatting all come
+ * from the shared salary model. They used to be defined inline here, which meant
+ * the landing-page Probe and this page could drift apart and quote different
+ * numbers for the same role.
+ */
+const fmt = formatZar;
 
 export default function SalaryCheckPage() {
   const [search, setSearch]         = useState("");

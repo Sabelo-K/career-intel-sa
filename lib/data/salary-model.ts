@@ -66,23 +66,29 @@ export function roundZar(n: number): number {
 }
 
 /**
+ * Group thousands with a space: 42000 -> "42 000", the SA convention.
+ *
+ * Deliberately not toLocaleString("en-ZA"). The edge runtime (where the share
+ * card renders) ships a trimmed ICU and returns "42,000" there while the
+ * browser returns "42 000" — so the card disagreed with the page that produced
+ * it. Doing the grouping ourselves makes every runtime agree.
+ */
+function group(n: number): string {
+  return Math.round(n).toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+}
+
+/**
  * Format a monthly rand figure. Below R10 000 the exact number matters (these
  * are minimum-wage-anchored roles), above it we round to the nearest R500.
  */
 export function formatZar(n: number): string {
   const rounded = Math.round(n / 1000) * 1000;
-  return `R${
-    rounded < 10000
-      ? Math.round(n).toLocaleString("en-ZA")
-      : roundZar(n).toLocaleString("en-ZA")
-  }`;
+  return `R${rounded < 10000 ? group(n) : group(roundZar(n))}`;
 }
 
 /** Compact form for axis ticks and share cards: R37 500 -> R38k. */
 export function formatZarShort(n: number): string {
-  return n >= 10000
-    ? `R${Math.round(n / 1000)}k`
-    : `R${Math.round(n).toLocaleString("en-ZA")}`;
+  return n >= 10000 ? `R${Math.round(n / 1000)}k` : `R${group(n)}`;
 }
 
 export type Verdict = "underpaid" | "fair" | "overpaid";

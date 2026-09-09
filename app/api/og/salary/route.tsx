@@ -11,6 +11,7 @@
  *     &avg=37500&verdict=underpaid&pct=56
  */
 import { renderOgImage } from "@/lib/og";
+import { formatZar } from "@/lib/data/salary-model";
 
 export const runtime = "edge";
 
@@ -26,10 +27,11 @@ function clean(value: string | null, max: number): string {
   return (value ?? "").replace(/\s+/g, " ").trim().slice(0, max);
 }
 
+
 export function GET(request: Request) {
   const { searchParams } = new URL(request.url);
 
-  const role = clean(searchParams.get("role"), 46) || "Your role";
+  const role = clean(searchParams.get("role"), 46);
   const province = clean(searchParams.get("province"), 24);
   const verdict = clean(searchParams.get("verdict"), 12).toLowerCase();
   const avgRaw = parseInt((searchParams.get("avg") ?? "").replace(/\D/g, ""), 10);
@@ -37,6 +39,21 @@ export function GET(request: Request) {
 
   const avg = Number.isFinite(avgRaw) && avgRaw > 0 ? avgRaw : null;
   const pct = Number.isFinite(pctRaw) && pctRaw > 0 ? Math.min(999, pctRaw) : null;
+
+  // No result to show — render the tool's generic card. This route is the ONLY
+  // source of /salary-check's share image: the folder's static
+  // opengraph-image.tsx was removed, because Next gives file-based metadata
+  // precedence over config-based, so it would have silently won over the
+  // personalised card that generateMetadata sets.
+  if (!role || !avg) {
+    return renderOgImage({
+      eyebrow: "Free Tool · No Sign-up",
+      title: "Am I Underpaid?",
+      subtitle:
+        "Check your salary against the SA market in 30 seconds. Role + province + experience = instant ZAR benchmark.",
+      accent: "#34d399",
+    });
+  }
 
   const eyebrow =
     verdict === "underpaid"
@@ -47,10 +64,6 @@ export function GET(request: Request) {
           ? "Above market rate"
           : "SA Salary Benchmark";
 
-  const title = avg
-    ? `${role} earns ${`R${avg.toLocaleString("en-ZA")}`}/month`
-    : `What does a ${role} earn in South Africa?`;
-
   const subtitleParts = [
     province ? `Market average in ${province}` : "South African market average",
     pct && verdict === "underpaid" ? `This person is on ${pct}% of it` : null,
@@ -58,7 +71,7 @@ export function GET(request: Request) {
 
   return renderOgImage({
     eyebrow,
-    title,
+    title: `${role} earns ${formatZar(avg)}/month`,
     subtitle: `${subtitleParts.join(" · ")} · Check yours free, no sign-up`,
     accent: ACCENT[verdict] ?? "#818cf8",
   });

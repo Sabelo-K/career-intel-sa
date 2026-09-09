@@ -7,6 +7,7 @@ import { auth } from "@clerk/nextjs/server";
 import { db } from "@/lib/db";
 import { isNewUserDiscountEligible, discountDaysRemaining } from "@/lib/payfast";
 import { getEffectivePlan } from "@/lib/plan-gate";
+import { computeEmployability } from "@/lib/employability";
 
 export async function GET() {
   try {
@@ -65,16 +66,18 @@ export async function GET() {
     const profileStrength = Math.round((PROFILE_STEPS.filter((s) => s.done).length / PROFILE_STEPS.length) * 100);
     const profileMissing = PROFILE_STEPS.filter((s) => !s.done).map(({ label, href }) => ({ label, href }));
 
-    // ── Employability score (weighted) ────────────────────────────────────────
-    const skillsScore   = Math.min((p?.skills?.length ?? 0) * 5, 40);   // up to 40 pts
-    const profileScore  = Math.round(profileStrength * 0.3);              // up to 30 pts
-    const activityScore = Math.min(
-      (dbUser.chatSessions?.length ?? 0) * 3 +
-      (dbUser.skillsGaps?.length ?? 0) * 5 +
-      (dbUser.careerPaths?.length ?? 0) * 5,
-      30
-    );
-    const employabilityScore = Math.min(skillsScore + profileScore + activityScore, 100);
+    // ── Employability score ───────────────────────────────────────────────────
+    // Rules live in lib/employability.ts so the dashboard Ledger can explain
+    // this number using exactly the arithmetic that produced it.
+    const employability = computeEmployability({
+      skillsCount:      p?.skills?.length ?? 0,
+      profileStepsDone: PROFILE_STEPS.filter((s) => s.done).length,
+      profileStepsTotal: PROFILE_STEPS.length,
+      chatSessions:     dbUser.chatSessions?.length ?? 0,
+      skillsGaps:       dbUser.skillsGaps?.length ?? 0,
+      careerPaths:      dbUser.careerPaths?.length ?? 0,
+    });
+    const employabilityScore = employability.total;
 
     // ── Recent chat sessions ──────────────────────────────────────────────────
     const recentSessions = dbUser.chatSessions.map((s) => ({
@@ -94,11 +97,15 @@ export async function GET() {
     return NextResponse.json({
       employabilityScore,
       profileStrength,
+      // Returned so the Ledger can score with the API's own rules rather than
+      // duplicating the step count and drifting from it.
+      profileStepsDone:  PROFILE_STEPS.filter((s) => s.done).length,
+      profileStepsTotal: PROFILE_STEPS.length,
       // Individual score components (used by the employability breakdown bars)
       scoreComponents: {
-        skills:   { score: skillsScore,   max: 40, pct: Math.round((skillsScore   / 40) * 100) },
-        profile:  { score: profileScore,  max: 30, pct: Math.round((profileScore  / 30) * 100) },
-        activity: { score: activityScore, max: 30, pct: Math.round((activityScore / 30) * 100) },
+        skills:   employability.skills,
+        profile:  employability.profile,
+        activity: employability.activity,
       },
       skillsCount: p?.skills?.length ?? 0,
       targetRole: p?.targetRole ?? null,

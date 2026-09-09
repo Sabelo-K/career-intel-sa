@@ -209,6 +209,7 @@ export default function LandingPage() {
           >
             <span className="text-white/30 text-xs font-medium uppercase tracking-wider">More free tools — no sign-up</span>
             {[
+              { href: "/explore",      label: "Explore 307 careers",    color: "text-shweshwe-light border-shweshwe/20 hover:border-shweshwe/40 hover:bg-shweshwe/5" },
               { href: "/matric",       label: "Matric career matcher",  color: "text-amber-400 border-amber-500/20 hover:border-amber-500/40 hover:bg-amber-500/5"        },
               { href: "/subject-choice", label: "Subject choice guide", color: "text-shweshwe-light border-shweshwe/20 hover:border-shweshwe/40 hover:bg-shweshwe-light/5"   },
               { href: "/degree-roi",   label: "Degree ROI calculator",  color: "text-seal-light border-seal/20 hover:border-seal/40 hover:bg-seal/5"    },

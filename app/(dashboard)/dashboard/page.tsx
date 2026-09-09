@@ -17,13 +17,13 @@ import {
 } from "recharts";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Progress } from "@/components/ui/progress";
 import { RoadmapWidget } from "@/components/roadmap-widget";
 import { ReferralWidget } from "@/components/referral-widget";
 import { GamificationPanel } from "@/components/gamification-panel";
 import { ProfileCompletionNudge } from "@/components/profile-completion-nudge";
 import { SA_CAREERS, TOP_GROWING_CAREERS_2025 } from "@/lib/data/sa-careers";
 import { formatSalaryRange, getDemandBadgeColor, getTrendLabel } from "@/lib/utils";
+import { CareerLedger } from "@/components/dashboard/career-ledger";
 
 interface ScoreComponent { score: number; max: number; pct: number; }
 
@@ -45,6 +45,8 @@ interface DashboardStats {
   plan: string;
   onboarded: boolean;
   profileMissing: { label: string; href: string }[];
+  profileStepsDone: number;
+  profileStepsTotal: number;
 }
 
 const DEMAND_TREND_DATA = [
@@ -86,44 +88,6 @@ const QUICK_ACTIONS = [
   { href: "/career-paths", icon: Brain, label: "Simulate Career", description: "5-year projection", color: "amber" },
 ];
 
-function EmployabilityRing({ score }: { score: number }) {
-  const circumference = 2 * Math.PI * 54;
-  const offset = circumference - (score / 100) * circumference;
-  const color = score >= 80 ? "#10b981" : score >= 60 ? "#6366f1" : score >= 40 ? "#f59e0b" : "#ef4444";
-  const label = score >= 80 ? "Excellent" : score >= 60 ? "Good" : score >= 40 ? "Fair" : "Needs Work";
-
-  return (
-    <div className="flex flex-col items-center">
-      <div className="relative w-36 h-36">
-        <svg className="w-full h-full -rotate-90" viewBox="0 0 128 128">
-          <circle cx="64" cy="64" r="54" fill="none" stroke="rgba(99,102,241,0.1)" strokeWidth="10" />
-          <motion.circle
-            cx="64" cy="64" r="54" fill="none"
-            stroke={color} strokeWidth="10"
-            strokeLinecap="round"
-            strokeDasharray={circumference}
-            initial={{ strokeDashoffset: circumference }}
-            animate={{ strokeDashoffset: offset }}
-            transition={{ duration: 1.5, ease: "easeOut", delay: 0.3 }}
-          />
-        </svg>
-        <div className="absolute inset-0 flex flex-col items-center justify-center">
-          <motion.span
-            initial={{ opacity: 0, scale: 0.5 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.8 }}
-            className="text-4xl font-bold text-white"
-          >
-            {score}
-          </motion.span>
-          <span className="text-xs text-muted-foreground">/ 100</span>
-        </div>
-      </div>
-      <div className="mt-2 text-sm font-semibold" style={{ color }}>{label}</div>
-      <div className="text-xs text-muted-foreground mt-0.5">Employability Score</div>
-    </div>
-  );
-}
 
 const fadeUp = {
   initial: { opacity: 0, y: 16 },
@@ -160,6 +124,8 @@ export default function DashboardPage() {
     plan: "FREE",
     onboarded: true,
     profileMissing: [],
+    profileStepsDone: 0,
+    profileStepsTotal: 0,
   });
   const [statsLoaded, setStatsLoaded] = useState(false);
 
@@ -333,55 +299,25 @@ export default function DashboardPage() {
 
       {/* Main grid */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
-        {/* Employability score + skills radar */}
+        {/* The Ledger — the score, and what actually moves it. Spans two
+            columns because the ranked moves are the point, not the dial. */}
         <motion.div
-          initial={{ opacity: 0, y: 16 }}
+          initial={{ opacity: 1, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
-          className="bg-card border border-border rounded-xl p-5"
+          className="lg:col-span-2"
         >
-          <div className="flex items-center justify-between mb-5">
-            <h2 className="text-sm font-semibold text-foreground">Employability Score</h2>
-            <Link href="/profile">
-              <Badge variant="indigo" className="cursor-pointer hover:opacity-80 transition-opacity">
-                Improve
-              </Badge>
-            </Link>
-          </div>
-
-          <EmployabilityRing score={employabilityScore} />
-
-          <div className="mt-6 space-y-3">
-            {[
-              {
-                label: "Skills Added",
-                value: stats.scoreComponents?.skills.pct ?? 0,
-                sub:   `${stats.skillsCount} skill${stats.skillsCount !== 1 ? "s" : ""} · ${stats.scoreComponents?.skills.score ?? 0}/40 pts`,
-                color: "bg-indigo-500",
-              },
-              {
-                label: "Profile Completeness",
-                value: profileStrength,
-                sub:   `${stats.scoreComponents?.profile.score ?? 0}/30 pts`,
-                color: "bg-amber-500",
-              },
-              {
-                label: "Platform Activity",
-                value: stats.scoreComponents?.activity.pct ?? 0,
-                sub:   `Chats · gap analyses · simulations · ${stats.scoreComponents?.activity.score ?? 0}/30 pts`,
-                color: "bg-emerald-500",
-              },
-            ].map((item) => (
-              <div key={item.label}>
-                <div className="flex items-center justify-between text-xs mb-0.5">
-                  <span className="text-muted-foreground">{item.label}</span>
-                  <span className="text-foreground font-medium">{item.value}%</span>
-                </div>
-                <Progress value={item.value} className="h-1.5" indicatorClassName={item.color} />
-                <p className="text-[10px] text-muted-foreground/60 mt-0.5">{item.sub}</p>
-              </div>
-            ))}
-          </div>
+          <CareerLedger
+            input={{
+              skillsCount:       stats.skillsCount,
+              profileStepsDone:  stats.profileStepsDone,
+              profileStepsTotal: stats.profileStepsTotal,
+              chatSessions:      stats.chatSessionsCount,
+              skillsGaps:        stats.skillsGapCount,
+              careerPaths:       stats.careerPathCount,
+            }}
+            profileMissing={stats.profileMissing}
+          />
         </motion.div>
 
         {/* Demand trend chart */}

@@ -13,7 +13,8 @@ const isPublicRoute = createRouteMatcher([
   "/graduate-programmes",     // free SA resource — no auth
   "/bursaries",               // free SA resource — no auth
   "/how-credits-work",        // public pricing/credits explainer — no auth
-  "/subject-choice",          // free viral tool — subject choice guide, no auth
+  "/subject-choice",           // free viral tool — subject choice guide, no auth
+  "/explore(.*)",             // public career map + 307 indexable career pages
   "/r/(.*)",               // referral redirect — sets cookie then redirects to sign-up
   "/api/career/demand(.*)",
   "/api/payfast/notify",   // PayFast ITN webhook — unauthenticated POST from PayFast servers

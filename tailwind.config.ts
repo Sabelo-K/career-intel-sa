@@ -50,6 +50,27 @@ const config: Config = {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        /**
+         * Shweshwe Frost — the two inks of the discharge print, matching the
+         * tokens already defined in app/globals.css. Named here so surfaces can
+         * use `bg-shweshwe` / `text-seal` instead of stock Tailwind indigo and
+         * violet, which is what made the landing page look like every other AI
+         * product. Seal red is the ember: reserved for warmth and for the one
+         * thing on a screen that should feel human.
+         */
+        shweshwe: {
+          DEFAULT: "#4A5FC7",
+          light: "#7C8EE8",
+          pale: "#A9B6F5",
+          dark: "#3A4CA8",
+          deep: "#28399C",
+        },
+        seal: {
+          DEFAULT: "#A5423F",
+          light: "#C6605C",
+          pale: "#E4A19D",
+          dark: "#7F3230",
+        },
         gold: {
           DEFAULT: "#F59E0B",
           light: "#FCD34D",

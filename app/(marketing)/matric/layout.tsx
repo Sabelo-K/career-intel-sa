@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Matric Career Matcher — What Can You Study? | CareerIntel SA",
+  title: "Matric Career Matcher — What Can You Study?",
   description:
     "Enter your matric symbols and instantly see your APS score, which university programmes you qualify for, and the careers that match your CAPS subjects. Free — no sign-up needed.",
   keywords: [

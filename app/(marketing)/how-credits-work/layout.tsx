@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "How Credits Work — Pricing Explained | CareerIntel SA",
+  title: "How Credits Work — Pricing Explained",
   description:
     "Exactly what each action costs on CareerIntel SA: AI coach messages, skills gap analyses and career simulations. See your free monthly allowance, what's always free, and credit pack prices in ZAR.",
   keywords: [

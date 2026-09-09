@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "SA Bursaries 2026 — NSFAS, Corporate & Government Bursary Directory | CareerIntel SA",
+  title: "SA Bursaries 2026 — NSFAS, Corporate & Government Bursary Directory",
   description:
     "Find bursaries for South African students — NSFAS, Sasol, Eskom, Standard Bank, Anglo American and 15 more. Filter by field of study, funder type, and application status.",
   keywords: [

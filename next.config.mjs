@@ -36,7 +36,17 @@ const securityHeaders = [
       // Images: same-origin + data URIs + Clerk avatars + Unsplash
       "img-src 'self' data: blob: https://img.clerk.com https://images.unsplash.com",
       // API connections
-      "connect-src 'self' https://*.clerk.accounts.dev https://clerk.careerintelsa.co.za https://api.adzuna.com https://o*.ingest.sentry.io",
+      //
+      // Sentry: the previous value was `https://o*.ingest.sentry.io`, which was
+      // broken two ways and silently disabled ALL browser error reporting.
+      //  1. `o*.` is not valid CSP wildcard syntax — `*` may only stand in for a
+      //     whole leftmost label, so the browser discarded the entire source
+      //     ("contains an invalid source ... It will be ignored").
+      //  2. Even written correctly, `*.ingest.sentry.io` would not match: the
+      //     ingest host is region-scoped, e.g. o<org>.ingest.us.sentry.io, and
+      //     CSP suffix-matches, so `.ingest.sentry.io` is not a suffix of it.
+      // Both regional and unregioned ingest hosts are allowed below.
+      "connect-src 'self' https://*.clerk.accounts.dev https://clerk.careerintelsa.co.za https://api.adzuna.com https://*.ingest.sentry.io https://*.ingest.us.sentry.io https://*.ingest.de.sentry.io",
       // Frames: Clerk hosted pages only
       "frame-src https://clerk.careerintelsa.co.za https://*.clerk.accounts.dev",
       // NB: no `form-action` directive on purpose. A PayFast payment POST

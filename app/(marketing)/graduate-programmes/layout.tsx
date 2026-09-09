@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "SA Graduate Programmes 2026 — Find & Track Corporate Intake Dates | CareerIntel SA",
+  title: "SA Graduate Programmes 2026 — Find & Track Corporate Intake Dates",
   description:
     "Track application windows for SA's top corporate graduate programmes — Deloitte, Standard Bank, Discovery, Anglo American, Sasol and 15 more. Never miss an intake date.",
   keywords: [

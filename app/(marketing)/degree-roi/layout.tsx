@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Is Your Degree Worth It? SA Degree ROI Calculator | CareerIntel SA",
+  title: "Is Your Degree Worth It? SA Degree ROI Calculator",
   description:
     "Calculate the real return on investment of any South African university degree. See total cost, salary timeline, break-even point vs the TVET alternative. Free — no sign-up needed.",
   keywords: [

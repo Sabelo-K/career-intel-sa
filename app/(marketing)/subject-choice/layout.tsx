@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Subject Choice Guide — Which Careers Do Your Subjects Open? | CareerIntel SA",
+  title: "Subject Choice Guide — Which Careers Do Your Subjects Open?",
   description:
     "Free Grade 9–11 subject choice guide for South African learners. Pick the subjects you enjoy and see exactly which careers they open — and which close. Find out what dropping Mathematics really costs.",
   keywords: [

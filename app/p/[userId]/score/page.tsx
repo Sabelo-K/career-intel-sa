@@ -24,14 +24,14 @@ const PROVINCE_LABELS: Record<string, string> = {
 async function getScoreData(userId: string): Promise<ScoreData | null> {
   try {
     const base = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
-    const res  = await fetch(`${base}/api/user/score/${userId}`, { next: { revalidate: 300 } });
+    const res  = await fetch(`${base}/api/user/score/${userId}`, { cache: "no-store" });
     if (!res.ok) return null;
     return res.json();
   } catch { return null; }
 }
 
-export async function generateMetadata({ params }: { params: { userId: string } }): Promise<Metadata> {
-  const data = await getScoreData(params.userId);
+export async function generateMetadata({ params }: { params: Promise<{ userId: string }> }): Promise<Metadata> {
+  const data = await getScoreData((await params).userId);
   if (!data) return { title: "CareerIntel SA" };
   return {
     title: `${data.name}'s Employability Score | CareerIntel SA`,
@@ -68,8 +68,8 @@ function ScoreRing({ score }: { score: number }) {
   );
 }
 
-export default async function PublicScorePage({ params }: { params: { userId: string } }) {
-  const data = await getScoreData(params.userId);
+export default async function PublicScorePage({ params }: { params: Promise<{ userId: string }> }) {
+  const data = await getScoreData((await params).userId);
   if (!data) notFound();
 
   const province = data.province ? (PROVINCE_LABELS[data.province] ?? data.province) : null;

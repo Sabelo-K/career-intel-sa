@@ -7,7 +7,7 @@ import { auth } from "@clerk/nextjs/server";
 import { z } from "zod";
 import Groq from "groq-sdk";
 
-const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
+
 
 const Schema = z.object({
   question: z.string().min(5).max(500),
@@ -20,6 +20,8 @@ export async function POST(req: NextRequest) {
     const { userId } = await auth();
     if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
+    if (!process.env.GROQ_API_KEY) return NextResponse.json({ error: 'Interview guidance is temporarily unavailable. Please try again later.' }, { status: 503 });
+    const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
     const body   = await req.json();
     const parsed = Schema.parse(body);
 

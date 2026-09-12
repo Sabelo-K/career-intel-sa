@@ -12,6 +12,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${BASE}/privacy`,     lastModified: now, changeFrequency: "monthly", priority: 0.3  },
     { url: `${BASE}/terms`,       lastModified: now, changeFrequency: "monthly", priority: 0.3  },
 
+    { url: BASE + '/start', changeFrequency: 'monthly', priority: 0.9 },
+    { url: BASE + '/career-map', changeFrequency: 'monthly', priority: 0.6 },
     // ── Free viral tools ───────────────────────────────────────────────────
     { url: `${BASE}/salary-check`,          lastModified: now, changeFrequency: "weekly",    priority: 0.9  },
     { url: `${BASE}/matric`,                lastModified: now, changeFrequency: "weekly",    priority: 0.9  },

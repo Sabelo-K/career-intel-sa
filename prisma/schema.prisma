@@ -29,6 +29,7 @@ model User {
   updatedAt     DateTime @updatedAt
 
   profile            Profile?
+  journey            CareerJourney?
   cvs                CV[]
   chatSessions       ChatSession[]
   careerPaths        CareerPath[]
@@ -41,6 +42,23 @@ model User {
   payments           Payment[]
 
   @@map("users")
+}
+
+model CareerJourney {
+  id             String   @id @default(cuid())
+  userId         String   @unique
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  persona        String   @default("learner")
+  goal           String   @default("")
+  hoursPerWeek   Int      @default(3)
+  monthlyBudget  Int      @default(0)
+  targetDate     String?
+  completedSteps String[] @default([])
+  shortlist      String[] @default([])
+  version        Int      @default(0)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  @@map("career_journeys")
 }
 
 model Profile {
@@ -58,6 +76,7 @@ model Profile {
   employabilityScore  Int?
   salaryExpectation   Int?
   isOpenToWork        Boolean   @default(false)
+  recruiterVisible    Boolean   @default(false)
   linkedinUrl         String?
   githubUrl           String?
   portfolioUrl        String?

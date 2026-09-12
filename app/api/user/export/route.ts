@@ -19,6 +19,7 @@ export async function GET() {
       where:   { clerkId: userId },
       include: {
         profile:           true,
+        journey:           true,
         cvs:               { select: { name: true, atsScore: true, recruiterScore: true, createdAt: true, updatedAt: true } },
         chatSessions:      {
           orderBy: { createdAt: "asc" },
@@ -55,6 +56,7 @@ export async function GET() {
         updatedAt: dbUser.updatedAt,
       },
       profile:           dbUser.profile,
+      journey:           dbUser.journey,
       cvs:               dbUser.cvs,
       chatSessions:      dbUser.chatSessions,
       skillsGaps:        dbUser.skillsGaps,

@@ -15,7 +15,11 @@ import {
   buildEmployabilityPrompt,
 } from "./prompts";
 
-const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
+let groqClient: Groq | undefined;
+function getGroq(): Groq {
+  if (!process.env.GROQ_API_KEY) throw new Error("AI guidance is temporarily unavailable. Please try again later.");
+  return groqClient ??= new Groq({ apiKey: process.env.GROQ_API_KEY });
+}
 
 const MODEL = "llama-3.3-70b-versatile";
 
@@ -68,7 +72,7 @@ export async function* streamCareerCoach(
     ? `${SYSTEM_PROMPT_CAREER_COACH}${langInstruction}\n\nAdditional context: ${systemContext}`
     : `${SYSTEM_PROMPT_CAREER_COACH}${langInstruction}`;
 
-  const stream = await groq.chat.completions.create({
+  const stream = await getGroq().chat.completions.create({
     model: MODEL,
     messages: buildMessages(messages, systemPrompt),
     stream: true,
@@ -85,7 +89,7 @@ export async function* streamCareerCoach(
 // ─── Support Agent (streaming) ───────────────────────────────────────────────
 
 export async function* streamSupportAgent(messages: Message[]) {
-  const stream = await groq.chat.completions.create({
+  const stream = await getGroq().chat.completions.create({
     model:       MODEL,
     messages:    buildMessages(messages, SYSTEM_PROMPT_SUPPORT_AGENT),
     stream:      true,
@@ -109,7 +113,7 @@ export async function chatWithCareerCoach(
     ? `${SYSTEM_PROMPT_CAREER_COACH}\n\nAdditional context: ${systemContext}`
     : SYSTEM_PROMPT_CAREER_COACH;
 
-  const response = await groq.chat.completions.create({
+  const response = await getGroq().chat.completions.create({
     model: MODEL,
     messages: buildMessages(messages, systemPrompt),
     stream: false,
@@ -122,7 +126,7 @@ export async function chatWithCareerCoach(
 // ─── CV Parser ───────────────────────────────────────────────────────────────
 
 export async function parseCV(cvText: string) {
-  const response = await groq.chat.completions.create({
+  const response = await getGroq().chat.completions.create({
     model: MODEL,
     messages: [
       { role: "system", content: SYSTEM_PROMPT_CV_PARSER },
@@ -138,7 +142,7 @@ export async function parseCV(cvText: string) {
 // ─── CV Analyser ─────────────────────────────────────────────────────────────
 
 export async function analyzeCV(cvData: Record<string, unknown>) {
-  const response = await groq.chat.completions.create({
+  const response = await getGroq().chat.completions.create({
     model: MODEL,
     messages: [
       {
@@ -187,7 +191,7 @@ export async function analyzeSkillsGap(params: {
   yearsExperience: number;
   education: string;
 }) {
-  const response = await groq.chat.completions.create({
+  const response = await getGroq().chat.completions.create({
     model: MODEL,
     messages: [
       { role: "system", content: SYSTEM_PROMPT_SKILLS_GAP },
@@ -228,7 +232,7 @@ export async function simulateCareerPath(params: {
   province: string;
   timeframeYears: number;
 }) {
-  const response = await groq.chat.completions.create({
+  const response = await getGroq().chat.completions.create({
     model: MODEL,
     messages: [
       { role: "user", content: buildCareerPathPrompt(params) },
@@ -250,7 +254,7 @@ export async function calculateEmployabilityScore(profile: {
   yearsExperience?: number;
   province?: string;
 }) {
-  const response = await groq.chat.completions.create({
+  const response = await getGroq().chat.completions.create({
     model: MODEL,
     messages: [
       { role: "user", content: buildEmployabilityPrompt(profile) },
@@ -269,7 +273,7 @@ export async function generateInterviewQuestions(params: {
   level: string;
   industry: string;
 }) {
-  const response = await groq.chat.completions.create({
+  const response = await getGroq().chat.completions.create({
     model: MODEL,
     messages: [
       {
@@ -322,7 +326,7 @@ export async function parseAndRevampCV(cvText: string, opts: RevampOptions = {})
     ? `\nJOB DESCRIPTION they are applying to (mirror its language where the candidate genuinely matches):\n${opts.jobDescription.slice(0, 1500)}`
     : "";
 
-  const response = await groq.chat.completions.create({
+  const response = await getGroq().chat.completions.create({
     model: MODEL,
     // Enforce a JSON object so parsing can't silently fail on stray prose.
     response_format: { type: "json_object" },

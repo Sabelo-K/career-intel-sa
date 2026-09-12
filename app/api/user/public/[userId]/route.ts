@@ -14,17 +14,17 @@ const PROVINCE_DISPLAY: Record<string, string> = {
 
 export async function GET(
   _req: NextRequest,
-  { params }: { params: { userId: string } }
+  { params }: { params: Promise<{ userId: string }> }
 ) {
   try {
-    const { userId } = params;
+    const { userId } = await params;
 
     const dbUser = await db.user.findUnique({
       where:   { clerkId: userId },
       include: { profile: true },
     });
 
-    if (!dbUser) {
+    if (!dbUser || !dbUser.profile?.recruiterVisible) {
       return NextResponse.json({ error: "Profile not found" }, { status: 404 });
     }
 
@@ -48,7 +48,7 @@ export async function GET(
       joinedYear:      new Date(dbUser.createdAt).getFullYear(),
     };
 
-    return NextResponse.json({ profile: publicProfile });
+    return NextResponse.json({ profile: publicProfile }, { headers: { "Cache-Control": "private, no-store" } });
   } catch (err) {
     console.error("[user/public GET]", err);
     return NextResponse.json({ error: "Failed to load profile" }, { status: 500 });

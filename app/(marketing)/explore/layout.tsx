@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Explore 307 SA Careers — Demand, Pay & Automation Risk",
+  title: "Explore & Compare SA Careers — Skills, Routes & Pay",
   description:
-    "Every South African career on one map. See demand, monthly ZAR pay, automation risk and which roles are one step away — 307 careers across 26 sectors. Free, no sign-up.",
+    "Explore South African career possibilities. See demand, monthly ZAR pay, automation risk and which roles are one step away — 307 careers across 26 sectors. Free, no sign-up.",
   keywords: [
     "South Africa careers list",
     "SA career map",
@@ -14,7 +14,7 @@ export const metadata: Metadata = {
     "career change South Africa",
   ],
   openGraph: {
-    title: "Explore 307 SA Careers on One Map",
+    title: "Explore & Compare SA Careers",
     description:
       "Demand, ZAR pay and automation risk for every career we track — and what each one is a step away from. Free on CareerIntel SA.",
     url: "https://careerintelsa.co.za/explore",
@@ -23,7 +23,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Explore 307 SA Careers on One Map",
+    title: "Explore & Compare SA Careers",
     description: "Demand, pay and automation risk for every SA career. Free — no sign-up.",
   },
   alternates: { canonical: "https://careerintelsa.co.za/explore" },

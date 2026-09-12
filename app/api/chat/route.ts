@@ -24,6 +24,7 @@ export async function POST(req: NextRequest) {
       });
     }
 
+    if (!process.env.GROQ_API_KEY) return Response.json({ error: "AI guidance is temporarily unavailable. Please try again later." }, { status: 503 });
     // Rate limit: 20 messages per minute per user
     const limited = rateLimitResponse(checkRateLimit({ key: `chat:${userId}`, ...CHAT_LIMIT }));
     if (limited) return limited;

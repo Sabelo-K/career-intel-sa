@@ -168,7 +168,7 @@ export function GamificationPanel() {
 // XP toast notification — shown briefly when XP is earned
 export function XpToast({ xpGained, newBadges, onDismiss }: {
   xpGained: number;
-  newBadges: BadgeData[];
+  newBadges: Omit<BadgeData, "xpReward">[];
   onDismiss: () => void;
 }) {
   useEffect(() => {

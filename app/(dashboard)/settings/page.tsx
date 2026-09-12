@@ -170,7 +170,7 @@ export default function SettingsPage() {
 
   // Privacy
   const [privacy, setPrivacy] = useState({
-    recruiterVisible: true,
+    recruiterVisible: false,
     aiPersonalisation: true,
     anonymousAnalytics: true,
     showSalaryExpectation: false,
@@ -220,15 +220,17 @@ export default function SettingsPage() {
   const handleSave = async () => {
     // Persist profile fields that exist on the schema
     try {
-      await fetch("/api/profile", {
+      const response = await fetch("/api/profile", {
         method:  "POST",
         headers: { "Content-Type": "application/json" },
         body:    JSON.stringify({
           isOpenToWork:      openToWork,
+          recruiterVisible: privacy.recruiterVisible,
           salaryExpectation: salaryMin ? Number(salaryMin) : undefined,
         }),
       });
-    } catch { /* non-fatal — preferences still saved locally */ }
+      if (!response.ok) throw new Error('Save failed');
+    } catch { alert('Your settings were not saved. Please retry.'); return; }
 
     // Save UI-only preferences to localStorage
     try {
@@ -338,6 +340,7 @@ export default function SettingsPage() {
       .then((d) => {
         if (d.profile?.isOpenToWork !== undefined) setOpenToWork(d.profile.isOpenToWork);
         if (d.profile?.salaryExpectation) setSalaryMin(String(d.profile.salaryExpectation));
+        setPrivacy(p => ({ ...p, recruiterVisible: d.profile?.recruiterVisible === true }));
       })
       .catch(() => {});
 
@@ -346,7 +349,7 @@ export default function SettingsPage() {
       const savedNotifs = localStorage.getItem("ci_notifs");
       if (savedNotifs) setNotifs(JSON.parse(savedNotifs));
       const savedPrivacy = localStorage.getItem("ci_privacy");
-      if (savedPrivacy) setPrivacy(JSON.parse(savedPrivacy));
+      if (savedPrivacy) setPrivacy(p => ({ ...p, ...JSON.parse(savedPrivacy), recruiterVisible: p.recruiterVisible }));
       const savedCareer = localStorage.getItem("ci_career_prefs");
       if (savedCareer) {
         const c = JSON.parse(savedCareer);
@@ -711,7 +714,7 @@ export default function SettingsPage() {
             <div className="divide-y divide-border">
               <ToggleRow
                 label="Visible to Recruiters"
-                description="Allow SA employers and recruiters on CareerIntel to discover your profile."
+                description="Make your profile and score page accessible to anyone with the link. Keep this off to stay private."
                 checked={privacy.recruiterVisible}
                 onChange={(v) => setPrivacy({ ...privacy, recruiterVisible: v })}
               />

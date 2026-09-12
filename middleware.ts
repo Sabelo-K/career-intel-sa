@@ -2,6 +2,8 @@ import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 
 const isPublicRoute = createRouteMatcher([
   "/",
+  "/start",
+  "/career-map",
   "/sign-in(.*)",
   "/sign-up(.*)",
   "/p/(.*)",               // public shareable profiles + score cards
@@ -20,6 +22,7 @@ const isPublicRoute = createRouteMatcher([
   "/api/payfast/notify",   // PayFast ITN webhook — unauthenticated POST from PayFast servers
   "/api/credits/itn",     // PayFast ITN for credit pack purchases — unauthenticated POST from PayFast servers
   "/api/cron/(.*)",        // Vercel cron jobs — protected by CRON_SECRET, not Clerk
+  "/api/user/public/(.*)", // public only after server-enforced opt-in
   "/api/user/score/(.*)",  // public score card API
 
   // ── Crawler + social-scraper assets ──────────────────────────────────────

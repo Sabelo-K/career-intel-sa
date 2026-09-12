@@ -48,7 +48,7 @@ export async function GET() {
     // Most explored career (from skills gap targets)
     const careerTargets = dbUser.skillsGaps
       .filter(g => new Date(g.createdAt) >= yearStart)
-      .map(g => (g.result as any)?.targetRole ?? null)
+      .map(g => g.targetRole ?? null)
       .filter(Boolean) as string[];
     const careerFreq: Record<string, number> = {};
     careerTargets.forEach(c => { careerFreq[c] = (careerFreq[c] ?? 0) + 1; });
@@ -61,7 +61,7 @@ export async function GET() {
     const activeAlerts = dbUser.jobAlerts.filter(a => a.isActive).length;
 
     // Employability score (from profile if stored, else 0)
-    const employabilityScore = (dbUser as any).employabilityScore ?? null;
+    const employabilityScore = dbUser.profile?.employabilityScore ?? null;
 
     // Account created
     const memberSince = dbUser.createdAt;

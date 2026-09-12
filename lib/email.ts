@@ -14,15 +14,16 @@ import { Resend } from "resend";
 
 // ── Client ────────────────────────────────────────────────────────────────────
 
-const resend = new Resend(process.env.RESEND_API_KEY ?? "");
+let resend: Resend | undefined;
 
 const FROM =
   process.env.EMAIL_FROM ?? "CareerIntel SA <hello@careerintelsa.co.za>";
 
 /** Fire-and-forget email helper — logs errors but never throws */
-async function send(opts: Parameters<typeof resend.emails.send>[0]) {
+async function send(opts: Parameters<Resend["emails"]["send"]>[0]) {
   if (!process.env.RESEND_API_KEY) return; // no-op in dev without key
   try {
+    resend ??= new Resend(process.env.RESEND_API_KEY);
     const { error } = await resend.emails.send(opts);
     if (error) console.error("[email]", error);
   } catch (err) {

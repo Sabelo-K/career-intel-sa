@@ -73,7 +73,7 @@ function useRecruiterAnalytics() {
       const topCareers = [...careers].sort((a, b) => b.demandScore - a.demandScore).slice(0, 5);
       const sectors    = [...new Set(careers.map((c) => c.sector))].slice(0, 4);
       return { code, name: PROVINCE_LABELS[code], avgSalary, avgDemand, topCareers, sectors, careerCount: careers.length };
-    }).filter(Boolean) as NonNullable<ReturnType<typeof useRecruiterAnalytics>["provinceData"][0]>[];
+    }).filter((province): province is NonNullable<typeof province> => province !== null);
 
     // 2 ── Skills demand (weighted by demandScore)
     const skillMap: Record<string, { score: number; count: number }> = {};

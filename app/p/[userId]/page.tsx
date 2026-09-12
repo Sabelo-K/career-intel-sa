@@ -32,7 +32,7 @@ async function getPublicProfile(userId: string): Promise<PublicProfile | null> {
   try {
     const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
     const res = await fetch(`${baseUrl}/api/user/public/${userId}`, {
-      next: { revalidate: 300 }, // 5 minute cache
+      cache: "no-store", // 5 minute cache
     });
     if (!res.ok) return null;
     const data = await res.json();
@@ -45,9 +45,9 @@ async function getPublicProfile(userId: string): Promise<PublicProfile | null> {
 // ── Metadata ──────────────────────────────────────────────────────────────────
 
 export async function generateMetadata(
-  { params }: { params: { userId: string } }
+  { params }: { params: Promise<{ userId: string }> }
 ): Promise<Metadata> {
-  const profile = await getPublicProfile(params.userId);
+  const profile = await getPublicProfile((await params).userId);
   if (!profile) return { title: "Profile Not Found | CareerIntel SA" };
 
   return {
@@ -73,9 +73,9 @@ const EDUCATION_DISPLAY: Record<string, string> = {
 };
 
 export default async function PublicProfilePage(
-  { params }: { params: { userId: string } }
+  { params }: { params: Promise<{ userId: string }> }
 ) {
-  const profile = await getPublicProfile(params.userId);
+  const profile = await getPublicProfile((await params).userId);
   if (!profile) notFound();
 
   const initials = profile.name

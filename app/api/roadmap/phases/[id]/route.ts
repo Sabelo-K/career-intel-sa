@@ -4,7 +4,7 @@ import { db } from "@/lib/db";
 
 export async function PATCH(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   const { userId: clerkId } = await auth();
   if (!clerkId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -15,7 +15,7 @@ export async function PATCH(
   // Verify the phase belongs to this user
   const phase = await db.roadmapPhase.findFirst({
     where: {
-      id:      params.id,
+      id:      (await params).id,
       roadmap: { userId: dbUser.id },
     },
   });
@@ -25,7 +25,7 @@ export async function PATCH(
   const nowCompleted = !phase.completed;
 
   const updated = await db.roadmapPhase.update({
-    where: { id: params.id },
+    where: { id: (await params).id },
     data: {
       completed:   nowCompleted,
       completedAt: nowCompleted ? new Date() : null,

@@ -62,10 +62,10 @@ const securityHeaders = [
 ];
 
 /** @type {import('next').NextConfig} */
-const nextConfig = {
+const nextConfig = { outputFileTracingRoot: new URL(".", import.meta.url).pathname.replace(/^\/(?:([A-Za-z]):)/, "$1:"),
   serverExternalPackages: ["pdf-parse", "@prisma/client"],
   typescript: {
-    ignoreBuildErrors: true,
+    ignoreBuildErrors: false,
   },
   images: {
     remotePatterns: [

@@ -14,6 +14,7 @@ export default function robots(): MetadataRoute.Robots {
         ],
         disallow: [
           "/dashboard",
+          "/opportunities",
           "/cv-builder",
           "/career-coach",
           "/career-paths",

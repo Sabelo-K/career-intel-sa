@@ -8,25 +8,25 @@ import { db } from "@/lib/db";
 
 export const dynamic = "force-dynamic";
 
-export async function GET(_req: NextRequest, { params }: { params: { userId: string } }) {
+export async function GET(_req: NextRequest, { params }: { params: Promise<{ userId: string }> }) {
   try {
     const dbUser = await db.user.findUnique({
-      where:   { clerkId: params.userId },
+      where:   { clerkId: (await params).userId },
       include: { profile: true, skillsGaps: { orderBy: { createdAt: "desc" }, take: 1 } },
     });
 
-    if (!dbUser) return NextResponse.json({ error: "Not found" }, { status: 404 });
+    if (!dbUser || !dbUser.profile?.recruiterVisible) return NextResponse.json({ error: "Not found" }, { status: 404 });
 
     // Respect privacy: if recruiterVisible is false, return minimal data
-    const isVisible = (dbUser.profile as any)?.recruiterVisible !== false;
+    const isVisible = dbUser.profile?.recruiterVisible === true;
 
     const topCareer = (() => {
       const sg = dbUser.skillsGaps[0];
       if (!sg) return null;
-      return (sg.result as any)?.targetRole ?? null;
+      return sg.targetRole ?? null;
     })();
 
-    const score = (dbUser as any).employabilityScore ?? null;
+    const score = dbUser.profile?.employabilityScore ?? null;
 
     return NextResponse.json({
       name:         isVisible ? (dbUser.name ?? "CareerIntel SA User") : "Anonymous",

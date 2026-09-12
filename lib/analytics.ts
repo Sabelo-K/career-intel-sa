@@ -19,6 +19,9 @@ import { track as vercelTrack } from "@vercel/analytics";
 
 /** Every event we track. Keeping them in one union avoids typo'd event names. */
 export type AnalyticsEvent =
+  | "journey_saved"
+  | "journey_step_updated"
+  | "career_shortlist_updated"
   // ── Acquisition: free tools (no sign-up required) ──────────────────────────
   | "tool_salary_check_run"
   /** The landing-page hero Probe. Kept separate from the /salary-check tool so

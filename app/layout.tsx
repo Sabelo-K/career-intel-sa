@@ -11,11 +11,11 @@ const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 
 export const metadata: Metadata = {
   title: {
-    default: "CareerIntel SA — AI Career Intelligence Platform",
+    default: "CareerIntel SA — Your next career step",
     template: "%s | CareerIntel SA",
   },
   description:
-    "South Africa's leading AI-powered career intelligence platform. Build winning CVs, discover in-demand careers, close skills gaps, and predict your salary growth.",
+    "Career guidance for South African learners, job seekers and working adults. Explore careers, compare routes and build a practical plan for your next step.",
   keywords: [
     "career guidance South Africa",
     "CV builder SA",
@@ -35,8 +35,8 @@ export const metadata: Metadata = {
     type: "website",
     locale: "en_ZA",
     url: "/",
-    title: "CareerIntel SA — AI Career Intelligence Platform",
-    description: "South Africa's #1 AI-powered career intelligence engine. Close the skills gap. Unlock your potential.",
+    title: "CareerIntel SA — Your next career step",
+    description: "Explore possibilities. Compare career routes. Take your next step with CareerIntel SA.",
     siteName: "CareerIntel SA",
   },
   twitter: {

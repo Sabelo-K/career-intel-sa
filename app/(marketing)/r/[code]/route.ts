@@ -9,9 +9,9 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(
   _req: NextRequest,
-  { params }: { params: { code: string } }
+  { params }: { params: Promise<{ code: string }> }
 ) {
-  const code = params.code;
+  const code = (await params).code;
 
   // Build redirect response to /sign-up
   const response = NextResponse.redirect(

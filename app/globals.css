@@ -312,3 +312,19 @@ body::before {
 .career-cookie-notice{position:fixed;bottom:16px;left:16px;right:16px;max-width:920px;margin:auto;z-index:60;display:flex;align-items:center;gap:16px;padding:18px 22px;background:#fff;color:#24304a;border:1px solid #cbd2e2;border-radius:13px;box-shadow:0 10px 40px #101a3325;font-size:13px;line-height:1.7}.career-cookie-notice>svg{color:#3d4fb0;flex-shrink:0}.career-cookie-notice p{flex:1}.career-cookie-notice a{color:#35479f;text-decoration:underline;text-underline-offset:3px}.career-cookie-notice button{background:#3d4fb0;color:#fff;border-radius:8px;min-height:44px;padding:10px 18px;white-space:nowrap;font-weight:600}.career-cookie-notice button:focus-visible{outline:3px solid #5266c8;outline-offset:3px}.journey-preview-steps{list-style:none}@media(max-width:540px){.career-cookie-notice{flex-wrap:wrap;gap:10px;padding:16px}.career-cookie-notice>svg{display:none}.career-cookie-notice p{flex-basis:100%}}
 /* Scope the new auth design above the legacy Clerk dark overrides. */
 .journey-auth-layout .cl-card{background:#fff!important;border:1px solid #dce0e9!important;backdrop-filter:none!important;color:#1b263e!important}.journey-auth-layout .cl-headerTitle,.journey-auth-layout .cl-formFieldLabel{color:#1b263e!important}.journey-auth-layout .cl-headerSubtitle,.journey-auth-layout .cl-dividerText,.journey-auth-layout .cl-footerActionText{color:#576278!important}.journey-auth-layout .cl-formFieldInput{background:#fff!important;color:#1b263e!important;border:1px solid #bac3d5!important}.journey-auth-layout .cl-formFieldInput::placeholder{color:#667186!important}.journey-auth-layout .cl-socialButtonsBlockButton{background:#fff!important;color:#1b263e!important;border:1px solid #dce0e9!important}.journey-auth-layout .cl-socialButtonsBlockButtonText{color:#1b263e!important}.journey-auth-layout .cl-formButtonPrimary{background:#3d4fb0!important;color:#fff!important}.journey-auth-layout .cl-footerActionLink{color:#35479f!important}
+
+/* An illustrated route from learning to work, behind the homepage hero only. */
+.journey-hero-motion{position:relative;isolation:isolate;padding-bottom:145px}
+.career-horizon{position:absolute;inset:0 -40px;z-index:-1;overflow:hidden;pointer-events:none;border-radius:0 0 28px 28px}
+.career-horizon svg{width:100%;height:100%;display:block}
+.career-horizon-sun{animation:career-dawn-breathe 16s ease-in-out infinite;transform-origin:1070px 300px}
+.career-horizon-trail{animation:career-route-travel 24s linear infinite}
+.career-horizon.is-paused *{animation-play-state:paused!important}
+.career-motion-control{position:absolute;right:0;bottom:12px;display:inline-flex;align-items:center;gap:7px;min-height:36px;padding:7px 10px;border:1px solid #d1d8e2;border-radius:8px;background:#f6f5f1;color:#576278;font-size:11px;cursor:pointer}
+.career-motion-control:hover{background:#fff;color:#1b263e}
+@keyframes career-route-travel{to{stroke-dashoffset:-624}}
+@keyframes career-dawn-breathe{0%,100%{opacity:.7;transform:scale(.95)}50%{opacity:1;transform:scale(1.04)}}
+@media(max-width:1000px){.career-horizon{left:-25px;right:-25px}}
+@media(max-width:767px){.journey-hero-motion{padding-bottom:135px}.career-horizon svg{position:absolute;bottom:35px;height:auto;width:100%;left:0;transform:none}.career-horizon{border-radius:0}.career-motion-control{bottom:8px}}
+@media(max-width:540px){.career-horizon{left:-20px;right:-20px}}
+@media(prefers-reduced-motion:reduce){.career-horizon *{animation:none!important}.career-motion-control{display:none}}

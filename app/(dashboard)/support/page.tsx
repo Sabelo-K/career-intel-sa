@@ -59,14 +59,14 @@ function MessageBubble({ message }: { message: Message }) {
         isUser ? "bg-indigo-600" : "bg-amber-500/20 border border-amber-500/30"
       }`}>
         {isUser
-          ? <User className="w-3.5 h-3.5 text-white" />
-          : <Bot  className="w-3.5 h-3.5 text-amber-400" />}
+          ? <User className="w-3.5 h-3.5 text-foreground" />
+          : <Bot  className="w-3.5 h-3.5 text-amber-700" />}
       </div>
 
       {/* Bubble */}
       <div className={`max-w-[80%] rounded-2xl px-4 py-2.5 text-sm leading-relaxed ${
         isUser
-          ? "bg-indigo-600 text-white rounded-tr-sm"
+          ? "bg-indigo-600 text-primary-foreground rounded-tr-sm"
           : "bg-card border border-border text-foreground rounded-tl-sm"
       }`}>
         {message.loading ? (
@@ -184,7 +184,7 @@ export default function SupportPage() {
       <div className="flex items-start justify-between gap-4 mb-4 flex-shrink-0">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-xl bg-amber-500/15 border border-amber-500/25 flex items-center justify-center">
-            <HeadphonesIcon className="w-5 h-5 text-amber-400" />
+            <HeadphonesIcon className="w-5 h-5 text-amber-700" />
           </div>
           <div>
             <h1 className="text-xl font-bold text-foreground">Help & Support</h1>
@@ -217,7 +217,7 @@ export default function SupportPage() {
           <div className="flex flex-col items-center justify-center h-full py-8 space-y-6">
             <div className="text-center space-y-2">
               <div className="w-14 h-14 rounded-2xl bg-amber-500/15 border border-amber-500/20 flex items-center justify-center mx-auto">
-                <HeadphonesIcon className="w-7 h-7 text-amber-400" />
+                <HeadphonesIcon className="w-7 h-7 text-amber-700" />
               </div>
               <h2 className="text-lg font-bold text-foreground">How can I help you today?</h2>
               <p className="text-sm text-muted-foreground max-w-sm">
@@ -233,7 +233,7 @@ export default function SupportPage() {
                   onClick={() => sendMessage(s.text)}
                   className="flex items-center gap-2.5 text-left px-3.5 py-2.5 rounded-xl border border-border hover:border-amber-500/30 hover:bg-amber-500/5 text-sm text-muted-foreground hover:text-foreground transition-all group"
                 >
-                  <s.icon className="w-4 h-4 text-amber-400/70 group-hover:text-amber-400 flex-shrink-0" />
+                  <s.icon className="w-4 h-4 text-amber-700/70 group-hover:text-amber-700 flex-shrink-0" />
                   <span>{s.text}</span>
                 </button>
               ))}
@@ -241,11 +241,11 @@ export default function SupportPage() {
 
             {/* Escalation callout */}
             <div className="flex items-start gap-3 bg-secondary border border-border rounded-xl px-4 py-3 w-full max-w-lg text-xs text-muted-foreground">
-              <AlertCircle className="w-4 h-4 text-amber-400 flex-shrink-0 mt-0.5" />
+              <AlertCircle className="w-4 h-4 text-amber-700 flex-shrink-0 mt-0.5" />
               <div>
                 <span className="text-foreground font-medium">Prefer to email us directly?</span>
                 {" "}Reach our team at{" "}
-                <a href="mailto:support@careerintelsa.co.za" className="text-amber-400 hover:text-amber-300 font-medium">
+                <a href="mailto:support@careerintelsa.co.za" className="text-amber-700 hover:text-amber-700 font-medium">
                   support@careerintelsa.co.za
                 </a>
                 {" "}— we respond within 24–48 business hours.

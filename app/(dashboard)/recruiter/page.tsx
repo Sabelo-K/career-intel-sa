@@ -174,12 +174,12 @@ export default function RecruiterHubPage() {
     return (
       <div className="max-w-lg mx-auto py-20 text-center space-y-6">
         <div className="w-16 h-16 rounded-2xl bg-amber-500/15 border border-amber-500/25 flex items-center justify-center mx-auto">
-          <Lock className="w-7 h-7 text-amber-400" />
+          <Lock className="w-7 h-7 text-amber-700" />
         </div>
         <div>
           <h1 className="text-2xl font-bold text-foreground mb-2">Recruiter Hub</h1>
           <p className="text-muted-foreground text-sm leading-relaxed">
-            Province salary benchmarking, skills demand intelligence, market analytics and SA hiring trend reports are exclusive to the <strong className="text-amber-400">Recruiter plan</strong>.
+            Province salary benchmarking, skills demand intelligence, market analytics and SA hiring trend reports are exclusive to the <strong className="text-amber-700">Recruiter plan</strong>.
           </p>
         </div>
         <Button variant="indigo" className="gap-2 mx-auto" onClick={() => router.push("/upgrade")}>
@@ -200,10 +200,10 @@ export default function RecruiterHubPage() {
       <div>
         <div className="flex items-center gap-2 mb-2">
           <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center">
-            <Briefcase className="w-4 h-4 text-white" />
+            <Briefcase className="w-4 h-4 text-foreground" />
           </div>
           <h1 className="text-2xl font-bold text-foreground">Recruiter Hub</h1>
-          <span className="text-xs bg-amber-500/15 text-amber-400 border border-amber-500/25 px-2 py-0.5 rounded-full font-semibold ml-1">Recruiter Plan</span>
+          <span className="text-xs bg-amber-500/15 text-amber-700 border border-amber-500/25 px-2 py-0.5 rounded-full font-semibold ml-1">Recruiter Plan</span>
         </div>
         <p className="text-muted-foreground text-sm">
           SA market intelligence for HR & talent teams — province salary benchmarks, skills demand, sector analytics, and hiring trend reports.
@@ -214,10 +214,10 @@ export default function RecruiterHubPage() {
       {/* KPI strip */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         {[
-          { icon: Briefcase,  label: "SA Careers Tracked",   value: SA_CAREERS.length,                          color: "text-indigo-400"  },
-          { icon: MapPin,     label: "Provinces Covered",     value: analytics.provinceData.length,              color: "text-emerald-400" },
-          { icon: Zap,        label: "Scarce-Skill Roles",    value: analytics.scarceSkills.length,              color: "text-amber-400"   },
-          { icon: Globe,      label: "Remote-Friendly Roles", value: `${analytics.remoteRoles} / ${SA_CAREERS.length}`, color: "text-violet-400" },
+          { icon: Briefcase,  label: "SA Careers Tracked",   value: SA_CAREERS.length,                          color: "text-indigo-700"  },
+          { icon: MapPin,     label: "Provinces Covered",     value: analytics.provinceData.length,              color: "text-emerald-700" },
+          { icon: Zap,        label: "Scarce-Skill Roles",    value: analytics.scarceSkills.length,              color: "text-amber-700"   },
+          { icon: Globe,      label: "Remote-Friendly Roles", value: `${analytics.remoteRoles} / ${SA_CAREERS.length}`, color: "text-violet-700" },
         ].map((kpi) => (
           <div key={kpi.label} className="bg-card border border-border rounded-xl p-4">
             <div className="flex items-center gap-2 mb-1">
@@ -262,7 +262,7 @@ export default function RecruiterHubPage() {
           {/* Province salary bar chart */}
           <div className="bg-card border border-border rounded-xl p-5">
             <h2 className="text-sm font-semibold text-foreground mb-4 flex items-center gap-2">
-              <DollarSign className="w-4 h-4 text-amber-400" />
+              <DollarSign className="w-4 h-4 text-amber-700" />
               Average Monthly Salary by Province (ZAR)
             </h2>
             <ResponsiveContainer width="100%" height={240}>
@@ -303,7 +303,7 @@ export default function RecruiterHubPage() {
                       <p className="text-xs text-muted-foreground">{prov.careerCount} tracked roles</p>
                     </div>
                     <div className="text-right">
-                      <div className="text-base font-bold text-amber-400">{formatZar(prov.avgSalary)}</div>
+                      <div className="text-base font-bold text-amber-700">{formatZar(prov.avgSalary)}</div>
                       <div className="text-[10px] text-muted-foreground">avg/month</div>
                     </div>
                   </div>
@@ -363,7 +363,7 @@ export default function RecruiterHubPage() {
                 onClick={() => setSectorFilter(s)}
                 className={`text-xs px-2.5 py-1 rounded-full border transition-all font-medium capitalize ${
                   sectorFilter === s
-                    ? "border-indigo-500/60 bg-indigo-500/20 text-indigo-300"
+                    ? "border-indigo-500/60 bg-indigo-500/20 text-indigo-700"
                     : "border-border text-muted-foreground hover:text-foreground hover:border-indigo-500/30"
                 }`}
               >
@@ -375,7 +375,7 @@ export default function RecruiterHubPage() {
           {/* Skills bar chart */}
           <div className="bg-card border border-border rounded-xl p-5">
             <h2 className="text-sm font-semibold text-foreground mb-4 flex items-center gap-2">
-              <Activity className="w-4 h-4 text-indigo-400" />
+              <Activity className="w-4 h-4 text-indigo-700" />
               Top 25 In-Demand Skills (Weighted Score)
             </h2>
             <ResponsiveContainer width="100%" height={340}>
@@ -428,7 +428,7 @@ export default function RecruiterHubPage() {
                       <td className="px-4 py-2.5 text-right text-muted-foreground">{s.count}</td>
                       <td className="px-4 py-2.5 text-right text-muted-foreground">{s.avgScore}</td>
                       <td className="px-4 py-2.5 text-right">
-                        <span className="font-semibold text-indigo-300">{s.weightedScore}</span>
+                        <span className="font-semibold text-indigo-700">{s.weightedScore}</span>
                       </td>
                     </tr>
                   ))}
@@ -449,7 +449,7 @@ export default function RecruiterHubPage() {
           {/* Demand vs Salary scatter (bar chart per sector) */}
           <div className="bg-card border border-border rounded-xl p-5">
             <h2 className="text-sm font-semibold text-foreground mb-1 flex items-center gap-2">
-              <BarChart2 className="w-4 h-4 text-indigo-400" />
+              <BarChart2 className="w-4 h-4 text-indigo-700" />
               Average Demand Score by Sector
             </h2>
             <p className="text-xs text-muted-foreground mb-4">Higher score = harder to fill roles = stronger candidate leverage</p>
@@ -471,7 +471,7 @@ export default function RecruiterHubPage() {
           {/* Avg salary by sector */}
           <div className="bg-card border border-border rounded-xl p-5">
             <h2 className="text-sm font-semibold text-foreground mb-4 flex items-center gap-2">
-              <DollarSign className="w-4 h-4 text-emerald-400" />
+              <DollarSign className="w-4 h-4 text-emerald-700" />
               Average Monthly Salary by Sector (ZAR)
             </h2>
             <ResponsiveContainer width="100%" height={260}>
@@ -516,7 +516,7 @@ export default function RecruiterHubPage() {
                       </td>
                       <td className="px-4 py-2.5 text-right text-muted-foreground">{s.count}</td>
                       <td className="px-4 py-2.5 text-right">
-                        <span className={`font-semibold ${s.avgDemand >= 80 ? "text-emerald-400" : s.avgDemand >= 65 ? "text-indigo-300" : "text-muted-foreground"}`}>
+                        <span className={`font-semibold ${s.avgDemand >= 80 ? "text-emerald-700" : s.avgDemand >= 65 ? "text-indigo-700" : "text-muted-foreground"}`}>
                           {s.avgDemand}
                         </span>
                       </td>
@@ -541,10 +541,10 @@ export default function RecruiterHubPage() {
           {/* Summary stats */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
             {[
-              { icon: Zap,    label: "Explosive-Growth Roles", value: analytics.growthBreakdown.find(g => g.trend === "EXPLOSIVE_GROWTH")?.count ?? 0, color: "text-emerald-400" },
-              { icon: Globe,  label: "International Demand",   value: analytics.intlRoles,       color: "text-indigo-400"  },
-              { icon: Cpu,    label: "Avg Automation Risk",    value: `${analytics.automationRiskAvg}%`, color: "text-amber-400" },
-              { icon: Award,  label: "Scarce-Skill Roles (85+)", value: analytics.scarceSkills.length, color: "text-violet-400" },
+              { icon: Zap,    label: "Explosive-Growth Roles", value: analytics.growthBreakdown.find(g => g.trend === "EXPLOSIVE_GROWTH")?.count ?? 0, color: "text-emerald-700" },
+              { icon: Globe,  label: "International Demand",   value: analytics.intlRoles,       color: "text-indigo-700"  },
+              { icon: Cpu,    label: "Avg Automation Risk",    value: `${analytics.automationRiskAvg}%`, color: "text-amber-700" },
+              { icon: Award,  label: "Scarce-Skill Roles (85+)", value: analytics.scarceSkills.length, color: "text-violet-700" },
             ].map((stat) => (
               <div key={stat.label} className="bg-card border border-border rounded-xl p-4">
                 <div className="flex items-center gap-2 mb-1">
@@ -560,7 +560,7 @@ export default function RecruiterHubPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             <div className="bg-card border border-border rounded-xl p-5">
               <h2 className="text-sm font-semibold text-foreground mb-4 flex items-center gap-2">
-                <TrendingUp className="w-4 h-4 text-indigo-400" />
+                <TrendingUp className="w-4 h-4 text-indigo-700" />
                 Growth Trend Distribution
               </h2>
               <ResponsiveContainer width="100%" height={220}>
@@ -588,7 +588,7 @@ export default function RecruiterHubPage() {
             {/* Scarce skills list */}
             <div className="bg-card border border-border rounded-xl p-5">
               <h2 className="text-sm font-semibold text-foreground mb-4 flex items-center gap-2">
-                <Star className="w-4 h-4 text-amber-400" />
+                <Star className="w-4 h-4 text-amber-700" />
                 Scarce-Skill Roles (Demand 85+)
               </h2>
               <div className="space-y-2 overflow-y-auto max-h-[200px] pr-1">
@@ -599,7 +599,7 @@ export default function RecruiterHubPage() {
                       <span className="text-foreground">{c.title}</span>
                       <span className="text-muted-foreground/60">{c.sector}</span>
                     </div>
-                    <span className="font-bold text-emerald-400 font-mono">{c.demandScore}</span>
+                    <span className="font-bold text-emerald-700 font-mono">{c.demandScore}</span>
                   </div>
                 ))}
               </div>
@@ -609,7 +609,7 @@ export default function RecruiterHubPage() {
           {/* Top 10 demand */}
           <div className="bg-card border border-border rounded-xl p-5">
             <h2 className="text-sm font-semibold text-foreground mb-1 flex items-center gap-2">
-              <ArrowUpRight className="w-4 h-4 text-emerald-400" />
+              <ArrowUpRight className="w-4 h-4 text-emerald-700" />
               Top 10 Highest-Demand Roles in SA
             </h2>
             <p className="text-xs text-muted-foreground mb-4">Hardest roles to fill — strongest employer competition for candidates</p>
@@ -638,7 +638,7 @@ export default function RecruiterHubPage() {
           {/* Top 10 salary */}
           <div className="bg-card border border-border rounded-xl p-5">
             <h2 className="text-sm font-semibold text-foreground mb-1 flex items-center gap-2">
-              <DollarSign className="w-4 h-4 text-amber-400" />
+              <DollarSign className="w-4 h-4 text-amber-700" />
               Top 10 Highest-Paying Roles in SA
             </h2>
             <p className="text-xs text-muted-foreground mb-4">Average monthly salary — use for salary benchmarking and offer competitiveness</p>
@@ -651,7 +651,7 @@ export default function RecruiterHubPage() {
                     <div className="text-[10px] text-muted-foreground">{c.sector}</div>
                   </div>
                   <div className="text-right flex-shrink-0">
-                    <div className="text-sm font-bold text-amber-400">{formatZar(c.avgSalaryZar)}</div>
+                    <div className="text-sm font-bold text-amber-700">{formatZar(c.avgSalaryZar)}</div>
                     <div className="text-[10px] text-muted-foreground">avg/mo</div>
                   </div>
                 </div>
@@ -662,7 +662,7 @@ export default function RecruiterHubPage() {
           {/* International demand */}
           <div className="bg-card border border-emerald-500/20 rounded-xl p-5">
             <h2 className="text-sm font-semibold text-foreground mb-1 flex items-center gap-2">
-              <Globe className="w-4 h-4 text-emerald-400" />
+              <Globe className="w-4 h-4 text-emerald-700" />
               Roles with International Demand ({analytics.intlRoles} roles)
             </h2>
             <p className="text-xs text-muted-foreground mb-4">SA candidates in these roles are also sought by offshore employers — affects local retention risk</p>
@@ -672,7 +672,7 @@ export default function RecruiterHubPage() {
                 .map((c) => (
                   <span
                     key={c.id}
-                    className="text-xs bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 px-2.5 py-1 rounded-full"
+                    className="text-xs bg-emerald-500/10 border border-emerald-500/20 text-emerald-700 px-2.5 py-1 rounded-full"
                   >
                     {c.title}
                   </span>

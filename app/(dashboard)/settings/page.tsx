@@ -24,7 +24,7 @@ function SectionCard({
   title,
   description,
   icon: Icon,
-  iconColor = "text-indigo-400",
+  iconColor = "text-indigo-700",
   children,
 }: {
   title: string;
@@ -99,7 +99,7 @@ function ToggleRow({
         <div className="flex items-center gap-2">
           <span className="text-sm font-medium text-foreground">{label}</span>
           {badge && (
-            <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-indigo-500/15 text-indigo-300 font-medium border border-indigo-500/20">
+            <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-indigo-500/15 text-indigo-700 font-medium border border-indigo-500/20">
               {badge}
             </span>
           )}
@@ -139,7 +139,7 @@ function DangerAction({
         variant={buttonVariant}
         size="sm"
         onClick={onClick}
-        className={buttonVariant === "destructive" ? "border-red-500/30 text-red-400 hover:bg-red-500/10 hover:border-red-500/50" : ""}
+        className={buttonVariant === "destructive" ? "border-red-500/30 text-destructive-foreground hover:bg-destructive/90 hover:border-red-500/50" : ""}
       >
         {buttonLabel}
       </Button>
@@ -177,30 +177,8 @@ export default function SettingsPage() {
   });
 
   // Appearance
-  const [theme, setTheme] = useState<"dark" | "system">("dark");
   const [language, setLanguage] = useState("en");
   const [compactMode, setCompactMode] = useState(false);
-
-  // Apply theme to document and persist to localStorage
-  const applyTheme = (t: "dark" | "system") => {
-    setTheme(t);
-    localStorage.setItem("careerintel-theme", t);
-    const html = document.documentElement;
-    if (t === "dark") {
-      html.classList.add("dark");
-    } else {
-      // system — follow OS preference
-      const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-      prefersDark ? html.classList.add("dark") : html.classList.remove("dark");
-    }
-  };
-
-  // Restore saved theme on mount
-  useEffect(() => {
-    const saved = localStorage.getItem("careerintel-theme") as "dark" | "system" | null;
-    if (saved) applyTheme(saved);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   // Career preferences
   const [jobType, setJobType] = useState<string[]>(["full-time"]);
@@ -380,9 +358,9 @@ export default function SettingsPage() {
 
   const PLAN_DISPLAY: Record<string, { name: string; color: string }> = {
     FREE:       { name: "Free Plan",         color: "text-muted-foreground" },
-    PREMIUM:    { name: "Premium",           color: "text-indigo-400" },
-    RECRUITER:  { name: "Recruiter",         color: "text-amber-400" },
-    ENTERPRISE: { name: "Enterprise",        color: "text-emerald-400" },
+    PREMIUM:    { name: "Premium",           color: "text-indigo-700" },
+    RECRUITER:  { name: "Recruiter",         color: "text-amber-700" },
+    ENTERPRISE: { name: "Enterprise",        color: "text-emerald-700" },
   };
   const { name: planName, color: planColor } = PLAN_DISPLAY[planKey] ?? PLAN_DISPLAY.FREE;
 
@@ -426,7 +404,7 @@ export default function SettingsPage() {
           {/* Profile summary */}
           <SectionCard title="Account Details" icon={User} description="Your CareerIntel SA account information.">
             <div className="flex items-center gap-4 mb-5">
-              <div className="w-14 h-14 rounded-full bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center text-white font-bold text-lg flex-shrink-0">
+              <div className="w-14 h-14 rounded-full bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center text-primary-foreground font-bold text-lg flex-shrink-0">
                 {user?.firstName?.[0] ?? user?.primaryEmailAddress?.emailAddress?.[0]?.toUpperCase() ?? "U"}
               </div>
               <div className="min-w-0">
@@ -457,7 +435,7 @@ export default function SettingsPage() {
                   Email is managed by your Clerk account.{" "}
                   <button
                     onClick={() => openUserProfile()}
-                    className="text-indigo-400 hover:text-indigo-300 underline underline-offset-2"
+                    className="text-indigo-700 hover:text-indigo-700 underline underline-offset-2"
                   >
                     Change email
                   </button>
@@ -467,7 +445,7 @@ export default function SettingsPage() {
           </SectionCard>
 
           {/* Shareable profile link */}
-          <SectionCard title="Shareable Profile Link" icon={Link2} iconColor="text-violet-400"
+          <SectionCard title="Shareable Profile Link" icon={Link2} iconColor="text-violet-700"
             description="Share your CareerIntel SA profile with recruiters and employers — no account needed to view it.">
             <div className="space-y-3">
               <div className="flex gap-2">
@@ -489,8 +467,8 @@ export default function SettingsPage() {
               </div>
               {profileLink && (
                 <p className="text-xs text-muted-foreground">
-                  Anyone with this link can view your name, current role, skills, and career goal — no login required.{" "}
-                  <a href={profileLink} target="_blank" rel="noopener noreferrer" className="text-indigo-400 hover:underline">
+                  Your profile is private unless you enable recruiter visibility in Privacy. When enabled, this link shows your name, role, skills and career goal.{" "}
+                  <a href={profileLink} target="_blank" rel="noopener noreferrer" className="text-indigo-700 hover:underline">
                     Preview it →
                   </a>
                 </p>
@@ -502,7 +480,7 @@ export default function SettingsPage() {
           <SectionCard
             title="Subscription Plan"
             icon={Crown}
-            iconColor="text-amber-400"
+            iconColor="text-amber-700"
             description="Your current plan and billing information."
           >
             <div className="flex items-center justify-between p-4 rounded-xl bg-secondary border border-border mb-4">
@@ -516,19 +494,19 @@ export default function SettingsPage() {
                       : "Full access — all features unlocked"}
                 </p>
               </div>
-              <Badge variant="outline" className={`text-xs ${planKey !== "FREE" ? "border-indigo-500/30 text-indigo-400" : ""}`}>
+              <Badge variant="outline" className={`text-xs ${planKey !== "FREE" ? "border-indigo-500/30 text-indigo-700" : ""}`}>
                 {planKey === "FREE" ? "Free" : "Active"}
               </Badge>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-4">
               {[
-                { name: "Graduate", price: "R24/mo", color: "border-violet-500/30 bg-violet-500/5", textColor: "text-violet-300" },
-                { name: "Professional", price: "R65/mo", color: "border-indigo-500/40 bg-indigo-500/10", textColor: "text-indigo-300", popular: true },
-                { name: "Recruiter", price: "R399/mo", color: "border-amber-500/30 bg-amber-500/5", textColor: "text-amber-300" },
+                { name: "Graduate", price: "R24/mo", color: "border-violet-500/30 bg-violet-500/5", textColor: "text-violet-700" },
+                { name: "Professional", price: "R65/mo", color: "border-indigo-500/40 bg-indigo-500/10", textColor: "text-indigo-700", popular: true },
+                { name: "Recruiter", price: "R399/mo", color: "border-amber-500/30 bg-amber-500/5", textColor: "text-amber-700" },
               ].map((plan) => (
                 <div key={plan.name} className={`relative rounded-xl border ${plan.color} p-3 text-center`}>
                   {plan.popular && (
-                    <span className="absolute -top-2.5 left-1/2 -translate-x-1/2 text-[10px] px-2 py-0.5 rounded-full bg-indigo-600 text-white font-semibold whitespace-nowrap">
+                    <span className="absolute -top-2.5 left-1/2 -translate-x-1/2 text-[10px] px-2 py-0.5 rounded-full bg-indigo-600 text-primary-foreground font-semibold whitespace-nowrap">
                       Most Popular
                     </span>
                   )}
@@ -549,17 +527,17 @@ export default function SettingsPage() {
               <div className="space-y-3">
                 {/* Plan status row */}
                 <div className="flex items-center justify-between px-4 py-3 rounded-xl bg-indigo-500/8 border border-indigo-500/20 text-sm">
-                  <div className="flex items-center gap-2 text-indigo-300">
-                    <Crown className="w-4 h-4 text-amber-400" />
+                  <div className="flex items-center gap-2 text-indigo-700">
+                    <Crown className="w-4 h-4 text-amber-700" />
                     <div>
                       <span className="font-medium">Plan active</span>
                       {billingType === "SUBSCRIPTION" && (
-                        <span className="ml-2 text-[10px] bg-emerald-500/15 text-emerald-400 border border-emerald-500/25 px-1.5 py-0.5 rounded-full font-semibold">
+                        <span className="ml-2 text-[10px] bg-emerald-500/15 text-emerald-700 border border-emerald-500/25 px-1.5 py-0.5 rounded-full font-semibold">
                           Monthly subscription
                         </span>
                       )}
                       {billingType === "ONCE_OFF" && (
-                        <span className="ml-2 text-[10px] bg-white/10 text-white/50 border border-white/15 px-1.5 py-0.5 rounded-full font-semibold">
+                        <span className="ml-2 text-[10px] bg-secondary text-muted-foreground border border-border px-1.5 py-0.5 rounded-full font-semibold">
                           Once-off
                         </span>
                       )}
@@ -569,7 +547,7 @@ export default function SettingsPage() {
                     const ms   = new Date(planExpiresAt).getTime() - Date.now();
                     const days = Math.max(0, Math.ceil(ms / (1000 * 60 * 60 * 24)));
                     return (
-                      <span className={`text-xs font-semibold ${days <= 5 ? "text-amber-400" : "text-muted-foreground"}`}>
+                      <span className={`text-xs font-semibold ${days <= 5 ? "text-amber-700" : "text-muted-foreground"}`}>
                         {days}d remaining
                       </span>
                     );
@@ -581,7 +559,7 @@ export default function SettingsPage() {
                   <button
                     onClick={handleCancelSubscription}
                     disabled={cancelling}
-                    className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border border-red-500/30 bg-red-500/5 hover:bg-red-500/10 text-red-400 text-xs font-medium transition-all disabled:opacity-50"
+                    className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border border-red-500/30 bg-red-500/5 hover:bg-red-500/10 text-red-700 text-xs font-medium transition-all disabled:opacity-50"
                   >
                     {cancelling ? "Cancelling…" : "Cancel Subscription"}
                   </button>
@@ -589,11 +567,11 @@ export default function SettingsPage() {
 
                 {/* Success state after cancellation */}
                 {cancelSuccess && (
-                  <div className="flex items-start gap-2 px-4 py-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-xs text-emerald-400">
+                  <div className="flex items-start gap-2 px-4 py-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-xs text-emerald-700">
                     <CheckCircle2 className="w-4 h-4 flex-shrink-0 mt-0.5" />
                     <div>
                       <p className="font-medium">Subscription cancelled</p>
-                      <p className="text-emerald-400/70 mt-0.5">You keep full access until your billing period ends. No further charges.</p>
+                      <p className="text-emerald-700/70 mt-0.5">You keep full access until your billing period ends. No further charges.</p>
                     </div>
                   </div>
                 )}
@@ -602,7 +580,7 @@ export default function SettingsPage() {
           </SectionCard>
 
           {/* Security */}
-          <SectionCard title="Security" icon={Lock} iconColor="text-emerald-400" description="Manage your login and security settings.">
+          <SectionCard title="Security" icon={Lock} iconColor="text-emerald-700" description="Manage your login and security settings.">
             <div className="divide-y divide-border">
               <DangerAction
                 icon={Lock}
@@ -634,7 +612,7 @@ export default function SettingsPage() {
           <SectionCard
             title="Email Notifications"
             icon={Mail}
-            iconColor="text-blue-400"
+            iconColor="text-blue-700"
             description="Choose which emails CareerIntel SA sends you."
           >
             <div className="divide-y divide-border">
@@ -675,7 +653,7 @@ export default function SettingsPage() {
           <SectionCard
             title="Platform Updates"
             icon={Bell}
-            iconColor="text-violet-400"
+            iconColor="text-violet-700"
             description="Updates about CareerIntel SA features and offers."
           >
             <div className="divide-y divide-border">
@@ -695,7 +673,7 @@ export default function SettingsPage() {
           </SectionCard>
 
           <div className="flex items-start gap-2 p-3 rounded-xl bg-secondary border border-border text-xs text-muted-foreground">
-            <Info className="w-4 h-4 text-indigo-400 flex-shrink-0 mt-0.5" />
+            <Info className="w-4 h-4 text-indigo-700 flex-shrink-0 mt-0.5" />
             <p>
               You can unsubscribe from all marketing emails at any time via the unsubscribe link in any email.
               Transactional emails (account security, billing) cannot be disabled.
@@ -708,7 +686,7 @@ export default function SettingsPage() {
           <SectionCard
             title="Profile Visibility"
             icon={Eye}
-            iconColor="text-indigo-400"
+            iconColor="text-indigo-700"
             description="Control who can see your CareerIntel SA profile."
           >
             <div className="divide-y divide-border">
@@ -730,7 +708,7 @@ export default function SettingsPage() {
           <SectionCard
             title="AI & Data Personalisation"
             icon={Shield}
-            iconColor="text-emerald-400"
+            iconColor="text-emerald-700"
             description="Control how your data is used to improve your experience."
           >
             <div className="divide-y divide-border">
@@ -752,9 +730,9 @@ export default function SettingsPage() {
           {/* POPIA notice */}
           <div className="bg-emerald-500/5 border border-emerald-500/20 rounded-xl p-4">
             <div className="flex items-start gap-3">
-              <Shield className="w-5 h-5 text-emerald-400 flex-shrink-0 mt-0.5" />
+              <Shield className="w-5 h-5 text-emerald-700 flex-shrink-0 mt-0.5" />
               <div>
-                <p className="text-sm font-semibold text-emerald-300 mb-1">POPIA Compliant</p>
+                <p className="text-sm font-semibold text-emerald-700 mb-1">POPIA Compliant</p>
                 <p className="text-xs text-muted-foreground leading-relaxed">
                   CareerIntel SA is fully compliant with South Africa&apos;s Protection of Personal
                   Information Act (POPIA). Your personal data is stored securely, never sold to
@@ -762,7 +740,7 @@ export default function SettingsPage() {
                 </p>
                 <a
                   href="/privacy"
-                  className="inline-flex items-center gap-1 text-xs text-emerald-400 hover:text-emerald-300 mt-2 underline underline-offset-2"
+                  className="inline-flex items-center gap-1 text-xs text-emerald-700 hover:text-emerald-700 mt-2 underline underline-offset-2"
                 >
                   Read our Privacy Policy <ExternalLink className="w-3 h-3" />
                 </a>
@@ -774,7 +752,7 @@ export default function SettingsPage() {
           <SectionCard
             title="Your Data"
             icon={EyeOff}
-            iconColor="text-amber-400"
+            iconColor="text-amber-700"
             description="Access, export, or delete your personal data."
           >
             <div className="divide-y divide-border">
@@ -805,14 +783,14 @@ export default function SettingsPage() {
                       className="p-4 rounded-xl bg-red-500/10 border border-red-500/20 space-y-3"
                     >
                       <div className="flex items-start gap-2">
-                        <AlertTriangle className="w-4 h-4 text-red-400 flex-shrink-0 mt-0.5" />
-                        <p className="text-sm text-red-300 font-medium">
+                        <AlertTriangle className="w-4 h-4 text-red-700 flex-shrink-0 mt-0.5" />
+                        <p className="text-sm text-red-700 font-medium">
                           This will permanently delete your account, CV data, chat history, and all saved settings. This cannot be undone.
                         </p>
                       </div>
                       <div>
                         <label className="text-xs text-muted-foreground mb-1.5 block">
-                          Type <span className="text-red-400 font-mono font-semibold">DELETE</span> to confirm
+                          Type <span className="text-red-700 font-mono font-semibold">DELETE</span> to confirm
                         </label>
                         <Input
                           value={deleteConfirmText}
@@ -822,7 +800,7 @@ export default function SettingsPage() {
                         />
                       </div>
                       {deleteError && (
-                        <p className="text-xs text-red-300 bg-red-500/10 border border-red-500/20 rounded-lg px-3 py-2">
+                        <p className="text-xs text-red-700 bg-red-500/10 border border-red-500/20 rounded-lg px-3 py-2">
                           {deleteError}
                         </p>
                       )}
@@ -838,7 +816,7 @@ export default function SettingsPage() {
                         </Button>
                         <Button
                           size="sm"
-                          className="flex-1 bg-red-600 hover:bg-red-500 text-white border-0"
+                          className="flex-1 bg-red-600 hover:bg-red-500 text-primary-foreground border-0"
                           disabled={deleteConfirmText !== "DELETE" || deleting}
                           onClick={handleDeleteAccount}
                         >
@@ -859,48 +837,16 @@ export default function SettingsPage() {
           <SectionCard
             title="Theme"
             icon={Moon}
-            iconColor="text-indigo-400"
-            description="Choose how CareerIntel SA looks on your device."
+            iconColor="text-indigo-700"
+            description="One consistent design across your career journey."
           >
-            <div className="grid grid-cols-2 gap-3">
-              {(["dark", "system"] as const).map((t) => (
-                <button
-                  key={t}
-                  onClick={() => applyTheme(t)}
-                  className={`relative rounded-xl border-2 p-4 transition-all ${
-                    theme === t
-                      ? "border-indigo-500 bg-indigo-500/10"
-                      : "border-border bg-secondary hover:border-indigo-500/30"
-                  }`}
-                >
-                  <div className="flex flex-col items-center gap-2">
-                    {t === "dark" && <Moon className="w-5 h-5 text-indigo-300" />}
-                    {t === "system" && (
-                      <div className="w-5 h-5 rounded-full bg-gradient-to-r from-slate-800 to-white border border-border" />
-                    )}
-                    <span className="text-xs font-medium capitalize text-foreground">
-                      {t === "dark" ? "Dark" : "System"}
-                    </span>
-                    <span className="text-[10px] text-muted-foreground">
-                      {t === "dark" ? "Always dark" : "Follow device"}
-                    </span>
-                  </div>
-                  {theme === t && (
-                    <div className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-indigo-500" />
-                  )}
-                </button>
-              ))}
-            </div>
-            <p className="text-xs text-muted-foreground mt-3 flex items-center gap-1.5">
-              <Info className="w-3.5 h-3.5 text-amber-400 flex-shrink-0" />
-              Light mode is coming in a future update.
-            </p>
+            <div className="rounded-xl border border-border bg-secondary p-5"><p className="font-semibold text-foreground">CareerIntel light</p><p className="text-sm text-muted-foreground mt-2">Warm ivory surfaces, clear indigo navigation and readable career tools across every page.</p></div>
           </SectionCard>
 
           <SectionCard
             title="Language & Region"
             icon={Globe}
-            iconColor="text-emerald-400"
+            iconColor="text-emerald-700"
             description="Set your preferred language for the CareerIntel SA interface."
           >
             <div className="space-y-3">
@@ -909,7 +855,7 @@ export default function SettingsPage() {
                 <select
                   value={language}
                   onChange={(e) => setLanguage(e.target.value)}
-                  className="w-full h-10 rounded-lg border border-input bg-input px-3 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+                  className="w-full h-10 rounded-lg border border-input bg-card px-3 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
                 >
                   <option value="en">English (South African)</option>
                   <option value="af" disabled>Afrikaans (Coming Soon)</option>
@@ -929,7 +875,7 @@ export default function SettingsPage() {
           <SectionCard
             title="Display"
             icon={Palette}
-            iconColor="text-violet-400"
+            iconColor="text-violet-700"
             description="Adjust how content is displayed across the platform."
           >
             <div className="divide-y divide-border">
@@ -949,7 +895,7 @@ export default function SettingsPage() {
           <SectionCard
             title="Job Search Status"
             icon={Briefcase}
-            iconColor="text-emerald-400"
+            iconColor="text-emerald-700"
             description="Let recruiters know whether you are currently looking for work."
           >
             <div className="divide-y divide-border">
@@ -966,7 +912,7 @@ export default function SettingsPage() {
           <SectionCard
             title="Job Type Preference"
             icon={Briefcase}
-            iconColor="text-indigo-400"
+            iconColor="text-indigo-700"
             description="Select all the employment types you are interested in."
           >
             <div className="flex flex-wrap gap-2">
@@ -984,7 +930,7 @@ export default function SettingsPage() {
                   onClick={() => toggleJobType(type.id)}
                   className={`px-3 py-1.5 rounded-lg text-xs font-medium border transition-all ${
                     jobType.includes(type.id)
-                      ? "bg-indigo-600/20 border-indigo-500/40 text-indigo-300"
+                      ? "bg-indigo-600/20 border-indigo-500/40 text-indigo-700"
                       : "bg-secondary border-border text-muted-foreground hover:text-foreground hover:border-border/80"
                   }`}
                 >
@@ -998,7 +944,7 @@ export default function SettingsPage() {
           <SectionCard
             title="Work Arrangement"
             icon={MapPin}
-            iconColor="text-blue-400"
+            iconColor="text-blue-700"
             description="Your preferred working arrangement."
           >
             <div className="grid grid-cols-3 gap-3">
@@ -1028,7 +974,7 @@ export default function SettingsPage() {
           <SectionCard
             title="Preferred Industries"
             icon={Briefcase}
-            iconColor="text-violet-400"
+            iconColor="text-violet-700"
             description="Select industries you want to work in. Used for AI recommendations."
           >
             <div className="flex flex-wrap gap-2">
@@ -1043,7 +989,7 @@ export default function SettingsPage() {
                   onClick={() => toggleIndustry(ind)}
                   className={`px-3 py-1.5 rounded-lg text-xs font-medium border transition-all ${
                     industries.includes(ind)
-                      ? "bg-violet-600/20 border-violet-500/40 text-violet-300"
+                      ? "bg-violet-600/20 border-violet-500/40 text-violet-700"
                       : "bg-secondary border-border text-muted-foreground hover:text-foreground hover:border-border/80"
                   }`}
                 >
@@ -1057,7 +1003,7 @@ export default function SettingsPage() {
           <SectionCard
             title="Salary Expectation"
             icon={DollarSign}
-            iconColor="text-amber-400"
+            iconColor="text-amber-700"
             description="Your expected monthly salary range (ZAR). Used for job matching and salary intelligence."
           >
             <div className="grid grid-cols-2 gap-3">

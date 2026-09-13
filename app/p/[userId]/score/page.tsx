@@ -1,3 +1,5 @@
+
+import { JourneyBrand } from "@/components/journey/chrome";
 /**
  * /p/[userId]/score — Public shareable Employability Score card
  */
@@ -61,8 +63,8 @@ function ScoreRing({ score }: { score: number }) {
           style={{ filter: `drop-shadow(0 0 8px ${color}60)` }} />
       </svg>
       <div className="absolute inset-0 flex flex-col items-center justify-center">
-        <span className="text-4xl font-black text-white">{score}</span>
-        <span className="text-xs text-white/40 font-medium">/ 100</span>
+        <span className="text-4xl font-black text-foreground">{score}</span>
+        <span className="text-xs text-muted-foreground font-medium">/ 100</span>
       </div>
     </div>
   );
@@ -80,23 +82,14 @@ export default async function PublicScorePage({ params }: { params: Promise<{ us
     : "Building";
 
   return (
-    <div className="min-h-screen bg-black flex flex-col items-center justify-center px-4 py-16">
+    <div className="min-h-screen bg-background flex flex-col items-center justify-center px-4 py-16">
       {/* Card */}
-      <div className="w-full max-w-sm bg-gradient-to-b from-white/[0.08] to-white/[0.03] border border-white/10 rounded-3xl p-8 text-center shadow-2xl">
-        {/* Logo */}
-        <div className="flex items-center justify-center gap-2 mb-6">
-          <div className="w-6 h-6 rounded-md bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center">
-            <Brain className="w-3.5 h-3.5 text-white" />
-          </div>
-          <span className="text-sm font-bold text-white/70">
-            Career<span className="text-indigo-400">Intel</span>
-            <span className="text-amber-400 text-xs ml-1">SA</span>
-          </span>
-        </div>
+      <div className="w-full max-w-sm bg-card border border-border rounded-3xl p-8 text-center shadow-2xl">
+        {/* Brand */}<div className="flex justify-center mb-8"><JourneyBrand /></div>
 
         {/* Name */}
-        <h1 className="text-xl font-bold text-white mb-1">{data.name}</h1>
-        <div className="flex items-center justify-center gap-3 text-xs text-white/40 mb-6">
+        <h1 className="text-xl font-bold text-foreground mb-1">{data.name}</h1>
+        <div className="flex items-center justify-center gap-3 text-xs text-muted-foreground mb-6">
           {data.currentRole && (
             <span className="flex items-center gap-1"><Briefcase className="w-3 h-3" />{data.currentRole}</span>
           )}
@@ -110,32 +103,32 @@ export default async function PublicScorePage({ params }: { params: Promise<{ us
           <>
             <ScoreRing score={data.score} />
             <div className="mt-4 mb-2">
-              <span className="text-lg font-bold text-white">{scoreLabel} Employability</span>
+              <span className="text-lg font-bold text-foreground">{scoreLabel} Employability</span>
             </div>
-            <p className="text-xs text-white/40 mb-6">
+            <p className="text-xs text-muted-foreground mb-6">
               Scored on CareerIntel SA&apos;s Employability Index — skills, profile, CV, and activity combined.
             </p>
           </>
         ) : (
           <div className="py-8 mb-6">
-            <Star className="w-12 h-12 text-amber-400/50 mx-auto mb-3" />
-            <p className="text-sm text-white/50">Score not yet calculated</p>
+            <Star className="w-12 h-12 text-amber-700/50 mx-auto mb-3" />
+            <p className="text-sm text-muted-foreground">Score not yet calculated</p>
           </div>
         )}
 
         {data.topCareer && (
-          <div className="bg-white/5 border border-white/10 rounded-xl px-4 py-3 mb-6">
-            <div className="text-[10px] text-white/30 mb-0.5">Top career target</div>
-            <div className="font-semibold text-white text-sm">{data.topCareer}</div>
+          <div className="bg-secondary border border-border rounded-xl px-4 py-3 mb-6">
+            <div className="text-[10px] text-muted-foreground mb-0.5">Top career target</div>
+            <div className="font-semibold text-foreground text-sm">{data.topCareer}</div>
           </div>
         )}
 
         {/* CTA */}
         <Link href="/sign-up"
-          className="flex items-center justify-center gap-2 w-full py-3 rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white text-sm font-semibold transition-all">
+          className="flex items-center justify-center gap-2 w-full py-3 rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-primary-foreground text-sm font-semibold transition-all">
           Check my score free <ArrowRight className="w-4 h-4" />
         </Link>
-        <p className="text-[10px] text-white/25 mt-3">careerintelsa.co.za · Free forever</p>
+        <p className="text-[10px] text-muted-foreground mt-3">careerintelsa.co.za · Free forever</p>
       </div>
     </div>
   );

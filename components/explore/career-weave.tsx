@@ -132,11 +132,11 @@ export function CareerWeave() {
     if (!ctx) return;
 
     ctx.clearRect(0, 0, W, H);
-    ctx.fillStyle = "#070912";
+    ctx.fillStyle = "#f6f5f1";
     ctx.fillRect(0, 0, W, H);
 
     // The discharge print: pale stamps on indigo ink.
-    ctx.fillStyle = "rgba(255,255,255,.045)";
+    ctx.fillStyle = "rgba(61,79,176,.06)";
     for (let y = 0; y < H; y += 30) {
       for (let x = 0; x < W; x += 30) {
         ctx.beginPath(); ctx.arc(x, y, 1.3, 0, 7); ctx.fill();
@@ -151,13 +151,13 @@ export function CareerWeave() {
     ctx.fillRect(0, 0, W, H);
 
     // Demand rings
-    ctx.strokeStyle = "rgba(255,255,255,.07)";
+    ctx.strokeStyle = "rgba(61,79,176,.16)";
     ctx.lineWidth = 1;
     [0.28, 0.52, 0.76, 1].forEach((f) => {
       ctx.beginPath(); ctx.arc(CX, CY, R * f, 0, 7); ctx.stroke();
     });
     ctx.font = "500 15px 'IBM Plex Mono', ui-monospace, monospace";
-    ctx.fillStyle = "rgba(126,134,166,.8)";
+    ctx.fillStyle = "#576278";
     ctx.textAlign = "center";
     ctx.fillText("HIGHEST DEMAND", CX, CY - R * 0.17 - 12);
     ctx.fillText("LOWEST DEMAND", CX, CY - R - 16);
@@ -172,7 +172,7 @@ export function CareerWeave() {
       ctx.beginPath();
       ctx.moveTo(a.x, a.y);
       ctx.quadraticCurveTo(mx + (CX - mx) * 0.34, my + (CY - my) * 0.34, b.x, b.y);
-      ctx.strokeStyle = lit ? "rgba(143,160,240,.8)" : "rgba(143,160,240,.14)";
+      ctx.strokeStyle = lit ? "rgba(61,79,176,.8)" : "rgba(61,79,176,.18)";
       ctx.lineWidth = lit ? 2 : 1;
       ctx.stroke();
     });
@@ -188,7 +188,7 @@ export function CareerWeave() {
       if (n.c.id === selectedId || n.c.id === hoverId) {
         ctx.beginPath();
         ctx.arc(n.x, n.y, n.r + 6, 0, 7);
-        ctx.strokeStyle = n.c.id === selectedId ? "#E8EAF4" : "rgba(232,234,244,.55)";
+        ctx.strokeStyle = n.c.id === selectedId ? "#1b263e" : "rgba(27,38,62,.55)";
         ctx.lineWidth = 2;
         ctx.stroke();
       }
@@ -202,9 +202,9 @@ export function CareerWeave() {
       ctx.textAlign = right ? "right" : "left";
       const ox = right ? -selected.r - 12 : selected.r + 12;
       const tw = ctx.measureText(selected.c.title).width;
-      ctx.fillStyle = "rgba(9,11,22,.88)";
+      ctx.fillStyle = "rgba(255,255,255,.96)";
       ctx.fillRect(selected.x + ox - (right ? tw + 8 : 8), selected.y - 15, tw + 16, 27);
-      ctx.fillStyle = "#E8EAF4";
+      ctx.fillStyle = "#1b263e";
       ctx.fillText(selected.c.title, selected.x + ox, selected.y + 5);
     }
   }, [nodes, links, active, selectedId, hoverId, selected]);
@@ -239,19 +239,19 @@ export function CareerWeave() {
         {/* Filters */}
         <div className="flex flex-wrap items-center gap-2 mb-3">
           <div className="relative flex-1 min-w-[190px]">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/25" aria-hidden="true" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" aria-hidden="true" />
             <input
               type="text"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Search 307 careers, sectors or skills…"
               aria-label="Search careers"
-              className="w-full bg-white/5 border border-white/12 rounded-lg pl-9 pr-8 py-2 text-sm text-white placeholder:text-white/25 focus:outline-none focus:border-shweshwe/60"
+              className="w-full bg-secondary border border-border rounded-lg pl-9 pr-8 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-shweshwe/60"
             />
             {query && (
               <button
                 type="button" onClick={() => setQuery("")} aria-label="Clear search"
-                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-white/30 hover:text-white/70"
+                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-muted-foreground"
               >
                 <X className="w-3.5 h-3.5" />
               </button>
@@ -261,11 +261,11 @@ export function CareerWeave() {
             value={sector}
             onChange={(e) => setSector(e.target.value)}
             aria-label="Filter by sector"
-            className="bg-white/5 border border-white/12 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-shweshwe/60"
+            className="bg-secondary border border-border rounded-lg px-3 py-2 text-sm text-foreground focus:outline-none focus:border-shweshwe/60"
           >
-            <option value="" className="bg-[#12152a]">All {WEAVE_SECTORS.length} sectors</option>
+            <option value="" className="bg-card">All {WEAVE_SECTORS.length} sectors</option>
             {WEAVE_SECTORS.map((s) => (
-              <option key={s} value={s} className="bg-[#12152a]">{s}</option>
+              <option key={s} value={s} className="bg-card">{s}</option>
             ))}
           </select>
           {([
@@ -280,8 +280,8 @@ export function CareerWeave() {
               onClick={() => set(!on)}
               className={`text-xs px-3 py-2 rounded-lg border transition-colors ${
                 on
-                  ? "bg-shweshwe/25 border-shweshwe text-white"
-                  : "border-white/12 text-white/60 hover:text-white hover:border-white/25"
+                  ? "bg-shweshwe/25 border-shweshwe text-foreground"
+                  : "border-border text-muted-foreground hover:text-foreground hover:border-border"
               }`}
             >
               {label}
@@ -295,7 +295,7 @@ export function CareerWeave() {
             ref={canvasRef}
             width={W}
             height={H}
-            className="block w-full h-auto rounded-xl border border-white/10 bg-[#070912] cursor-crosshair touch-none"
+            className="block w-full h-auto rounded-xl border border-border bg-card cursor-crosshair touch-none"
             onMouseMove={(e) => {
               const hit = locate(e);
               if (!hit) return;
@@ -318,11 +318,11 @@ export function CareerWeave() {
           />
           {tip && (
             <div
-              className="pointer-events-none absolute z-20 -translate-x-1/2 -translate-y-[125%] rounded-lg border border-white/15 bg-[#141833]/97 px-3 py-2 shadow-2xl"
+              className="pointer-events-none absolute z-20 -translate-x-1/2 -translate-y-[125%] rounded-lg border border-border bg-card px-3 py-2 shadow-2xl"
               style={{ left: tip.x, top: tip.y }}
             >
-              <span className="block text-sm font-semibold text-white">{tip.c.title}</span>
-              <span className="block text-[11px] font-mono text-white/45">
+              <span className="block text-sm font-semibold text-foreground">{tip.c.title}</span>
+              <span className="block text-[11px] font-mono text-muted-foreground">
                 {formatZarShort(tip.c.avgSalaryZar)} · demand {tip.c.demandScore} · {tip.c.automationRisk}% automatable
               </span>
             </div>
@@ -330,7 +330,7 @@ export function CareerWeave() {
         </div>
 
         {/* Legend */}
-        <div className="flex flex-wrap items-center gap-x-5 gap-y-2 mt-3 text-[11px] font-mono text-white/40">
+        <div className="flex flex-wrap items-center gap-x-5 gap-y-2 mt-3 text-[11px] font-mono text-muted-foreground">
           <span>Toward the centre = higher demand</span>
           <span>Bigger = pays more</span>
           <span className="flex items-center gap-1.5">
@@ -347,46 +347,46 @@ export function CareerWeave() {
             ))}
             {WEAVE_RANGES.automation.max}%
           </span>
-          <span className="text-white/30">{matches.length} of {WEAVE_CAREERS.length} shown</span>
+          <span className="text-muted-foreground">{matches.length} of {WEAVE_CAREERS.length} shown</span>
         </div>
       </div>
 
       {/* Detail panel */}
-      <aside className="flex flex-col gap-4 rounded-xl border border-white/10 bg-[#141833]/55 p-5 h-fit lg:sticky lg:top-6">
+      <aside className="flex flex-col gap-4 rounded-xl border border-border bg-card p-5 h-fit lg:sticky lg:top-6">
         <div>
-          <p className="text-[11px] font-mono uppercase tracking-[0.12em] text-shweshwe-light">
+          <p className="text-[11px] font-mono uppercase tracking-[0.12em] text-primary">
             {selected.c.sector}
           </p>
           <h2 className="mt-1 text-xl font-bold leading-tight tracking-tight">{selected.c.title}</h2>
         </div>
 
-        <dl className="grid grid-cols-2 gap-px rounded-lg border border-white/10 overflow-hidden bg-white/10">
+        <dl className="grid grid-cols-2 gap-px rounded-lg border border-border overflow-hidden bg-secondary">
           {[
             ["Avg / month", formatZarShort(selected.c.avgSalaryZar)],
             ["Demand", `${selected.c.demandScore} / 100`],
             ["NQF level", selected.c.nqfLevel ? `NQF ${selected.c.nqfLevel}` : "—"],
             ["Automatable", `${selected.c.automationRisk}%`],
           ].map(([k, v]) => (
-            <div key={k} className="bg-[#0e1224] px-3 py-2">
-              <dt className="text-[10px] font-mono uppercase tracking-[0.1em] text-white/40">{k}</dt>
-              <dd className="mt-0.5 font-mono text-sm tabular-nums text-white">{v}</dd>
+            <div key={k} className="bg-card px-3 py-2">
+              <dt className="text-[10px] font-mono uppercase tracking-[0.1em] text-muted-foreground">{k}</dt>
+              <dd className="mt-0.5 font-mono text-sm tabular-nums text-foreground">{v}</dd>
             </div>
           ))}
         </dl>
 
         <div>
-          <p className="text-[11px] font-mono uppercase tracking-[0.12em] text-white/40 mb-2">Range</p>
-          <p className="font-mono text-sm text-white/80">
+          <p className="text-[11px] font-mono uppercase tracking-[0.12em] text-muted-foreground mb-2">Range</p>
+          <p className="font-mono text-sm text-muted-foreground">
             {formatZarShort(selected.c.minSalaryZar)} – {formatZarShort(selected.c.maxSalaryZar)}
-            <span className="text-white/35"> per month</span>
+            <span className="text-muted-foreground"> per month</span>
           </p>
         </div>
 
         <div>
-          <p className="text-[11px] font-mono uppercase tracking-[0.12em] text-white/40 mb-2">Top skills</p>
+          <p className="text-[11px] font-mono uppercase tracking-[0.12em] text-muted-foreground mb-2">Top skills</p>
           <div className="flex flex-wrap gap-1.5">
             {selected.c.topSkills.map((s) => (
-              <span key={s} className="text-xs px-2.5 py-1 rounded-full bg-shweshwe/15 border border-shweshwe/30 text-shweshwe-pale">
+              <span key={s} className="text-xs px-2.5 py-1 rounded-full bg-shweshwe/15 border border-shweshwe/30 text-primary">
                 {s}
               </span>
             ))}
@@ -394,14 +394,14 @@ export function CareerWeave() {
         </div>
 
         <div>
-          <p className="text-[11px] font-mono uppercase tracking-[0.12em] text-white/40 mb-2">Hires most in</p>
-          <p className="text-sm text-white/70">
+          <p className="text-[11px] font-mono uppercase tracking-[0.12em] text-muted-foreground mb-2">Hires most in</p>
+          <p className="text-sm text-muted-foreground">
             {selected.c.topProvinces.map((p) => PROVINCE_NAME[p] ?? p).join(" · ")}
           </p>
         </div>
 
         <div>
-          <p className="text-[11px] font-mono uppercase tracking-[0.12em] text-white/40 mb-1">One step away</p>
+          <p className="text-[11px] font-mono uppercase tracking-[0.12em] text-muted-foreground mb-1">One step away</p>
           {selected.c.related.length > 0 ? (
             <div className="flex flex-col">
               {selected.c.related.map((rid) => {
@@ -413,10 +413,10 @@ export function CareerWeave() {
                     key={rid}
                     type="button"
                     onClick={() => setSelectedId(rid)}
-                    className="flex items-center justify-between gap-2 border-b border-white/6 py-2 text-left text-sm text-white/70 hover:text-white last:border-0"
+                    className="flex items-center justify-between gap-2 border-b border-border py-2 text-left text-sm text-muted-foreground hover:text-foreground last:border-0"
                   >
                     <span className="truncate">{r.c.title}</span>
-                    <span className={`shrink-0 font-mono text-xs ${diff > 0 ? "text-emerald-400" : diff < 0 ? "text-white/35" : "text-white/35"}`}>
+                    <span className={`shrink-0 font-mono text-xs ${diff > 0 ? "text-emerald-700" : diff < 0 ? "text-muted-foreground" : "text-muted-foreground"}`}>
                       {diff > 0 ? "+" : diff < 0 ? "−" : ""}{formatZarShort(Math.abs(diff))}
                     </span>
                   </button>
@@ -424,13 +424,13 @@ export function CareerWeave() {
               })}
             </div>
           ) : (
-            <p className="text-sm text-white/40">No mapped neighbours yet.</p>
+            <p className="text-sm text-muted-foreground">No mapped neighbours yet.</p>
           )}
         </div>
 
         <Link
           href={`/explore/${selected.c.id}`}
-          className="group flex items-center justify-center gap-2 rounded-lg bg-shweshwe hover:bg-shweshwe-light px-4 py-2.5 text-sm font-semibold text-white transition-colors"
+          className="group flex items-center justify-center gap-2 rounded-lg bg-shweshwe hover:bg-shweshwe-light px-4 py-2.5 text-sm font-semibold text-primary-foreground transition-colors"
         >
           Full profile
           <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />

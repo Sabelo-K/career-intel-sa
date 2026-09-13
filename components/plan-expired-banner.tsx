@@ -74,7 +74,7 @@ export function PlanExpiredBanner() {
 
   return (
     <div className="mb-6 flex items-start gap-3 rounded-xl border border-amber-500/25 bg-amber-500/10 p-4">
-      <AlertCircle className="mt-0.5 h-5 w-5 flex-shrink-0 text-amber-400" />
+      <AlertCircle className="mt-0.5 h-5 w-5 flex-shrink-0 text-amber-700" />
       <div className="flex-1">
         <p className="text-sm font-semibold text-foreground">
           Your {planLabel} plan has expired — you&apos;re now on the Free plan
@@ -85,7 +85,7 @@ export function PlanExpiredBanner() {
         </p>
         <Link
           href="/upgrade"
-          className="mt-3 inline-flex items-center gap-1.5 rounded-lg bg-indigo-600 px-3 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-indigo-500"
+          className="mt-3 inline-flex items-center gap-1.5 rounded-lg bg-indigo-600 px-3 py-1.5 text-xs font-semibold text-primary-foreground transition-colors hover:bg-indigo-500"
         >
           <Crown className="h-3.5 w-3.5" />
           Renew my plan
@@ -94,7 +94,7 @@ export function PlanExpiredBanner() {
       <button
         onClick={dismiss}
         aria-label="Dismiss"
-        className="text-amber-400/70 transition-colors hover:text-amber-300"
+        className="text-amber-700/70 transition-colors hover:text-amber-700"
       >
         <X className="h-4 w-4" />
       </button>

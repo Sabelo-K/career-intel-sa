@@ -1,3 +1,4 @@
+import { JourneyHeader } from "@/components/journey/chrome";
 import { auth, currentUser } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 
@@ -15,7 +16,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <p className="text-muted-foreground text-sm">
-          Admin access not configured. Set <code className="text-indigo-400">ADMIN_EMAIL</code> in Vercel.
+          Admin access not configured. Set <code className="text-indigo-700">ADMIN_EMAIL</code> in Vercel.
         </p>
       </div>
     );
@@ -28,5 +29,5 @@ export default async function AdminLayout({ children }: { children: React.ReactN
     redirect("/dashboard");
   }
 
-  return <>{children}</>;
+  return <div className="journey-surface"><JourneyHeader /><main id="main-content" className="journey-container journey-admin-content">{children}</main></div>;
 }

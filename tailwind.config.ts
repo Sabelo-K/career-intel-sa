@@ -123,7 +123,7 @@ const config: Config = {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
         "gradient-conic": "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
         "hero-gradient":
-          "linear-gradient(135deg, #050B1A 0%, #0D1526 30%, #0F1830 60%, #050B1A 100%)",
+          "linear-gradient(135deg, #f6f5f1 0%, #edf0fb 60%, #f6f5f1 100%)",
         "card-gradient": "linear-gradient(135deg, rgba(99,102,241,0.1) 0%, rgba(168,85,247,0.05) 100%)",
       },
       fontFamily: {

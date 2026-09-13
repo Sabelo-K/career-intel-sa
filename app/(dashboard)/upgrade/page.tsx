@@ -56,7 +56,7 @@ const PLANS: PlanConfig[] = [
     tagline:    "Perfect for students & job seekers",
     color:      "border-violet-500/30 bg-violet-500/5",
     badgeColor: "bg-violet-600",
-    textColor:  "text-violet-300",
+    textColor:  "text-violet-700",
     icon:       Star,
     badge:      "For Youth",
     highlight:  false,
@@ -78,7 +78,7 @@ const PLANS: PlanConfig[] = [
     tagline:    "Serious about your career growth",
     color:      "border-indigo-500/40 bg-indigo-500/10",
     badgeColor: "bg-indigo-600",
-    textColor:  "text-indigo-300",
+    textColor:  "text-indigo-700",
     icon:       Crown,
     badge:      "Most Popular",
     highlight:  true,
@@ -98,9 +98,9 @@ const PLANS: PlanConfig[] = [
     price:      "R399",
     period:     "/month",
     tagline:    "Market intelligence for HR & talent teams",
-    color:      "border-white/10 bg-white/3",
-    badgeColor: "bg-white/20",
-    textColor:  "text-white/40",
+    color:      "border-border bg-secondary",
+    badgeColor: "bg-secondary",
+    textColor:  "text-muted-foreground",
     icon:       Users,
     badge:      "Coming Soon",
     highlight:  false,
@@ -225,7 +225,7 @@ export default function UpgradePage() {
 
       {/* Header */}
       <div className="text-center space-y-3">
-        <div className="inline-flex items-center gap-2 bg-indigo-500/10 border border-indigo-500/20 rounded-full px-4 py-1.5 text-xs text-indigo-300 font-medium">
+        <div className="inline-flex items-center gap-2 bg-indigo-500/10 border border-indigo-500/20 rounded-full px-4 py-1.5 text-xs text-indigo-700 font-medium">
           <Zap className="w-3.5 h-3.5" />
           Unlock Your Full Career Potential
         </div>
@@ -236,7 +236,7 @@ export default function UpgradePage() {
           Join thousands of South African professionals accelerating their careers with AI-powered intelligence.
         </p>
         {isAlreadyPaid && (
-          <div className="inline-flex items-center gap-2 bg-emerald-500/10 border border-emerald-500/20 rounded-full px-3 py-1 text-xs text-emerald-400">
+          <div className="inline-flex items-center gap-2 bg-emerald-500/10 border border-emerald-500/20 rounded-full px-3 py-1 text-xs text-emerald-700">
             <Check className="w-3.5 h-3.5" />
             You are on the {currentPlanKey
             ? currentPlanKey.charAt(0).toUpperCase() + currentPlanKey.slice(1)
@@ -253,7 +253,7 @@ export default function UpgradePage() {
           className="flex items-center gap-3 bg-gradient-to-r from-amber-500/15 to-orange-500/10 border border-amber-500/30 rounded-xl px-4 py-3.5"
         >
           <div className="w-8 h-8 rounded-lg bg-amber-500/20 flex items-center justify-center flex-shrink-0">
-            <Zap className="w-4 h-4 text-amber-400" />
+            <Zap className="w-4 h-4 text-amber-700" />
           </div>
           <div className="flex-1">
             <p className="text-sm font-bold text-foreground">
@@ -265,8 +265,8 @@ export default function UpgradePage() {
           </div>
           {daysLeft > 0 && (
             <div className="flex items-center gap-1.5 bg-amber-500/20 border border-amber-500/30 rounded-lg px-2.5 py-1.5 flex-shrink-0">
-              <Clock className="w-3.5 h-3.5 text-amber-400" />
-              <span className="text-xs font-bold text-amber-300">
+              <Clock className="w-3.5 h-3.5 text-amber-700" />
+              <span className="text-xs font-bold text-amber-700">
                 {daysLeft} day{daysLeft !== 1 ? "s" : ""} left
               </span>
             </div>
@@ -296,11 +296,11 @@ export default function UpgradePage() {
             }`}
           >
             Monthly Subscription
-            <span className="absolute -top-2.5 -right-2 text-[9px] bg-emerald-500 text-white px-1.5 py-0.5 rounded-full font-semibold">SAVE</span>
+            <span className="absolute -top-2.5 -right-2 text-[9px] bg-emerald-500 text-primary-foreground px-1.5 py-0.5 rounded-full font-semibold">SAVE</span>
           </button>
         </div>
         {billingType === "subscription" ? (
-          <p className="text-xs text-emerald-400">✓ Lower monthly rate · Auto-renews · Cancel anytime</p>
+          <p className="text-xs text-emerald-700">✓ Lower monthly rate · Auto-renews · Cancel anytime</p>
         ) : (
           <p className="text-xs text-muted-foreground">Pay once, access for 30 days · No auto-renewal</p>
         )}
@@ -329,7 +329,7 @@ export default function UpgradePage() {
             >
               {/* Badge */}
               {plan.badge && (
-                <span className={`absolute -top-3 left-1/2 -translate-x-1/2 text-[10px] px-2.5 py-0.5 rounded-full ${plan.badgeColor} text-white font-semibold whitespace-nowrap`}>
+                <span className={`absolute -top-3 left-1/2 -translate-x-1/2 text-[10px] px-2.5 py-0.5 rounded-full ${plan.badgeColor} text-foreground font-semibold whitespace-nowrap`}>
                   {plan.badge}
                 </span>
               )}
@@ -348,8 +348,8 @@ export default function UpgradePage() {
               {/* Price */}
               {isComingSoon ? (
                 <div className="mb-4">
-                  <p className="text-2xl font-bold text-white/30">Coming Soon</p>
-                  <p className="text-[11px] text-white/25 mt-1">We&apos;re building this — join the waitlist to be first in line</p>
+                  <p className="text-2xl font-bold text-muted-foreground">Coming Soon</p>
+                  <p className="text-[11px] text-muted-foreground mt-1">We&apos;re building this — join the waitlist to be first in line</p>
                 </div>
               ) : (
                 <>
@@ -367,7 +367,7 @@ export default function UpgradePage() {
                     )}
                   </div>
                   {billingType === "subscription" ? (
-                    <p className="text-[11px] text-emerald-400 mb-3">
+                    <p className="text-[11px] text-emerald-700 mb-3">
                       Save {plan.key === "graduate" ? "R5" : plan.key === "professional" ? "R14" : "R100"}/mo vs once-off · Cancel anytime
                     </p>
                   ) : (
@@ -380,7 +380,7 @@ export default function UpgradePage() {
               <ul className="space-y-2 flex-1 mb-5">
                 {plan.features.map((f) => (
                   <li key={f} className="flex items-start gap-2 text-xs text-muted-foreground">
-                    <Check className="w-3.5 h-3.5 text-emerald-400 flex-shrink-0 mt-0.5" />
+                    <Check className="w-3.5 h-3.5 text-emerald-700 flex-shrink-0 mt-0.5" />
                     {f}
                   </li>
                 ))}
@@ -390,7 +390,7 @@ export default function UpgradePage() {
               {isComingSoon ? (
                 <a
                   href="mailto:hello@careerintelsa.co.za?subject=Recruiter Plan Waitlist"
-                  className="w-full flex items-center justify-center gap-1.5 py-2 px-4 rounded-lg border border-white/15 text-white/40 text-sm font-medium hover:border-white/25 hover:text-white/60 transition-colors"
+                  className="w-full flex items-center justify-center gap-1.5 py-2 px-4 rounded-lg border border-border text-muted-foreground text-sm font-medium hover:border-border hover:text-muted-foreground transition-colors"
                 >
                   Join Waitlist
                   <ChevronRight className="w-3.5 h-3.5" />
@@ -431,7 +431,7 @@ export default function UpgradePage() {
 
       {/* Error */}
       {error && (
-        <div className="text-center text-sm text-red-400 bg-red-500/10 border border-red-500/20 rounded-xl px-4 py-3">
+        <div className="text-center text-sm text-red-700 bg-red-500/10 border border-red-500/20 rounded-xl px-4 py-3">
           {error} — please try again or contact support@careerintel.co.za
         </div>
       )}
@@ -457,7 +457,7 @@ export default function UpgradePage() {
           </div>
           <button
             type="submit"
-            className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-semibold transition-colors active:scale-95 whitespace-nowrap"
+            className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-primary-foreground text-sm font-semibold transition-colors active:scale-95 whitespace-nowrap"
           >
             <Zap className="w-4 h-4" />
             Continue to secure payment
@@ -473,7 +473,7 @@ export default function UpgradePage() {
         <p className="text-xs text-muted-foreground">
           30-day access · No automatic renewal · POPIA compliant
           {isNewUser && !isAlreadyPaid && (
-            <span className="text-amber-400 font-medium"> · 50% off your first month — no code needed</span>
+            <span className="text-amber-700 font-medium"> · 50% off your first month — no code needed</span>
           )}
         </p>
       </div>
@@ -487,7 +487,7 @@ export default function UpgradePage() {
             return (
               <div key={h.label} className="bg-card border border-border rounded-xl p-4 flex items-start gap-3">
                 <div className="w-8 h-8 rounded-lg bg-indigo-500/10 flex items-center justify-center flex-shrink-0">
-                  <Icon className="w-4 h-4 text-indigo-400" />
+                  <Icon className="w-4 h-4 text-indigo-700" />
                 </div>
                 <div>
                   <p className="text-sm font-semibold text-foreground">{h.label}</p>

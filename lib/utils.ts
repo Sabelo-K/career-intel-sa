@@ -16,19 +16,19 @@ export function formatSalaryRange(min: number, max: number): string {
 }
 
 export function getDemandColor(score: number): string {
-  if (score >= 85) return "text-emerald-400";
-  if (score >= 70) return "text-blue-400";
-  if (score >= 55) return "text-yellow-400";
-  if (score >= 40) return "text-orange-400";
-  return "text-red-400";
+  if (score >= 85) return "text-emerald-700";
+  if (score >= 70) return "text-blue-700";
+  if (score >= 55) return "text-yellow-700";
+  if (score >= 40) return "text-orange-700";
+  return "text-red-700";
 }
 
 export function getDemandBadgeColor(score: number): string {
-  if (score >= 85) return "bg-emerald-500/20 text-emerald-300 border-emerald-500/30";
-  if (score >= 70) return "bg-blue-500/20 text-blue-300 border-blue-500/30";
-  if (score >= 55) return "bg-yellow-500/20 text-yellow-300 border-yellow-500/30";
-  if (score >= 40) return "bg-orange-500/20 text-orange-300 border-orange-500/30";
-  return "bg-red-500/20 text-red-300 border-red-500/30";
+  if (score >= 85) return "bg-emerald-500/20 text-emerald-700 border-emerald-500/30";
+  if (score >= 70) return "bg-blue-500/20 text-blue-700 border-blue-500/30";
+  if (score >= 55) return "bg-yellow-500/20 text-yellow-700 border-yellow-500/30";
+  if (score >= 40) return "bg-orange-500/20 text-orange-700 border-orange-500/30";
+  return "bg-red-500/20 text-red-700 border-red-500/30";
 }
 
 export function getScoreLabel(score: number): string {
@@ -77,10 +77,10 @@ export function getProvinceLabel(province: string): string {
 }
 
 export function getAutomationRiskLabel(risk: number): { label: string; color: string } {
-  if (risk >= 75) return { label: "High Risk", color: "text-red-400" };
-  if (risk >= 50) return { label: "Medium Risk", color: "text-yellow-400" };
-  if (risk >= 25) return { label: "Low Risk", color: "text-blue-400" };
-  return { label: "Minimal Risk", color: "text-emerald-400" };
+  if (risk >= 75) return { label: "High Risk", color: "text-red-700" };
+  if (risk >= 50) return { label: "Medium Risk", color: "text-yellow-700" };
+  if (risk >= 25) return { label: "Low Risk", color: "text-blue-700" };
+  return { label: "Minimal Risk", color: "text-emerald-700" };
 }
 
 export function truncate(str: string, length: number): string {

@@ -55,7 +55,7 @@ export function OutOfCreditsModal({
               <div className="flex items-start justify-between">
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-xl bg-amber-500/15 flex items-center justify-center flex-shrink-0">
-                    <Coins className="w-5 h-5 text-amber-400" />
+                    <Coins className="w-5 h-5 text-amber-700" />
                   </div>
                   <div>
                     <h2 className="text-sm font-semibold text-foreground">Out of credits</h2>
@@ -100,7 +100,7 @@ export function OutOfCreditsModal({
                 <Link
                   href="/upgrade"
                   onClick={onClose}
-                  className="flex items-center justify-center gap-2 w-full py-2.5 px-4 rounded-xl bg-indigo-600 hover:bg-indigo-500 active:scale-95 text-white text-sm font-semibold transition-all"
+                  className="flex items-center justify-center gap-2 w-full py-2.5 px-4 rounded-xl bg-indigo-600 hover:bg-indigo-500 active:scale-95 text-primary-foreground text-sm font-semibold transition-all"
                 >
                   <Crown className="w-4 h-4" />
                   Upgrade — unlimited from R49/mo

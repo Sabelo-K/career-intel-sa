@@ -100,16 +100,16 @@ const MOCK_QUESTIONS: Question[] = [
 ];
 
 const TYPE_COLORS: Record<string, string> = {
-  behavioral: "bg-blue-500/15 text-blue-300 border-blue-500/25",
-  technical: "bg-violet-500/15 text-violet-300 border-violet-500/25",
-  situational: "bg-emerald-500/15 text-emerald-300 border-emerald-500/25",
-  competency: "bg-amber-500/15 text-amber-300 border-amber-500/25",
+  behavioral: "bg-blue-500/15 text-blue-700 border-blue-500/25",
+  technical: "bg-violet-500/15 text-violet-700 border-violet-500/25",
+  situational: "bg-emerald-500/15 text-emerald-700 border-emerald-500/25",
+  competency: "bg-amber-500/15 text-amber-700 border-amber-500/25",
 };
 
 const DIFFICULTY_COLORS: Record<string, string> = {
-  easy: "text-emerald-400",
-  medium: "text-amber-400",
-  hard: "text-red-400",
+  easy: "text-emerald-700",
+  medium: "text-amber-700",
+  hard: "text-red-700",
 };
 
 export default function InterviewPrepPage() {
@@ -299,7 +299,7 @@ export default function InterviewPrepPage() {
             <select
               value={level}
               onChange={(e) => setLevel(e.target.value)}
-              className="w-full h-10 rounded-lg border border-input bg-input px-3 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+              className="w-full h-10 rounded-lg border border-input bg-card px-3 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
             >
               <option value="junior">Junior / Graduate</option>
               <option value="mid">Mid-Level</option>
@@ -332,10 +332,10 @@ export default function InterviewPrepPage() {
 
       {/* Error banner */}
       {error && (
-        <div className="flex items-center gap-3 p-4 rounded-xl bg-red-500/10 border border-red-500/20 text-sm text-red-300">
+        <div className="flex items-center gap-3 p-4 rounded-xl bg-red-500/10 border border-red-500/20 text-sm text-red-700">
           <AlertCircle className="w-4 h-4 flex-shrink-0" />
           <span>{error}</span>
-          <button onClick={() => setError(null)} className="ml-auto hover:text-red-200">✕</button>
+          <button onClick={() => setError(null)} className="ml-auto hover:text-red-700">✕</button>
         </div>
       )}
 
@@ -356,7 +356,7 @@ export default function InterviewPrepPage() {
         ].map((s) => (
           <div key={s.label} className="stat-card flex items-center gap-3">
             <div className="w-9 h-9 rounded-lg bg-indigo-500/15 flex items-center justify-center">
-              <s.icon className="w-4 h-4 text-indigo-400" />
+              <s.icon className="w-4 h-4 text-indigo-700" />
             </div>
             <div>
               <div className="text-lg font-bold text-foreground">{s.value}</div>
@@ -375,7 +375,7 @@ export default function InterviewPrepPage() {
               onClick={() => setFilter(f)}
               className={`text-xs px-3 py-1.5 rounded-lg border transition-colors capitalize ${
                 filter === f
-                  ? "border-indigo-500/50 bg-indigo-500/15 text-indigo-300"
+                  ? "border-indigo-500/50 bg-indigo-500/15 text-indigo-700"
                   : "border-border text-muted-foreground hover:bg-secondary"
               }`}
             >
@@ -387,7 +387,7 @@ export default function InterviewPrepPage() {
           onClick={() => { setVoiceMode(v => !v); stopSpeaking(); stopRecording(); }}
           className={`flex items-center gap-2 text-xs px-3 py-1.5 rounded-lg border font-medium transition-all ${
             voiceMode
-              ? "border-emerald-500/50 bg-emerald-500/15 text-emerald-300"
+              ? "border-emerald-500/50 bg-emerald-500/15 text-emerald-700"
               : "border-border text-muted-foreground hover:bg-secondary"
           }`}
         >
@@ -398,7 +398,7 @@ export default function InterviewPrepPage() {
 
       {voiceMode && (
         <div className="flex items-start gap-3 bg-emerald-500/10 border border-emerald-500/20 rounded-xl p-4 text-xs text-muted-foreground">
-          <Mic className="w-4 h-4 text-emerald-400 flex-shrink-0 mt-0.5" />
+          <Mic className="w-4 h-4 text-emerald-700 flex-shrink-0 mt-0.5" />
           <div>
             <span className="font-semibold text-foreground">Voice Mode active</span> — click <strong>Read Question</strong> to hear the question aloud, then <strong>Record Answer</strong> to speak your response (requires mic permission), or simply <strong>type your answer</strong> in the box below. Either way, click <strong>AI Score</strong> for instant feedback.
             <span className="text-muted-foreground/60"> Voice recording works best in Chrome or Edge.</span>
@@ -407,10 +407,10 @@ export default function InterviewPrepPage() {
       )}
 
       {voiceError && (
-        <div className="flex items-start gap-3 bg-red-500/10 border border-red-500/20 rounded-xl p-4 text-xs text-red-300">
-          <AlertCircle className="w-4 h-4 text-red-400 flex-shrink-0 mt-0.5" />
+        <div className="flex items-start gap-3 bg-red-500/10 border border-red-500/20 rounded-xl p-4 text-xs text-red-700">
+          <AlertCircle className="w-4 h-4 text-red-700 flex-shrink-0 mt-0.5" />
           <div className="flex-1">{voiceError}</div>
-          <button onClick={() => setVoiceError(null)} className="text-red-400/60 hover:text-red-300 text-base leading-none flex-shrink-0">✕</button>
+          <button onClick={() => setVoiceError(null)} className="text-red-700/60 hover:text-red-700 text-base leading-none flex-shrink-0">✕</button>
         </div>
       )}
 
@@ -428,7 +428,7 @@ export default function InterviewPrepPage() {
               onClick={() => setExpandedId(expandedId === q.id ? null : q.id)}
               className="w-full flex items-start gap-4 p-5 text-left hover:bg-secondary transition-colors"
             >
-              <div className="w-8 h-8 rounded-full bg-indigo-600/20 border border-indigo-500/25 flex items-center justify-center text-xs font-bold text-indigo-400 flex-shrink-0 mt-0.5">
+              <div className="w-8 h-8 rounded-full bg-indigo-600/20 border border-indigo-500/25 flex items-center justify-center text-xs font-bold text-indigo-700 flex-shrink-0 mt-0.5">
                 {i + 1}
               </div>
               <div className="flex-1 min-w-0">
@@ -456,15 +456,15 @@ export default function InterviewPrepPage() {
                 >
                   <div className="px-5 pb-5 border-t border-border pt-4 space-y-4">
                     <div>
-                      <div className="text-xs font-semibold text-indigo-400 mb-1.5 uppercase tracking-wide">How to Answer</div>
+                      <div className="text-xs font-semibold text-indigo-700 mb-1.5 uppercase tracking-wide">How to Answer</div>
                       <p className="text-sm text-muted-foreground leading-relaxed">{q.sampleAnswer}</p>
                     </div>
                     <div>
-                      <div className="text-xs font-semibold text-emerald-400 mb-2 uppercase tracking-wide">Pro Tips</div>
+                      <div className="text-xs font-semibold text-emerald-700 mb-2 uppercase tracking-wide">Pro Tips</div>
                       <div className="space-y-1.5">
                         {q.tips.map((tip, j) => (
                           <div key={j} className="flex items-start gap-2 text-xs text-muted-foreground">
-                            <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 flex-shrink-0 mt-0.5" />
+                            <CheckCircle2 className="w-3.5 h-3.5 text-emerald-700 flex-shrink-0 mt-0.5" />
                             {tip}
                           </div>
                         ))}
@@ -472,13 +472,13 @@ export default function InterviewPrepPage() {
                     </div>
                     {practiceId === q.id && (
                       <div className="space-y-2">
-                        <div className="text-xs font-semibold text-amber-400 uppercase tracking-wide">Your Practice Answer</div>
+                        <div className="text-xs font-semibold text-amber-700 uppercase tracking-wide">Your Practice Answer</div>
                         <textarea
                           value={practiceText[q.id] || ""}
                           onChange={(e) => setPracticeText({ ...practiceText, [q.id]: e.target.value })}
                           placeholder="Type your answer here — try to follow the framework above..."
                           rows={5}
-                          className="w-full rounded-lg border border-input bg-input px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring resize-none"
+                          className="w-full rounded-lg border border-input bg-card px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring resize-none"
                           autoFocus
                         />
                         {practiceText[q.id] && (
@@ -528,33 +528,33 @@ export default function InterviewPrepPage() {
                           <motion.div initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }}
                             className="bg-secondary rounded-xl p-4 space-y-3">
                             <div className="flex items-center gap-3">
-                              <div className={`text-2xl font-black ${evaluations[q.id].score >= 8 ? "text-emerald-400" : evaluations[q.id].score >= 6 ? "text-indigo-300" : "text-amber-400"}`}>
+                              <div className={`text-2xl font-black ${evaluations[q.id].score >= 8 ? "text-emerald-700" : evaluations[q.id].score >= 6 ? "text-indigo-700" : "text-amber-700"}`}>
                                 {evaluations[q.id].score}/10
                               </div>
                               <span className="text-sm font-medium text-foreground">{evaluations[q.id].headline}</span>
                             </div>
                             {evaluations[q.id].strengths.length > 0 && (
                               <div>
-                                <div className="text-[10px] font-semibold text-emerald-400 uppercase tracking-wide mb-1">Strengths</div>
+                                <div className="text-[10px] font-semibold text-emerald-700 uppercase tracking-wide mb-1">Strengths</div>
                                 {evaluations[q.id].strengths.map((s, i) => (
                                   <div key={i} className="flex items-start gap-1.5 text-xs text-muted-foreground mb-1">
-                                    <CheckCircle2 className="w-3 h-3 text-emerald-400 flex-shrink-0 mt-0.5" />{s}
+                                    <CheckCircle2 className="w-3 h-3 text-emerald-700 flex-shrink-0 mt-0.5" />{s}
                                   </div>
                                 ))}
                               </div>
                             )}
                             {evaluations[q.id].improvements.length > 0 && (
                               <div>
-                                <div className="text-[10px] font-semibold text-amber-400 uppercase tracking-wide mb-1">To Improve</div>
+                                <div className="text-[10px] font-semibold text-amber-700 uppercase tracking-wide mb-1">To Improve</div>
                                 {evaluations[q.id].improvements.map((s, i) => (
                                   <div key={i} className="flex items-start gap-1.5 text-xs text-muted-foreground mb-1">
-                                    <ArrowRight className="w-3 h-3 text-amber-400 flex-shrink-0 mt-0.5" />{s}
+                                    <ArrowRight className="w-3 h-3 text-amber-700 flex-shrink-0 mt-0.5" />{s}
                                   </div>
                                 ))}
                               </div>
                             )}
                             {evaluations[q.id].saContext && (
-                              <div className="bg-indigo-500/10 border border-indigo-500/20 rounded-lg px-3 py-2 text-xs text-indigo-300">
+                              <div className="bg-indigo-500/10 border border-indigo-500/20 rounded-lg px-3 py-2 text-xs text-indigo-700">
                                 🇿🇦 SA Tip: {evaluations[q.id].saContext}
                               </div>
                             )}
@@ -600,7 +600,7 @@ export default function InterviewPrepPage() {
       {/* SA Interview Tips */}
       <div className="bg-card border border-amber-500/20 rounded-xl p-5">
         <h3 className="text-sm font-semibold text-foreground mb-3 flex items-center gap-2">
-          <Star className="w-4 h-4 text-amber-400" />
+          <Star className="w-4 h-4 text-amber-700" />
           SA-Specific Interview Tips
         </h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -613,7 +613,7 @@ export default function InterviewPrepPage() {
             "Reference SA-specific industry bodies (SAICA, ECSA, HPCSA) relevant to your field",
           ].map((tip) => (
             <div key={tip} className="flex items-start gap-2 text-xs text-muted-foreground">
-              <CheckCircle2 className="w-3.5 h-3.5 text-amber-400 flex-shrink-0 mt-0.5" />
+              <CheckCircle2 className="w-3.5 h-3.5 text-amber-700 flex-shrink-0 mt-0.5" />
               {tip}
             </div>
           ))}

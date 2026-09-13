@@ -31,9 +31,9 @@ const RADIUS = 66;
 const CIRC = 2 * Math.PI * RADIUS;
 
 const KIND_TONE: Record<string, string> = {
-  skills: "bg-shweshwe/15 border-shweshwe/30 text-shweshwe-light",
-  profile: "bg-shweshwe/15 border-shweshwe/30 text-shweshwe-light",
-  activity: "bg-seal/15 border-seal/30 text-seal-pale",
+  skills: "bg-shweshwe/15 border-shweshwe/30 text-primary",
+  profile: "bg-shweshwe/15 border-shweshwe/30 text-primary",
+  activity: "bg-seal/15 border-seal/30 text-destructive",
 };
 
 export interface CareerLedgerProps {
@@ -100,7 +100,7 @@ export function CareerLedger({ input, profileMissing = [] }: CareerLedgerProps) 
 
           <div className="mt-2 min-h-[22px]">
             {previewed ? (
-              <span className="text-sm font-mono text-emerald-400">
+              <span className="text-sm font-mono text-emerald-700">
                 +{previewed.gain} with that one step
               </span>
             ) : (
@@ -115,7 +115,7 @@ export function CareerLedger({ input, profileMissing = [] }: CareerLedgerProps) 
             {parts.map((p) => (
               <div key={p.key} className="flex items-center gap-2.5 text-xs">
                 <span className="w-12 text-left text-muted-foreground">{p.label}</span>
-                <span className="flex-1 h-1.5 rounded-full bg-white/8 overflow-hidden">
+                <span className="flex-1 h-1.5 rounded-full bg-secondary overflow-hidden">
                   <span
                     className="block h-full rounded-full bg-shweshwe transition-[width] duration-500"
                     style={{ width: `${p.part.pct}%` }}
@@ -158,7 +158,7 @@ export function CareerLedger({ input, profileMissing = [] }: CareerLedgerProps) 
                         {m.detail}
                       </span>
                     </span>
-                    <ArrowRight className="w-4 h-4 shrink-0 text-muted-foreground group-hover:text-shweshwe-light group-hover:translate-x-0.5 transition-all" />
+                    <ArrowRight className="w-4 h-4 shrink-0 text-muted-foreground group-hover:text-primary group-hover:translate-x-0.5 transition-all" />
                   </Link>
                 ))}
               </div>
@@ -169,7 +169,7 @@ export function CareerLedger({ input, profileMissing = [] }: CareerLedgerProps) 
             </>
           ) : (
             <div className="h-full flex flex-col items-center justify-center text-center gap-2 py-8">
-              <Sparkles className="w-6 h-6 text-emerald-400" />
+              <Sparkles className="w-6 h-6 text-emerald-700" />
               <p className="text-sm font-medium">You&apos;ve maxed every lever.</p>
               <p className="text-xs text-muted-foreground max-w-[34ch]">
                 Nothing left to add — your score is as high as these rules go.

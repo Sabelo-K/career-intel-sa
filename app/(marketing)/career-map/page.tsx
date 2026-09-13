@@ -1,3 +1,4 @@
+import { JourneyHeader } from "@/components/journey/chrome";
 import Link from "next/link";
 import { Brain, ArrowRight } from "lucide-react";
 import { CareerWeave } from "@/components/explore/career-weave";
@@ -16,39 +17,18 @@ import { WEAVE_CAREERS, WEAVE_SECTORS } from "@/lib/data/weave-index.generated";
  */
 export default function ExplorePage() {
   return (
-    <div className="min-h-screen text-white">
-      <nav className="border-b border-white/10 px-4 sm:px-6 py-4 flex items-center justify-between">
-        <Link href="/" className="flex items-center gap-2">
-          <span className="w-7 h-7 rounded-lg bg-gradient-to-br from-shweshwe to-seal flex items-center justify-center">
-            <Brain className="w-4 h-4 text-white" />
-          </span>
-          <span className="font-bold text-sm">
-            Career<span className="text-shweshwe-light">Intel</span>
-            <span className="text-amber-400 text-xs ml-1">SA</span>
-          </span>
-        </Link>
-        <div className="flex items-center gap-3">
-          <Link href="/salary-check" className="hidden sm:inline text-sm text-white/50 hover:text-white transition-colors">
-            Am I underpaid?
-          </Link>
-          <Link
-            href="/sign-up"
-            className="text-sm bg-shweshwe hover:bg-shweshwe-light text-white px-4 py-2 rounded-lg font-medium transition-colors"
-          >
-            Get started free
-          </Link>
-        </div>
-      </nav>
+    <div className="min-h-screen text-foreground">
+      <JourneyHeader />
 
       <main className="max-w-[1500px] mx-auto px-4 sm:px-6 py-8 sm:py-12">
         <header className="mb-8 max-w-3xl">
-          <p className="text-[11px] font-mono uppercase tracking-[0.16em] text-white/40">
+          <p className="text-[11px] font-mono uppercase tracking-[0.16em] text-muted-foreground">
             Free · no sign-up · {WEAVE_CAREERS.length} careers · {WEAVE_SECTORS.length} sectors
           </p>
           <h1 className="mt-3 text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight leading-[1.05]">
             Every South African career, <span className="gradient-text">on one cloth</span>
           </h1>
-          <p className="mt-4 text-white/60 leading-relaxed">
+          <p className="mt-4 text-muted-foreground leading-relaxed">
             Each stamp is a career. The closer to the centre, the more the market wants it.
             The bigger the stamp, the more it pays. The colour is how much of the job a
             machine can already do — and the threads join roles that are one step from each
@@ -58,14 +38,14 @@ export default function ExplorePage() {
 
         <CareerWeave />
 
-        <section className="mt-14 border-t border-white/10 pt-8">
+        <section className="mt-14 border-t border-border pt-8">
           <h2 className="text-lg font-semibold mb-1">Browse every career</h2>
-          <p className="text-sm text-white/45 mb-6">
+          <p className="text-sm text-muted-foreground mb-6">
             Each one has its own page with pay range, demand, skills and the roles it leads to.
           </p>
           {WEAVE_SECTORS.map((sector) => (
             <div key={sector} className="mb-6">
-              <h3 className="text-[11px] font-mono uppercase tracking-[0.14em] text-shweshwe-light mb-2">
+              <h3 className="text-[11px] font-mono uppercase tracking-[0.14em] text-primary mb-2">
                 {sector}
               </h3>
               <ul className="flex flex-wrap gap-x-4 gap-y-1.5">
@@ -73,7 +53,7 @@ export default function ExplorePage() {
                   <li key={c.id}>
                     <Link
                       href={`/explore/${c.id}`}
-                      className="text-sm text-white/55 hover:text-shweshwe-light transition-colors"
+                      className="text-sm text-muted-foreground hover:text-primary transition-colors"
                     >
                       {c.title}
                     </Link>
@@ -86,14 +66,14 @@ export default function ExplorePage() {
 
         <section className="mt-12 rounded-2xl border border-shweshwe/25 bg-shweshwe/5 p-6 sm:p-8 text-center">
           <h2 className="text-xl sm:text-2xl font-bold">Where do you sit on this map?</h2>
-          <p className="mt-2 text-white/60 max-w-xl mx-auto">
+          <p className="mt-2 text-muted-foreground max-w-xl mx-auto">
             Check your salary against the market in about thirty seconds, or get a full
             career report with a skills gap and a five-year projection.
           </p>
           <div className="mt-5 flex flex-col sm:flex-row items-center justify-center gap-3">
             <Link
               href="/salary-check"
-              className="w-full sm:w-auto px-5 py-2.5 rounded-lg border border-white/15 text-sm font-medium text-white/80 hover:text-white hover:border-white/30 transition-colors"
+              className="w-full sm:w-auto px-5 py-2.5 rounded-lg border border-border text-sm font-medium text-muted-foreground hover:text-foreground hover:border-border transition-colors"
             >
               Am I underpaid?
             </Link>

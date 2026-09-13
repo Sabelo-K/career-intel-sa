@@ -40,3 +40,6 @@ prisma/*.db-journal
 
 # Local release verification output
 journey-*.log
+
+# Isolated interface fixtures (never deployed)
+.interface-preview/

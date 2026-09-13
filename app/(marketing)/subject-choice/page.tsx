@@ -1,5 +1,8 @@
 "use client";
 
+import { JourneyHeader } from "@/components/journey/chrome";
+
+
 import { useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
@@ -112,35 +115,19 @@ export default function SubjectChoicePage() {
   return (
     <div className="min-h-screen bg-background">
       {/* Nav */}
-      <nav className="border-b border-border px-4 py-4 flex items-center justify-between max-w-3xl mx-auto">
-        <Link href="/" className="flex items-center gap-2">
-          <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center">
-            <Brain className="w-4 h-4 text-white" />
-          </div>
-          <span className="font-bold text-sm text-foreground">
-            Career<span className="text-indigo-400">Intel</span>
-            <span className="text-amber-400 text-xs ml-1">SA</span>
-          </span>
-        </Link>
-        <div className="flex items-center gap-3">
-          <Link href="/matric" className="text-xs text-muted-foreground hover:text-foreground transition-colors">Matric Matcher</Link>
-          <Link href="/sign-up" className="text-xs px-3 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white font-medium transition-colors">
-            Get started free
-          </Link>
-        </div>
-      </nav>
+      <JourneyHeader />
 
       <div className="max-w-3xl mx-auto px-4 py-12">
 
         {/* Header */}
         <div className="text-center mb-10">
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 text-xs font-medium mb-4">
+          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-700 text-xs font-medium mb-4">
             <BookOpen className="w-3.5 h-3.5" />
             Free subject-choice guide — no sign-up
           </div>
           <h1 className="text-3xl sm:text-4xl font-bold text-foreground mb-3 leading-tight">
             Which careers do your<br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-violet-400">school subjects open?</span>
+            <span className="text-primary">school subjects open?</span>
           </h1>
           <p className="text-muted-foreground text-sm max-w-lg mx-auto leading-relaxed">
             Choose the subjects you enjoy and we&apos;ll show you which careers they unlock —
@@ -171,13 +158,13 @@ export default function SubjectChoicePage() {
                         onClick={() => toggle(s)}
                         className={`text-xs px-3 py-1.5 rounded-lg border transition-all ${
                           active
-                            ? "bg-indigo-600 border-indigo-500 text-white font-medium"
-                            : "bg-secondary border-border text-muted-foreground hover:text-foreground hover:border-white/20"
+                            ? "bg-indigo-600 border-indigo-500 text-primary-foreground font-medium"
+                            : "bg-secondary border-border text-muted-foreground hover:text-foreground hover:border-border"
                         }`}
                       >
                         {s}
                         {unlocks > 0 && (
-                          <span className={`ml-1.5 text-[10px] ${active ? "text-indigo-100" : "text-emerald-400"}`}>
+                          <span className={`ml-1.5 text-[10px] ${active ? "text-indigo-100" : "text-emerald-700"}`}>
                             {unlocks}
                           </span>
                         )}
@@ -206,7 +193,7 @@ export default function SubjectChoicePage() {
             className="mb-6 rounded-2xl border border-amber-500/30 bg-amber-500/10 p-5"
           >
             <div className="flex items-start gap-3">
-              <AlertTriangle className="w-5 h-5 text-amber-400 flex-shrink-0 mt-0.5" />
+              <AlertTriangle className="w-5 h-5 text-amber-700 flex-shrink-0 mt-0.5" />
               <div>
                 <p className="text-sm font-semibold text-foreground">
                   You haven&apos;t chosen Mathematics — that closes {mathsUnlocks} careers
@@ -233,7 +220,7 @@ export default function SubjectChoicePage() {
             initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }}
             className="mb-6 rounded-2xl border border-emerald-500/25 bg-emerald-500/10 p-4 flex items-start gap-3"
           >
-            <CheckCircle2 className="w-5 h-5 text-emerald-400 flex-shrink-0 mt-0.5" />
+            <CheckCircle2 className="w-5 h-5 text-emerald-700 flex-shrink-0 mt-0.5" />
             <p className="text-xs text-muted-foreground leading-relaxed">
               <strong className="text-foreground">Mathematics is keeping {mathsUnlocks} careers open for you.</strong>{" "}
               It&apos;s the single most valuable subject choice in the South African system — keep it if you possibly can.
@@ -249,11 +236,11 @@ export default function SubjectChoicePage() {
               {/* Headline counts */}
               <div className="grid grid-cols-2 gap-3">
                 <div className="bg-card border border-emerald-500/25 rounded-2xl p-4 text-center">
-                  <Unlock className="w-4 h-4 text-emerald-400 mx-auto mb-1.5" />
+                  <Unlock className="w-4 h-4 text-emerald-700 mx-auto mb-1.5" />
                   <p className="text-3xl font-bold text-foreground">{result.open.length}</p>
                   <p className="text-xs text-muted-foreground mt-0.5">careers open to you</p>
                   {result.strongFits > 0 && (
-                    <p className="text-[11px] text-emerald-400 mt-1">{result.strongFits} a strong fit</p>
+                    <p className="text-[11px] text-emerald-700 mt-1">{result.strongFits} a strong fit</p>
                   )}
                 </div>
                 <div className="bg-card border border-border rounded-2xl p-4 text-center">
@@ -266,10 +253,10 @@ export default function SubjectChoicePage() {
               {/* Best next subject */}
               {result.bestAdd && (
                 <div className="bg-card border border-indigo-500/25 rounded-2xl p-4 flex items-start gap-3">
-                  <Sparkles className="w-4 h-4 text-indigo-400 flex-shrink-0 mt-0.5" />
+                  <Sparkles className="w-4 h-4 text-indigo-700 flex-shrink-0 mt-0.5" />
                   <div>
                     <p className="text-sm font-semibold text-foreground">
-                      Adding <span className="text-indigo-400">{result.bestAdd[0]}</span> would unlock {result.bestAdd[1]} more career{result.bestAdd[1] !== 1 ? "s" : ""}
+                      Adding <span className="text-indigo-700">{result.bestAdd[0]}</span> would unlock {result.bestAdd[1]} more career{result.bestAdd[1] !== 1 ? "s" : ""}
                     </p>
                     <p className="text-xs text-muted-foreground mt-0.5">
                       It&apos;s the single highest-impact subject you could still add.
@@ -282,7 +269,7 @@ export default function SubjectChoicePage() {
               {result.open.length > 0 && (
                 <div>
                   <h3 className="text-sm font-semibold text-foreground mb-3 flex items-center gap-2">
-                    <Unlock className="w-4 h-4 text-emerald-400" />
+                    <Unlock className="w-4 h-4 text-emerald-700" />
                     Careers your subjects open ({result.open.length})
                   </h3>
                   <div className="space-y-2">
@@ -292,7 +279,7 @@ export default function SubjectChoicePage() {
                           <div className="flex items-center gap-2">
                             <p className="text-sm font-medium text-foreground truncate">{c.title}</p>
                             {fit >= 2 && (
-                              <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-emerald-500/15 text-emerald-300 border border-emerald-500/25 whitespace-nowrap flex-shrink-0">
+                              <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-emerald-500/15 text-emerald-700 border border-emerald-500/25 whitespace-nowrap flex-shrink-0">
                                 Strong fit
                               </span>
                             )}
@@ -300,7 +287,7 @@ export default function SubjectChoicePage() {
                           <p className="text-xs text-muted-foreground">{c.sector}</p>
                         </div>
                         <div className="text-right flex-shrink-0">
-                          <p className="text-xs font-semibold text-emerald-400 whitespace-nowrap">
+                          <p className="text-xs font-semibold text-emerald-700 whitespace-nowrap">
                             {fmtSalary(c.avgSalaryZar)}/mo avg
                           </p>
                           <p className="text-[11px] text-muted-foreground flex items-center gap-1 justify-end">
@@ -322,7 +309,7 @@ export default function SubjectChoicePage() {
               {result.oneAway.length > 0 && (
                 <div>
                   <h3 className="text-sm font-semibold text-foreground mb-3 flex items-center gap-2">
-                    <Lock className="w-4 h-4 text-amber-400" />
+                    <Lock className="w-4 h-4 text-amber-700" />
                     One subject away ({result.oneAway.length})
                   </h3>
                   <div className="space-y-2">
@@ -330,7 +317,7 @@ export default function SubjectChoicePage() {
                       <div key={career.id} className="bg-card border border-border rounded-xl px-4 py-3 flex items-center justify-between gap-3">
                         <div className="min-w-0">
                           <p className="text-sm font-medium text-foreground truncate">{career.title}</p>
-                          <p className="text-xs text-amber-400">needs {missing}</p>
+                          <p className="text-xs text-amber-700">needs {missing}</p>
                         </div>
                         <p className="text-xs font-semibold text-muted-foreground whitespace-nowrap flex-shrink-0">
                           {fmtSalary(career.avgSalaryZar)}/mo
@@ -354,15 +341,15 @@ export default function SubjectChoicePage() {
               <div className="flex flex-col sm:flex-row gap-3">
                 <button
                   onClick={share}
-                  className="flex-1 inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-secondary border border-border text-foreground text-sm font-semibold transition-colors hover:border-white/20"
+                  className="flex-1 inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-secondary border border-border text-foreground text-sm font-semibold transition-colors hover:border-border"
                 >
-                  {copied ? <CheckCircle2 className="w-4 h-4 text-emerald-400" /> : <Share2 className="w-4 h-4" />}
+                  {copied ? <CheckCircle2 className="w-4 h-4 text-emerald-700" /> : <Share2 className="w-4 h-4" />}
                   {copied ? "Copied!" : "Share my results"}
                 </button>
                 <Link
                   href="/sign-up"
                   onClick={() => track("tool_subject_choice_run", { subjects: chosen.length, opened: result.open.length })}
-                  className="flex-1 inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-semibold transition-colors"
+                  className="flex-1 inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-primary-foreground text-sm font-semibold transition-colors"
                 >
                   Get my full career plan <ArrowRight className="w-4 h-4" />
                 </Link>

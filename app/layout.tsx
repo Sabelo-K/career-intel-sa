@@ -50,7 +50,7 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-  themeColor: "#050B1A",
+  themeColor: "#f6f5f1",
 };
 
 const JSON_LD = {
@@ -80,7 +80,7 @@ const JSON_LD = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <ClerkProvider>
-      <html lang="en" className="dark" suppressHydrationWarning>
+      <html lang="en" className="career-theme" suppressHydrationWarning>
         <head>
           <script
             type="application/ld+json"
@@ -88,21 +88,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           />
         </head>
         <body className={`${inter.variable} font-sans`}>
-          {/* Inline script: apply saved theme before first paint to avoid flash */}
-          <script dangerouslySetInnerHTML={{ __html: `
-            (function() {
-              try {
-                var t = localStorage.getItem('careerintel-theme');
-                var html = document.documentElement;
-                if (t === 'light') { html.classList.remove('dark'); }
-                else if (t === 'system') {
-                  if (!window.matchMedia('(prefers-color-scheme: dark)').matches) {
-                    html.classList.remove('dark');
-                  }
-                }
-              } catch(e) {}
-            })();
-          ` }} />
           <LanguageProvider>
             {children}
             <CookieBanner />

@@ -18,12 +18,12 @@ import { formatSalaryRange, getDemandBadgeColor } from "@/lib/utils";
 
 const NQF_LEVELS = [
   { level: 4,  label: "Grade 12 / Matric",           color: "bg-secondary text-muted-foreground" },
-  { level: 5,  label: "Higher Certificate (1 year)",  color: "bg-indigo-500/15 text-indigo-300" },
-  { level: 6,  label: "Diploma (2–3 years)",          color: "bg-violet-500/15 text-violet-300" },
-  { level: 7,  label: "Bachelor's Degree (3–4 years)", color: "bg-emerald-500/15 text-emerald-300" },
-  { level: 8,  label: "Honours / Professional (1 yr)", color: "bg-amber-500/15 text-amber-300" },
-  { level: 9,  label: "Master's Degree (2 years)",    color: "bg-orange-500/15 text-orange-300" },
-  { level: 10, label: "Doctorate / PhD (3–5 years)",  color: "bg-red-500/15 text-red-300" },
+  { level: 5,  label: "Higher Certificate (1 year)",  color: "bg-indigo-500/15 text-indigo-700" },
+  { level: 6,  label: "Diploma (2–3 years)",          color: "bg-violet-500/15 text-violet-700" },
+  { level: 7,  label: "Bachelor's Degree (3–4 years)", color: "bg-emerald-500/15 text-emerald-700" },
+  { level: 8,  label: "Honours / Professional (1 yr)", color: "bg-amber-500/15 text-amber-700" },
+  { level: 9,  label: "Master's Degree (2 years)",    color: "bg-orange-500/15 text-orange-700" },
+  { level: 10, label: "Doctorate / PhD (3–5 years)",  color: "bg-red-500/15 text-red-700" },
 ];
 
 // ── Career card for HS view ───────────────────────────────────────────────────
@@ -64,7 +64,7 @@ function HSCareerCard({
         </div>
         <div className="flex items-center gap-1.5">
           {hasRequiredSubjects === true && (
-            <span className="text-xs bg-emerald-500/15 text-emerald-400 border border-emerald-500/25 px-2 py-0.5 rounded-full font-medium">✓ Matches</span>
+            <span className="text-xs bg-emerald-500/15 text-emerald-700 border border-emerald-500/25 px-2 py-0.5 rounded-full font-medium">✓ Matches</span>
           )}
           <span className={`text-xs font-bold px-2 py-0.5 rounded-lg border ${getDemandBadgeColor(career.demandScore)}`}>
             {career.demandScore}
@@ -83,7 +83,7 @@ function HSCareerCard({
                   key={s}
                   className={`text-[10px] px-1.5 py-0.5 rounded border font-medium ${
                     userSubjects.includes(s)
-                      ? "bg-amber-500/15 border-amber-500/30 text-amber-300"
+                      ? "bg-amber-500/15 border-amber-500/30 text-amber-700"
                       : "bg-secondary border-border text-muted-foreground"
                   }`}
                 >
@@ -160,7 +160,7 @@ export default function HighSchoolPage() {
       <div>
         <div className="flex items-center gap-2 mb-2">
           <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center">
-            <GraduationCap className="w-4 h-4 text-white" />
+            <GraduationCap className="w-4 h-4 text-foreground" />
           </div>
           <h1 className="text-2xl font-bold text-foreground">High School Career Hub</h1>
         </div>
@@ -172,7 +172,7 @@ export default function HighSchoolPage() {
       {/* Subject profile banner */}
       {profileLoaded && userSubjects.length === 0 && (
         <div className="bg-amber-500/10 border border-amber-500/20 rounded-xl p-4 flex items-start gap-3">
-          <Lightbulb className="w-5 h-5 text-amber-400 flex-shrink-0 mt-0.5" />
+          <Lightbulb className="w-5 h-5 text-amber-700 flex-shrink-0 mt-0.5" />
           <div className="flex-1">
             <div className="text-sm font-semibold text-foreground mb-1">Set up your subject profile</div>
             <p className="text-xs text-muted-foreground leading-relaxed">
@@ -195,14 +195,14 @@ export default function HighSchoolPage() {
           <div className="flex items-start justify-between gap-4">
             <div>
               <div className="flex items-center gap-2 mb-1">
-                <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+                <CheckCircle2 className="w-4 h-4 text-emerald-700" />
                 <span className="text-sm font-semibold text-foreground">
                   {matchingCount} career{matchingCount !== 1 ? "s" : ""} match your subjects
                 </span>
               </div>
               <div className="flex flex-wrap gap-1.5 mt-2">
                 {userSubjects.map((s) => (
-                  <span key={s} className="text-xs bg-emerald-500/15 border border-emerald-500/25 text-emerald-300 px-2 py-0.5 rounded-full">
+                  <span key={s} className="text-xs bg-emerald-500/15 border border-emerald-500/25 text-emerald-700 px-2 py-0.5 rounded-full">
                     {s}
                   </span>
                 ))}
@@ -265,7 +265,7 @@ export default function HighSchoolPage() {
                 {selectedSubjectFilter && (
                   <button
                     onClick={() => setSelectedSubjectFilter(null)}
-                    className="flex items-center gap-1 text-xs text-indigo-400 hover:text-indigo-300"
+                    className="flex items-center gap-1 text-xs text-indigo-700 hover:text-indigo-700"
                   >
                     <X className="w-3 h-3" /> Clear filter
                   </button>
@@ -284,9 +284,9 @@ export default function HighSchoolPage() {
                           onClick={() => setSelectedSubjectFilter(isSelected ? null : s)}
                           className={`text-xs px-2.5 py-1 rounded-full border transition-all font-medium ${
                             isSelected
-                              ? "border-indigo-500/60 bg-indigo-500/20 text-indigo-300"
+                              ? "border-indigo-500/60 bg-indigo-500/20 text-indigo-700"
                               : isUserSubject
-                              ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-300 hover:border-emerald-500/60"
+                              ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-700 hover:border-emerald-500/60"
                               : "border-border text-muted-foreground hover:text-foreground hover:border-indigo-500/30"
                           }`}
                         >
@@ -314,7 +314,7 @@ export default function HighSchoolPage() {
 
           {filteredCareers.length === 0 && (
             <div className="text-center py-12 text-muted-foreground text-sm">
-              No careers found for that filter. <button className="text-indigo-400 hover:text-indigo-300" onClick={() => { setSearch(""); setSelectedSubjectFilter(null); }}>Clear filters</button>
+              No careers found for that filter. <button className="text-indigo-700 hover:text-indigo-700" onClick={() => { setSearch(""); setSelectedSubjectFilter(null); }}>Clear filters</button>
             </div>
           )}
 
@@ -322,7 +322,7 @@ export default function HighSchoolPage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
             <div className="bg-card border border-indigo-500/20 rounded-xl p-4">
               <div className="flex items-center gap-2 mb-2">
-                <MessageCircle className="w-4 h-4 text-indigo-400" />
+                <MessageCircle className="w-4 h-4 text-indigo-700" />
                 <span className="text-sm font-semibold text-foreground">Ask the AI Career Coach</span>
               </div>
               <p className="text-xs text-muted-foreground mb-3">
@@ -340,7 +340,7 @@ export default function HighSchoolPage() {
             </div>
             <div className="bg-card border border-emerald-500/20 rounded-xl p-4">
               <div className="flex items-center gap-2 mb-2">
-                <Target className="w-4 h-4 text-emerald-400" />
+                <Target className="w-4 h-4 text-emerald-700" />
                 <span className="text-sm font-semibold text-foreground">Skills Gap Analysis</span>
               </div>
               <p className="text-xs text-muted-foreground mb-3">
@@ -365,7 +365,7 @@ export default function HighSchoolPage() {
         <div className="space-y-5">
           <div className="bg-card border border-border rounded-xl p-5">
             <h2 className="text-sm font-semibold text-foreground mb-1 flex items-center gap-2">
-              <TrendingUp className="w-4 h-4 text-indigo-400" />
+              <TrendingUp className="w-4 h-4 text-indigo-700" />
               The NQF Pathway — From Grade 12 to Your Career
             </h2>
             <p className="text-xs text-muted-foreground mb-5 leading-relaxed">
@@ -422,7 +422,7 @@ export default function HighSchoolPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="bg-card border border-emerald-500/20 rounded-xl p-4">
               <div className="flex items-center gap-2 mb-3">
-                <Star className="w-4 h-4 text-emerald-400" />
+                <Star className="w-4 h-4 text-emerald-700" />
                 <h3 className="text-sm font-semibold text-foreground">NSFAS — Free University Funding</h3>
               </div>
               <div className="space-y-2 text-xs text-muted-foreground">
@@ -433,7 +433,7 @@ export default function HighSchoolPage() {
                     href="https://www.nsfas.org.za"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1.5 text-emerald-400 hover:text-emerald-300 font-medium"
+                    className="inline-flex items-center gap-1.5 text-emerald-700 hover:text-emerald-700 font-medium"
                   >
                     Apply at nsfas.org.za <ExternalLink className="w-3 h-3" />
                   </a>
@@ -443,7 +443,7 @@ export default function HighSchoolPage() {
 
             <div className="bg-card border border-indigo-500/20 rounded-xl p-4">
               <div className="flex items-center gap-2 mb-3">
-                <Zap className="w-4 h-4 text-indigo-400" />
+                <Zap className="w-4 h-4 text-indigo-700" />
                 <h3 className="text-sm font-semibold text-foreground">Bursaries & Learnerships</h3>
               </div>
               <div className="space-y-2 text-xs text-muted-foreground">
@@ -466,21 +466,21 @@ export default function HighSchoolPage() {
             <h3 className="text-sm font-semibold text-foreground mb-4">Two Paths After Grade 12</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <div className="text-xs font-semibold text-indigo-300 uppercase tracking-wide">University Route</div>
+                <div className="text-xs font-semibold text-indigo-700 uppercase tracking-wide">University Route</div>
                 <ul className="space-y-1.5 text-xs text-muted-foreground">
-                  <li className="flex items-start gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-indigo-400 mt-0.5 flex-shrink-0" />3–6 year degrees (NQF 7–8)</li>
-                  <li className="flex items-start gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-indigo-400 mt-0.5 flex-shrink-0" />Requires APS of 25+ for most programmes</li>
-                  <li className="flex items-start gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-indigo-400 mt-0.5 flex-shrink-0" />Mathematics required for Engineering, Sciences, IT, Finance</li>
-                  <li className="flex items-start gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-indigo-400 mt-0.5 flex-shrink-0" />NSFAS or bursary can cover costs if you qualify</li>
+                  <li className="flex items-start gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-indigo-700 mt-0.5 flex-shrink-0" />3–6 year degrees (NQF 7–8)</li>
+                  <li className="flex items-start gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-indigo-700 mt-0.5 flex-shrink-0" />Requires APS of 25+ for most programmes</li>
+                  <li className="flex items-start gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-indigo-700 mt-0.5 flex-shrink-0" />Mathematics required for Engineering, Sciences, IT, Finance</li>
+                  <li className="flex items-start gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-indigo-700 mt-0.5 flex-shrink-0" />NSFAS or bursary can cover costs if you qualify</li>
                 </ul>
               </div>
               <div className="space-y-2">
-                <div className="text-xs font-semibold text-amber-300 uppercase tracking-wide">TVET / Trade Route</div>
+                <div className="text-xs font-semibold text-amber-700 uppercase tracking-wide">TVET / Trade Route</div>
                 <ul className="space-y-1.5 text-xs text-muted-foreground">
-                  <li className="flex items-start gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-amber-400 mt-0.5 flex-shrink-0" />N1–N6 programmes (NQF 4–6) — 1–3 years</li>
-                  <li className="flex items-start gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-amber-400 mt-0.5 flex-shrink-0" />Apprenticeships: earn while you learn</li>
-                  <li className="flex items-start gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-amber-400 mt-0.5 flex-shrink-0" />Mathematical Literacy accepted for most programmes</li>
-                  <li className="flex items-start gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-amber-400 mt-0.5 flex-shrink-0" />Electricians, plumbers, welders earn R20k–R60k+/month</li>
+                  <li className="flex items-start gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-amber-700 mt-0.5 flex-shrink-0" />N1–N6 programmes (NQF 4–6) — 1–3 years</li>
+                  <li className="flex items-start gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-amber-700 mt-0.5 flex-shrink-0" />Apprenticeships: earn while you learn</li>
+                  <li className="flex items-start gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-amber-700 mt-0.5 flex-shrink-0" />Mathematical Literacy accepted for most programmes</li>
+                  <li className="flex items-start gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-amber-700 mt-0.5 flex-shrink-0" />Electricians, plumbers, welders earn R20k–R60k+/month</li>
                 </ul>
               </div>
             </div>
@@ -501,11 +501,11 @@ export default function HighSchoolPage() {
               >
                 <div className="flex items-start justify-between mb-2">
                   <div className="flex items-center gap-2">
-                    <BookOpen className="w-4 h-4 text-indigo-400" />
+                    <BookOpen className="w-4 h-4 text-indigo-700" />
                     <h3 className="text-sm font-semibold text-foreground">{res.name}</h3>
                   </div>
                   {res.free && (
-                    <span className="text-[10px] bg-emerald-500/15 text-emerald-400 border border-emerald-500/25 px-2 py-0.5 rounded-full font-semibold">FREE</span>
+                    <span className="text-[10px] bg-emerald-500/15 text-emerald-700 border border-emerald-500/25 px-2 py-0.5 rounded-full font-semibold">FREE</span>
                   )}
                 </div>
                 <p className="text-xs text-muted-foreground leading-relaxed mb-3">{res.description}</p>
@@ -518,7 +518,7 @@ export default function HighSchoolPage() {
                   href={res.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 text-xs text-indigo-400 hover:text-indigo-300 font-medium transition-colors"
+                  className="inline-flex items-center gap-1.5 text-xs text-indigo-700 hover:text-indigo-700 font-medium transition-colors"
                 >
                   Visit {res.name} <ExternalLink className="w-3 h-3" />
                 </a>
@@ -529,7 +529,7 @@ export default function HighSchoolPage() {
           {/* Exam tips */}
           <div className="bg-card border border-border rounded-xl p-5">
             <h3 className="text-sm font-semibold text-foreground mb-4 flex items-center gap-2">
-              <Lightbulb className="w-4 h-4 text-amber-400" />
+              <Lightbulb className="w-4 h-4 text-amber-700" />
               Matric Exam Tips for High Demand Careers
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs text-muted-foreground">
@@ -557,9 +557,9 @@ export default function HighSchoolPage() {
               ].map((item) => (
                 <div key={item.subject} className="bg-secondary rounded-xl p-3">
                   <div className={`text-xs font-semibold mb-1 ${
-                    item.color === "indigo" ? "text-indigo-300" :
-                    item.color === "violet" ? "text-violet-300" :
-                    item.color === "emerald" ? "text-emerald-300" : "text-amber-300"
+                    item.color === "indigo" ? "text-indigo-700" :
+                    item.color === "violet" ? "text-violet-700" :
+                    item.color === "emerald" ? "text-emerald-700" : "text-amber-700"
                   }`}>{item.subject}</div>
                   <p className="leading-relaxed">{item.tip}</p>
                 </div>
@@ -593,9 +593,9 @@ export default function HighSchoolPage() {
 
           {/* Important notice */}
           <div className="flex items-start gap-3 bg-amber-500/10 border border-amber-500/25 rounded-xl p-4">
-            <AlertCircle className="w-4 h-4 text-amber-400 flex-shrink-0 mt-0.5" />
-            <p className="text-xs text-amber-200/80 leading-relaxed">
-              Application deadlines vary per institution. Most SA universities open applications in <strong className="text-amber-300">April–June</strong> for the following year. Apply early — popular programmes fill up fast.
+            <AlertCircle className="w-4 h-4 text-amber-700 flex-shrink-0 mt-0.5" />
+            <p className="text-xs text-amber-700/80 leading-relaxed">
+              Application deadlines vary per institution. Most SA universities open applications in <strong className="text-amber-700">April–June</strong> for the following year. Apply early — popular programmes fill up fast.
             </p>
           </div>
 
@@ -603,13 +603,13 @@ export default function HighSchoolPage() {
           <div className="bg-card border border-border rounded-xl overflow-hidden">
             <div className="bg-gradient-to-r from-indigo-500/10 to-violet-500/10 border-b border-border px-5 py-4 flex items-center gap-3">
               <div className="w-8 h-8 rounded-lg bg-indigo-500/20 flex items-center justify-center flex-shrink-0">
-                <FileText className="w-4 h-4 text-indigo-400" />
+                <FileText className="w-4 h-4 text-indigo-700" />
               </div>
               <div>
                 <h3 className="text-sm font-semibold text-foreground">CAO — Central Applications Office</h3>
                 <p className="text-xs text-muted-foreground">Apply to multiple universities with one form</p>
               </div>
-              <span className="ml-auto text-[10px] bg-emerald-500/15 text-emerald-400 border border-emerald-500/25 px-2 py-0.5 rounded-full font-semibold flex-shrink-0">RECOMMENDED</span>
+              <span className="ml-auto text-[10px] bg-emerald-500/15 text-emerald-700 border border-emerald-500/25 px-2 py-0.5 rounded-full font-semibold flex-shrink-0">RECOMMENDED</span>
             </div>
             <div className="p-5 space-y-3">
               <p className="text-xs text-muted-foreground leading-relaxed">
@@ -632,7 +632,7 @@ export default function HighSchoolPage() {
                 href="https://www.cao.ac.za/Apply.aspx?content=Apply"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold px-4 py-2 rounded-lg transition-colors"
+                className="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-primary-foreground text-xs font-semibold px-4 py-2 rounded-lg transition-colors"
               >
                 Apply via CAO <ExternalLink className="w-3 h-3" />
               </a>
@@ -642,7 +642,7 @@ export default function HighSchoolPage() {
           {/* University direct applications */}
           <div>
             <h3 className="text-sm font-semibold text-foreground mb-3 flex items-center gap-2">
-              <GraduationCap className="w-4 h-4 text-violet-400" />
+              <GraduationCap className="w-4 h-4 text-violet-700" />
               Direct University Applications
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -783,11 +783,11 @@ export default function HighSchoolPage() {
                   <p className="text-[11px] text-muted-foreground mb-3 leading-relaxed">{uni.note}</p>
                   <div className="grid grid-cols-2 gap-1.5 mb-3 text-[11px]">
                     <div className="flex items-center gap-1.5 text-muted-foreground">
-                      <Calendar className="w-3 h-3 text-amber-400 flex-shrink-0" />
+                      <Calendar className="w-3 h-3 text-amber-700 flex-shrink-0" />
                       Deadline: <span className="text-foreground font-medium">{uni.deadline}</span>
                     </div>
                     <div className="flex items-center gap-1.5 text-muted-foreground">
-                      <CheckCircle2 className="w-3 h-3 text-emerald-400 flex-shrink-0" />
+                      <CheckCircle2 className="w-3 h-3 text-emerald-700 flex-shrink-0" />
                       Fee: <span className="text-foreground font-medium">{uni.fee}</span>
                     </div>
                   </div>
@@ -795,7 +795,7 @@ export default function HighSchoolPage() {
                     href={uni.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1.5 text-xs text-indigo-400 hover:text-indigo-300 font-medium transition-colors"
+                    className="inline-flex items-center gap-1.5 text-xs text-indigo-700 hover:text-indigo-700 font-medium transition-colors"
                   >
                     Apply to {uni.short} <ExternalLink className="w-3 h-3" />
                   </a>
@@ -807,7 +807,7 @@ export default function HighSchoolPage() {
           {/* TVET Colleges */}
           <div className="bg-card border border-border rounded-xl p-5">
             <h3 className="text-sm font-semibold text-foreground mb-1 flex items-center gap-2">
-              <Zap className="w-4 h-4 text-amber-400" />
+              <Zap className="w-4 h-4 text-amber-700" />
               TVET College Applications
             </h3>
             <p className="text-xs text-muted-foreground mb-4 leading-relaxed">
@@ -822,7 +822,7 @@ export default function HighSchoolPage() {
                 <div key={tvet.name} className="bg-secondary rounded-xl p-3">
                   <h4 className="text-xs font-semibold text-foreground mb-1">{tvet.name}</h4>
                   <p className="text-[11px] text-muted-foreground mb-2 leading-relaxed">{tvet.desc}</p>
-                  <a href={tvet.url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-[11px] text-indigo-400 hover:text-indigo-300 font-medium">
+                  <a href={tvet.url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-[11px] text-indigo-700 hover:text-indigo-700 font-medium">
                     Visit <ExternalLink className="w-2.5 h-2.5" />
                   </a>
                 </div>
@@ -833,7 +833,7 @@ export default function HighSchoolPage() {
           {/* Bursaries & Funding */}
           <div className="bg-card border border-border rounded-xl p-5">
             <h3 className="text-sm font-semibold text-foreground mb-1 flex items-center gap-2">
-              <Star className="w-4 h-4 text-amber-400" />
+              <Star className="w-4 h-4 text-amber-700" />
               Funding Your Studies
             </h3>
             <p className="text-xs text-muted-foreground mb-4">Don&apos;t let money stop you — SA has multiple funding options.</p>
@@ -872,14 +872,14 @@ export default function HighSchoolPage() {
                   <div className="flex items-center justify-between mb-2">
                     <h4 className="text-xs font-semibold text-foreground">{fund.name}</h4>
                     <span className={`text-[10px] px-2 py-0.5 rounded-full font-semibold border ${
-                      fund.badgeColor === "emerald" ? "bg-emerald-500/15 text-emerald-400 border-emerald-500/25" :
-                      fund.badgeColor === "indigo" ? "bg-indigo-500/15 text-indigo-400 border-indigo-500/25" :
-                      fund.badgeColor === "violet" ? "bg-violet-500/15 text-violet-400 border-violet-500/25" :
-                      "bg-amber-500/15 text-amber-400 border-amber-500/25"
+                      fund.badgeColor === "emerald" ? "bg-emerald-500/15 text-emerald-700 border-emerald-500/25" :
+                      fund.badgeColor === "indigo" ? "bg-indigo-500/15 text-indigo-700 border-indigo-500/25" :
+                      fund.badgeColor === "violet" ? "bg-violet-500/15 text-violet-700 border-violet-500/25" :
+                      "bg-amber-500/15 text-amber-700 border-amber-500/25"
                     }`}>{fund.badge}</span>
                   </div>
                   <p className="text-[11px] text-muted-foreground leading-relaxed mb-2">{fund.desc}</p>
-                  <a href={fund.url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-[11px] text-indigo-400 hover:text-indigo-300 font-medium">
+                  <a href={fund.url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-[11px] text-indigo-700 hover:text-indigo-700 font-medium">
                     Apply for {fund.name} <ExternalLink className="w-2.5 h-2.5" />
                   </a>
                 </div>
@@ -904,7 +904,7 @@ export default function HighSchoolPage() {
               href="https://essa.labour.gov.za"
               target="_blank"
               rel="noopener noreferrer external"
-              className="flex-shrink-0 flex items-center gap-1.5 px-4 py-2.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold transition-colors whitespace-nowrap"
+              className="flex-shrink-0 flex items-center gap-1.5 px-4 py-2.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-primary-foreground text-xs font-semibold transition-colors whitespace-nowrap"
             >
               Search ESSA Jobs
               <ExternalLink className="w-3 h-3" />

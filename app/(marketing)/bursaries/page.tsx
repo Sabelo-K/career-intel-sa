@@ -1,5 +1,8 @@
 "use client";
 
+import { JourneyHeader } from "@/components/journey/chrome";
+
+
 import { useState, useMemo } from "react";
 import { motion } from "framer-motion";
 import { Search, ExternalLink, ChevronRight, Brain, Gift, Filter, CheckCircle2, BookOpen } from "lucide-react";
@@ -7,15 +10,15 @@ import Link from "next/link";
 import { BURSARIES, BURSARY_FIELDS, FUNDER_TYPES, matchesBursaryField, type Bursary, type BursaryStatus, type FunderType } from "@/lib/data/bursaries";
 
 const STATUS_CONFIG: Record<BursaryStatus, { label: string; color: string; dot: string }> = {
-  open:         { label: "Open",         color: "bg-emerald-500/15 text-emerald-300 border-emerald-500/30", dot: "bg-emerald-400" },
-  opening_soon: { label: "Opening Soon", color: "bg-amber-500/15 text-amber-300 border-amber-500/30",    dot: "bg-amber-400"   },
-  closed:       { label: "Closed",       color: "bg-white/5 text-white/40 border-white/10",              dot: "bg-white/20"    },
+  open:         { label: "Open",         color: "bg-emerald-500/15 text-emerald-700 border-emerald-500/30", dot: "bg-emerald-400" },
+  opening_soon: { label: "Opening Soon", color: "bg-amber-500/15 text-amber-700 border-amber-500/30",    dot: "bg-amber-400"   },
+  closed:       { label: "Closed",       color: "bg-secondary text-muted-foreground border-border",              dot: "bg-secondary"    },
 };
 
 const TYPE_COLORS: Record<FunderType, string> = {
-  government: "bg-indigo-500/10 text-indigo-300 border-indigo-500/25",
-  corporate:  "bg-violet-500/10 text-violet-300 border-violet-500/25",
-  ngo:        "bg-emerald-500/10 text-emerald-300 border-emerald-500/25",
+  government: "bg-indigo-500/10 text-indigo-700 border-indigo-500/25",
+  corporate:  "bg-violet-500/10 text-violet-700 border-violet-500/25",
+  ngo:        "bg-emerald-500/10 text-emerald-700 border-emerald-500/25",
 };
 const TYPE_LABELS: Record<FunderType, string> = {
   government: "Government",
@@ -45,7 +48,7 @@ function BursaryCard({ bursary }: { bursary: Bursary }) {
           ? "border-emerald-500/25 hover:border-emerald-500/40"
           : bursary.status === "opening_soon"
           ? "border-amber-500/20 hover:border-amber-500/35"
-          : "border-border hover:border-white/15"
+          : "border-border hover:border-border"
       }`}
     >
       {/* Header */}
@@ -70,13 +73,13 @@ function BursaryCard({ bursary }: { bursary: Bursary }) {
       {/* Value */}
       <div className="mb-3 px-3 py-2 rounded-lg bg-emerald-500/8 border border-emerald-500/15">
         <p className="text-xs text-muted-foreground">Value <span className="text-[10px] font-normal">(est.)</span></p>
-        <p className="text-sm font-semibold text-emerald-300">{bursary.value}</p>
+        <p className="text-sm font-semibold text-emerald-700">{bursary.value}</p>
       </div>
 
       {/* Fields */}
       <div className="flex flex-wrap gap-1.5 mb-3">
         {bursary.fields.slice(0, expanded ? undefined : 3).map((f) => (
-          <span key={f} className="text-[10px] px-2 py-0.5 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-300">
+          <span key={f} className="text-[10px] px-2 py-0.5 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-700">
             {f}
           </span>
         ))}
@@ -108,7 +111,7 @@ function BursaryCard({ bursary }: { bursary: Bursary }) {
             <div className="space-y-1">
               {bursary.eligibility.map((e) => (
                 <div key={e} className="flex items-start gap-2 text-xs text-muted-foreground">
-                  <CheckCircle2 className="w-3 h-3 text-emerald-400 mt-0.5 flex-shrink-0" />
+                  <CheckCircle2 className="w-3 h-3 text-emerald-700 mt-0.5 flex-shrink-0" />
                   {e}
                 </div>
               ))}
@@ -119,7 +122,7 @@ function BursaryCard({ bursary }: { bursary: Bursary }) {
             <div className="space-y-1">
               {bursary.highlights.map((h) => (
                 <div key={h} className="flex items-start gap-2 text-xs text-muted-foreground">
-                  <ChevronRight className="w-3 h-3 text-indigo-400 mt-0.5 flex-shrink-0" />
+                  <ChevronRight className="w-3 h-3 text-indigo-700 mt-0.5 flex-shrink-0" />
                   {h}
                 </div>
               ))}
@@ -144,9 +147,9 @@ function BursaryCard({ bursary }: { bursary: Bursary }) {
             rel="noopener noreferrer"
             className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors ${
               bursary.status === "open"
-                ? "bg-emerald-600 hover:bg-emerald-500 text-white"
+                ? "bg-emerald-600 hover:bg-emerald-500 text-primary-foreground"
                 : bursary.status === "opening_soon"
-                ? "bg-amber-600 hover:bg-amber-500 text-white"
+                ? "bg-amber-600 hover:bg-amber-500 text-primary-foreground"
                 : "bg-secondary border border-border text-muted-foreground hover:text-foreground"
             }`}
           >
@@ -189,27 +192,12 @@ export default function BursariesPage() {
   return (
     <div className="min-h-screen bg-background">
       {/* Nav */}
-      <nav className="border-b border-border px-4 py-4 flex items-center justify-between max-w-6xl mx-auto">
-        <Link href="/" className="flex items-center gap-2">
-          <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center">
-            <Brain className="w-4 h-4 text-white" />
-          </div>
-          <span className="font-bold text-sm text-foreground">
-            Career<span className="text-indigo-400">Intel</span>
-            <span className="text-amber-400 text-xs ml-1">SA</span>
-          </span>
-        </Link>
-        <div className="flex items-center gap-3">
-          <Link href="/graduate-programmes" className="text-xs text-muted-foreground hover:text-foreground transition-colors">Graduate Programmes</Link>
-          <Link href="/salary-check" className="text-xs text-muted-foreground hover:text-foreground transition-colors">Salary Check</Link>
-          <Link href="/sign-in" className="text-xs px-3 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white font-medium transition-colors">Sign In</Link>
-        </div>
-      </nav>
+      <JourneyHeader />
 
       <div className="max-w-6xl mx-auto px-4 py-10">
         {/* Header */}
         <div className="text-center mb-10">
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 text-xs font-medium mb-4">
+          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-700 text-xs font-medium mb-4">
             <Gift className="w-3.5 h-3.5" />
             SA Bursary Directory 2026
           </div>
@@ -278,7 +266,7 @@ export default function BursariesPage() {
             <div className="col-span-2 text-center py-16 text-muted-foreground">
               <Gift className="w-10 h-10 mx-auto mb-3 opacity-30" />
               <p className="text-sm">No bursaries match your filters.</p>
-              <button onClick={() => { setSearch(""); setField("all"); setType("all"); setOnlyOpen(false); }} className="mt-2 text-xs text-indigo-400 hover:underline">
+              <button onClick={() => { setSearch(""); setField("all"); setType("all"); setOnlyOpen(false); }} className="mt-2 text-xs text-indigo-700 hover:underline">
                 Clear filters
               </button>
             </div>
@@ -294,7 +282,7 @@ export default function BursariesPage() {
         <div className="mt-8 p-6 rounded-xl bg-gradient-to-r from-emerald-500/10 to-indigo-500/10 border border-emerald-500/20 text-center">
           <h2 className="text-base font-semibold text-foreground mb-1">Preparing to apply? Stand out from the start.</h2>
           <p className="text-sm text-muted-foreground mb-4">Use CareerIntel SA to build your CV, identify your skills gaps, and practice mock interviews before your application.</p>
-          <Link href="/sign-up" className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-semibold transition-colors">
+          <Link href="/sign-up" className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-primary-foreground text-sm font-semibold transition-colors">
             Get Started Free <ChevronRight className="w-4 h-4" />
           </Link>
         </div>

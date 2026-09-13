@@ -1,5 +1,8 @@
 "use client";
 
+import { JourneyHeader } from "@/components/journey/chrome";
+
+
 import { useState, useMemo } from "react";
 import { motion } from "framer-motion";
 import {
@@ -10,9 +13,9 @@ import Link from "next/link";
 import { GRADUATE_PROGRAMMES, SECTORS, type GraduateProgramme, type ProgrammeStatus } from "@/lib/data/graduate-programmes";
 
 const STATUS_CONFIG: Record<ProgrammeStatus, { label: string; color: string; dot: string }> = {
-  open:          { label: "Applications Open",    color: "bg-emerald-500/15 text-emerald-300 border-emerald-500/30", dot: "bg-emerald-400" },
-  opening_soon:  { label: "Opening Soon",         color: "bg-amber-500/15 text-amber-300 border-amber-500/30",    dot: "bg-amber-400"   },
-  closed:        { label: "Applications Closed",  color: "bg-white/5 text-white/40 border-white/10",              dot: "bg-white/20"    },
+  open:          { label: "Applications Open",    color: "bg-emerald-500/15 text-emerald-700 border-emerald-500/30", dot: "bg-emerald-400" },
+  opening_soon:  { label: "Opening Soon",         color: "bg-amber-500/15 text-amber-700 border-amber-500/30",    dot: "bg-amber-400"   },
+  closed:        { label: "Applications Closed",  color: "bg-secondary text-muted-foreground border-border",              dot: "bg-secondary"    },
 };
 
 function StatusBadge({ status }: { status: ProgrammeStatus }) {
@@ -37,7 +40,7 @@ function ProgrammeCard({ prog }: { prog: GraduateProgramme }) {
           ? "border-emerald-500/25 hover:border-emerald-500/40"
           : prog.status === "opening_soon"
           ? "border-amber-500/20 hover:border-amber-500/35"
-          : "border-border hover:border-white/20"
+          : "border-border hover:border-border"
       }`}
     >
       <div className="flex items-start justify-between gap-3 mb-3">
@@ -55,15 +58,15 @@ function ProgrammeCard({ prog }: { prog: GraduateProgramme }) {
 
       <div className="flex flex-wrap gap-3 text-xs text-muted-foreground mb-3">
         <span className="flex items-center gap-1">
-          <Briefcase className="w-3 h-3 text-indigo-400" />
+          <Briefcase className="w-3 h-3 text-indigo-700" />
           {prog.sector}
         </span>
         <span className="flex items-center gap-1">
-          <Clock className="w-3 h-3 text-violet-400" />
+          <Clock className="w-3 h-3 text-violet-700" />
           {prog.duration}
         </span>
         <span className="flex items-center gap-1">
-          <MapPin className="w-3 h-3 text-emerald-400" />
+          <MapPin className="w-3 h-3 text-emerald-700" />
           {prog.provinces.slice(0, 2).join(", ")}{prog.provinces.length > 2 ? ` +${prog.provinces.length - 2}` : ""}
         </span>
       </div>
@@ -77,12 +80,12 @@ function ProgrammeCard({ prog }: { prog: GraduateProgramme }) {
           <span className="text-muted-foreground">Intake: </span>
           <span className="font-semibold text-foreground">{prog.intake}</span>
         </div>
-        <div className="text-xs font-semibold text-emerald-400">~{prog.stipend} <span className="text-muted-foreground font-normal">(est.)</span></div>
+        <div className="text-xs font-semibold text-emerald-700">~{prog.stipend} <span className="text-muted-foreground font-normal">(est.)</span></div>
       </div>
 
       <div className="flex flex-wrap gap-1.5 mb-3">
         {prog.degrees.slice(0, expanded ? undefined : 3).map((d) => (
-          <span key={d} className="text-[10px] px-2 py-0.5 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-300">
+          <span key={d} className="text-[10px] px-2 py-0.5 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-700">
             {d}
           </span>
         ))}
@@ -105,7 +108,7 @@ function ProgrammeCard({ prog }: { prog: GraduateProgramme }) {
           <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-1.5">Highlights</p>
           {prog.highlights.map((h) => (
             <div key={h} className="flex items-start gap-2 text-xs text-muted-foreground">
-              <ChevronRight className="w-3 h-3 text-indigo-400 mt-0.5 flex-shrink-0" />
+              <ChevronRight className="w-3 h-3 text-indigo-700 mt-0.5 flex-shrink-0" />
               {h}
             </div>
           ))}
@@ -125,7 +128,7 @@ function ProgrammeCard({ prog }: { prog: GraduateProgramme }) {
             href={prog.applyUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold transition-colors"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-primary-foreground text-xs font-semibold transition-colors"
           >
             Apply Now <ExternalLink className="w-3 h-3" />
           </a>
@@ -177,27 +180,12 @@ export default function GraduateProgrammesPage() {
   return (
     <div className="min-h-screen bg-background">
       {/* Nav bar */}
-      <nav className="border-b border-border px-4 py-4 flex items-center justify-between max-w-6xl mx-auto">
-        <Link href="/" className="flex items-center gap-2">
-          <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center">
-            <Brain className="w-4 h-4 text-white" />
-          </div>
-          <span className="font-bold text-sm text-foreground">
-            Career<span className="text-indigo-400">Intel</span>
-            <span className="text-amber-400 text-xs ml-1">SA</span>
-          </span>
-        </Link>
-        <div className="flex items-center gap-3">
-          <Link href="/salary-check" className="text-xs text-muted-foreground hover:text-foreground transition-colors">Salary Check</Link>
-          <Link href="/bursaries" className="text-xs text-muted-foreground hover:text-foreground transition-colors">Bursaries</Link>
-          <Link href="/sign-in" className="text-xs px-3 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white font-medium transition-colors">Sign In</Link>
-        </div>
-      </nav>
+      <JourneyHeader />
 
       <div className="max-w-6xl mx-auto px-4 py-10">
         {/* Header */}
         <div className="text-center mb-10">
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 text-xs font-medium mb-4">
+          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-700 text-xs font-medium mb-4">
             <Award className="w-3.5 h-3.5" />
             SA Graduate Programmes 2026
           </div>
@@ -226,13 +214,13 @@ export default function GraduateProgrammesPage() {
                     ? "bg-emerald-500/15 border-emerald-500/40"
                     : s.color === "amber"
                     ? "bg-amber-500/15 border-amber-500/40"
-                    : "bg-white/10 border-white/25"
-                  : "bg-card border-border hover:border-white/20"
+                    : "bg-secondary border-border"
+                  : "bg-card border-border hover:border-border"
               }`}
             >
               <div className={`text-2xl font-bold mb-0.5 ${
-                s.color === "emerald" ? "text-emerald-400" :
-                s.color === "amber"   ? "text-amber-400"   : "text-muted-foreground"
+                s.color === "emerald" ? "text-emerald-700" :
+                s.color === "amber"   ? "text-amber-700"   : "text-muted-foreground"
               }`}>{s.count}</div>
               <div className="text-xs text-muted-foreground">{s.label}</div>
             </button>
@@ -274,7 +262,7 @@ export default function GraduateProgrammesPage() {
             <div className="col-span-2 text-center py-16 text-muted-foreground">
               <GraduationCap className="w-10 h-10 mx-auto mb-3 opacity-30" />
               <p className="text-sm">No programmes match your search.</p>
-              <button onClick={() => { setSearch(""); setSector("all"); setStatus("all"); }} className="mt-2 text-xs text-indigo-400 hover:underline">
+              <button onClick={() => { setSearch(""); setSector("all"); setStatus("all"); }} className="mt-2 text-xs text-indigo-700 hover:underline">
                 Clear filters
               </button>
             </div>
@@ -290,7 +278,7 @@ export default function GraduateProgrammesPage() {
         <div className="mt-8 p-6 rounded-xl bg-gradient-to-r from-indigo-500/10 to-violet-500/10 border border-indigo-500/20 text-center">
           <h2 className="text-base font-semibold text-foreground mb-1">Want to stand out in your application?</h2>
           <p className="text-sm text-muted-foreground mb-4">Build your CV, run a skills gap analysis, and practice mock interviews — all free on CareerIntel SA.</p>
-          <Link href="/sign-up" className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-semibold transition-colors">
+          <Link href="/sign-up" className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-primary-foreground text-sm font-semibold transition-colors">
             Get Started Free <ChevronRight className="w-4 h-4" />
           </Link>
         </div>

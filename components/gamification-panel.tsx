@@ -58,7 +58,7 @@ export function GamificationPanel() {
       <div className="flex items-center justify-between mb-5">
         <div className="flex items-center gap-2">
           <div className="w-8 h-8 rounded-lg bg-amber-500/15 flex items-center justify-center">
-            <Trophy className="w-4 h-4 text-amber-400" />
+            <Trophy className="w-4 h-4 text-amber-700" />
           </div>
           <div>
             <h2 className="text-sm font-semibold text-foreground">Career XP</h2>
@@ -68,14 +68,14 @@ export function GamificationPanel() {
         <div className="flex items-center gap-3">
           {stats.streak > 0 && (
             <div className="flex items-center gap-1 px-2.5 py-1 rounded-full bg-orange-500/15 border border-orange-500/30">
-              <Flame className="w-3.5 h-3.5 text-orange-400" />
-              <span className="text-xs font-bold text-orange-300">{stats.streak}</span>
-              <span className="text-xs text-orange-400/70">day streak</span>
+              <Flame className="w-3.5 h-3.5 text-orange-700" />
+              <span className="text-xs font-bold text-orange-700">{stats.streak}</span>
+              <span className="text-xs text-orange-700/70">day streak</span>
             </div>
           )}
           <div className="flex items-center gap-1 px-2.5 py-1 rounded-full bg-amber-500/15 border border-amber-500/30">
-            <Zap className="w-3.5 h-3.5 text-amber-400" />
-            <span className="text-xs font-bold text-amber-300">{stats.xp.toLocaleString()} XP</span>
+            <Zap className="w-3.5 h-3.5 text-amber-700" />
+            <span className="text-xs font-bold text-amber-700">{stats.xp.toLocaleString()} XP</span>
           </div>
         </div>
       </div>
@@ -111,7 +111,7 @@ export function GamificationPanel() {
           {(stats.earnedBadges.length + stats.lockedBadges.length) > 6 && (
             <button
               onClick={() => setShowAllBadges(!showAllBadges)}
-              className="text-xs text-indigo-400 hover:text-indigo-300 transition-colors"
+              className="text-xs text-indigo-700 hover:text-indigo-700 transition-colors"
             >
               {showAllBadges ? "Show less" : "See all"}
             </button>
@@ -130,11 +130,11 @@ export function GamificationPanel() {
                 className="flex flex-col items-center gap-1 p-2 rounded-lg bg-amber-500/8 border border-amber-500/20 cursor-default group relative"
               >
                 <span className="text-2xl">{badge.icon}</span>
-                <span className="text-[10px] text-amber-300 font-medium text-center leading-tight">{badge.name}</span>
+                <span className="text-[10px] text-amber-700 font-medium text-center leading-tight">{badge.name}</span>
                 {/* Tooltip */}
                 <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1 w-32 bg-popover border border-border rounded-md px-2 py-1.5 text-[10px] text-muted-foreground text-center opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10 shadow-lg">
                   {badge.description}
-                  {badge.xpReward > 0 && <div className="text-amber-400 mt-0.5">+{badge.xpReward} XP bonus</div>}
+                  {badge.xpReward > 0 && <div className="text-amber-700 mt-0.5">+{badge.xpReward} XP bonus</div>}
                 </div>
               </motion.div>
             ))}
@@ -184,8 +184,8 @@ export function XpToast({ xpGained, newBadges, onDismiss }: {
       className="fixed bottom-6 right-6 z-50 flex flex-col gap-2"
     >
       <div className="flex items-center gap-2 bg-amber-500/15 border border-amber-500/40 rounded-xl px-4 py-2.5 shadow-lg backdrop-blur-sm">
-        <Zap className="w-4 h-4 text-amber-400 flex-shrink-0" />
-        <span className="text-sm font-semibold text-amber-300">+{xpGained} XP earned!</span>
+        <Zap className="w-4 h-4 text-amber-700 flex-shrink-0" />
+        <span className="text-sm font-semibold text-amber-700">+{xpGained} XP earned!</span>
       </div>
       {newBadges.map((badge) => (
         <div key={badge.id} className="flex items-center gap-2 bg-card border border-border rounded-xl px-4 py-2.5 shadow-lg backdrop-blur-sm">

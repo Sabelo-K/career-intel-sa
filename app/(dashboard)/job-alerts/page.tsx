@@ -90,7 +90,7 @@ function JobCard({ job }: { job: AdzunaJob }) {
         <div className="flex items-start gap-3">
           {/* Icon */}
           <div className="w-8 h-8 rounded-lg bg-indigo-500/10 flex items-center justify-center flex-shrink-0 mt-0.5">
-            <Briefcase className="w-3.5 h-3.5 text-indigo-400" />
+            <Briefcase className="w-3.5 h-3.5 text-indigo-700" />
           </div>
 
           <div className="flex-1 min-w-0">
@@ -112,7 +112,7 @@ function JobCard({ job }: { job: AdzunaJob }) {
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={(e) => e.stopPropagation()}
-                className="flex-shrink-0 text-[11px] font-medium text-indigo-400 hover:text-indigo-300 flex items-center gap-0.5 transition-colors"
+                className="flex-shrink-0 text-[11px] font-medium text-indigo-700 hover:text-indigo-700 flex items-center gap-0.5 transition-colors"
               >
                 Apply <ExternalLink className="w-2.5 h-2.5" />
               </a>
@@ -120,7 +120,7 @@ function JobCard({ job }: { job: AdzunaJob }) {
 
             <div className="flex items-center gap-3 mt-1.5 flex-wrap">
               {salary && (
-                <span className="text-[11px] font-medium text-emerald-400">{salary}</span>
+                <span className="text-[11px] font-medium text-emerald-700">{salary}</span>
               )}
               {daysAgo !== null && (
                 <span className="text-[11px] text-muted-foreground/60">
@@ -342,7 +342,7 @@ export default function JobAlertsPage() {
       <AnimatePresence>
         {error && (
           <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
-            className="flex items-center gap-3 p-3.5 rounded-xl bg-red-500/10 border border-red-500/20 text-sm text-red-300"
+            className="flex items-center gap-3 p-3.5 rounded-xl bg-red-500/10 border border-red-500/20 text-sm text-red-700"
           >
             <AlertCircle className="w-4 h-4 flex-shrink-0" />
             <span className="flex-1">{error}</span>
@@ -351,7 +351,7 @@ export default function JobAlertsPage() {
         )}
         {success && (
           <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
-            className="flex items-center gap-3 p-3.5 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-sm text-emerald-300"
+            className="flex items-center gap-3 p-3.5 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-sm text-emerald-700"
           >
             <CheckCircle2 className="w-4 h-4 flex-shrink-0" />
             <span>{success}</span>
@@ -370,7 +370,7 @@ export default function JobAlertsPage() {
           >
             <div className="flex items-center justify-between">
               <h2 className="text-sm font-semibold text-foreground flex items-center gap-2">
-                <Bell className="w-4 h-4 text-indigo-400" />
+                <Bell className="w-4 h-4 text-indigo-700" />
                 Create New Alert
               </h2>
               <button onClick={resetForm} className="text-muted-foreground hover:text-foreground">
@@ -381,7 +381,7 @@ export default function JobAlertsPage() {
             {/* Keywords */}
             <div>
               <label className="text-xs font-medium text-muted-foreground mb-1.5 block">
-                Job Keywords <span className="text-red-400">*</span>
+                Job Keywords <span className="text-red-700">*</span>
                 <span className="ml-1 text-muted-foreground/60">({keywords.length}/10)</span>
               </label>
               <div className="flex gap-2">
@@ -404,7 +404,7 @@ export default function JobAlertsPage() {
                   {keywords.map(k => (
                     <Badge key={k} variant="indigo" className="gap-1 pr-1">
                       {k}
-                      <button onClick={() => setKeywords(keywords.filter(kw => kw !== k))} className="ml-0.5 hover:text-red-300">
+                      <button onClick={() => setKeywords(keywords.filter(kw => kw !== k))} className="ml-0.5 hover:text-red-700">
                         <X className="w-3 h-3" />
                       </button>
                     </Badge>
@@ -422,7 +422,7 @@ export default function JobAlertsPage() {
                 <select
                   value={province}
                   onChange={e => setProvince(e.target.value)}
-                  className="w-full h-10 rounded-lg border border-input bg-input px-3 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+                  className="w-full h-10 rounded-lg border border-input bg-card px-3 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
                 >
                   <option value="">All provinces</option>
                   {PROVINCES.map(p => (
@@ -437,7 +437,7 @@ export default function JobAlertsPage() {
                 <select
                   value={minSalary}
                   onChange={e => setMinSalary(e.target.value)}
-                  className="w-full h-10 rounded-lg border border-input bg-input px-3 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+                  className="w-full h-10 rounded-lg border border-input bg-card px-3 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
                 >
                   {SALARY_OPTIONS.map(o => (
                     <option key={o.value} value={o.value}>{o.label}</option>
@@ -456,7 +456,7 @@ export default function JobAlertsPage() {
                     onClick={() => setRemote(v)}
                     className={`flex-1 py-2 rounded-lg text-xs font-medium border transition-all capitalize ${
                       remote === v
-                        ? "bg-indigo-600/20 border-indigo-500/40 text-indigo-300"
+                        ? "bg-indigo-600/20 border-indigo-500/40 text-indigo-700"
                         : "border-border text-muted-foreground hover:text-foreground hover:bg-secondary"
                     }`}
                   >
@@ -491,7 +491,7 @@ export default function JobAlertsPage() {
       ) : alerts.length === 0 ? (
         <div className="text-center py-16 space-y-3">
           <div className="w-14 h-14 rounded-2xl bg-indigo-500/10 flex items-center justify-center mx-auto">
-            <Bell className="w-7 h-7 text-indigo-400/50" />
+            <Bell className="w-7 h-7 text-indigo-700/50" />
           </div>
           <p className="text-sm font-medium text-foreground">No job alerts yet</p>
           <p className="text-xs text-muted-foreground max-w-sm mx-auto">
@@ -568,7 +568,7 @@ export default function JobAlertsPage() {
                       <button
                         onClick={() => handleDelete(alert.id)}
                         disabled={deleting === alert.id}
-                        className="w-7 h-7 rounded-lg flex items-center justify-center text-muted-foreground hover:text-red-400 hover:bg-red-500/10 transition-all disabled:opacity-40"
+                        className="w-7 h-7 rounded-lg flex items-center justify-center text-muted-foreground hover:text-red-700 hover:bg-red-500/10 transition-all disabled:opacity-40"
                       >
                         <Trash2 className="w-3.5 h-3.5" />
                       </button>
@@ -617,7 +617,7 @@ export default function JobAlertsPage() {
       {/* How it works + attribution */}
       <div className="bg-card border border-border rounded-xl p-5 space-y-4">
         <h3 className="text-sm font-semibold text-foreground flex items-center gap-2">
-          <Bell className="w-4 h-4 text-indigo-400" />
+          <Bell className="w-4 h-4 text-indigo-700" />
           How Job Alerts Work
         </h3>
         <div className="space-y-2">
@@ -628,7 +628,7 @@ export default function JobAlertsPage() {
             "Pause alerts when you're not actively searching without losing your settings",
           ].map((tip) => (
             <div key={tip} className="flex items-start gap-2 text-xs text-muted-foreground">
-              <CheckCircle2 className="w-3.5 h-3.5 text-indigo-400 flex-shrink-0 mt-0.5" />
+              <CheckCircle2 className="w-3.5 h-3.5 text-indigo-700 flex-shrink-0 mt-0.5" />
               {tip}
             </div>
           ))}
@@ -641,7 +641,7 @@ export default function JobAlertsPage() {
               <span className="text-base">🏛️</span>
             </div>
             <div>
-              <p className="text-sm font-semibold text-emerald-300">Looking for government jobs?</p>
+              <p className="text-sm font-semibold text-emerald-700">Looking for government jobs?</p>
               <p className="text-xs text-muted-foreground mt-0.5 leading-relaxed">
                 Search official Department of Labour vacancies on the <strong className="text-foreground">ESSA portal</strong> — South Africa&apos;s government employment service.
               </p>
@@ -651,7 +651,7 @@ export default function JobAlertsPage() {
             href="https://essa.labour.gov.za"
             target="_blank"
             rel="noopener noreferrer external"
-            className="flex-shrink-0 flex items-center gap-1.5 px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold transition-colors whitespace-nowrap"
+            className="flex-shrink-0 flex items-center gap-1.5 px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-primary-foreground text-xs font-semibold transition-colors whitespace-nowrap"
           >
             Search ESSA Jobs
             <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>
@@ -660,17 +660,17 @@ export default function JobAlertsPage() {
 
         {/* Source attribution — changes based on whether Adzuna is wired in */}
         {adzunaConfigured === false ? (
-          <div className="p-3 rounded-lg bg-amber-500/8 border border-amber-500/20 text-xs text-amber-200/80">
+          <div className="p-3 rounded-lg bg-amber-500/8 border border-amber-500/20 text-xs text-amber-700/80">
             <strong>Coming soon:</strong> Live job matching is ready — add your{" "}
-            <code className="font-mono text-amber-300">ADZUNA_APP_ID</code> and{" "}
-            <code className="font-mono text-amber-300">ADZUNA_APP_KEY</code> env vars (free at{" "}
+            <code className="font-mono text-amber-700">ADZUNA_APP_ID</code> and{" "}
+            <code className="font-mono text-amber-700">ADZUNA_APP_KEY</code> env vars (free at{" "}
             <a href="https://developer.adzuna.com" target="_blank" rel="noopener noreferrer" className="underline hover:text-amber-100">
               developer.adzuna.com
             </a>
             ) to activate. Email notifications coming once our email system launches.
           </div>
         ) : (
-          <div className="flex items-center justify-between p-3 rounded-lg bg-indigo-500/8 border border-indigo-500/20 text-xs text-indigo-200/80">
+          <div className="flex items-center justify-between p-3 rounded-lg bg-indigo-500/8 border border-indigo-500/20 text-xs text-indigo-700/80">
             <span>
               Jobs sourced from the SA market via{" "}
               <a href="https://www.adzuna.co.za" target="_blank" rel="noopener noreferrer" className="font-medium underline hover:text-indigo-100">

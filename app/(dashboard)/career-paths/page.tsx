@@ -202,8 +202,8 @@ export default function CareerPathsPage() {
           <div className="flex items-end flex-col gap-2">
             <div className="text-xs text-muted-foreground w-full flex items-center gap-1.5">
               <span className="w-2 h-2 rounded-full bg-indigo-400 inline-block" />
-              Province: <span className="text-indigo-300 font-medium">{PROVINCE_DISPLAY[userProvince] ?? userProvince}</span>
-              <a href="/profile" className="text-xs text-indigo-400 hover:underline ml-auto">Change</a>
+              Province: <span className="text-indigo-700 font-medium">{PROVINCE_DISPLAY[userProvince] ?? userProvince}</span>
+              <a href="/profile" className="text-xs text-indigo-700 hover:underline ml-auto">Change</a>
             </div>
             <Button
               onClick={simulate}
@@ -235,7 +235,7 @@ export default function CareerPathsPage() {
               >
                 <span>{p.icon}</span>
                 {p.from} → {p.to}
-                <span className="text-emerald-400 font-medium">{p.salary}</span>
+                <span className="text-emerald-700 font-medium">{p.salary}</span>
               </button>
             ))}
           </div>
@@ -244,10 +244,10 @@ export default function CareerPathsPage() {
 
       {/* Error state */}
       {error && (
-        <div className="flex items-center gap-3 p-4 rounded-xl bg-red-500/10 border border-red-500/20 text-sm text-red-300">
+        <div className="flex items-center gap-3 p-4 rounded-xl bg-red-500/10 border border-red-500/20 text-sm text-red-700">
           <AlertCircle className="w-4 h-4 flex-shrink-0" />
           <span>{error}</span>
-          <button onClick={() => setError(null)} className="ml-auto hover:text-red-200">
+          <button onClick={() => setError(null)} className="ml-auto hover:text-red-700">
             <X className="w-4 h-4" />
           </button>
         </div>
@@ -267,9 +267,9 @@ export default function CareerPathsPage() {
                 <div key={s.label} className="stat-card">
                   <div className="text-xs text-muted-foreground">{s.label}</div>
                   <div className={`text-2xl font-bold mt-1 ${
-                    s.color === "emerald" ? "text-emerald-400" :
-                    s.color === "violet" ? "text-violet-400" :
-                    s.color === "amber" ? "text-amber-400" : "text-indigo-400"
+                    s.color === "emerald" ? "text-emerald-700" :
+                    s.color === "violet" ? "text-violet-700" :
+                    s.color === "amber" ? "text-amber-700" : "text-indigo-700"
                   }`}>{s.value}</div>
                   <div className="text-xs text-muted-foreground mt-0.5">{s.desc}</div>
                 </div>
@@ -279,7 +279,7 @@ export default function CareerPathsPage() {
             {/* Summary */}
             <div className="bg-card border border-indigo-500/20 rounded-xl p-5">
               <div className="flex items-center gap-2 mb-2">
-                <Sparkles className="w-4 h-4 text-indigo-400" />
+                <Sparkles className="w-4 h-4 text-indigo-700" />
                 <span className="text-sm font-semibold text-foreground">AI Career Analysis</span>
               </div>
               <p className="text-sm text-muted-foreground leading-relaxed">{result.summary}</p>
@@ -309,7 +309,7 @@ export default function CareerPathsPage() {
                   />
                   <Tooltip
                     formatter={(val: number) => [`R${(val / 1000).toFixed(0)}k/mo`, "Salary"]}
-                    contentStyle={{ background: "rgba(13,21,38,0.95)", border: "1px solid rgba(99,102,241,0.2)", borderRadius: 8, fontSize: 12 }}
+                    contentStyle={{ background: "#ffffff", border: "1px solid rgba(99,102,241,0.2)", borderRadius: 8, fontSize: 12 }}
                   />
                   <Area type="monotone" dataKey="salary" stroke="#6366f1" fill="url(#salaryGrad)" strokeWidth={2.5} dot={{ fill: "#6366f1", r: 4 }} />
                 </AreaChart>
@@ -319,7 +319,7 @@ export default function CareerPathsPage() {
             {/* Milestones timeline */}
             <div className="bg-card border border-border rounded-xl p-5">
               <h3 className="text-sm font-semibold text-foreground mb-5 flex items-center gap-2">
-                <GitBranch className="w-4 h-4 text-violet-400" />
+                <GitBranch className="w-4 h-4 text-violet-700" />
                 Career Milestones Timeline
               </h3>
               <div className="space-y-3">
@@ -339,8 +339,8 @@ export default function CareerPathsPage() {
                     <div className="flex flex-col items-center">
                       <div className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0 ${
                         i === result.milestones.length - 1
-                          ? "bg-emerald-600 text-white"
-                          : "bg-indigo-600/20 text-indigo-400 border border-indigo-500/30"
+                          ? "bg-emerald-600 text-primary-foreground"
+                          : "bg-indigo-600/20 text-indigo-700 border border-indigo-500/30"
                       }`}>
                         {m.year === 1 ? "Now" : `Y${m.year}`}
                       </div>
@@ -352,7 +352,7 @@ export default function CareerPathsPage() {
                       <div className="flex items-start justify-between gap-2">
                         <div>
                           <div className="text-sm font-semibold text-foreground">{m.role}</div>
-                          <div className="text-sm text-emerald-400 font-bold mt-0.5">{formatSalary(m.salary)}/mo</div>
+                          <div className="text-sm text-emerald-700 font-bold mt-0.5">{formatSalary(m.salary)}/mo</div>
                         </div>
                         {i === result.milestones.length - 1 && (
                           <Badge variant="success">Goal</Badge>
@@ -380,13 +380,13 @@ export default function CareerPathsPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
               <div className="bg-card border border-border rounded-xl p-5">
                 <h3 className="text-sm font-semibold text-foreground mb-3 flex items-center gap-2">
-                  <Award className="w-4 h-4 text-amber-400" />
+                  <Award className="w-4 h-4 text-amber-700" />
                   Required Certifications
                 </h3>
                 <div className="space-y-2">
                   {result.requiredCertifications.map((cert) => (
                     <div key={cert} className="flex items-center gap-2 text-sm text-muted-foreground">
-                      <Star className="w-3.5 h-3.5 text-amber-400 flex-shrink-0" />
+                      <Star className="w-3.5 h-3.5 text-amber-700 flex-shrink-0" />
                       {cert}
                     </div>
                   ))}
@@ -395,7 +395,7 @@ export default function CareerPathsPage() {
 
               <div className="bg-card border border-border rounded-xl p-5">
                 <h3 className="text-sm font-semibold text-foreground mb-3 flex items-center gap-2">
-                  <Target className="w-4 h-4 text-red-400" />
+                  <Target className="w-4 h-4 text-red-700" />
                   Key Risks to Monitor
                 </h3>
                 <div className="space-y-2">

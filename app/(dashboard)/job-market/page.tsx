@@ -26,17 +26,17 @@ import { formatSalaryRange, getDemandBadgeColor, getTrendLabel, getAutomationRis
 const DATA_LAST_UPDATED = "August 2026";
 const NEXT_UPDATE_DUE   = "September 2026";
 
-// Shared tooltip style — dark background with white text for all charts
+// Shared tooltip style — white cards with readable ink for all charts
 const TOOLTIP_STYLE = {
   contentStyle: {
-    background: "rgba(13,21,38,0.97)",
+    background: "#ffffff",
     border: "1px solid rgba(99,102,241,0.25)",
     borderRadius: 8,
     fontSize: 12,
-    color: "#f1f5f9",
+    color: "#1b263e",
   },
-  labelStyle: { color: "#cbd5e1", marginBottom: 4, fontWeight: 600 },
-  itemStyle: { color: "#f1f5f9" },
+  labelStyle: { color: "#1b263e", marginBottom: 4, fontWeight: 600 },
+  itemStyle: { color: "#1b263e" },
   cursor: { fill: "rgba(99,102,241,0.08)" },
 };
 
@@ -213,11 +213,11 @@ const PROVINCE_LABELS: Record<string, string> = {
 };
 
 const OUTLOOK_LABEL: Record<string, { label: string; color: string }> = {
-  EXCEPTIONAL: { label: "Exceptional outlook", color: "text-emerald-400" },
-  EXCELLENT:   { label: "Excellent outlook",   color: "text-emerald-400" },
-  GOOD:        { label: "Good outlook",         color: "text-indigo-400"  },
-  FAIR:        { label: "Fair outlook",          color: "text-amber-400"  },
-  POOR:        { label: "Poor outlook",          color: "text-red-400"    },
+  EXCEPTIONAL: { label: "Exceptional outlook", color: "text-emerald-700" },
+  EXCELLENT:   { label: "Excellent outlook",   color: "text-emerald-700" },
+  GOOD:        { label: "Good outlook",         color: "text-indigo-700"  },
+  FAIR:        { label: "Fair outlook",          color: "text-amber-700"  },
+  POOR:        { label: "Poor outlook",          color: "text-red-700"    },
 };
 
 function CareerDetailDrawer({ career, onClose }: { career: (typeof SA_CAREERS)[0]; onClose: () => void }) {
@@ -274,15 +274,15 @@ function CareerDetailDrawer({ career, onClose }: { career: (typeof SA_CAREERS)[0
 
           {/* Market context pill */}
           <div className="flex items-start gap-2 bg-indigo-500/10 border border-indigo-500/20 rounded-xl px-3.5 py-2.5">
-            <TrendingUp className="w-3.5 h-3.5 text-indigo-400 mt-0.5 flex-shrink-0" />
-            <p className="text-xs text-indigo-300 leading-relaxed">{marketContext}</p>
+            <TrendingUp className="w-3.5 h-3.5 text-indigo-700 mt-0.5 flex-shrink-0" />
+            <p className="text-xs text-indigo-700 leading-relaxed">{marketContext}</p>
           </div>
 
           {/* Key stats row */}
           <div className="grid grid-cols-3 gap-3">
             {[
-              { label: "Avg Salary", value: `R${avgK}k/mo`, color: "text-emerald-400" },
-              { label: "Demand", value: `${career.demandScore}/100`, color: "text-indigo-400" },
+              { label: "Avg Salary", value: `R${avgK}k/mo`, color: "text-emerald-700" },
+              { label: "Demand", value: `${career.demandScore}/100`, color: "text-indigo-700" },
               { label: "Outlook", value: outlook.label.split(" ")[0], color: outlook.color },
             ].map((s) => (
               <div key={s.label} className="bg-secondary rounded-xl p-3 text-center">
@@ -301,14 +301,14 @@ function CareerDetailDrawer({ career, onClose }: { career: (typeof SA_CAREERS)[0
               {career.dataConfidence === "gazetted" ? (
                 <span
                   title="Anchored to legally published SA rates — National Minimum Wage Act, a sectoral determination, or a bargaining council agreement."
-                  className="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-emerald-500/15 text-emerald-300 border border-emerald-500/25 whitespace-nowrap"
+                  className="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-emerald-500/15 text-emerald-700 border border-emerald-500/25 whitespace-nowrap"
                 >
                   Gazetted rate
                 </span>
               ) : career.dataConfidence === "surveyed" ? (
                 <span
                   title="Taken from a published SA salary survey."
-                  className="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-indigo-500/15 text-indigo-300 border border-indigo-500/25 whitespace-nowrap"
+                  className="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-indigo-500/15 text-indigo-700 border border-indigo-500/25 whitespace-nowrap"
                 >
                   Survey data
                 </span>
@@ -350,7 +350,7 @@ function CareerDetailDrawer({ career, onClose }: { career: (typeof SA_CAREERS)[0
             <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-3">Skills You Need</h3>
             <div className="flex flex-wrap gap-1.5">
               {career.topSkills.map((skill) => (
-                <span key={skill} className="text-xs bg-indigo-500/15 border border-indigo-500/25 text-indigo-300 px-2.5 py-1 rounded-full">
+                <span key={skill} className="text-xs bg-indigo-500/15 border border-indigo-500/25 text-indigo-700 px-2.5 py-1 rounded-full">
                   {skill}
                 </span>
               ))}
@@ -361,15 +361,15 @@ function CareerDetailDrawer({ career, onClose }: { career: (typeof SA_CAREERS)[0
           {subjectReqs && (
             <div className="bg-card border border-amber-500/20 rounded-xl p-4">
               <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-3 flex items-center gap-1.5">
-                <GraduationCap className="w-3.5 h-3.5 text-amber-400" />
+                <GraduationCap className="w-3.5 h-3.5 text-amber-700" />
                 Grade 12 Subject Requirements
               </h3>
               {subjectReqs.required.length > 0 && (
                 <div className="mb-2">
-                  <div className="text-xs font-medium text-amber-400 mb-1.5">Required for entry:</div>
+                  <div className="text-xs font-medium text-amber-700 mb-1.5">Required for entry:</div>
                   <div className="flex flex-wrap gap-1.5">
                     {subjectReqs.required.map((s) => (
-                      <span key={s} className="text-xs bg-amber-500/15 border border-amber-500/30 text-amber-300 px-2 py-0.5 rounded-full">{s}</span>
+                      <span key={s} className="text-xs bg-amber-500/15 border border-amber-500/30 text-amber-700 px-2 py-0.5 rounded-full">{s}</span>
                     ))}
                   </div>
                 </div>
@@ -391,13 +391,13 @@ function CareerDetailDrawer({ career, onClose }: { career: (typeof SA_CAREERS)[0
           <div className="grid grid-cols-2 gap-3">
             <div className="bg-card border border-border rounded-xl p-3">
               <div className="flex items-center gap-1.5 mb-1.5">
-                <MapPin className="w-3.5 h-3.5 text-indigo-400" />
+                <MapPin className="w-3.5 h-3.5 text-indigo-700" />
                 <span className="text-xs font-semibold text-foreground">Top Provinces</span>
               </div>
               <div className="space-y-1">
                 {career.topProvinces.map((p) => (
                   <div key={p} className="text-xs text-muted-foreground flex items-center gap-1">
-                    <ChevronRight className="w-3 h-3 text-indigo-400/60" />
+                    <ChevronRight className="w-3 h-3 text-indigo-700/60" />
                     {PROVINCE_LABELS[p] ?? p}
                   </div>
                 ))}
@@ -407,7 +407,7 @@ function CareerDetailDrawer({ career, onClose }: { career: (typeof SA_CAREERS)[0
             <div className="bg-card border border-border rounded-xl p-3 space-y-2">
               {career.nqfLevel && (
                 <div className="flex items-start gap-1.5">
-                  <GraduationCap className="w-3.5 h-3.5 text-violet-400 mt-0.5 flex-shrink-0" />
+                  <GraduationCap className="w-3.5 h-3.5 text-violet-700 mt-0.5 flex-shrink-0" />
                   <div>
                     <div className="text-xs font-semibold text-foreground">Min Qualification</div>
                     <div className="text-xs text-muted-foreground">NQF Level {career.nqfLevel}</div>
@@ -415,14 +415,14 @@ function CareerDetailDrawer({ career, onClose }: { career: (typeof SA_CAREERS)[0
                 </div>
               )}
               <div className="flex items-start gap-1.5">
-                <Shield className="w-3.5 h-3.5 text-amber-400 mt-0.5 flex-shrink-0" />
+                <Shield className="w-3.5 h-3.5 text-amber-700 mt-0.5 flex-shrink-0" />
                 <div>
                   <div className="text-xs font-semibold text-foreground">AI Risk</div>
                   <div className="text-xs text-muted-foreground">{automationLabel} ({career.automationRisk}%)</div>
                 </div>
               </div>
               <div className="flex items-start gap-1.5">
-                <Globe className="w-3.5 h-3.5 text-emerald-400 mt-0.5 flex-shrink-0" />
+                <Globe className="w-3.5 h-3.5 text-emerald-700 mt-0.5 flex-shrink-0" />
                 <div>
                   <div className="text-xs font-semibold text-foreground">Work Style</div>
                   <div className="text-xs text-muted-foreground">
@@ -438,7 +438,7 @@ function CareerDetailDrawer({ career, onClose }: { career: (typeof SA_CAREERS)[0
           <div className="bg-card border border-border rounded-xl p-4">
             <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2">Growth Trend</h3>
             <div className="flex items-center justify-between">
-              <span className={`text-sm font-semibold ${career.growthTrend === "DECLINING" ? "text-red-400" : career.growthTrend === "STABLE" ? "text-blue-400" : "text-emerald-400"}`}>
+              <span className={`text-sm font-semibold ${career.growthTrend === "DECLINING" ? "text-red-700" : career.growthTrend === "STABLE" ? "text-blue-700" : "text-emerald-700"}`}>
                 {getTrendLabel(career.growthTrend)}
               </span>
               <span className={`text-sm font-medium ${outlook.color}`}>{outlook.label}</span>
@@ -528,7 +528,7 @@ function DemandCard({ career, onSelect }: { career: (typeof SA_CAREERS)[0]; onSe
         </div>
         <div className="text-right">
           <div className="text-muted-foreground">Trend</div>
-          <div className={`font-medium mt-0.5 ${career.growthTrend === "DECLINING" ? "text-red-400" : career.growthTrend === "STABLE" ? "text-blue-400" : "text-emerald-400"}`}>
+          <div className={`font-medium mt-0.5 ${career.growthTrend === "DECLINING" ? "text-red-700" : career.growthTrend === "STABLE" ? "text-blue-700" : "text-emerald-700"}`}>
             {getTrendLabel(career.growthTrend)}
           </div>
         </div>
@@ -606,7 +606,7 @@ export default function JobMarketPage() {
         <div className="flex flex-col items-end gap-1.5 flex-shrink-0">
           <div className="flex items-center gap-1.5 bg-emerald-500/10 border border-emerald-500/20 rounded-full px-3 py-1">
             <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-            <span className="text-xs font-medium text-emerald-300">
+            <span className="text-xs font-medium text-emerald-700">
               Data updated: {DATA_LAST_UPDATED}
             </span>
           </div>
@@ -633,16 +633,16 @@ export default function JobMarketPage() {
                 stat.color === "emerald" ? "bg-emerald-500/15" : "bg-indigo-500/15"
               }`}>
                 <stat.icon className={`w-3.5 h-3.5 ${
-                  stat.color === "amber" ? "text-amber-400" :
-                  stat.color === "red" ? "text-red-400" :
-                  stat.color === "emerald" ? "text-emerald-400" : "text-indigo-400"
+                  stat.color === "amber" ? "text-amber-700" :
+                  stat.color === "red" ? "text-red-700" :
+                  stat.color === "emerald" ? "text-emerald-700" : "text-indigo-700"
                 }`} />
               </div>
             </div>
             <div className={`text-2xl font-bold ${
-              stat.color === "emerald" ? "text-emerald-400" :
-              stat.color === "red" ? "text-red-400" :
-              stat.color === "amber" ? "text-amber-400" : "text-foreground"
+              stat.color === "emerald" ? "text-emerald-700" :
+              stat.color === "red" ? "text-red-700" :
+              stat.color === "amber" ? "text-amber-700" : "text-foreground"
             }`}>{stat.value}</div>
             <div className="text-xs text-muted-foreground mt-0.5">{stat.change}</div>
           </div>
@@ -683,7 +683,7 @@ export default function JobMarketPage() {
                   onClick={() => setFilter(f.key)}
                   className={`text-xs px-3 py-1.5 rounded-lg border transition-colors ${
                     filter === f.key
-                      ? "border-indigo-500/50 bg-indigo-500/15 text-indigo-300"
+                      ? "border-indigo-500/50 bg-indigo-500/15 text-indigo-700"
                       : "border-border text-muted-foreground hover:text-foreground hover:bg-secondary"
                   }`}
                 >
@@ -833,7 +833,7 @@ export default function JobMarketPage() {
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center justify-between mb-1">
                         <span className="text-xs font-medium text-foreground truncate">{p.label}</span>
-                        <span className="text-xs font-bold text-indigo-400">{p.score}</span>
+                        <span className="text-xs font-bold text-indigo-700">{p.score}</span>
                       </div>
                       <div className="h-1 bg-secondary rounded-full">
                         <div
@@ -855,7 +855,7 @@ export default function JobMarketPage() {
             <div className="bg-card border border-border rounded-xl p-5">
               <div className="flex items-center justify-between gap-2 mb-4">
                 <div className="flex items-center gap-2">
-                  <Zap className="w-4 h-4 text-amber-400" />
+                  <Zap className="w-4 h-4 text-amber-700" />
                   <h3 className="text-sm font-semibold text-foreground">DHET / SETA Scarce Skills</h3>
                 </div>
                 <span className="text-[10px] text-muted-foreground/60">Updated {DATA_LAST_UPDATED}</span>
@@ -882,7 +882,7 @@ export default function JobMarketPage() {
             <div className="space-y-4">
               <div className="bg-card border border-emerald-500/20 rounded-xl p-5">
                 <h3 className="text-sm font-semibold text-foreground mb-3 flex items-center gap-2">
-                  <TrendingUp className="w-4 h-4 text-emerald-400" />
+                  <TrendingUp className="w-4 h-4 text-emerald-700" />
                   Highest Premium for Scarce Skills
                 </h3>
                 <div className="space-y-3">
@@ -900,7 +900,7 @@ export default function JobMarketPage() {
                           <div className="h-full bg-emerald-500 rounded-full" style={{ width: `${item.demand}%` }} />
                         </div>
                       </div>
-                      <span className="text-emerald-400 text-sm font-bold ml-3">{item.premium}</span>
+                      <span className="text-emerald-700 text-sm font-bold ml-3">{item.premium}</span>
                     </div>
                   ))}
                 </div>
@@ -908,7 +908,7 @@ export default function JobMarketPage() {
 
               <div className="bg-card border border-red-500/20 rounded-xl p-5">
                 <h3 className="text-sm font-semibold text-foreground mb-3 flex items-center gap-2">
-                  <AlertTriangle className="w-4 h-4 text-red-400" />
+                  <AlertTriangle className="w-4 h-4 text-red-700" />
                   High Automation Risk Careers
                 </h3>
                 <div className="space-y-2">
@@ -924,7 +924,7 @@ export default function JobMarketPage() {
                       <div className="w-24 h-1.5 bg-secondary rounded-full">
                         <div className="h-full bg-red-500 rounded-full" style={{ width: `${item.risk}%` }} />
                       </div>
-                      <span className="text-red-400 font-medium w-8 text-right">{item.risk}%</span>
+                      <span className="text-red-700 font-medium w-8 text-right">{item.risk}%</span>
                     </div>
                   ))}
                 </div>

@@ -174,7 +174,7 @@ export default function ProfilePage() {
             {saved ? <CheckCircle2 className="w-3.5 h-3.5" /> : <Save className="w-3.5 h-3.5" />}
             {saving ? "Saving..." : saved ? "Saved!" : "Save Profile"}
           </Button>
-          {saveError && <p className="text-xs text-red-400">{saveError}</p>}
+          {saveError && <p className="text-xs text-red-700">{saveError}</p>}
         </div>
       </div>
 
@@ -182,10 +182,10 @@ export default function ProfilePage() {
       <div className="bg-card border border-border rounded-xl p-5">
         <div className="flex items-center justify-between mb-2">
           <div className="flex items-center gap-2">
-            <Sparkles className="w-4 h-4 text-amber-400" />
+            <Sparkles className="w-4 h-4 text-amber-700" />
             <span className="text-sm font-semibold text-foreground">Profile Strength</span>
           </div>
-          <span className="text-lg font-bold text-amber-400">{profileStrength}%</span>
+          <span className="text-lg font-bold text-amber-700">{profileStrength}%</span>
         </div>
         <Progress value={profileStrength} className="h-2" indicatorClassName="bg-gradient-to-r from-amber-500 to-orange-500" />
         <p className="text-xs text-muted-foreground mt-2">
@@ -196,7 +196,7 @@ export default function ProfilePage() {
       {/* Basic info */}
       <div className="bg-card border border-border rounded-xl p-5">
         <h2 className="text-sm font-semibold text-foreground mb-4 flex items-center gap-2">
-          <User className="w-4 h-4 text-indigo-400" />
+          <User className="w-4 h-4 text-indigo-700" />
           Personal Information
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -222,7 +222,7 @@ export default function ProfilePage() {
       {/* Location & experience */}
       <div className="bg-card border border-border rounded-xl p-5">
         <h2 className="text-sm font-semibold text-foreground mb-4 flex items-center gap-2">
-          <Briefcase className="w-4 h-4 text-emerald-400" />
+          <Briefcase className="w-4 h-4 text-emerald-700" />
           Work & Location
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -236,7 +236,7 @@ export default function ProfilePage() {
           </div>
           <div>
             <label className="text-xs font-medium text-muted-foreground mb-1.5 block">Province</label>
-            <select ref={provinceRef} className="w-full h-10 rounded-lg border border-input bg-input px-3 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring">
+            <select ref={provinceRef} className="w-full h-10 rounded-lg border border-input bg-card px-3 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring">
               <option value="">Select province...</option>
               {PROVINCES.map((p) => <option key={p} value={p}>{p}</option>)}
             </select>
@@ -260,7 +260,7 @@ export default function ProfilePage() {
             ref={bioRef}
             rows={3}
             placeholder="Brief summary of your experience, skills, and career goals..."
-            className="w-full rounded-lg border border-input bg-input px-3 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring resize-none"
+            className="w-full rounded-lg border border-input bg-card px-3 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring resize-none"
           />
         </div>
       </div>
@@ -268,13 +268,13 @@ export default function ProfilePage() {
       {/* Education */}
       <div className="bg-card border border-border rounded-xl p-5">
         <h2 className="text-sm font-semibold text-foreground mb-4 flex items-center gap-2">
-          <GraduationCap className="w-4 h-4 text-violet-400" />
+          <GraduationCap className="w-4 h-4 text-violet-700" />
           Education
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <label className="text-xs font-medium text-muted-foreground mb-1.5 block">Highest Qualification</label>
-            <select ref={educationRef} className="w-full h-10 rounded-lg border border-input bg-input px-3 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring">
+            <select ref={educationRef} className="w-full h-10 rounded-lg border border-input bg-card px-3 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring">
               <option value="">Select education level...</option>
               {EDUCATION_LEVELS.map((e) => <option key={e} value={e}>{e}</option>)}
             </select>
@@ -297,7 +297,7 @@ export default function ProfilePage() {
       {/* Skills */}
       <div className="bg-card border border-border rounded-xl p-5">
         <h2 className="text-sm font-semibold text-foreground mb-4 flex items-center gap-2">
-          <Code className="w-4 h-4 text-amber-400" />
+          <Code className="w-4 h-4 text-amber-700" />
           Skills ({skills.length})
         </h2>
         <div className="flex flex-wrap gap-2 mb-4">
@@ -307,10 +307,10 @@ export default function ProfilePage() {
               layout
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 1, scale: 1 }}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-indigo-500/15 border border-indigo-500/25 text-sm text-indigo-300"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-indigo-500/15 border border-indigo-500/25 text-sm text-indigo-700"
             >
               {skill}
-              <button onClick={() => removeSkill(skill)} className="text-indigo-400/60 hover:text-indigo-300 ml-0.5 text-xs">×</button>
+              <button onClick={() => removeSkill(skill)} className="text-indigo-700/60 hover:text-indigo-700 ml-0.5 text-xs">×</button>
             </motion.div>
           ))}
         </div>
@@ -343,7 +343,7 @@ export default function ProfilePage() {
       {/* CAPS Subjects (for high school students) */}
       <div className="bg-card border border-border rounded-xl p-5">
         <h2 className="text-sm font-semibold text-foreground mb-1 flex items-center gap-2">
-          <BookOpen className="w-4 h-4 text-amber-400" />
+          <BookOpen className="w-4 h-4 text-amber-700" />
           CAPS Subjects ({subjects.length} selected)
         </h2>
         <p className="text-xs text-muted-foreground mb-4">
@@ -368,12 +368,12 @@ export default function ProfilePage() {
                       }
                       className={`text-xs px-2.5 py-1.5 rounded-full border transition-all font-medium ${
                         selected
-                          ? group.color === "indigo"  ? "border-indigo-500/60 bg-indigo-500/20 text-indigo-300"
-                          : group.color === "emerald" ? "border-emerald-500/60 bg-emerald-500/20 text-emerald-300"
-                          : group.color === "violet"  ? "border-violet-500/60 bg-violet-500/20 text-violet-300"
-                          : group.color === "amber"   ? "border-amber-500/60 bg-amber-500/20 text-amber-300"
-                          : group.color === "blue"    ? "border-blue-500/60 bg-blue-500/20 text-blue-300"
-                          :                             "border-pink-500/60 bg-pink-500/20 text-pink-300"
+                          ? group.color === "indigo"  ? "border-indigo-500/60 bg-indigo-500/20 text-indigo-700"
+                          : group.color === "emerald" ? "border-emerald-500/60 bg-emerald-500/20 text-emerald-700"
+                          : group.color === "violet"  ? "border-violet-500/60 bg-violet-500/20 text-violet-700"
+                          : group.color === "amber"   ? "border-amber-500/60 bg-amber-500/20 text-amber-700"
+                          : group.color === "blue"    ? "border-blue-500/60 bg-blue-500/20 text-blue-700"
+                          :                             "border-pink-500/60 bg-pink-500/20 text-pink-700"
                           : "border-border text-muted-foreground hover:text-foreground"
                       }`}
                     >
@@ -390,7 +390,7 @@ export default function ProfilePage() {
       {/* Open to work toggle */}
       <div className="bg-card border border-emerald-500/20 rounded-xl p-5 flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <Target className="w-5 h-5 text-emerald-400" />
+          <Target className="w-5 h-5 text-emerald-700" />
           <div>
             <div className="text-sm font-semibold text-foreground">Open to Work</div>
             <div className="text-xs text-muted-foreground">Recruiters can discover your profile on CareerIntel SA</div>

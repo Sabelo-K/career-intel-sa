@@ -1,5 +1,9 @@
 "use client";
 
+import { JourneyBrand } from "@/components/journey/chrome";
+
+
+
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { track } from "@/lib/analytics";
@@ -148,13 +152,7 @@ export default function OnboardingPage() {
 
   return (
     <div className="min-h-screen bg-background flex flex-col items-center justify-center p-4">
-      {/* Logo */}
-      <div className="flex items-center gap-2 mb-8">
-        <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center">
-          <Sparkles className="w-4 h-4 text-white" />
-        </div>
-        <span className="text-lg font-bold text-foreground">CareerIntel <span className="text-indigo-400">SA</span></span>
-      </div>
+      {/* Brand */}<div className="flex justify-center mb-8"><JourneyBrand /></div>
 
       <div className="w-full max-w-lg">
         {/* Progress */}
@@ -166,8 +164,8 @@ export default function OnboardingPage() {
             return (
               <div key={s.id} className="flex items-center gap-2 flex-1">
                 <div className={`flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium transition-all ${
-                  active ? "bg-indigo-600 text-white" :
-                  done   ? "bg-indigo-500/20 text-indigo-300" :
+                  active ? "bg-indigo-600 text-primary-foreground" :
+                  done   ? "bg-indigo-500/20 text-indigo-700" :
                            "bg-secondary text-muted-foreground"
                 }`}>
                   {done ? <CheckCircle2 className="w-3.5 h-3.5" /> : <Icon className="w-3.5 h-3.5" />}
@@ -221,7 +219,7 @@ export default function OnboardingPage() {
                         onClick={() => setCurrentRole(r)}
                         className={`text-xs px-2.5 py-1 rounded-full border transition-all ${
                           currentRole === r
-                            ? "border-indigo-500/60 bg-indigo-500/15 text-indigo-300"
+                            ? "border-indigo-500/60 bg-indigo-500/15 text-indigo-700"
                             : "border-border hover:border-indigo-500/30 text-muted-foreground hover:text-foreground"
                         }`}
                       >
@@ -233,8 +231,8 @@ export default function OnboardingPage() {
 
                 {showSubjectStep && (
                   <div className="flex items-start gap-2 bg-amber-500/10 border border-amber-500/20 rounded-xl px-3 py-2.5">
-                    <BookOpen className="w-3.5 h-3.5 text-amber-400 mt-0.5 flex-shrink-0" />
-                    <p className="text-xs text-amber-300 leading-relaxed">
+                    <BookOpen className="w-3.5 h-3.5 text-amber-700 mt-0.5 flex-shrink-0" />
+                    <p className="text-xs text-amber-700 leading-relaxed">
                       We&apos;ll add a subject selection step so we can match you to careers that suit your Grade 10–12 subjects.
                     </p>
                   </div>
@@ -272,7 +270,7 @@ export default function OnboardingPage() {
                         onClick={() => setTargetRole(r)}
                         className={`text-xs px-2.5 py-1 rounded-full border transition-all ${
                           targetRole === r
-                            ? "border-emerald-500/60 bg-emerald-500/15 text-emerald-300"
+                            ? "border-emerald-500/60 bg-emerald-500/15 text-emerald-700"
                             : "border-border hover:border-emerald-500/30 text-muted-foreground hover:text-foreground"
                         }`}
                       >
@@ -312,9 +310,9 @@ export default function OnboardingPage() {
                 {skills.length > 0 && (
                   <div className="flex flex-wrap gap-1.5">
                     {skills.map((skill) => (
-                      <span key={skill} className="inline-flex items-center gap-1 bg-indigo-500/15 border border-indigo-500/25 text-indigo-300 text-xs px-2.5 py-1 rounded-full">
+                      <span key={skill} className="inline-flex items-center gap-1 bg-indigo-500/15 border border-indigo-500/25 text-indigo-700 text-xs px-2.5 py-1 rounded-full">
                         {skill}
-                        <button onClick={() => removeSkill(skill)} className="hover:text-red-400 transition-colors ml-0.5">×</button>
+                        <button onClick={() => removeSkill(skill)} className="hover:text-red-700 transition-colors ml-0.5">×</button>
                       </span>
                     ))}
                   </div>
@@ -361,12 +359,12 @@ export default function OnboardingPage() {
                             onClick={() => toggleSubject(subject)}
                             className={`text-xs px-2.5 py-1.5 rounded-full border transition-all font-medium ${
                               selected
-                                ? group.color === "indigo"  ? "border-indigo-500/60 bg-indigo-500/20 text-indigo-300"
-                                : group.color === "emerald" ? "border-emerald-500/60 bg-emerald-500/20 text-emerald-300"
-                                : group.color === "violet"  ? "border-violet-500/60 bg-violet-500/20 text-violet-300"
-                                : group.color === "amber"   ? "border-amber-500/60 bg-amber-500/20 text-amber-300"
-                                : group.color === "blue"    ? "border-blue-500/60 bg-blue-500/20 text-blue-300"
-                                :                             "border-pink-500/60 bg-pink-500/20 text-pink-300"
+                                ? group.color === "indigo"  ? "border-indigo-500/60 bg-indigo-500/20 text-indigo-700"
+                                : group.color === "emerald" ? "border-emerald-500/60 bg-emerald-500/20 text-emerald-700"
+                                : group.color === "violet"  ? "border-violet-500/60 bg-violet-500/20 text-violet-700"
+                                : group.color === "amber"   ? "border-amber-500/60 bg-amber-500/20 text-amber-700"
+                                : group.color === "blue"    ? "border-blue-500/60 bg-blue-500/20 text-blue-700"
+                                :                             "border-pink-500/60 bg-pink-500/20 text-pink-700"
                                 : "border-border text-muted-foreground hover:text-foreground hover:border-border/60"
                             }`}
                           >
@@ -380,8 +378,8 @@ export default function OnboardingPage() {
 
                 {subjects.length > 0 && (
                   <div className="flex items-center gap-2 pt-1">
-                    <CheckCircle2 className="w-4 h-4 text-emerald-400 flex-shrink-0" />
-                    <span className="text-xs text-emerald-400">{subjects.length} subject{subjects.length !== 1 ? "s" : ""} selected</span>
+                    <CheckCircle2 className="w-4 h-4 text-emerald-700 flex-shrink-0" />
+                    <span className="text-xs text-emerald-700">{subjects.length} subject{subjects.length !== 1 ? "s" : ""} selected</span>
                   </div>
                 )}
               </div>
@@ -391,7 +389,7 @@ export default function OnboardingPage() {
 
         {/* Error banner */}
         {saveError && (
-          <div className="mt-4 px-4 py-3 rounded-lg bg-red-500/15 border border-red-500/30 text-red-300 text-sm">
+          <div className="mt-4 px-4 py-3 rounded-lg bg-red-500/15 border border-red-500/30 text-red-700 text-sm">
             {saveError}
           </div>
         )}

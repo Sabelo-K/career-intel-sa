@@ -88,9 +88,9 @@ export function RoadmapWidget() {
   if (loading) {
     return (
       <div className="bg-card border border-border rounded-xl p-5 animate-pulse">
-        <div className="h-4 w-40 bg-white/10 rounded mb-4" />
-        <div className="h-2 w-full bg-white/5 rounded mb-2" />
-        <div className="h-2 w-3/4 bg-white/5 rounded" />
+        <div className="h-4 w-40 bg-secondary rounded mb-4" />
+        <div className="h-2 w-full bg-secondary rounded mb-2" />
+        <div className="h-2 w-3/4 bg-secondary rounded" />
       </div>
     );
   }
@@ -99,7 +99,7 @@ export function RoadmapWidget() {
     return (
       <div className="bg-card border border-border rounded-xl p-5 flex flex-col items-center text-center gap-3 py-8">
         <div className="w-12 h-12 rounded-full bg-indigo-500/15 flex items-center justify-center">
-          <BookOpen className="w-6 h-6 text-indigo-400" />
+          <BookOpen className="w-6 h-6 text-indigo-700" />
         </div>
         <div>
           <p className="text-sm font-semibold text-foreground">No active roadmap</p>
@@ -137,8 +137,8 @@ export function RoadmapWidget() {
             allDone ? "bg-emerald-500/20" : "bg-indigo-500/15"
           )}>
             {allDone
-              ? <Trophy className="w-4 h-4 text-emerald-400" />
-              : <BookOpen className="w-4 h-4 text-indigo-400" />
+              ? <Trophy className="w-4 h-4 text-emerald-700" />
+              : <BookOpen className="w-4 h-4 text-indigo-700" />
             }
           </div>
           <div>
@@ -147,7 +147,7 @@ export function RoadmapWidget() {
             </h2>
             <div className="flex items-center gap-1.5 mt-0.5">
               <span className="text-xs text-muted-foreground">→</span>
-              <span className="text-xs font-medium text-indigo-300 truncate max-w-[160px]">
+              <span className="text-xs font-medium text-indigo-700 truncate max-w-[160px]">
                 {roadmap.targetRole}
               </span>
             </div>
@@ -169,7 +169,7 @@ export function RoadmapWidget() {
           </span>
           <span className={cn(
             "text-xs font-bold",
-            allDone ? "text-emerald-400" : progressPct >= 50 ? "text-indigo-400" : "text-amber-400"
+            allDone ? "text-emerald-700" : progressPct >= 50 ? "text-indigo-700" : "text-amber-700"
           )}>
             {progressPct}%
           </span>
@@ -210,14 +210,14 @@ export function RoadmapWidget() {
                 "hover:border-indigo-500/30 active:scale-[0.99]",
                 phase.completed
                   ? "bg-emerald-500/8 border-emerald-500/20"
-                  : "border-border hover:bg-white/[0.04]",
+                  : "border-border hover:bg-secondary",
                 toggling === phase.id && "opacity-60 pointer-events-none"
               )}
             >
               {/* Checkbox icon */}
               <div className="flex-shrink-0 mt-0.5">
                 {phase.completed
-                  ? <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+                  ? <CheckCircle2 className="w-4 h-4 text-emerald-700" />
                   : <Circle className="w-4 h-4 text-muted-foreground/50" />
                 }
               </div>
@@ -245,7 +245,7 @@ export function RoadmapWidget() {
                               .join(",")
                       )}&phase=${encodeURIComponent(phase.title)}`}
                       onClick={(e) => e.stopPropagation()}
-                      className="flex items-center gap-0.5 text-[10px] text-indigo-400 hover:text-indigo-300 border border-indigo-500/30 hover:border-indigo-400/50 bg-indigo-500/10 hover:bg-indigo-500/15 px-1.5 py-0.5 rounded transition-all"
+                      className="flex items-center gap-0.5 text-[10px] text-indigo-700 hover:text-indigo-700 border border-indigo-500/30 hover:border-indigo-400/50 bg-indigo-500/10 hover:bg-indigo-500/15 px-1.5 py-0.5 rounded transition-all"
                     >
                       <BookOpen className="w-2.5 h-2.5" />
                       Courses
@@ -264,8 +264,8 @@ export function RoadmapWidget() {
                         className={cn(
                           "text-[10px] px-1.5 py-0.5 rounded border transition-all",
                           phase.completed
-                            ? "text-muted-foreground border-white/10 bg-white/5 hover:border-white/20"
-                            : "text-indigo-300 border-indigo-500/25 bg-indigo-500/10 hover:bg-indigo-500/20 hover:border-indigo-400/40"
+                            ? "text-muted-foreground border-border bg-secondary hover:border-border"
+                            : "text-indigo-700 border-indigo-500/25 bg-indigo-500/10 hover:bg-indigo-500/20 hover:border-indigo-400/40"
                         )}
                       >
                         {s}
@@ -275,7 +275,7 @@ export function RoadmapWidget() {
                       <Link
                         href={`/courses?q=${encodeURIComponent(phase.skills.join(","))}&phase=${encodeURIComponent(phase.title)}`}
                         onClick={(e) => e.stopPropagation()}
-                        className="text-[10px] text-muted-foreground hover:text-indigo-300 transition-colors"
+                        className="text-[10px] text-muted-foreground hover:text-indigo-700 transition-colors"
                       >
                         +{phase.skills.length - 3} more
                       </Link>
@@ -302,8 +302,8 @@ export function RoadmapWidget() {
       {/* Salary impact callout */}
       {roadmap.salaryImpact && !allDone && (
         <div className="mt-3 p-2.5 rounded-lg bg-amber-500/8 border border-amber-500/20">
-          <p className="text-xs text-amber-200/80 flex items-center gap-1.5">
-            <Sparkles className="w-3 h-3 text-amber-400 flex-shrink-0" />
+          <p className="text-xs text-amber-700/80 flex items-center gap-1.5">
+            <Sparkles className="w-3 h-3 text-amber-700 flex-shrink-0" />
             {roadmap.salaryImpact}
           </p>
         </div>
@@ -312,7 +312,7 @@ export function RoadmapWidget() {
       {/* Browse all courses for this role */}
       <Link
         href={`/courses?q=${encodeURIComponent(roadmap.targetRole)}`}
-        className="mt-3 flex items-center justify-center gap-2 w-full py-2.5 rounded-lg border border-indigo-500/25 bg-indigo-500/8 hover:bg-indigo-500/14 hover:border-indigo-400/40 text-xs font-medium text-indigo-300 hover:text-indigo-200 transition-all"
+        className="mt-3 flex items-center justify-center gap-2 w-full py-2.5 rounded-lg border border-indigo-500/25 bg-indigo-500/8 hover:bg-indigo-500/14 hover:border-indigo-400/40 text-xs font-medium text-indigo-700 hover:text-indigo-700 transition-all"
       >
         <BookOpen className="w-3.5 h-3.5" />
         Browse all {roadmap.targetRole} courses

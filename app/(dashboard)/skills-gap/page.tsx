@@ -47,9 +47,9 @@ interface GapResult {
 }
 
 const PRIORITY_COLOR: Record<string, string> = {
-  HIGH: "text-red-400 bg-red-500/15 border-red-500/30",
-  MEDIUM: "text-amber-400 bg-amber-500/15 border-amber-500/30",
-  LOW: "text-blue-400 bg-blue-500/15 border-blue-500/30",
+  HIGH: "text-red-700 bg-red-500/15 border-red-500/30",
+  MEDIUM: "text-amber-700 bg-amber-500/15 border-amber-500/30",
+  LOW: "text-blue-700 bg-blue-500/15 border-blue-500/30",
 };
 
 export default function SkillsGapPage() {
@@ -228,18 +228,18 @@ export default function SkillsGapPage() {
       <div className="bg-card border border-border rounded-xl p-5">
         <div className="flex items-center justify-between mb-3">
           <h2 className="text-sm font-semibold text-foreground">Your Current Skills</h2>
-          <Button variant="ghost" size="sm" className="text-xs text-indigo-400" onClick={() => setShowSkillInput(true)}>+ Add Skills</Button>
+          <Button variant="ghost" size="sm" className="text-xs text-indigo-700" onClick={() => setShowSkillInput(true)}>+ Add Skills</Button>
         </div>
         <div className="flex flex-wrap gap-2">
           {currentSkills.length === 0 && (
             <p className="text-xs text-muted-foreground italic">
-              No skills loaded yet — <a href="/profile" className="text-indigo-400 hover:underline">add skills to your profile</a> or use the + Add Skills button below.
+              No skills loaded yet — <a href="/profile" className="text-indigo-700 hover:underline">add skills to your profile</a> or use the + Add Skills button below.
             </p>
           )}
           {currentSkills.map((skill) => (
             <Badge key={skill} variant="success" className="flex items-center gap-1 pr-1">
               {skill}
-              <button onClick={() => setCurrentSkills(currentSkills.filter(s => s !== skill))} className="ml-1 hover:text-red-400 transition-colors">
+              <button onClick={() => setCurrentSkills(currentSkills.filter(s => s !== skill))} className="ml-1 hover:text-red-700 transition-colors">
                 <X className="w-3 h-3" />
               </button>
             </Badge>
@@ -293,20 +293,20 @@ export default function SkillsGapPage() {
             exit={{ opacity: 0, y: -8 }}
             className={`flex items-center gap-3 p-3.5 rounded-xl border text-sm ${
               skillsSaved
-                ? "bg-emerald-500/12 border-emerald-500/30 text-emerald-200"
-                : "bg-indigo-500/10 border-indigo-500/25 text-indigo-200"
+                ? "bg-emerald-500/12 border-emerald-500/30 text-emerald-700"
+                : "bg-indigo-500/10 border-indigo-500/25 text-indigo-700"
             }`}
           >
             {skillsSaved ? (
               <>
-                <CheckCircle2 className="w-4 h-4 text-emerald-400 flex-shrink-0" />
+                <CheckCircle2 className="w-4 h-4 text-emerald-700 flex-shrink-0" />
                 <span className="flex-1">Skills saved to your profile!</span>
               </>
             ) : (
               <>
-                <Save className="w-4 h-4 text-indigo-400 flex-shrink-0" />
+                <Save className="w-4 h-4 text-indigo-700 flex-shrink-0" />
                 <span className="flex-1">
-                  You added <strong className="text-indigo-300">{newSkillsToSync.length} new skill{newSkillsToSync.length !== 1 ? "s" : ""}</strong> not yet in your profile.
+                  You added <strong className="text-indigo-700">{newSkillsToSync.length} new skill{newSkillsToSync.length !== 1 ? "s" : ""}</strong> not yet in your profile.
                 </span>
                 <Button
                   size="sm"
@@ -369,10 +369,10 @@ export default function SkillsGapPage() {
 
       {/* Error state */}
       {error && (
-        <div className="flex items-center gap-3 p-4 rounded-xl bg-red-500/10 border border-red-500/20 text-sm text-red-300">
+        <div className="flex items-center gap-3 p-4 rounded-xl bg-red-500/10 border border-red-500/20 text-sm text-red-700">
           <AlertCircle className="w-4 h-4 flex-shrink-0" />
           <span>{error}</span>
-          <button onClick={() => setError(null)} className="ml-auto text-red-400 hover:text-red-200">
+          <button onClick={() => setError(null)} className="ml-auto text-red-700 hover:text-red-700">
             <X className="w-4 h-4" />
           </button>
         </div>
@@ -387,9 +387,9 @@ export default function SkillsGapPage() {
             exit={{ opacity: 0, y: -8 }}
             className="flex items-center gap-3 p-3.5 rounded-xl bg-indigo-500/12 border border-indigo-500/30 text-sm"
           >
-            <TrendingUp className="w-4 h-4 text-indigo-400 flex-shrink-0" />
-            <span className="text-indigo-200 flex-1">
-              🎉 You&apos;ve closed <strong className="text-indigo-300">{closedGaps} gap{closedGaps !== 1 ? "s" : ""}</strong> since your last analysis for this role. Keep going!
+            <TrendingUp className="w-4 h-4 text-indigo-700 flex-shrink-0" />
+            <span className="text-indigo-700 flex-1">
+              🎉 You&apos;ve closed <strong className="text-indigo-700">{closedGaps} gap{closedGaps !== 1 ? "s" : ""}</strong> since your last analysis for this role. Keep going!
             </span>
             <button onClick={() => setClosedGaps(null)} className="text-muted-foreground hover:text-foreground">
               <X className="w-4 h-4" />
@@ -407,11 +407,11 @@ export default function SkillsGapPage() {
             exit={{ opacity: 0, y: -8 }}
             className="flex items-center gap-3 p-3.5 rounded-xl bg-emerald-500/12 border border-emerald-500/30 text-sm"
           >
-            <CheckCircle2 className="w-4 h-4 text-emerald-400 flex-shrink-0" />
-            <span className="text-emerald-200 flex-1">
+            <CheckCircle2 className="w-4 h-4 text-emerald-700 flex-shrink-0" />
+            <span className="text-emerald-700 flex-1">
               Roadmap saved to your dashboard — track progress from there anytime.
             </span>
-            <Link href="/dashboard" className="flex items-center gap-1 text-xs text-emerald-400 hover:text-emerald-300 font-medium transition-colors">
+            <Link href="/dashboard" className="flex items-center gap-1 text-xs text-emerald-700 hover:text-emerald-700 font-medium transition-colors">
               <LayoutDashboard className="w-3.5 h-3.5" />
               View
             </Link>
@@ -433,9 +433,9 @@ export default function SkillsGapPage() {
                 <div key={stat.label} className="stat-card">
                   <div className="text-xs text-muted-foreground mb-1">{stat.label}</div>
                   <div className={`text-2xl font-bold ${
-                    stat.color === "emerald" ? "text-emerald-400" :
-                    stat.color === "amber" ? "text-amber-400" :
-                    stat.color === "red" ? "text-red-400" : "text-indigo-400"
+                    stat.color === "emerald" ? "text-emerald-700" :
+                    stat.color === "amber" ? "text-amber-700" :
+                    stat.color === "red" ? "text-red-700" : "text-indigo-700"
                   }`}>{stat.value}</div>
                   <div className="text-xs text-muted-foreground mt-0.5">{stat.desc}</div>
                 </div>
@@ -446,14 +446,14 @@ export default function SkillsGapPage() {
             <div className="bg-card border border-border rounded-xl p-5">
               <div className="flex items-center justify-between mb-2">
                 <span className="text-sm font-semibold text-foreground">Skills match for {result.targetRole}</span>
-                <span className="text-2xl font-bold text-amber-400">{result.matchPercentage}%</span>
+                <span className="text-2xl font-bold text-amber-700">{result.matchPercentage}%</span>
               </div>
               <Progress value={result.matchPercentage} className="h-3" indicatorClassName="bg-gradient-to-r from-amber-500 to-orange-500" />
               <div className="flex items-center justify-between mt-2 text-xs text-muted-foreground">
                 <span>Current: {currentSkills.length} skills</span>
                 <span>Target: {currentSkills.length + result.missingSkills.length} skills needed</span>
               </div>
-              <div className="mt-3 p-3 rounded-lg bg-emerald-500/8 border border-emerald-500/20 text-xs text-emerald-200/80">
+              <div className="mt-3 p-3 rounded-lg bg-emerald-500/8 border border-emerald-500/20 text-xs text-emerald-700/80">
                 <TrendingUp className="w-3.5 h-3.5 inline mr-1.5" />
                 {result.salaryImpact}
               </div>
@@ -462,7 +462,7 @@ export default function SkillsGapPage() {
             {/* Missing skills */}
             <div className="bg-card border border-border rounded-xl p-5">
               <h3 className="text-sm font-semibold text-foreground mb-4 flex items-center gap-2">
-                <AlertCircle className="w-4 h-4 text-amber-400" />
+                <AlertCircle className="w-4 h-4 text-amber-700" />
                 Missing Skills ({result.missingSkills.length})
               </h3>
               <div className="space-y-3">
@@ -483,7 +483,7 @@ export default function SkillsGapPage() {
                     </div>
                     <div className="text-right flex-shrink-0">
                       <div className="text-xs text-muted-foreground">Demand</div>
-                      <div className="text-sm font-bold text-indigo-400">{skill.demandScore}</div>
+                      <div className="text-sm font-bold text-indigo-700">{skill.demandScore}</div>
                     </div>
                     <div className="text-right flex-shrink-0">
                       <div className="text-xs text-muted-foreground">Time</div>
@@ -497,7 +497,7 @@ export default function SkillsGapPage() {
             {/* Learning roadmap */}
             <div className="bg-card border border-border rounded-xl p-5">
               <h3 className="text-sm font-semibold text-foreground mb-5 flex items-center gap-2">
-                <BookOpen className="w-4 h-4 text-indigo-400" />
+                <BookOpen className="w-4 h-4 text-indigo-700" />
                 Personalised Learning Roadmap · {result.estimatedMonths} months
               </h3>
               <div className="space-y-3">
@@ -508,7 +508,7 @@ export default function SkillsGapPage() {
                     className="cursor-pointer"
                   >
                     <div className={`flex items-start gap-4 p-4 rounded-xl border transition-all ${activeStep === i ? "border-indigo-500/40 bg-indigo-500/8" : "border-border hover:border-indigo-500/20 hover:bg-secondary"}`}>
-                      <div className="w-8 h-8 rounded-full bg-indigo-600/20 border border-indigo-500/30 flex items-center justify-center text-xs font-bold text-indigo-400 flex-shrink-0">
+                      <div className="w-8 h-8 rounded-full bg-indigo-600/20 border border-indigo-500/30 flex items-center justify-center text-xs font-bold text-indigo-700 flex-shrink-0">
                         {step.order}
                       </div>
                       <div className="flex-1 min-w-0">
@@ -530,7 +530,7 @@ export default function SkillsGapPage() {
                           >
                             <div className="text-xs text-muted-foreground mb-1.5 font-medium">Recommended Resources:</div>
                             {step.resources.map((r) => (
-                              <div key={r} className="flex items-center gap-1.5 text-xs text-indigo-300 mb-1">
+                              <div key={r} className="flex items-center gap-1.5 text-xs text-indigo-700 mb-1">
                                 <ChevronRight className="w-3 h-3" />
                                 {r}
                               </div>

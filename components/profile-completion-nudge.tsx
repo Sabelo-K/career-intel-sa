@@ -57,14 +57,14 @@ export function ProfileCompletionNudge({ profileStrength, profileMissing }: Prop
 
           <div className="flex items-start gap-3 pr-6">
             <div className="w-9 h-9 rounded-lg bg-indigo-500/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-              <Sparkles className="w-4.5 h-4.5 text-indigo-400" />
+              <Sparkles className="w-4.5 h-4.5 text-indigo-700" />
             </div>
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2 mb-1">
                 <p className="text-sm font-semibold text-foreground">
                   Your profile is {profileStrength}% complete
                 </p>
-                <span className="text-xs px-1.5 py-0.5 rounded bg-indigo-500/20 text-indigo-300 font-medium">
+                <span className="text-xs px-1.5 py-0.5 rounded bg-indigo-500/20 text-indigo-700 font-medium">
                   {profileMissing.length} step{profileMissing.length !== 1 ? "s" : ""} left
                 </span>
               </div>
@@ -77,9 +77,9 @@ export function ProfileCompletionNudge({ profileStrength, profileMissing }: Prop
                   <Link
                     key={step.href}
                     href={step.href}
-                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-indigo-500/15 border border-indigo-500/30 text-xs font-medium text-indigo-200 hover:bg-indigo-500/25 hover:border-indigo-500/50 transition-all"
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-indigo-500/15 border border-indigo-500/30 text-xs font-medium text-indigo-700 hover:bg-indigo-500/25 hover:border-indigo-500/50 transition-all"
                   >
-                    <CheckCircle2 className="w-3 h-3 text-indigo-400" />
+                    <CheckCircle2 className="w-3 h-3 text-indigo-700" />
                     {step.label}
                     <ChevronRight className="w-3 h-3 opacity-60" />
                   </Link>

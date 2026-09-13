@@ -1,3 +1,4 @@
+import { JourneyHeader } from "@/components/journey/chrome";
 /**
  * /p/[userId] — Public shareable career profile
  * No auth required. Share as: career-intel-sa.vercel.app/p/<clerkId>
@@ -86,34 +87,16 @@ export default async function PublicProfilePage(
     .toUpperCase();
 
   return (
-    <div className="min-h-screen bg-[#0d1526] text-foreground">
+    <div className="min-h-screen bg-card text-foreground">
       {/* Navbar */}
-      <header className="border-b border-white/10 bg-black/40 backdrop-blur-xl sticky top-0 z-10">
-        <div className="max-w-3xl mx-auto px-4 py-3 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2">
-            <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center">
-              <Brain className="w-4 h-4 text-white" />
-            </div>
-            <span className="font-bold text-sm text-white">
-              Career<span className="text-indigo-400">Intel</span>
-              <span className="text-amber-400 text-xs ml-1">SA</span>
-            </span>
-          </Link>
-          <Link
-            href="/sign-up"
-            className="text-xs bg-indigo-600 hover:bg-indigo-500 text-white px-3 py-1.5 rounded-lg font-medium transition-colors"
-          >
-            Build Your Profile
-          </Link>
-        </div>
-      </header>
+      <JourneyHeader />
 
       <main className="max-w-3xl mx-auto px-4 py-8 space-y-6">
         {/* Hero card */}
         <div className="bg-card border border-border rounded-2xl p-6">
           <div className="flex items-start gap-5">
             {/* Avatar */}
-            <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center text-white font-bold text-xl flex-shrink-0">
+            <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center text-primary-foreground font-bold text-xl flex-shrink-0">
               {initials}
             </div>
 
@@ -122,11 +105,11 @@ export default async function PublicProfilePage(
                 <div>
                   <h1 className="text-xl font-bold text-foreground">{profile.name}</h1>
                   {profile.currentRole && (
-                    <p className="text-sm text-indigo-300 font-medium mt-0.5">{profile.currentRole}</p>
+                    <p className="text-sm text-indigo-700 font-medium mt-0.5">{profile.currentRole}</p>
                   )}
                 </div>
                 {profile.isOpenToWork && (
-                  <span className="text-xs px-2.5 py-1 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 font-medium flex-shrink-0">
+                  <span className="text-xs px-2.5 py-1 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-700 font-medium flex-shrink-0">
                     🟢 Open to Work
                   </span>
                 )}
@@ -159,19 +142,19 @@ export default async function PublicProfilePage(
                 <div className="flex flex-wrap gap-2 mt-3">
                   {profile.linkedinUrl && (
                     <a href={profile.linkedinUrl} target="_blank" rel="noopener noreferrer"
-                      className="text-xs flex items-center gap-1 text-indigo-400 hover:text-indigo-300 transition-colors">
+                      className="text-xs flex items-center gap-1 text-indigo-700 hover:text-indigo-700 transition-colors">
                       <Globe className="w-3 h-3" />LinkedIn
                     </a>
                   )}
                   {profile.githubUrl && (
                     <a href={profile.githubUrl} target="_blank" rel="noopener noreferrer"
-                      className="text-xs flex items-center gap-1 text-indigo-400 hover:text-indigo-300 transition-colors">
+                      className="text-xs flex items-center gap-1 text-indigo-700 hover:text-indigo-700 transition-colors">
                       <Globe className="w-3 h-3" />GitHub
                     </a>
                   )}
                   {profile.portfolioUrl && (
                     <a href={profile.portfolioUrl} target="_blank" rel="noopener noreferrer"
-                      className="text-xs flex items-center gap-1 text-indigo-400 hover:text-indigo-300 transition-colors">
+                      className="text-xs flex items-center gap-1 text-indigo-700 hover:text-indigo-700 transition-colors">
                       <Globe className="w-3 h-3" />Portfolio
                     </a>
                   )}
@@ -192,10 +175,10 @@ export default async function PublicProfilePage(
         {profile.targetRole && (
           <div className="bg-card border border-indigo-500/20 rounded-xl p-5">
             <div className="flex items-center gap-2 mb-1">
-              <Target className="w-4 h-4 text-indigo-400" />
+              <Target className="w-4 h-4 text-indigo-700" />
               <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Career Goal</span>
             </div>
-            <p className="text-sm font-semibold text-indigo-300">{profile.targetRole}</p>
+            <p className="text-sm font-semibold text-indigo-700">{profile.targetRole}</p>
           </div>
         )}
 
@@ -203,7 +186,7 @@ export default async function PublicProfilePage(
         {profile.skills.length > 0 && (
           <div className="bg-card border border-border rounded-xl p-5">
             <div className="flex items-center gap-2 mb-3">
-              <BookOpen className="w-4 h-4 text-emerald-400" />
+              <BookOpen className="w-4 h-4 text-emerald-700" />
               <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
                 Skills · {profile.skills.length} listed
               </span>
@@ -230,13 +213,13 @@ export default async function PublicProfilePage(
           <div className="flex flex-col sm:flex-row gap-2 justify-center">
             <Link
               href="/sign-up"
-              className="px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-semibold transition-colors"
+              className="px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-primary-foreground text-sm font-semibold transition-colors"
             >
               Create Free Profile
             </Link>
             <Link
               href="/"
-              className="px-5 py-2.5 rounded-xl bg-white/[0.07] border border-white/15 hover:bg-white/[0.12] text-white text-sm font-medium transition-colors"
+              className="px-5 py-2.5 rounded-xl bg-secondary border border-border hover:bg-secondary text-foreground text-sm font-medium transition-colors"
             >
               Learn More
             </Link>

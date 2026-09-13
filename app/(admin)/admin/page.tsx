@@ -68,7 +68,7 @@ function StarRow({ rating }: { rating: number }) {
   return (
     <span className="flex items-center gap-0.5">
       {[1, 2, 3, 4, 5].map((s) => (
-        <Star key={s} className={`w-3 h-3 ${s <= rating ? "fill-amber-400 text-amber-400" : "text-muted-foreground/30"}`} />
+        <Star key={s} className={`w-3 h-3 ${s <= rating ? "fill-amber-400 text-amber-700" : "text-muted-foreground/30"}`} />
       ))}
     </span>
   );
@@ -110,7 +110,7 @@ function PlanOverridePanel() {
   return (
     <div className="bg-card border border-border rounded-xl p-5 space-y-4">
       <h3 className="text-sm font-semibold text-foreground flex items-center gap-2">
-        <Crown className="w-4 h-4 text-amber-400" />
+        <Crown className="w-4 h-4 text-amber-700" />
         Manual Plan Override
         <span className="text-xs text-muted-foreground font-normal ml-1">— fix users whose PayFast ITN didn&apos;t fire</span>
       </h3>
@@ -166,7 +166,7 @@ function PlanOverridePanel() {
           <button
             onClick={submit}
             disabled={busy || !email.trim()}
-            className="flex items-center gap-2 px-4 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 text-white text-sm font-medium transition-colors"
+            className="flex items-center gap-2 px-4 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 text-primary-foreground text-sm font-medium transition-colors"
           >
             {busy ? <RefreshCw className="w-3.5 h-3.5 animate-spin" /> : <Zap className="w-3.5 h-3.5" />}
             Apply Plan
@@ -175,7 +175,7 @@ function PlanOverridePanel() {
       </div>
 
       {result && (
-        <div className={`flex items-start gap-2 p-3 rounded-lg text-sm ${result.ok ? "bg-emerald-500/10 border border-emerald-500/25 text-emerald-300" : "bg-red-500/10 border border-red-500/25 text-red-300"}`}>
+        <div className={`flex items-start gap-2 p-3 rounded-lg text-sm ${result.ok ? "bg-emerald-500/10 border border-emerald-500/25 text-emerald-700" : "bg-red-500/10 border border-red-500/25 text-red-700"}`}>
           {result.ok
             ? <CheckCircle2 className="w-4 h-4 flex-shrink-0 mt-0.5" />
             : <Shield className="w-4 h-4 flex-shrink-0 mt-0.5" />}
@@ -251,10 +251,10 @@ export default function AdminPage() {
       {/* ── API error banner ─────────────────────────────────────────────── */}
       {apiError && (
         <div className="flex items-start gap-3 p-4 rounded-xl bg-red-500/10 border border-red-500/25 text-sm">
-          <Shield className="w-4 h-4 text-red-400 flex-shrink-0 mt-0.5" />
+          <Shield className="w-4 h-4 text-red-700 flex-shrink-0 mt-0.5" />
           <div className="flex-1">
-            <p className="text-red-300 font-medium">Stats API error — check server logs</p>
-            <p className="text-red-400/70 text-xs mt-0.5 font-mono break-all">{apiError}</p>
+            <p className="text-red-700 font-medium">Stats API error — check server logs</p>
+            <p className="text-red-700/70 text-xs mt-0.5 font-mono break-all">{apiError}</p>
           </div>
         </div>
       )}
@@ -263,7 +263,7 @@ export default function AdminPage() {
       <div className="bg-card border border-border rounded-xl p-5 space-y-5">
         <div className="flex items-center justify-between">
           <h2 className="text-sm font-semibold text-foreground flex items-center gap-2">
-            <Star className="w-4 h-4 text-amber-400" />
+            <Star className="w-4 h-4 text-amber-700" />
             Customer Satisfaction (CSAT)
           </h2>
           {csat && <Badge variant="indigo">{csat.total} response{csat.total !== 1 ? "s" : ""}</Badge>}
@@ -287,7 +287,7 @@ export default function AdminPage() {
                 return (
                   <div key={star} className="flex items-center gap-2 text-xs">
                     <span className="text-muted-foreground w-3">{star}</span>
-                    <Star className="w-3 h-3 fill-amber-400 text-amber-400 flex-shrink-0" />
+                    <Star className="w-3 h-3 fill-amber-400 text-amber-700 flex-shrink-0" />
                     <div className="flex-1 h-2 bg-secondary rounded-full overflow-hidden">
                       <motion.div
                         initial={{ width: 0 }} animate={{ width: `${pct}%` }}
@@ -327,7 +327,7 @@ export default function AdminPage() {
                   <div className="flex items-center justify-between gap-2">
                     <div className="flex items-center gap-2">
                       <StarRow rating={r.rating} />
-                      <span className="text-xs text-indigo-300">{FEATURE_LABEL[r.feature] ?? r.feature}</span>
+                      <span className="text-xs text-indigo-700">{FEATURE_LABEL[r.feature] ?? r.feature}</span>
                     </div>
                     <span className="text-xs text-muted-foreground flex-shrink-0">
                       {new Date(r.createdAt).toLocaleDateString("en-ZA", { day: "numeric", month: "short" })}
@@ -365,19 +365,19 @@ export default function AdminPage() {
               stat.color === "blue"    ? "bg-blue-500/15"    : "bg-pink-500/15"
             }`}>
               <stat.icon className={`w-4 h-4 ${
-                stat.color === "indigo"  ? "text-indigo-400"  :
-                stat.color === "emerald" ? "text-emerald-400" :
-                stat.color === "amber"   ? "text-amber-400"   :
-                stat.color === "violet"  ? "text-violet-400"  :
-                stat.color === "green"   ? "text-green-400"   :
-                stat.color === "red"     ? "text-red-400"     :
-                stat.color === "blue"    ? "text-blue-400"    : "text-pink-400"
+                stat.color === "indigo"  ? "text-indigo-700"  :
+                stat.color === "emerald" ? "text-emerald-700" :
+                stat.color === "amber"   ? "text-amber-700"   :
+                stat.color === "violet"  ? "text-violet-700"  :
+                stat.color === "green"   ? "text-green-700"   :
+                stat.color === "red"     ? "text-red-700"     :
+                stat.color === "blue"    ? "text-blue-700"    : "text-pink-700"
               }`} />
             </div>
             {loading
               ? <Skeleton className="h-7 w-16 mb-1" />
               : apiError
-                ? <div className="text-xl font-bold text-red-400">—</div>
+                ? <div className="text-xl font-bold text-red-700">—</div>
                 : <div className="text-xl font-bold text-foreground">{stat.prefix}{(stat.value ?? 0).toLocaleString()}</div>
             }
             <div className="text-xs text-muted-foreground mt-0.5">{stat.label}</div>
@@ -397,15 +397,15 @@ export default function AdminPage() {
             <div className="flex items-center justify-between mb-2">
               <span className="text-xs text-muted-foreground font-medium">{stat.label}</span>
               <stat.icon className={`w-4 h-4 ${
-                stat.color === "emerald" ? "text-emerald-400" :
-                stat.color === "violet"  ? "text-violet-400"  :
-                stat.color === "amber"   ? "text-amber-400"   : "text-indigo-400"
+                stat.color === "emerald" ? "text-emerald-700" :
+                stat.color === "violet"  ? "text-violet-700"  :
+                stat.color === "amber"   ? "text-amber-700"   : "text-indigo-700"
               }`} />
             </div>
             {loading
               ? <Skeleton className="h-8 w-20 mb-1" />
               : apiError
-                ? <div className="text-2xl font-bold text-red-400">—</div>
+                ? <div className="text-2xl font-bold text-red-700">—</div>
                 : <div className="text-2xl font-bold text-foreground">{(stat.value ?? 0).toLocaleString()}</div>
             }
             <div className="text-xs text-muted-foreground mt-1">{stat.desc}</div>
@@ -419,7 +419,7 @@ export default function AdminPage() {
         {/* Plan breakdown */}
         <div className="bg-card border border-border rounded-xl p-5">
           <h3 className="text-sm font-semibold text-foreground mb-1 flex items-center gap-2">
-            <Crown className="w-4 h-4 text-amber-400" />
+            <Crown className="w-4 h-4 text-amber-700" />
             Paid Plan Breakdown
           </h3>
           <p className="text-xs text-muted-foreground mb-4">Currently active paid users by plan tier</p>
@@ -430,9 +430,9 @@ export default function AdminPage() {
             const bd = s?.planBreakdown ?? { graduate: 0, professional: 0, recruiter: 0 };
             const total = bd.graduate + bd.professional + bd.recruiter || 1;
             const plans = [
-              { key: "graduate",     label: "Graduate",     price: 49,  count: bd.graduate,     color: "bg-violet-500", textColor: "text-violet-300" },
-              { key: "professional", label: "Professional", price: 99,  count: bd.professional, color: "bg-indigo-500", textColor: "text-indigo-300" },
-              { key: "recruiter",    label: "Recruiter",    price: 499, count: bd.recruiter,     color: "bg-amber-500",  textColor: "text-amber-300"  },
+              { key: "graduate",     label: "Graduate",     price: 49,  count: bd.graduate,     color: "bg-violet-500", textColor: "text-violet-700" },
+              { key: "professional", label: "Professional", price: 99,  count: bd.professional, color: "bg-indigo-500", textColor: "text-indigo-700" },
+              { key: "recruiter",    label: "Recruiter",    price: 499, count: bd.recruiter,     color: "bg-amber-500",  textColor: "text-amber-700"  },
             ];
             const totalRevenue = plans.reduce((sum, p) => sum + p.count * p.price, 0);
             return (
@@ -461,7 +461,7 @@ export default function AdminPage() {
                 ))}
                 <div className="pt-2 border-t border-border flex items-center justify-between text-sm">
                   <span className="text-muted-foreground">Total active MRR</span>
-                  <span className="font-bold text-green-400">R{totalRevenue.toLocaleString()}/mo</span>
+                  <span className="font-bold text-green-700">R{totalRevenue.toLocaleString()}/mo</span>
                 </div>
               </div>
             );
@@ -471,7 +471,7 @@ export default function AdminPage() {
         {/* Revenue trend */}
         <div className="bg-card border border-border rounded-xl p-5">
           <h3 className="text-sm font-semibold text-foreground mb-1 flex items-center gap-2">
-            <DollarSign className="w-4 h-4 text-green-400" />
+            <DollarSign className="w-4 h-4 text-green-700" />
             Revenue Trend (last 6 months)
           </h3>
           <p className="text-xs text-muted-foreground mb-4">Estimated ZAR revenue per month · based on plan prices</p>
@@ -489,9 +489,9 @@ export default function AdminPage() {
                 <XAxis dataKey="month" tick={{ fontSize: 10, fill: "#6b7280" }} axisLine={false} tickLine={false} />
                 <YAxis tick={{ fontSize: 10, fill: "#6b7280" }} axisLine={false} tickLine={false} tickFormatter={(v) => `R${v}`} />
                 <Tooltip
-                  contentStyle={{ background: "rgba(13,21,38,0.97)", border: "1px solid rgba(34,197,94,0.25)", borderRadius: 8, fontSize: 12, color: "#e5e7eb" }}
+                  contentStyle={{ background: "#ffffff", border: "1px solid rgba(34,197,94,0.25)", borderRadius: 8, fontSize: 12, color: "#1b263e" }}
                   labelStyle={{ color: "#86efac", fontWeight: 600 }}
-                  itemStyle={{ color: "#e5e7eb" }}
+                  itemStyle={{ color: "#1b263e" }}
                   formatter={(v: number) => [`R${v.toLocaleString()}`, "Revenue"]}
                 />
                 <Area
@@ -522,11 +522,11 @@ export default function AdminPage() {
                     </span>
                   )}
                 </span>
-                <span className="font-medium text-amber-400">R{(s.creditRevenueThisMonth ?? 0).toLocaleString()}</span>
+                <span className="font-medium text-amber-700">R{(s.creditRevenueThisMonth ?? 0).toLocaleString()}</span>
               </div>
               <div className="flex items-center justify-between text-xs pt-1.5 border-t border-border/60">
                 <span className="text-muted-foreground">This month so far</span>
-                <span className="font-semibold text-green-400">R{(s.revenueThisMonth ?? 0).toLocaleString()}</span>
+                <span className="font-semibold text-green-700">R{(s.revenueThisMonth ?? 0).toLocaleString()}</span>
               </div>
               {typeof s.creditRevenueTotal === "number" && s.creditRevenueTotal > 0 && (
                 <div className="flex items-center justify-between text-[11px] text-muted-foreground/80">
@@ -550,7 +550,7 @@ export default function AdminPage() {
         {/* User growth */}
         <div className="bg-card border border-border rounded-xl p-5">
           <h3 className="text-sm font-semibold text-foreground mb-1 flex items-center gap-2">
-            <TrendingUp className="w-4 h-4 text-emerald-400" />
+            <TrendingUp className="w-4 h-4 text-emerald-700" />
             New Sign-ups (last 6 months)
           </h3>
           <p className="text-xs text-muted-foreground mb-4">New accounts created per month</p>
@@ -562,9 +562,9 @@ export default function AdminPage() {
                 <XAxis dataKey="month" tick={{ fontSize: 10, fill: "#6b7280" }} axisLine={false} tickLine={false} />
                 <YAxis tick={{ fontSize: 10, fill: "#6b7280" }} axisLine={false} tickLine={false} allowDecimals={false} />
                 <Tooltip
-                  contentStyle={{ background: "rgba(13,21,38,0.97)", border: "1px solid rgba(99,102,241,0.25)", borderRadius: 8, fontSize: 12, color: "#e5e7eb" }}
+                  contentStyle={{ background: "#ffffff", border: "1px solid rgba(99,102,241,0.25)", borderRadius: 8, fontSize: 12, color: "#1b263e" }}
                   labelStyle={{ color: "#a5b4fc", fontWeight: 600 }}
-                  itemStyle={{ color: "#e5e7eb" }}
+                  itemStyle={{ color: "#1b263e" }}
                 />
                 <Line type="monotone" dataKey="users" stroke="#6366f1" strokeWidth={2.5} dot={{ fill: "#6366f1", r: 4 }} name="New users" />
               </LineChart>
@@ -575,7 +575,7 @@ export default function AdminPage() {
         {/* Top target roles */}
         <div className="bg-card border border-border rounded-xl p-5">
           <h3 className="text-sm font-semibold text-foreground mb-1 flex items-center gap-2">
-            <BarChart2 className="w-4 h-4 text-indigo-400" />
+            <BarChart2 className="w-4 h-4 text-indigo-700" />
             Most Searched Career Roles
           </h3>
           <p className="text-xs text-muted-foreground mb-4">From Skills Gap + Career Path analyses</p>
@@ -591,9 +591,9 @@ export default function AdminPage() {
                 <XAxis type="number" tick={{ fontSize: 10, fill: "#6b7280" }} axisLine={false} tickLine={false} allowDecimals={false} />
                 <YAxis type="category" dataKey="career" tick={{ fontSize: 10, fill: "#6b7280" }} axisLine={false} tickLine={false} width={120} />
                 <Tooltip
-                  contentStyle={{ background: "rgba(13,21,38,0.97)", border: "1px solid rgba(99,102,241,0.25)", borderRadius: 8, fontSize: 12, color: "#e5e7eb" }}
+                  contentStyle={{ background: "#ffffff", border: "1px solid rgba(99,102,241,0.25)", borderRadius: 8, fontSize: 12, color: "#1b263e" }}
                   labelStyle={{ color: "#a5b4fc", fontWeight: 600 }}
-                  itemStyle={{ color: "#e5e7eb" }}
+                  itemStyle={{ color: "#1b263e" }}
                   cursor={{ fill: "rgba(99,102,241,0.08)" }}
                 />
                 <Bar dataKey="queries" radius={4} name="Searches">
@@ -612,7 +612,7 @@ export default function AdminPage() {
         <div className="flex items-center justify-between mb-4">
           <div>
             <h3 className="text-sm font-semibold text-foreground flex items-center gap-2">
-              <CalendarClock className="w-4 h-4 text-indigo-400" />
+              <CalendarClock className="w-4 h-4 text-indigo-700" />
               Active Subscribers — Membership Expiry
             </h3>
             <p className="text-xs text-muted-foreground mt-0.5">
@@ -621,8 +621,8 @@ export default function AdminPage() {
           </div>
           {s && s.expiringCount > 0 && (
             <div className="flex items-center gap-1.5 bg-red-500/10 border border-red-500/20 rounded-full px-3 py-1">
-              <AlertTriangle className="w-3.5 h-3.5 text-red-400" />
-              <span className="text-xs font-semibold text-red-300">
+              <AlertTriangle className="w-3.5 h-3.5 text-red-700" />
+              <span className="text-xs font-semibold text-red-700">
                 {s.expiringCount} expiring within 7 days
               </span>
             </div>
@@ -667,7 +667,7 @@ export default function AdminPage() {
                       <td className="py-3 pr-4">
                         <div className="flex items-center gap-2.5">
                           <div className="w-7 h-7 rounded-full bg-indigo-500/20 border border-indigo-500/25 flex items-center justify-center flex-shrink-0">
-                            <span className="text-xs font-bold text-indigo-300">
+                            <span className="text-xs font-bold text-indigo-700">
                               {(sub.name?.[0] ?? "?").toUpperCase()}
                             </span>
                           </div>
@@ -681,9 +681,9 @@ export default function AdminPage() {
                       {/* Plan */}
                       <td className="py-3 pr-4">
                         <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full border ${
-                          sub.planKey === "recruiter"    ? "bg-amber-500/15 border-amber-500/25 text-amber-300" :
-                          sub.planKey === "professional" ? "bg-indigo-500/15 border-indigo-500/25 text-indigo-300" :
-                                                          "bg-violet-500/15 border-violet-500/25 text-violet-300"
+                          sub.planKey === "recruiter"    ? "bg-amber-500/15 border-amber-500/25 text-amber-700" :
+                          sub.planKey === "professional" ? "bg-indigo-500/15 border-indigo-500/25 text-indigo-700" :
+                                                          "bg-violet-500/15 border-violet-500/25 text-violet-700"
                         }`}>
                           {sub.planKey.charAt(0).toUpperCase() + sub.planKey.slice(1)}
                         </span>
@@ -706,10 +706,10 @@ export default function AdminPage() {
                           </span>
                         ) : (
                           <span className={`inline-flex items-center gap-1 text-[10px] font-bold px-2.5 py-1 rounded-full border ${
-                            urgent  ? "bg-red-500/15 border-red-500/25 text-red-300" :
-                            warning ? "bg-amber-500/15 border-amber-500/25 text-amber-300" :
-                            good    ? "bg-emerald-500/15 border-emerald-500/25 text-emerald-300" :
-                                      "bg-indigo-500/15 border-indigo-500/25 text-indigo-300"
+                            urgent  ? "bg-red-500/15 border-red-500/25 text-red-700" :
+                            warning ? "bg-amber-500/15 border-amber-500/25 text-amber-700" :
+                            good    ? "bg-emerald-500/15 border-emerald-500/25 text-emerald-700" :
+                                      "bg-indigo-500/15 border-indigo-500/25 text-indigo-700"
                           }`}>
                             {urgent  && <AlertTriangle className="w-2.5 h-2.5" />}
                             {warning && <Clock className="w-2.5 h-2.5" />}

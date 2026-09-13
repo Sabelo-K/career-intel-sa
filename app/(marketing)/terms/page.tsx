@@ -1,3 +1,4 @@
+import { JourneyHeader } from "@/components/journey/chrome";
 import Link from "next/link";
 import { Sparkles } from "lucide-react";
 
@@ -6,15 +7,7 @@ export const metadata = { title: "Terms of Service | CareerIntel SA" };
 export default function TermsPage() {
   return (
     <div className="min-h-screen bg-background">
-      <header className="border-b border-border px-6 py-4 flex items-center justify-between max-w-5xl mx-auto">
-        <Link href="/" className="flex items-center gap-2">
-          <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center">
-            <Sparkles className="w-3.5 h-3.5 text-white" />
-          </div>
-          <span className="font-bold text-foreground">CareerIntel <span className="text-indigo-400">SA</span></span>
-        </Link>
-        <Link href="/dashboard" className="text-sm text-muted-foreground hover:text-foreground transition-colors">← Back to app</Link>
-      </header>
+      <JourneyHeader />
 
       <main className="max-w-3xl mx-auto px-6 py-12">
         <h1 className="text-3xl font-bold text-foreground mb-2">Terms of Service</h1>
@@ -35,8 +28,8 @@ export default function TermsPage() {
               <li><strong className="text-foreground">Full name:</strong> Sabelo Khanyile (trading as CareerIntel SA)</li>
               <li><strong className="text-foreground">Country of registration:</strong> Republic of South Africa</li>
               <li><strong className="text-foreground">Physical address:</strong> KwaZulu-Natal, South Africa</li>
-              <li><strong className="text-foreground">Email:</strong> <a href="mailto:legal@careerintelsa.co.za" className="text-indigo-400 hover:text-indigo-300">legal@careerintelsa.co.za</a></li>
-              <li><strong className="text-foreground">Website:</strong> <a href="https://careerintelsa.co.za" className="text-indigo-400 hover:text-indigo-300">careerintelsa.co.za</a></li>
+              <li><strong className="text-foreground">Email:</strong> <a href="mailto:legal@careerintelsa.co.za" className="text-indigo-700 hover:text-indigo-700">legal@careerintelsa.co.za</a></li>
+              <li><strong className="text-foreground">Website:</strong> <a href="https://careerintelsa.co.za" className="text-indigo-700 hover:text-indigo-700">careerintelsa.co.za</a></li>
             </ul>
           </section>
 
@@ -63,7 +56,7 @@ export default function TermsPage() {
           <section className="p-4 rounded-xl bg-amber-500/8 border border-amber-500/20 text-sm">
             <h2 className="text-base font-semibold text-foreground mb-3">5. Cooling-Off Period (Consumer Protection Act Section 44, ECT Act)</h2>
             <p>In accordance with the <strong className="text-foreground">Electronic Communications and Transactions Act 25 of 2002 (Section 44)</strong> and the <strong className="text-foreground">Consumer Protection Act 68 of 2008</strong>, you have the right to cancel any electronic transaction within <strong className="text-foreground">7 (seven) business days</strong> of the date of the transaction without reason or penalty.</p>
-            <p className="mt-2">To exercise your cooling-off right, notify us in writing at <a href="mailto:legal@careerintelsa.co.za" className="text-indigo-400 hover:text-indigo-300">legal@careerintelsa.co.za</a> within the 7-day period. We will process a full refund within 30 days of receiving your cancellation notice.</p>
+            <p className="mt-2">To exercise your cooling-off right, notify us in writing at <a href="mailto:legal@careerintelsa.co.za" className="text-indigo-700 hover:text-indigo-700">legal@careerintelsa.co.za</a> within the 7-day period. We will process a full refund within 30 days of receiving your cancellation notice.</p>
           </section>
 
           {/* Refund Policy */}
@@ -73,7 +66,7 @@ export default function TermsPage() {
             <ul className="list-disc list-inside mt-2 space-y-1">
               <li>Subscriptions cancelled mid-month will not be refunded for the remaining period but will remain active until the end of the billing cycle</li>
               <li>Refund requests due to technical failures or service unavailability will be assessed on a case-by-case basis</li>
-              <li>To request a refund outside the cooling-off period, contact <a href="mailto:legal@careerintelsa.co.za" className="text-indigo-400 hover:text-indigo-300">legal@careerintelsa.co.za</a> with your account details and reason</li>
+              <li>To request a refund outside the cooling-off period, contact <a href="mailto:legal@careerintelsa.co.za" className="text-indigo-700 hover:text-indigo-700">legal@careerintelsa.co.za</a> with your account details and reason</li>
               <li>We will respond to all refund requests within <strong className="text-foreground">5 business days</strong></li>
             </ul>
           </section>
@@ -111,7 +104,7 @@ export default function TermsPage() {
 
           <section>
             <h2 className="text-lg font-semibold text-foreground mb-3">11. PAIA — Access to Information</h2>
-            <p>In terms of the <strong className="text-foreground">Promotion of Access to Information Act 2 of 2000 (PAIA)</strong>, a copy of our PAIA manual is available on request. To request access to records held by CareerIntel SA, contact our Information Officer at <a href="mailto:privacy@careerintelsa.co.za" className="text-indigo-400 hover:text-indigo-300">privacy@careerintelsa.co.za</a>.</p>
+            <p>In terms of the <strong className="text-foreground">Promotion of Access to Information Act 2 of 2000 (PAIA)</strong>, a copy of our PAIA manual is available on request. To request access to records held by CareerIntel SA, contact our Information Officer at <a href="mailto:privacy@careerintelsa.co.za" className="text-indigo-700 hover:text-indigo-700">privacy@careerintelsa.co.za</a>.</p>
           </section>
 
           <section>
@@ -127,7 +120,7 @@ export default function TermsPage() {
 
           <section>
             <h2 className="text-lg font-semibold text-foreground mb-3">14. Contact</h2>
-            <p>For questions about these Terms, contact us at <a href="mailto:legal@careerintelsa.co.za" className="text-indigo-400 hover:text-indigo-300">legal@careerintelsa.co.za</a>.</p>
+            <p>For questions about these Terms, contact us at <a href="mailto:legal@careerintelsa.co.za" className="text-indigo-700 hover:text-indigo-700">legal@careerintelsa.co.za</a>.</p>
           </section>
         </div>
 

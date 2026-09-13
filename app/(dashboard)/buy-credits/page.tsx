@@ -9,9 +9,9 @@ import { track } from "@/lib/analytics";
 
 // What each credit buys — shown below the packs
 const CREDIT_USES = [
-  { icon: MessageCircle, label: "AI Coach message",     cost: 1, color: "text-violet-400" },
-  { icon: Target,        label: "Skills Gap analysis",  cost: 3, color: "text-emerald-400" },
-  { icon: GitBranch,     label: "Career Path simulation",cost: 3, color: "text-amber-400"  },
+  { icon: MessageCircle, label: "AI Coach message",     cost: 1, color: "text-violet-700" },
+  { icon: Target,        label: "Skills Gap analysis",  cost: 3, color: "text-emerald-700" },
+  { icon: GitBranch,     label: "Career Path simulation",cost: 3, color: "text-amber-700"  },
 ];
 
 
@@ -62,7 +62,7 @@ export default function BuyCreditsPage() {
       {/* Header */}
       <div className="text-center space-y-2">
         <div className="w-14 h-14 rounded-2xl bg-amber-500/15 flex items-center justify-center mx-auto mb-4">
-          <Coins className="w-7 h-7 text-amber-400" />
+          <Coins className="w-7 h-7 text-amber-700" />
         </div>
         <h1 className="text-2xl font-bold text-foreground">Buy Credits</h1>
         <p className="text-muted-foreground text-sm max-w-md mx-auto">
@@ -71,7 +71,7 @@ export default function BuyCreditsPage() {
         </p>
         {balance !== null && (
           <div className="inline-flex items-center gap-2 bg-secondary rounded-full px-4 py-1.5 mt-2">
-            <Zap className="w-3.5 h-3.5 text-amber-400" />
+            <Zap className="w-3.5 h-3.5 text-amber-700" />
             <span className="text-sm font-medium text-foreground">
               Current balance: <strong>{balance}</strong> credit{balance !== 1 ? "s" : ""}
             </span>
@@ -83,7 +83,7 @@ export default function BuyCreditsPage() {
       {allowance.length > 0 && (
         <div className="bg-card border border-border rounded-2xl p-5 space-y-4">
           <div className="flex items-start gap-3">
-            <Info className="w-4 h-4 text-indigo-400 flex-shrink-0 mt-0.5" />
+            <Info className="w-4 h-4 text-indigo-700 flex-shrink-0 mt-0.5" />
             <div>
               <h3 className="text-sm font-semibold text-foreground">
                 Your free allowance this month
@@ -109,7 +109,7 @@ export default function BuyCreditsPage() {
                         then {a.creditCost} credit{a.creditCost !== 1 ? "s" : ""} each
                       </span>
                     </span>
-                    <span className={`font-semibold ${exhausted ? "text-amber-400" : "text-foreground"}`}>
+                    <span className={`font-semibold ${exhausted ? "text-amber-700" : "text-foreground"}`}>
                       {isUnlimited
                         ? "Unlimited"
                         : exhausted
@@ -131,7 +131,7 @@ export default function BuyCreditsPage() {
           </div>
 
           {hasFreeLeft && (
-            <p className="text-xs text-emerald-300/90 bg-emerald-500/10 border border-emerald-500/20 rounded-lg px-3 py-2 leading-relaxed">
+            <p className="text-xs text-emerald-700/90 bg-emerald-500/10 border border-emerald-500/20 rounded-lg px-3 py-2 leading-relaxed">
               You still have free usage left this month — you may not need credits yet.
               Buy them now only if you want them ready in advance. Credits never expire.
             </p>
@@ -142,7 +142,7 @@ export default function BuyCreditsPage() {
       {/* Unlimited plans don't consume credits at all */}
       {unlimited && (
         <div className="bg-card border border-border rounded-2xl p-4 flex items-start gap-3">
-          <Info className="w-4 h-4 text-indigo-400 flex-shrink-0 mt-0.5" />
+          <Info className="w-4 h-4 text-indigo-700 flex-shrink-0 mt-0.5" />
           <p className="text-xs text-muted-foreground leading-relaxed">
             Your plan includes <strong className="text-foreground">unlimited</strong> AI coaching, skills gap
             analyses and career simulations, so credits aren&apos;t consumed while it&apos;s active.
@@ -153,10 +153,10 @@ export default function BuyCreditsPage() {
 
       {/* Payment error */}
       {buyError && (
-        <div className="flex items-center gap-3 p-4 rounded-xl bg-red-500/10 border border-red-500/20 text-sm text-red-300">
+        <div className="flex items-center gap-3 p-4 rounded-xl bg-red-500/10 border border-red-500/20 text-sm text-red-700">
           <AlertCircle className="w-4 h-4 flex-shrink-0" />
           <span className="flex-1">{buyError}</span>
-          <button onClick={() => setBuyError(null)} className="text-red-400 hover:text-red-200">
+          <button onClick={() => setBuyError(null)} className="text-red-700 hover:text-red-700">
             <X className="w-4 h-4" />
           </button>
         </div>
@@ -166,8 +166,8 @@ export default function BuyCreditsPage() {
       {/* Paid user notice */}
       {isPaid && (
         <div className="bg-indigo-500/10 border border-indigo-500/20 rounded-xl p-4 flex items-center gap-3">
-          <Crown className="w-5 h-5 text-indigo-400 flex-shrink-0" />
-          <p className="text-sm text-indigo-300">
+          <Crown className="w-5 h-5 text-indigo-700 flex-shrink-0" />
+          <p className="text-sm text-indigo-700">
             You&apos;re on a paid plan with unlimited access. Credits are only needed for Free plan users —
             but you can still buy them to gift or accumulate for when your plan expires.
           </p>
@@ -208,19 +208,19 @@ export default function BuyCreditsPage() {
 
             <ul className="space-y-1.5 text-xs text-muted-foreground flex-1">
               <li className="flex items-center gap-2">
-                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 flex-shrink-0" />
+                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-700 flex-shrink-0" />
                 {pack.credits} AI coach messages
               </li>
               <li className="flex items-center gap-2">
-                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 flex-shrink-0" />
+                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-700 flex-shrink-0" />
                 {Math.floor(pack.credits / 3)} skills gap analyses
               </li>
               <li className="flex items-center gap-2">
-                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 flex-shrink-0" />
+                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-700 flex-shrink-0" />
                 {Math.floor(pack.credits / 3)} career simulations
               </li>
               <li className="flex items-center gap-2">
-                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 flex-shrink-0" />
+                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-700 flex-shrink-0" />
                 Credits never expire
               </li>
             </ul>
@@ -254,7 +254,7 @@ export default function BuyCreditsPage() {
       <div className="bg-card border border-border rounded-2xl p-5 space-y-4">
         <div className="flex items-center justify-between gap-3">
           <h3 className="text-sm font-semibold text-foreground">What do credits buy?</h3>
-          <Link href="/how-credits-work" className="text-xs text-indigo-400 hover:underline whitespace-nowrap">
+          <Link href="/how-credits-work" className="text-xs text-indigo-700 hover:underline whitespace-nowrap">
             Full breakdown →
           </Link>
         </div>
@@ -280,16 +280,16 @@ export default function BuyCreditsPage() {
       {/* Upgrade nudge */}
       <div className="bg-gradient-to-br from-indigo-600/15 to-violet-600/10 border border-indigo-500/20 rounded-2xl p-5 space-y-3">
         <div className="flex items-center gap-2">
-          <Crown className="w-4 h-4 text-amber-400" />
-          <span className="text-sm font-semibold text-white">Better value: go unlimited</span>
+          <Crown className="w-4 h-4 text-amber-700" />
+          <span className="text-sm font-semibold text-foreground">Better value: go unlimited</span>
         </div>
-        <p className="text-xs text-white/60 leading-relaxed">
+        <p className="text-xs text-muted-foreground leading-relaxed">
           A subscription gives you unlimited AI coaching, skills gap analyses, and career simulations —
-          no counting credits. Starting from <strong className="text-white/80">R24/month</strong>.
+          no counting credits. Starting from <strong className="text-muted-foreground">R24/month</strong>.
         </p>
         <Link
           href="/upgrade"
-          className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-semibold transition-all active:scale-95"
+          className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-primary-foreground text-sm font-semibold transition-all active:scale-95"
         >
           <Zap className="w-3.5 h-3.5" />
           See subscription plans

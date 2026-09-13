@@ -171,7 +171,7 @@ function ScoreRing({ score, color, size = "md" }: { score: number; color: string
         />
       </svg>
       <div className="absolute inset-0 flex items-center justify-center">
-        <span className="text-xl font-bold text-white">{score}</span>
+        <span className="text-xl font-bold text-foreground">{score}</span>
       </div>
     </div>
   );
@@ -383,8 +383,8 @@ function BuildFromScratch({ isPaid }: { isPaid: boolean }) {
               <button
                 onClick={() => s.id < step && setStep(s.id)}
                 className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all whitespace-nowrap ${
-                  active ? "bg-indigo-600 text-white" :
-                  done ? "bg-indigo-500/20 text-indigo-300 cursor-pointer hover:bg-indigo-500/30" :
+                  active ? "bg-indigo-600 text-primary-foreground" :
+                  done ? "bg-indigo-500/20 text-indigo-700 cursor-pointer hover:bg-indigo-500/30" :
                   "bg-secondary text-muted-foreground cursor-default"
                 }`}
               >
@@ -480,7 +480,7 @@ function BuildFromScratch({ isPaid }: { isPaid: boolean }) {
                         <div key={exp.id} className="border border-border rounded-lg p-4 space-y-3">
                           <div className="flex items-center justify-between">
                             <span className="text-xs font-medium text-muted-foreground">Job {idx + 1}</span>
-                            <button onClick={() => removeExp(exp.id)} className="text-muted-foreground hover:text-red-400 transition-colors">
+                            <button onClick={() => removeExp(exp.id)} className="text-muted-foreground hover:text-red-700 transition-colors">
                               <Trash2 className="w-3.5 h-3.5" />
                             </button>
                           </div>
@@ -547,7 +547,7 @@ function BuildFromScratch({ isPaid }: { isPaid: boolean }) {
                         <div key={edu.id} className="border border-border rounded-lg p-4 space-y-3">
                           <div className="flex items-center justify-between">
                             <span className="text-xs font-medium text-muted-foreground">Qualification {idx + 1}</span>
-                            <button onClick={() => removeEdu(edu.id)} className="text-muted-foreground hover:text-red-400 transition-colors">
+                            <button onClick={() => removeEdu(edu.id)} className="text-muted-foreground hover:text-red-700 transition-colors">
                               <Trash2 className="w-3.5 h-3.5" />
                             </button>
                           </div>
@@ -603,9 +603,9 @@ function BuildFromScratch({ isPaid }: { isPaid: boolean }) {
                     </div>
                     <div className="flex flex-wrap gap-1.5">
                       {cv.skills.map((skill) => (
-                        <span key={skill} className="inline-flex items-center gap-1 bg-indigo-500/15 text-indigo-300 text-xs px-2.5 py-1 rounded-full">
+                        <span key={skill} className="inline-flex items-center gap-1 bg-indigo-500/15 text-indigo-700 text-xs px-2.5 py-1 rounded-full">
                           {skill}
-                          <button onClick={() => update("skills", cv.skills.filter((s) => s !== skill))} className="hover:text-red-400 ml-0.5">×</button>
+                          <button onClick={() => update("skills", cv.skills.filter((s) => s !== skill))} className="hover:text-red-700 ml-0.5">×</button>
                         </span>
                       ))}
                       {cv.skills.length === 0 && <p className="text-xs text-muted-foreground italic">No skills added yet</p>}
@@ -629,9 +629,9 @@ function BuildFromScratch({ isPaid }: { isPaid: boolean }) {
                     </div>
                     <div className="flex flex-wrap gap-1.5">
                       {cv.certifications.map((cert) => (
-                        <span key={cert} className="inline-flex items-center gap-1 bg-emerald-500/15 text-emerald-300 text-xs px-2.5 py-1 rounded-full">
+                        <span key={cert} className="inline-flex items-center gap-1 bg-emerald-500/15 text-emerald-700 text-xs px-2.5 py-1 rounded-full">
                           {cert}
-                          <button onClick={() => update("certifications", cv.certifications.filter((c) => c !== cert))} className="hover:text-red-400 ml-0.5">×</button>
+                          <button onClick={() => update("certifications", cv.certifications.filter((c) => c !== cert))} className="hover:text-red-700 ml-0.5">×</button>
                         </span>
                       ))}
                       {cv.certifications.length === 0 && <p className="text-xs text-muted-foreground italic">No certifications added yet</p>}
@@ -664,7 +664,7 @@ function BuildFromScratch({ isPaid }: { isPaid: boolean }) {
         <div className="lg:col-span-2 space-y-4">
           <div className="bg-card border border-border rounded-xl p-5">
             <h3 className="text-sm font-semibold text-foreground mb-3 flex items-center gap-2">
-              <Award className="w-4 h-4 text-amber-400" />
+              <Award className="w-4 h-4 text-amber-700" />
               SA CV Tips — Step {step}
             </h3>
             <div className="space-y-2 text-xs text-muted-foreground">
@@ -673,31 +673,31 @@ function BuildFromScratch({ isPaid }: { isPaid: boolean }) {
                 "A Gmail or professional email looks better than old email addresses",
                 "Include your province — many SA recruiters filter by location",
                 "LinkedIn is increasingly expected even for trade jobs",
-              ].map((tip, i) => <div key={i} className="flex items-start gap-2"><CheckCircle2 className="w-3 h-3 text-amber-400 flex-shrink-0 mt-0.5" />{tip}</div>)}
+              ].map((tip, i) => <div key={i} className="flex items-start gap-2"><CheckCircle2 className="w-3 h-3 text-amber-700 flex-shrink-0 mt-0.5" />{tip}</div>)}
               {step === 2 && [
                 "Include learnerships, apprenticeships, and informal work — it all counts",
                 "Use numbers where possible: '50 clients', 'R2M project', '3 staff supervised'",
                 "List most recent job first",
                 "Even matric holiday jobs show work ethic — include them if new to work",
-              ].map((tip, i) => <div key={i} className="flex items-start gap-2"><CheckCircle2 className="w-3 h-3 text-amber-400 flex-shrink-0 mt-0.5" />{tip}</div>)}
+              ].map((tip, i) => <div key={i} className="flex items-start gap-2"><CheckCircle2 className="w-3 h-3 text-amber-700 flex-shrink-0 mt-0.5" />{tip}</div>)}
               {step === 3 && [
                 "Always include your NQF level — SA corporates require it",
                 "TVET N courses: list the highest N level you completed (N4, N5, N6)",
                 "Trade certificates from SETAs are highly valued — list them all",
                 "SAQA NLRD certification numbers add credibility for professional roles",
-              ].map((tip, i) => <div key={i} className="flex items-start gap-2"><CheckCircle2 className="w-3 h-3 text-amber-400 flex-shrink-0 mt-0.5" />{tip}</div>)}
+              ].map((tip, i) => <div key={i} className="flex items-start gap-2"><CheckCircle2 className="w-3 h-3 text-amber-700 flex-shrink-0 mt-0.5" />{tip}</div>)}
               {step === 4 && [
                 "Add both hard skills (Welding, Python) and soft skills (Communication)",
                 "PSIRA, SAMTRAC, trade papers should go in Certifications",
                 "Include driver&apos;s licence code (Code 8, 10, 14) if relevant",
                 "Language skills matter in SA — add Zulu, Sotho, Afrikaans if applicable",
-              ].map((tip, i) => <div key={i} className="flex items-start gap-2"><CheckCircle2 className="w-3 h-3 text-amber-400 flex-shrink-0 mt-0.5" />{tip}</div>)}
+              ].map((tip, i) => <div key={i} className="flex items-start gap-2"><CheckCircle2 className="w-3 h-3 text-amber-700 flex-shrink-0 mt-0.5" />{tip}</div>)}
               {step === 5 && [
                 "Click 'Download CV' — a premium branded version opens in a new tab",
                 "The print dialog launches automatically — choose 'Save as PDF'",
                 "File name suggestion: FirstName_Surname_CV_2025.pdf",
                 "Always send your CV as a PDF — never a Word doc",
-              ].map((tip, i) => <div key={i} className="flex items-start gap-2"><CheckCircle2 className="w-3 h-3 text-amber-400 flex-shrink-0 mt-0.5" />{tip}</div>)}
+              ].map((tip, i) => <div key={i} className="flex items-start gap-2"><CheckCircle2 className="w-3 h-3 text-amber-700 flex-shrink-0 mt-0.5" />{tip}</div>)}
             </div>
           </div>
 
@@ -714,7 +714,7 @@ function BuildFromScratch({ isPaid }: { isPaid: boolean }) {
               <div key={item.label} className="flex items-center justify-between py-1.5 border-b border-border last:border-0">
                 <span className="text-xs text-muted-foreground">{item.label}</span>
                 {item.done
-                  ? <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
+                  ? <CheckCircle2 className="w-3.5 h-3.5 text-emerald-700" />
                   : <div className="w-3.5 h-3.5 rounded-full border-2 border-muted-foreground/30" />}
               </div>
             ))}
@@ -968,12 +968,12 @@ export default function CVBuilderPage() {
               className="mb-5 flex flex-col sm:flex-row sm:items-center gap-3 bg-emerald-500/8 border border-emerald-500/20 rounded-2xl px-4 py-3.5"
             >
               <div className="flex items-center gap-3 flex-1">
-                <TrendingUp className="w-5 h-5 text-emerald-400 flex-shrink-0" />
+                <TrendingUp className="w-5 h-5 text-emerald-700 flex-shrink-0" />
                 <div>
                   <div className="text-sm font-semibold text-foreground">
-                    ATS score improved {analysis.originalAtsScore} <span className="text-emerald-400">→ {analysis.atsScore}</span>
+                    ATS score improved {analysis.originalAtsScore} <span className="text-emerald-700">→ {analysis.atsScore}</span>
                     {analysis.atsScore > analysis.originalAtsScore && (
-                      <span className="ml-2 text-xs font-bold text-emerald-400">+{analysis.atsScore - analysis.originalAtsScore}</span>
+                      <span className="ml-2 text-xs font-bold text-emerald-700">+{analysis.atsScore - analysis.originalAtsScore}</span>
                     )}
                   </div>
                   <div className="text-xs text-muted-foreground">
@@ -993,7 +993,7 @@ export default function CVBuilderPage() {
                   {/* Optional ATS targeting — drives keyword match & score */}
                   <div className="mb-4 bg-card border border-border rounded-2xl p-4 sm:p-5">
                     <div className="flex items-center gap-2 mb-1">
-                      <Target className="w-4 h-4 text-indigo-400" />
+                      <Target className="w-4 h-4 text-indigo-700" />
                       <h3 className="text-sm font-semibold text-foreground">Optimise for a specific job <span className="font-normal text-muted-foreground">(optional, but boosts your ATS score)</span></h3>
                     </div>
                     <p className="text-xs text-muted-foreground mb-3">Tell us the role and paste the job ad — we&apos;ll match your CV to its keywords and score the fit.</p>
@@ -1024,15 +1024,15 @@ export default function CVBuilderPage() {
                   >
                     <input ref={fileRef} type="file" accept=".pdf,.doc,.docx" className="hidden" onChange={(e) => { if (e.target.files?.[0]) handleFile(e.target.files[0]); }} />
                     <div className="w-16 h-16 rounded-2xl bg-indigo-500/15 flex items-center justify-center mx-auto mb-4">
-                      <Upload className="w-8 h-8 text-indigo-400" />
+                      <Upload className="w-8 h-8 text-indigo-700" />
                     </div>
                     <h3 className="text-lg font-semibold text-foreground mb-2">Drop your CV here</h3>
                     <p className="text-muted-foreground text-sm mb-4">Supports PDF, DOC, DOCX · Max 10MB</p>
                     <Button variant="indigo" size="sm" className="pointer-events-none">Browse Files</Button>
                     <div className="mt-6 flex items-center justify-center gap-6 text-xs text-muted-foreground">
-                      <span className="flex items-center gap-1.5"><CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" /> ATS Score</span>
-                      <span className="flex items-center gap-1.5"><CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" /> Recruiter Rating</span>
-                      <span className="flex items-center gap-1.5"><CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" /> AI Improvements</span>
+                      <span className="flex items-center gap-1.5"><CheckCircle2 className="w-3.5 h-3.5 text-emerald-700" /> ATS Score</span>
+                      <span className="flex items-center gap-1.5"><CheckCircle2 className="w-3.5 h-3.5 text-emerald-700" /> Recruiter Rating</span>
+                      <span className="flex items-center gap-1.5"><CheckCircle2 className="w-3.5 h-3.5 text-emerald-700" /> AI Improvements</span>
                     </div>
                   </div>
                 </motion.div>
@@ -1042,7 +1042,7 @@ export default function CVBuilderPage() {
                 <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="bg-card border border-border rounded-2xl p-10 text-center">
                   <div className="w-16 h-16 rounded-2xl bg-indigo-500/15 flex items-center justify-center mx-auto mb-5">
                     <motion.div animate={{ rotate: 360 }} transition={{ duration: 1.5, repeat: Infinity, ease: "linear" }}>
-                      <Zap className="w-8 h-8 text-indigo-400" />
+                      <Zap className="w-8 h-8 text-indigo-700" />
                     </motion.div>
                   </div>
                   <h3 className="text-lg font-semibold text-foreground mb-2">Revamping your CV with AI...</h3>
@@ -1056,7 +1056,7 @@ export default function CVBuilderPage() {
                     ].map((step, i) => (
                       <motion.div key={step} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: i * 1.5 }} className="flex items-center gap-2 text-xs text-muted-foreground">
                         <motion.div animate={{ scale: [1, 1.2, 1] }} transition={{ delay: i * 1.5, duration: 0.4 }}>
-                          <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
+                          <CheckCircle2 className="w-3.5 h-3.5 text-emerald-700" />
                         </motion.div>
                         {step}
                       </motion.div>
@@ -1069,7 +1069,7 @@ export default function CVBuilderPage() {
               {stage === "error" && (
                 <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="bg-card border border-red-500/20 rounded-2xl p-10 text-center">
                   <div className="w-16 h-16 rounded-2xl bg-red-500/15 flex items-center justify-center mx-auto mb-5">
-                    <AlertCircle className="w-8 h-8 text-red-400" />
+                    <AlertCircle className="w-8 h-8 text-red-700" />
                   </div>
                   <h3 className="text-lg font-semibold text-foreground mb-2">Revamp failed</h3>
                   <p className="text-sm text-muted-foreground mb-4">{revampError}</p>
@@ -1088,7 +1088,7 @@ export default function CVBuilderPage() {
                   {analysis.personal?.fullName && (
                     <div className="bg-gradient-to-r from-indigo-500/10 to-purple-500/10 border border-indigo-500/20 rounded-xl p-4">
                       <div className="flex items-start gap-3">
-                        <div className="w-10 h-10 rounded-full bg-indigo-600 flex items-center justify-center text-white text-sm font-bold flex-shrink-0">
+                        <div className="w-10 h-10 rounded-full bg-indigo-600 flex items-center justify-center text-primary-foreground text-sm font-bold flex-shrink-0">
                           {analysis.personal.fullName.split(" ").filter(Boolean).slice(0, 2).map(w => w[0]).join("").toUpperCase() || "CV"}
                         </div>
                         <div className="flex-1 min-w-0">
@@ -1101,18 +1101,18 @@ export default function CVBuilderPage() {
                           </p>
                           <div className="flex items-center gap-3 mt-2 text-xs text-muted-foreground">
                             {analysis.experience?.length > 0 && (
-                              <span className="flex items-center gap-1"><Briefcase className="w-3 h-3 text-indigo-400" />{analysis.experience.length} job{analysis.experience.length !== 1 ? "s" : ""}</span>
+                              <span className="flex items-center gap-1"><Briefcase className="w-3 h-3 text-indigo-700" />{analysis.experience.length} job{analysis.experience.length !== 1 ? "s" : ""}</span>
                             )}
                             {analysis.education?.length > 0 && (
-                              <span className="flex items-center gap-1"><GraduationCap className="w-3 h-3 text-indigo-400" />{analysis.education.length} qualification{analysis.education.length !== 1 ? "s" : ""}</span>
+                              <span className="flex items-center gap-1"><GraduationCap className="w-3 h-3 text-indigo-700" />{analysis.education.length} qualification{analysis.education.length !== 1 ? "s" : ""}</span>
                             )}
                             {(analysis.skills?.length || analysis.extractedSkills?.length) > 0 && (
-                              <span className="flex items-center gap-1"><Wrench className="w-3 h-3 text-indigo-400" />{analysis.skills?.length || analysis.extractedSkills?.length} skills</span>
+                              <span className="flex items-center gap-1"><Wrench className="w-3 h-3 text-indigo-700" />{analysis.skills?.length || analysis.extractedSkills?.length} skills</span>
                             )}
                           </div>
                         </div>
                       </div>
-                      <p className="text-xs text-indigo-300 mt-3 flex items-center gap-1.5">
+                      <p className="text-xs text-indigo-700 mt-3 flex items-center gap-1.5">
                         <Sparkles className="w-3 h-3" />
                         Your CV has been rewritten — choose a template and download your revamped version below
                       </p>
@@ -1127,7 +1127,7 @@ export default function CVBuilderPage() {
                     <div key={section.key} className="bg-card border border-border rounded-xl overflow-hidden">
                       <button onClick={() => setExpandedSection(expandedSection === section.key ? null : section.key)} className="w-full flex items-center justify-between p-4 hover:bg-secondary transition-colors">
                         <div className="flex items-center gap-2.5">
-                          <section.icon className={`w-4 h-4 ${section.color === "indigo" ? "text-indigo-400" : section.color === "emerald" ? "text-emerald-400" : "text-amber-400"}`} />
+                          <section.icon className={`w-4 h-4 ${section.color === "indigo" ? "text-indigo-700" : section.color === "emerald" ? "text-emerald-700" : "text-amber-700"}`} />
                           <span className="text-sm font-semibold text-foreground">{section.title}</span>
                           <Badge variant={section.color === "indigo" ? "indigo" : section.color === "emerald" ? "success" : "warning"} className="text-xs">{section.badge}</Badge>
                         </div>
@@ -1151,7 +1151,7 @@ export default function CVBuilderPage() {
                   ))}
                   <div className="bg-card border border-indigo-500/20 rounded-xl p-4">
                     <div className="flex items-center gap-2 mb-3">
-                      <Sparkles className="w-4 h-4 text-indigo-400" />
+                      <Sparkles className="w-4 h-4 text-indigo-700" />
                       <span className="text-sm font-semibold text-foreground">AI-Improved Professional Summary</span>
                     </div>
                     <p className="text-sm text-muted-foreground leading-relaxed italic">&ldquo;{analysis.improvedSummary}&rdquo;</p>
@@ -1163,7 +1163,7 @@ export default function CVBuilderPage() {
             <div className="lg:col-span-2 space-y-5">
               <div className="bg-card border border-border rounded-xl p-5">
                 <h3 className="text-sm font-semibold text-foreground mb-4 flex items-center gap-2">
-                  <FileText className="w-4 h-4 text-indigo-400" />
+                  <FileText className="w-4 h-4 text-indigo-700" />
                   CV Templates
                 </h3>
                 <div className="space-y-2.5">
@@ -1173,7 +1173,7 @@ export default function CVBuilderPage() {
                         <span className="text-sm font-medium text-foreground">{tmpl.name}</span>
                         <div className="flex items-center gap-1.5">
                           {tmpl.recommended && <Badge variant="success" className="text-xs">Recommended</Badge>}
-                          {selectedTemplate === tmpl.id && <CheckCircle2 className="w-3.5 h-3.5 text-indigo-400" />}
+                          {selectedTemplate === tmpl.id && <CheckCircle2 className="w-3.5 h-3.5 text-indigo-700" />}
                         </div>
                       </div>
                       <p className="text-xs text-muted-foreground">{tmpl.description}</p>
@@ -1195,14 +1195,14 @@ export default function CVBuilderPage() {
               {analysis && (
                 <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="bg-card border border-border rounded-xl p-5">
                   <h3 className="text-sm font-semibold text-foreground mb-3 flex items-center gap-2">
-                    <Target className="w-4 h-4 text-emerald-400" />
+                    <Target className="w-4 h-4 text-emerald-700" />
                     Skills Extracted
                   </h3>
                   <div className="flex flex-wrap gap-1.5 mb-4">
                     {analysis.extractedSkills.map((skill) => <Badge key={skill} variant="success" className="text-xs">{skill}</Badge>)}
                   </div>
                   <div className="border-t border-border pt-3">
-                    <h4 className="text-xs font-semibold text-amber-300 mb-2 flex items-center gap-1.5">
+                    <h4 className="text-xs font-semibold text-amber-700 mb-2 flex items-center gap-1.5">
                       <AlertCircle className="w-3 h-3" /> Missing High-Demand Keywords
                     </h4>
                     <div className="flex flex-wrap gap-1.5">
@@ -1214,7 +1214,7 @@ export default function CVBuilderPage() {
 
               <div className="bg-card border border-border rounded-xl p-5">
                 <h3 className="text-sm font-semibold text-foreground mb-3 flex items-center gap-2">
-                  <Award className="w-4 h-4 text-amber-400" />
+                  <Award className="w-4 h-4 text-amber-700" />
                   SA ATS Tips
                 </h3>
                 <div className="space-y-2.5 text-xs text-muted-foreground">
@@ -1226,7 +1226,7 @@ export default function CVBuilderPage() {
                     "Include race/equity info only if requested — check job spec",
                   ].map((tip, i) => (
                     <div key={i} className="flex items-start gap-2">
-                      <CheckCircle2 className="w-3 h-3 text-amber-400 flex-shrink-0 mt-0.5" />
+                      <CheckCircle2 className="w-3 h-3 text-amber-700 flex-shrink-0 mt-0.5" />
                       {tip}
                     </div>
                   ))}

@@ -32,10 +32,10 @@ const SECTOR_EE: Record<string, { pressure: "Very High" | "High" | "Medium" | "G
 const PRESSURE_ORDER = { "Very High": 0, "High": 1, "Growing": 2, "Medium": 3 };
 
 const EE_BADGE = {
-  "Very High": { bg: "bg-emerald-500/15", text: "text-emerald-400", border: "border-emerald-500/25" },
-  "High":      { bg: "bg-indigo-500/15",  text: "text-indigo-400",  border: "border-indigo-500/25"  },
-  "Growing":   { bg: "bg-violet-500/15",  text: "text-violet-400",  border: "border-violet-500/25"  },
-  "Medium":    { bg: "bg-amber-500/15",   text: "text-amber-400",   border: "border-amber-500/25"   },
+  "Very High": { bg: "bg-emerald-500/15", text: "text-emerald-700", border: "border-emerald-500/25" },
+  "High":      { bg: "bg-indigo-500/15",  text: "text-indigo-700",  border: "border-indigo-500/25"  },
+  "Growing":   { bg: "bg-violet-500/15",  text: "text-violet-700",  border: "border-violet-500/25"  },
+  "Medium":    { bg: "bg-amber-500/15",   text: "text-amber-700",   border: "border-amber-500/25"   },
 };
 
 // Under-represented roles: where demand is high but supply of black professionals is low
@@ -102,7 +102,7 @@ export default function BBBEEPage() {
       <div>
         <div className="flex items-center gap-2 mb-2">
           <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-500 flex items-center justify-center">
-            <Users className="w-4 h-4 text-white" />
+            <Users className="w-4 h-4 text-foreground" />
           </div>
           <h1 className="text-2xl font-bold text-foreground">B-BBEE Career Intelligence</h1>
         </div>
@@ -113,7 +113,7 @@ export default function BBBEEPage() {
 
       {/* Disclaimer */}
       <div className="flex items-start gap-3 bg-blue-500/10 border border-blue-500/20 rounded-xl p-4">
-        <Info className="w-4 h-4 text-blue-400 flex-shrink-0 mt-0.5" />
+        <Info className="w-4 h-4 text-blue-700 flex-shrink-0 mt-0.5" />
         <p className="text-xs text-muted-foreground leading-relaxed">
           B-BBEE targets are designed to address historical inequality. This data is intended to help all South Africans — particularly those from historically disadvantaged backgrounds — understand where Employment Equity demand is strongest in the market.
         </p>
@@ -142,10 +142,10 @@ export default function BBBEEPage() {
         <div className="space-y-5">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
             {[
-              { label: "Very High EE Demand sectors", value: sectorStats.filter(s => s.eeData?.pressure === "Very High").length, color: "text-emerald-400" },
-              { label: "High EE Demand sectors",      value: sectorStats.filter(s => s.eeData?.pressure === "High").length,      color: "text-indigo-400" },
-              { label: "Under-represented roles",     value: UNDER_REPRESENTED.length,                                           color: "text-amber-400"  },
-              { label: "Critical talent gaps",        value: UNDER_REPRESENTED.filter(r => r.gap === "Critical").length,         color: "text-violet-400" },
+              { label: "Very High EE Demand sectors", value: sectorStats.filter(s => s.eeData?.pressure === "Very High").length, color: "text-emerald-700" },
+              { label: "High EE Demand sectors",      value: sectorStats.filter(s => s.eeData?.pressure === "High").length,      color: "text-indigo-700" },
+              { label: "Under-represented roles",     value: UNDER_REPRESENTED.length,                                           color: "text-amber-700"  },
+              { label: "Critical talent gaps",        value: UNDER_REPRESENTED.filter(r => r.gap === "Critical").length,         color: "text-violet-700" },
             ].map(kpi => (
               <div key={kpi.label} className="bg-card border border-border rounded-xl p-4 text-center">
                 <div className={`text-2xl font-bold ${kpi.color} mb-1`}>{kpi.value}</div>
@@ -156,7 +156,7 @@ export default function BBBEEPage() {
 
           <div className="bg-card border border-border rounded-xl p-5">
             <h2 className="text-sm font-semibold text-foreground mb-4 flex items-center gap-2">
-              <BarChart2 className="w-4 h-4 text-indigo-400" />
+              <BarChart2 className="w-4 h-4 text-indigo-700" />
               Average Demand Score by Sector (EE-active sectors)
             </h2>
             <ResponsiveContainer width="100%" height={240}>
@@ -231,7 +231,7 @@ export default function BBBEEPage() {
                       {s.topCareers.map(c => (
                         <div key={c.id} className="flex items-center justify-between text-xs bg-secondary rounded-lg px-2.5 py-1.5">
                           <span className="text-foreground">{c.title}</span>
-                          <span className="font-bold text-emerald-400 ml-2">{c.demandScore}</span>
+                          <span className="font-bold text-emerald-700 ml-2">{c.demandScore}</span>
                         </div>
                       ))}
                     </div>
@@ -255,17 +255,17 @@ export default function BBBEEPage() {
                     <div className="flex items-center gap-2 mb-1">
                       <h3 className="text-sm font-semibold text-foreground">{r.role}</h3>
                       <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full border ${
-                        r.gap === "Critical" ? "bg-red-500/15 text-red-400 border-red-500/25" :
-                        r.gap === "High"     ? "bg-amber-500/15 text-amber-400 border-amber-500/25" :
-                                               "bg-indigo-500/15 text-indigo-400 border-indigo-500/25"
+                        r.gap === "Critical" ? "bg-red-500/15 text-red-700 border-red-500/25" :
+                        r.gap === "High"     ? "bg-amber-500/15 text-amber-700 border-amber-500/25" :
+                                               "bg-indigo-500/15 text-indigo-700 border-indigo-500/25"
                       }`}>{r.gap} gap</span>
                     </div>
                     <div className="text-xs text-muted-foreground/60 mb-1">{r.sector}</div>
                     <p className="text-xs text-muted-foreground">{r.reason}</p>
                   </div>
                   {r.gap === "Critical"
-                    ? <AlertCircle className="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" />
-                    : <CheckCircle2 className="w-5 h-5 text-emerald-400 flex-shrink-0 mt-0.5" />}
+                    ? <AlertCircle className="w-5 h-5 text-red-700 flex-shrink-0 mt-0.5" />
+                    : <CheckCircle2 className="w-5 h-5 text-emerald-700 flex-shrink-0 mt-0.5" />}
                 </div>
               </div>
             ))}
@@ -281,31 +281,31 @@ export default function BBBEEPage() {
               title: "Prioritise sectors with formal EE charters",
               body: "Finance, Mining, Legal, and Energy sectors all have legally binding transformation charters with specific numerical targets. These sectors are actively measured and penalised if they don't meet targets — making EE hiring a strategic imperative, not just a preference.",
               color: "border-emerald-500/25 bg-emerald-500/5",
-              icon: CheckCircle2, iconColor: "text-emerald-400",
+              icon: CheckCircle2, iconColor: "text-emerald-700",
             },
             {
               title: "Target scarce-skills roles in EE-active sectors",
               body: "When a role is both scarce (high demand, low supply) AND in an EE-active sector, you're in the strongest possible negotiating position. Roles like Data Scientist, Software Engineer, Actuary, and CA(SA) in Finance or Mining give you double leverage.",
               color: "border-indigo-500/25 bg-indigo-500/5",
-              icon: Star, iconColor: "text-indigo-400",
+              icon: Star, iconColor: "text-indigo-700",
             },
             {
               title: "Build your B-BBEE narrative into your CV and interviews",
               body: "Don't leave it implicit. Mention your EE status on your CV where relevant. In interviews, speak confidently about your transformation contribution. Employers who are under pressure to meet targets will see this as a positive business case, not charity.",
               color: "border-amber-500/25 bg-amber-500/5",
-              icon: Award, iconColor: "text-amber-400",
+              icon: Award, iconColor: "text-amber-700",
             },
             {
               title: "Negotiate using market data, not EE as the primary lever",
               body: "While B-BBEE creates demand, always negotiate primarily on your skills, market value, and contribution. Use the salary benchmarks in the Salary Checker tool to anchor negotiations. EE demand increases your leverage — it doesn't replace your value.",
               color: "border-violet-500/25 bg-violet-500/5",
-              icon: TrendingUp, iconColor: "text-violet-400",
+              icon: TrendingUp, iconColor: "text-violet-700",
             },
             {
               title: "Government and state-owned entities have the strongest targets",
               body: "Public Service Act requirements mean government departments must reflect SA demographics. National, provincial, and municipal entities are among the most aggressive EE employers. Consider public sector roles if transformation is a priority for you.",
               color: "border-blue-500/25 bg-blue-500/5",
-              icon: Users, iconColor: "text-blue-400",
+              icon: Users, iconColor: "text-blue-700",
             },
           ].map((tip, i) => (
             <motion.div key={i} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.08 }}

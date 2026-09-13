@@ -34,7 +34,7 @@ export default function UpgradeSuccessPage() {
         transition={{ type: "spring", stiffness: 200, damping: 15 }}
         className="w-20 h-20 rounded-full bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center"
       >
-        <CheckCircle2 className="w-10 h-10 text-emerald-400" />
+        <CheckCircle2 className="w-10 h-10 text-emerald-700" />
       </motion.div>
 
       <motion.div
@@ -44,9 +44,9 @@ export default function UpgradeSuccessPage() {
         className="space-y-2"
       >
         <div className="flex items-center justify-center gap-2 mb-2">
-          <Sparkles className="w-4 h-4 text-amber-400" />
-          <span className="text-xs font-semibold text-amber-400 uppercase tracking-wide">Payment Successful</span>
-          <Sparkles className="w-4 h-4 text-amber-400" />
+          <Sparkles className="w-4 h-4 text-amber-700" />
+          <span className="text-xs font-semibold text-amber-700 uppercase tracking-wide">Payment Successful</span>
+          <Sparkles className="w-4 h-4 text-amber-700" />
         </div>
         <h1 className="text-2xl font-bold text-foreground">
           Welcome to {planName}!

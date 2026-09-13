@@ -82,7 +82,7 @@ export default function CoursesPage() {
             onClick={() => setSelectedCategory(cat)}
             className={`px-3 py-1.5 rounded-full border text-xs font-medium transition-all ${
               selectedCategory === cat
-                ? "border-violet-500/50 bg-violet-500/20 text-violet-300"
+                ? "border-violet-500/50 bg-violet-500/20 text-violet-700"
                 : "border-border text-muted-foreground hover:text-foreground hover:bg-secondary"
             }`}
           >
@@ -101,7 +101,7 @@ export default function CoursesPage() {
               onClick={() => setSelectedPlatform(p.id === selectedPlatform ? "all" : p.id)}
               className={`flex items-center gap-2 px-3 py-2 rounded-lg border text-xs font-medium transition-all ${
                 selectedPlatform === p.id
-                  ? "border-indigo-500/50 bg-indigo-500/15 text-indigo-300"
+                  ? "border-indigo-500/50 bg-indigo-500/15 text-indigo-700"
                   : "border-border text-muted-foreground hover:text-foreground hover:bg-secondary"
               }`}
             >
@@ -121,10 +121,10 @@ export default function CoursesPage() {
           animate={{ opacity: 1, y: 0 }}
           className="flex items-center gap-3 px-4 py-3 rounded-xl bg-indigo-500/12 border border-indigo-500/25 text-sm"
         >
-          <BookOpen className="w-4 h-4 text-indigo-400 flex-shrink-0" />
-          <span className="text-indigo-200 flex-1">
+          <BookOpen className="w-4 h-4 text-indigo-700 flex-shrink-0" />
+          <span className="text-indigo-700 flex-1">
             Showing courses for{" "}
-            <strong className="text-indigo-300">
+            <strong className="text-indigo-700">
               {/* Prefer the human-readable phase name if provided */}
               {searchParams.get("phase") ?? searchParams.get("q")}
             </strong>
@@ -132,7 +132,7 @@ export default function CoursesPage() {
           </span>
           <button
             onClick={() => setSearch("")}
-            className="text-xs text-indigo-400 hover:text-indigo-200 transition-colors font-medium"
+            className="text-xs text-indigo-700 hover:text-indigo-700 transition-colors font-medium"
           >
             Clear ×
           </button>
@@ -148,7 +148,7 @@ export default function CoursesPage() {
         <button
           onClick={() => setFreeOnly(!freeOnly)}
           className={`flex items-center gap-2 px-3 py-2 rounded-lg border text-xs font-medium transition-all ${
-            freeOnly ? "border-emerald-500/50 bg-emerald-500/15 text-emerald-300" : "border-border text-muted-foreground hover:bg-secondary"
+            freeOnly ? "border-emerald-500/50 bg-emerald-500/15 text-emerald-700" : "border-border text-muted-foreground hover:bg-secondary"
           }`}
         >
           Free / Subsidised Only
@@ -159,7 +159,7 @@ export default function CoursesPage() {
       <div className="flex items-center justify-between">
         <p className="text-sm text-muted-foreground">
           <span className="text-foreground font-semibold">{filtered.length}</span> course{filtered.length !== 1 ? "s" : ""} found
-          {selectedCategory !== "All" && <span className="ml-1">in <span className="text-violet-300">{selectedCategory}</span></span>}
+          {selectedCategory !== "All" && <span className="ml-1">in <span className="text-violet-700">{selectedCategory}</span></span>}
         </p>
         {(search || selectedCategory !== "All" || selectedPlatform !== "all" || freeOnly) && (
           <button
@@ -188,8 +188,8 @@ export default function CoursesPage() {
               </div>
               <span className={`text-xs font-bold px-2 py-1 rounded-lg ml-3 flex-shrink-0 ${
                 course.price === "free" || course.price === 0
-                  ? "bg-emerald-500/15 text-emerald-300 border border-emerald-500/25"
-                  : "bg-indigo-500/15 text-indigo-300 border border-indigo-500/25"
+                  ? "bg-emerald-500/15 text-emerald-700 border border-emerald-500/25"
+                  : "bg-indigo-500/15 text-indigo-700 border border-indigo-500/25"
               }`}>
                 {course.price === "free" || course.price === 0
                   ? "Free"
@@ -199,7 +199,7 @@ export default function CoursesPage() {
 
             <div className="flex items-center gap-3 text-xs text-muted-foreground mb-3">
               <span className="flex items-center gap-1">
-                <Star className="w-3 h-3 text-amber-400 fill-amber-400" />
+                <Star className="w-3 h-3 text-amber-700 fill-amber-400" />
                 {course.rating}
               </span>
               <span className="flex items-center gap-1">
@@ -226,7 +226,7 @@ export default function CoursesPage() {
               href={course.url}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center justify-center gap-2 w-full py-2 rounded-lg border border-border hover:border-indigo-500/40 hover:bg-indigo-500/8 text-xs font-medium text-muted-foreground hover:text-indigo-300 transition-all"
+              className="flex items-center justify-center gap-2 w-full py-2 rounded-lg border border-border hover:border-indigo-500/40 hover:bg-indigo-500/8 text-xs font-medium text-muted-foreground hover:text-indigo-700 transition-all"
             >
               <BookOpen className="w-3.5 h-3.5" />
               View Course
@@ -239,7 +239,7 @@ export default function CoursesPage() {
       {/* SA-specific note */}
       <div className="bg-card border border-amber-500/20 rounded-xl p-5">
         <div className="flex items-start gap-3">
-          <GraduationCap className="w-5 h-5 text-amber-400 flex-shrink-0 mt-0.5" />
+          <GraduationCap className="w-5 h-5 text-amber-700 flex-shrink-0 mt-0.5" />
           <div>
             <h3 className="text-sm font-semibold text-foreground mb-1">SA Funding Options</h3>
             <p className="text-xs text-muted-foreground leading-relaxed">

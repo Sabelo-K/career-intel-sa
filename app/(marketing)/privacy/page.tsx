@@ -1,3 +1,4 @@
+import { JourneyHeader } from "@/components/journey/chrome";
 import Link from "next/link";
 import { Sparkles } from "lucide-react";
 
@@ -6,15 +7,7 @@ export const metadata = { title: "Privacy Policy | CareerIntel SA" };
 export default function PrivacyPage() {
   return (
     <div className="min-h-screen bg-background">
-      <header className="border-b border-border px-6 py-4 flex items-center justify-between max-w-5xl mx-auto">
-        <Link href="/" className="flex items-center gap-2">
-          <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center">
-            <Sparkles className="w-3.5 h-3.5 text-white" />
-          </div>
-          <span className="font-bold text-foreground">CareerIntel <span className="text-indigo-400">SA</span></span>
-        </Link>
-        <Link href="/dashboard" className="text-sm text-muted-foreground hover:text-foreground transition-colors">← Back to app</Link>
-      </header>
+      <JourneyHeader />
 
       <main className="max-w-3xl mx-auto px-6 py-12">
         <h1 className="text-3xl font-bold text-foreground mb-2">Privacy Policy</h1>
@@ -22,14 +15,14 @@ export default function PrivacyPage() {
 
         <div className="prose prose-sm prose-invert max-w-none space-y-8 text-muted-foreground leading-relaxed">
 
-          <section className="p-4 rounded-xl bg-indigo-500/8 border border-indigo-500/20 text-sm text-indigo-200">
-            <strong className="text-indigo-300">Summary:</strong> We collect only what&apos;s needed to provide our service. We do not sell your personal information. You can delete your account and all associated data at any time.
+          <section className="p-4 rounded-xl bg-indigo-500/8 border border-indigo-500/20 text-sm text-indigo-700">
+            <strong className="text-indigo-700">Summary:</strong> We collect only what&apos;s needed to provide our service. We do not sell your personal information. You can delete your account and all associated data at any time.
           </section>
 
           <section>
             <h2 className="text-lg font-semibold text-foreground mb-3">1. Who We Are (Responsible Party)</h2>
             <p>CareerIntel SA is operated by <strong className="text-foreground">Sabelo Khanyile</strong> (trading as CareerIntel SA), based in the Republic of South Africa. We are the &quot;responsible party&quot; as defined under POPIA for the personal information we process.</p>
-            <p className="mt-2">Contact our Information Officer: <a href="mailto:privacy@careerintelsa.co.za" className="text-indigo-400 hover:text-indigo-300">privacy@careerintelsa.co.za</a></p>
+            <p className="mt-2">Contact our Information Officer: <a href="mailto:privacy@careerintelsa.co.za" className="text-indigo-700 hover:text-indigo-700">privacy@careerintelsa.co.za</a></p>
           </section>
 
           <section>
@@ -103,7 +96,7 @@ export default function PrivacyPage() {
               <li><strong className="text-foreground">Data portability:</strong> Request your data in a machine-readable format</li>
               <li><strong className="text-foreground">Complaint:</strong> Lodge a complaint with the Information Regulator of South Africa</li>
             </ul>
-            <p className="mt-3">To exercise these rights, go to <strong className="text-foreground">Settings → Privacy</strong> in the app, or email <a href="mailto:privacy@careerintelsa.co.za" className="text-indigo-400 hover:text-indigo-300">privacy@careerintelsa.co.za</a>.</p>
+            <p className="mt-3">To exercise these rights, go to <strong className="text-foreground">Settings → Privacy</strong> in the app, or email <a href="mailto:privacy@careerintelsa.co.za" className="text-indigo-700 hover:text-indigo-700">privacy@careerintelsa.co.za</a>.</p>
             <p className="mt-2">We will respond to requests within <strong className="text-foreground">30 days</strong> as required by POPIA.</p>
           </section>
 
@@ -130,7 +123,7 @@ export default function PrivacyPage() {
 
           <section>
             <h2 className="text-lg font-semibold text-foreground mb-3">11. PAIA — Promotion of Access to Information Act</h2>
-            <p>In terms of the <strong className="text-foreground">Promotion of Access to Information Act 2 of 2000 (PAIA)</strong>, you have the right to request access to records held by CareerIntel SA. To submit a PAIA request, email our Information Officer at <a href="mailto:privacy@careerintelsa.co.za" className="text-indigo-400 hover:text-indigo-300">privacy@careerintelsa.co.za</a>. A copy of our PAIA manual is available on request.</p>
+            <p>In terms of the <strong className="text-foreground">Promotion of Access to Information Act 2 of 2000 (PAIA)</strong>, you have the right to request access to records held by CareerIntel SA. To submit a PAIA request, email our Information Officer at <a href="mailto:privacy@careerintelsa.co.za" className="text-indigo-700 hover:text-indigo-700">privacy@careerintelsa.co.za</a>. A copy of our PAIA manual is available on request.</p>
           </section>
 
           <section>
@@ -138,7 +131,7 @@ export default function PrivacyPage() {
             <p>If you are not satisfied with how we handle your complaint, you may contact the Information Regulator of South Africa:</p>
             <div className="mt-2 p-3 bg-secondary rounded-lg text-sm">
               <p className="text-foreground font-medium">Information Regulator (South Africa)</p>
-              <p>Website: <a href="https://www.inforegulator.org.za" target="_blank" rel="noopener noreferrer" className="text-indigo-400 hover:text-indigo-300">www.inforegulator.org.za</a></p>
+              <p>Website: <a href="https://www.inforegulator.org.za" target="_blank" rel="noopener noreferrer" className="text-indigo-700 hover:text-indigo-700">www.inforegulator.org.za</a></p>
               <p>Email: inforeg@justice.gov.za</p>
             </div>
           </section>

@@ -100,38 +100,38 @@ export function PricingSection() {
           className="text-center mb-10"
         >
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4">Simple, transparent pricing</h2>
-          <p className="text-white/50">Start free, upgrade when you&apos;re ready. No hidden fees.</p>
+          <p className="text-muted-foreground">Start free, upgrade when you&apos;re ready. No hidden fees.</p>
         </motion.div>
 
         {/* Billing toggle */}
         <div className="flex flex-col items-center gap-2 mb-12">
-          <div className="flex items-center gap-1 bg-white/5 border border-white/10 rounded-xl p-1">
+          <div className="flex items-center gap-1 bg-secondary border border-border rounded-xl p-1">
             <button
               onClick={() => setBilling("subscription")}
               className={`relative px-5 py-2 rounded-lg text-sm font-medium transition-all ${
                 billing === "subscription"
-                  ? "bg-indigo-600 text-white shadow-md"
-                  : "text-white/50 hover:text-white"
+                  ? "bg-indigo-600 text-primary-foreground shadow-md"
+                  : "text-muted-foreground hover:text-foreground"
               }`}
             >
               Monthly Subscription
-              <span className="absolute -top-2.5 -right-2 text-[9px] bg-emerald-500 text-white px-1.5 py-0.5 rounded-full font-bold">SAVE</span>
+              <span className="absolute -top-2.5 -right-2 text-[9px] bg-emerald-500 text-primary-foreground px-1.5 py-0.5 rounded-full font-bold">SAVE</span>
             </button>
             <button
               onClick={() => setBilling("once_off")}
               className={`px-5 py-2 rounded-lg text-sm font-medium transition-all ${
                 billing === "once_off"
-                  ? "bg-white/10 text-white shadow-md"
-                  : "text-white/50 hover:text-white"
+                  ? "bg-secondary text-foreground shadow-md"
+                  : "text-muted-foreground hover:text-foreground"
               }`}
             >
               Once-off (30 days)
             </button>
           </div>
           {billing === "subscription" ? (
-            <p className="text-xs text-emerald-400">✓ Lower monthly rate · Auto-renews · Cancel anytime</p>
+            <p className="text-xs text-emerald-700">✓ Lower monthly rate · Auto-renews · Cancel anytime</p>
           ) : (
-            <p className="text-xs text-white/40">Pay once · 30 days access · No auto-renewal</p>
+            <p className="text-xs text-muted-foreground">Pay once · 30 days access · No auto-renewal</p>
           )}
         </div>
 
@@ -143,7 +143,7 @@ export function PricingSection() {
                 <div className={`absolute top-0 left-1/2 -translate-x-1/2 z-10 px-3 py-1 rounded-full text-white text-xs font-semibold whitespace-nowrap ${
                   plan.badge === "Most Popular" ? "bg-indigo-600" :
                   plan.badge === "For Youth"    ? "bg-violet-600" :
-                  plan.badge === "Coming Soon"  ? "bg-white/20 text-white/70" :
+                  plan.badge === "Coming Soon"  ? "bg-secondary text-muted-foreground" :
                   "bg-amber-600"
                 }`}>
                   {plan.badge}
@@ -155,33 +155,33 @@ export function PricingSection() {
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1 }}
                 className={`relative rounded-2xl p-6 h-full flex flex-col ${"comingSoon" in plan && plan.comingSoon
-                    ? "bg-white/[0.02] border border-white/5 opacity-55"
+                    ? "bg-secondary border border-border opacity-55"
                     : plan.highlight
                     ? "bg-gradient-to-b from-indigo-600/20 to-violet-600/10 border-2 border-indigo-500/50 shadow-2xl shadow-indigo-500/10"
-                    : "bg-white/[0.03] border border-white/10"
+                    : "bg-secondary border border-border"
                 }`}
               >
                 <div className="mb-5">
-                  <h3 className={`text-lg font-bold mb-1 ${"comingSoon" in plan && plan.comingSoon ? "text-white/40" : "text-white"}`}>{plan.name}</h3>
-                  <p className="text-white/40 text-sm mb-4">{plan.description}</p>
+                  <h3 className={`text-lg font-bold mb-1 ${"comingSoon" in plan && plan.comingSoon ? "text-muted-foreground" : "text-foreground"}`}>{plan.name}</h3>
+                  <p className="text-muted-foreground text-sm mb-4">{plan.description}</p>
                   {"comingSoon" in plan && plan.comingSoon ? (
                     <div>
-                      <p className="text-2xl font-bold text-white/30">Coming Soon</p>
-                      <p className="text-xs text-white/25 mt-1">Join the waitlist to be first in line</p>
+                      <p className="text-2xl font-bold text-muted-foreground">Coming Soon</p>
+                      <p className="text-xs text-muted-foreground mt-1">Join the waitlist to be first in line</p>
                     </div>
                   ) : (
                     <>
                       <div className="flex items-end gap-1.5">
-                        <span className="text-4xl font-bold text-white">
+                        <span className="text-4xl font-bold text-foreground">
                           {billing === "subscription" ? plan.subscription : plan.onceOff}
                         </span>
-                        <span className="text-white/40 text-sm mb-1">/mo</span>
+                        <span className="text-muted-foreground text-sm mb-1">/mo</span>
                       </div>
                       {billing === "subscription" && plan.saving && (
-                        <p className="text-xs text-emerald-400 mt-1">{plan.saving} vs once-off</p>
+                        <p className="text-xs text-emerald-700 mt-1">{plan.saving} vs once-off</p>
                       )}
                       {billing === "once_off" && plan.name !== "Free" && (
-                        <p className="text-xs text-white/30 mt-1">30 days · no auto-renewal</p>
+                        <p className="text-xs text-muted-foreground mt-1">30 days · no auto-renewal</p>
                       )}
                     </>
                   )}
@@ -189,8 +189,8 @@ export function PricingSection() {
 
                 <ul className="space-y-3 mb-8 flex-1">
                   {plan.features.map((f) => (
-                    <li key={f} className="flex items-center gap-2.5 text-sm text-white/70">
-                      <CheckCircle className={`w-4 h-4 flex-shrink-0 ${"comingSoon" in plan && plan.comingSoon ? "text-white/20" : "text-emerald-400"}`} />
+                    <li key={f} className="flex items-center gap-2.5 text-sm text-muted-foreground">
+                      <CheckCircle className={`w-4 h-4 flex-shrink-0 ${"comingSoon" in plan && plan.comingSoon ? "text-muted-foreground" : "text-emerald-700"}`} />
                       {f}
                     </li>
                   ))}
@@ -199,7 +199,7 @@ export function PricingSection() {
                 {"comingSoon" in plan && plan.comingSoon ? (
                   <a
                     href="mailto:hello@careerintelsa.co.za?subject=Recruiter Plan Waitlist"
-                    className="block text-center py-3 rounded-xl font-semibold text-sm border border-white/10 text-white/40 hover:border-white/20 hover:text-white/60 transition-all duration-200"
+                    className="block text-center py-3 rounded-xl font-semibold text-sm border border-border text-muted-foreground hover:border-border hover:text-muted-foreground transition-all duration-200"
                   >
                     Join Waitlist
                   </a>
@@ -208,8 +208,8 @@ export function PricingSection() {
                     href="/sign-up"
                     className={`block text-center py-3 rounded-xl font-semibold text-sm transition-all duration-200 ${
                       plan.highlight
-                        ? "bg-indigo-600 hover:bg-indigo-500 text-white hover:shadow-lg hover:shadow-indigo-500/25"
-                        : "border border-white/10 hover:border-white/20 text-white hover:bg-white/5"
+                        ? "bg-indigo-600 hover:bg-indigo-500 text-primary-foreground hover:shadow-lg hover:shadow-indigo-500/25"
+                        : "border border-border hover:border-border text-foreground hover:bg-secondary"
                     }`}
                   >
                     {plan.cta}
@@ -221,7 +221,7 @@ export function PricingSection() {
         </div>
 
         {/* Bottom note */}
-        <p className="text-center text-xs text-white/30 mt-8">
+        <p className="text-center text-xs text-muted-foreground mt-8">
           All plans include a free tier. Subscriptions can be cancelled anytime. Payments processed securely via PayFast.
         </p>
       </div>

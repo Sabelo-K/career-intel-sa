@@ -34,13 +34,13 @@ export function ReferralWidget() {
 
       <div className="flex items-start gap-3 relative z-10">
         <div className="w-9 h-9 rounded-xl bg-violet-500/20 flex items-center justify-center flex-shrink-0">
-          <Gift className="w-4 h-4 text-violet-400" />
+          <Gift className="w-4 h-4 text-violet-700" />
         </div>
         <div className="flex-1 min-w-0">
           <div className="flex items-center justify-between mb-1">
             <h3 className="text-sm font-semibold text-foreground">Refer a Friend — Get 7 Free Days</h3>
             {count > 0 && (
-              <span className="flex items-center gap-1 text-xs text-violet-400 font-semibold">
+              <span className="flex items-center gap-1 text-xs text-violet-700 font-semibold">
                 <Users className="w-3 h-3" />
                 {count} referred
               </span>
@@ -59,8 +59,8 @@ export function ReferralWidget() {
                 onClick={copy}
                 className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-semibold transition-all flex-shrink-0 ${
                   copied
-                    ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30"
-                    : "bg-violet-600 hover:bg-violet-500 text-white"
+                    ? "bg-emerald-500/20 text-emerald-700 border border-emerald-500/30"
+                    : "bg-violet-600 hover:bg-violet-500 text-primary-foreground"
                 }`}
               >
                 {copied ? <><Check className="w-3 h-3" /> Copied!</> : <><Copy className="w-3 h-3" /> Copy</>}
@@ -76,7 +76,7 @@ export function ReferralWidget() {
             </p>
           )}
           {count > 0 && (
-            <p className="text-xs text-emerald-400 mt-2 font-medium">
+            <p className="text-xs text-emerald-700 mt-2 font-medium">
               {count} friend{count !== 1 ? "s" : ""} joined via your link — you&apos;ve earned {count * 7} bonus days total 🎉
             </p>
           )}

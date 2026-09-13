@@ -29,7 +29,7 @@ export function LanguageSelector({ compact = false }: { compact?: boolean }) {
       <button
         onClick={() => setOpen((o) => !o)}
         className={cn(
-          "flex items-center gap-1.5 rounded-lg border border-white/10 bg-white/[0.06] hover:bg-white/[0.10] transition-colors text-white/60 hover:text-white/90",
+          "flex items-center gap-1.5 rounded-lg border border-border bg-secondary hover:bg-secondary transition-colors text-muted-foreground hover:text-muted-foreground",
           compact ? "px-2 py-1 text-xs" : "px-3 py-1.5 text-sm"
         )}
         aria-label={t("language")}
@@ -40,9 +40,9 @@ export function LanguageSelector({ compact = false }: { compact?: boolean }) {
       </button>
 
       {open && (
-        <div className="absolute bottom-full mb-2 left-0 z-50 w-40 rounded-xl border border-white/10 bg-[#0d1117] shadow-xl shadow-black/40 overflow-hidden">
-          <div className="px-3 py-2 border-b border-white/10">
-            <p className="text-[10px] font-semibold text-white/40 uppercase tracking-wider">
+        <div className="absolute bottom-full mb-2 left-0 z-50 w-40 rounded-xl border border-border bg-card shadow-xl shadow-black/40 overflow-hidden">
+          <div className="px-3 py-2 border-b border-border">
+            <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">
               {t("language")}
             </p>
           </div>
@@ -51,17 +51,17 @@ export function LanguageSelector({ compact = false }: { compact?: boolean }) {
               <button
                 key={lang.code}
                 onClick={() => { setLanguage(lang.code); setOpen(false); }}
-                className="w-full flex items-center gap-2.5 px-3 py-2 text-sm hover:bg-white/[0.07] transition-colors text-left"
+                className="w-full flex items-center gap-2.5 px-3 py-2 text-sm hover:bg-secondary transition-colors text-left"
               >
                 <span>{lang.flag}</span>
                 <span className={cn(
                   "flex-1 font-medium",
-                  language === lang.code ? "text-white" : "text-white/60"
+                  language === lang.code ? "text-foreground" : "text-muted-foreground"
                 )}>
                   {lang.label}
                 </span>
                 {language === lang.code && (
-                  <Check className="w-3.5 h-3.5 text-indigo-400" />
+                  <Check className="w-3.5 h-3.5 text-indigo-700" />
                 )}
               </button>
             ))}

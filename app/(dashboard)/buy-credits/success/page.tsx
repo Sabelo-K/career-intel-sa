@@ -30,7 +30,7 @@ export default function CreditsPurchaseSuccessPage() {
         transition={{ type: "spring", stiffness: 260, damping: 22 }}
         className="w-20 h-20 rounded-full bg-emerald-500/15 flex items-center justify-center"
       >
-        <CheckCircle2 className="w-10 h-10 text-emerald-400" />
+        <CheckCircle2 className="w-10 h-10 text-emerald-700" />
       </motion.div>
 
       <div className="space-y-2">
@@ -46,7 +46,7 @@ export default function CreditsPurchaseSuccessPage() {
           animate={{ opacity: 1, y: 0 }}
           className="bg-amber-500/10 border border-amber-500/20 rounded-2xl px-6 py-4 flex items-center gap-3"
         >
-          <Zap className="w-5 h-5 text-amber-400" />
+          <Zap className="w-5 h-5 text-amber-700" />
           <div className="text-left">
             <p className="text-xs text-muted-foreground">New balance</p>
             <p className="text-2xl font-bold text-foreground">
@@ -59,7 +59,7 @@ export default function CreditsPurchaseSuccessPage() {
       <div className="flex flex-col sm:flex-row gap-3 w-full">
         <Link
           href="/career-coach"
-          className="flex-1 flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-semibold transition-all active:scale-95"
+          className="flex-1 flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-primary-foreground text-sm font-semibold transition-all active:scale-95"
         >
           Open AI Career Coach
           <ArrowRight className="w-4 h-4" />

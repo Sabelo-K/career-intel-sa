@@ -1,5 +1,8 @@
 "use client";
 
+import { JourneyHeader } from "@/components/journey/chrome";
+
+
 import { useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
@@ -189,8 +192,8 @@ function fmt(n: number) {
 function ChartTip({ active, payload, label }: any) {
   if (!active || !payload?.length) return null;
   return (
-    <div className="bg-zinc-900 border border-white/10 rounded-lg px-3 py-2 text-xs shadow-xl">
-      <div className="text-white/50 mb-1">Year {label}</div>
+    <div className="bg-card border border-border rounded-lg px-3 py-2 text-xs shadow-xl">
+      <div className="text-muted-foreground mb-1">Year {label}</div>
       {payload.map((p: any, i: number) => (
         <div key={i} style={{ color: p.color }} className="font-semibold">{p.name}: {fmt(p.value)}/mo</div>
       ))}
@@ -258,32 +261,21 @@ export default function DegreeROIPage() {
   }, [selectedField, institution]);
 
   return (
-    <div className="min-h-screen bg-black text-white">
+    <div className="min-h-screen bg-background text-foreground">
       {/* Nav */}
-      <nav className="border-b border-white/10 px-6 py-4 flex items-center justify-between">
-        <Link href="/" className="flex items-center gap-2">
-          <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center">
-            <Brain className="w-4 h-4 text-white" />
-          </div>
-          <span className="font-bold text-sm">Career<span className="text-indigo-400">Intel</span><span className="text-amber-400 text-xs ml-1">SA</span></span>
-        </Link>
-        <div className="flex items-center gap-3">
-          <Link href="/sign-in" className="text-sm text-white/50 hover:text-white transition-colors">Sign in</Link>
-          <Link href="/sign-up" className="text-sm bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded-lg font-medium transition-colors">Get started free</Link>
-        </div>
-      </nav>
+      <JourneyHeader />
 
       <div className="max-w-3xl mx-auto px-4 py-16">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-10">
-          <div className="inline-flex items-center gap-2 bg-violet-500/10 border border-violet-500/20 text-violet-400 text-xs font-semibold px-3 py-1.5 rounded-full mb-5">
+          <div className="inline-flex items-center gap-2 bg-violet-500/10 border border-violet-500/20 text-violet-700 text-xs font-semibold px-3 py-1.5 rounded-full mb-5">
             <DollarSign className="w-3.5 h-3.5" />
             Free SA Degree ROI Calculator
           </div>
           <h1 className="text-4xl sm:text-5xl font-bold mb-4 leading-tight">
             Is your degree<br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-violet-400 to-indigo-400">worth the investment?</span>
+            <span className="text-primary">worth the investment?</span>
           </h1>
-          <p className="text-white/50 text-lg">See the real cost, salary timeline, and break-even point for any SA degree — vs the TVET alternative.</p>
+          <p className="text-muted-foreground text-lg">See the real cost, salary timeline, and break-even point for any SA degree — vs the TVET alternative.</p>
         </motion.div>
 
         {/* Category filter */}
@@ -291,7 +283,7 @@ export default function DegreeROIPage() {
           {CATEGORIES.map(c => (
             <button key={c} onClick={() => { setCategory(c); setSelectedField(null); setShowResults(false); }}
               className={`text-xs px-3 py-1.5 rounded-full border transition-all font-medium ${
-                category === c ? "border-violet-500/60 bg-violet-500/20 text-violet-300" : "border-white/10 text-white/50 hover:text-white hover:border-white/20"
+                category === c ? "border-violet-500/60 bg-violet-500/20 text-violet-700" : "border-border text-muted-foreground hover:text-foreground hover:border-border"
               }`}>
               {c}
             </button>
@@ -305,13 +297,13 @@ export default function DegreeROIPage() {
               className={`text-left p-4 rounded-xl border transition-all ${
                 selectedField?.field === d.field
                   ? "border-violet-500/50 bg-violet-500/10"
-                  : "border-white/10 bg-white/[0.03] hover:border-white/20 hover:bg-white/[0.06]"
+                  : "border-border bg-secondary hover:border-border hover:bg-secondary"
               }`}>
-              <div className="text-sm font-semibold text-white mb-0.5">{d.field}</div>
-              <div className="text-xs text-white/40">{d.degreeType} · {d.duration} years</div>
+              <div className="text-sm font-semibold text-foreground mb-0.5">{d.field}</div>
+              <div className="text-xs text-muted-foreground">{d.degreeType} · {d.duration} years</div>
               <div className="flex items-center gap-3 mt-2 text-xs">
-                <span className="text-violet-400 font-semibold">From R{Math.round(d.costPublicPerYear/1000)}k/yr</span>
-                <span className="text-emerald-400">Avg: R{Math.round(d.salary5yr/1000)}k/mo at 5yrs</span>
+                <span className="text-violet-700 font-semibold">From R{Math.round(d.costPublicPerYear/1000)}k/yr</span>
+                <span className="text-emerald-700">Avg: R{Math.round(d.salary5yr/1000)}k/mo at 5yrs</span>
               </div>
             </button>
           ))}
@@ -323,7 +315,7 @@ export default function DegreeROIPage() {
             {(["public", "private"] as const).map(opt => (
               <button key={opt} onClick={() => { setInstitution(opt); setShowResults(false); }}
                 className={`flex-1 py-3 rounded-xl text-sm font-medium border transition-all capitalize ${
-                  institution === opt ? "border-violet-500/50 bg-violet-500/15 text-violet-300" : "border-white/10 text-white/50 hover:text-white"
+                  institution === opt ? "border-violet-500/50 bg-violet-500/15 text-violet-700" : "border-border text-muted-foreground hover:text-foreground"
                 }`}>
                 {opt === "public" ? "🎓 Public University (UCT, Wits, UKZN…)" : "🏫 Private Institution"}
               </button>
@@ -333,7 +325,7 @@ export default function DegreeROIPage() {
 
         {selectedField && (
           <button onClick={() => { setShowResults(true); track("tool_degree_roi_run", { field: selectedField.field ?? "unknown" }); }}
-            className="w-full py-3.5 rounded-xl font-semibold text-sm bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 text-white flex items-center justify-center gap-2 transition-all mb-6">
+            className="w-full py-3.5 rounded-xl font-semibold text-sm bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 text-primary-foreground flex items-center justify-center gap-2 transition-all mb-6">
             Calculate ROI <ArrowRight className="w-4 h-4" />
           </button>
         )}
@@ -346,23 +338,23 @@ export default function DegreeROIPage() {
               {/* Cost summary */}
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                 {[
-                  { label: "Total degree cost",  value: fmt(roi.totalCost),                  icon: DollarSign,  color: "text-red-400"     },
-                  { label: "Duration",            value: `${selectedField.duration} years`,   icon: Clock,       color: "text-amber-400"   },
-                  { label: "Starting salary",     value: `${fmt(selectedField.startingSalary)}/mo`, icon: TrendingUp, color: "text-emerald-400" },
-                  { label: "10yr ROI",            value: `${roi.roi10yr}%`,                   icon: Award,       color: "text-violet-400"  },
+                  { label: "Total degree cost",  value: fmt(roi.totalCost),                  icon: DollarSign,  color: "text-red-700"     },
+                  { label: "Duration",            value: `${selectedField.duration} years`,   icon: Clock,       color: "text-amber-700"   },
+                  { label: "Starting salary",     value: `${fmt(selectedField.startingSalary)}/mo`, icon: TrendingUp, color: "text-emerald-700" },
+                  { label: "10yr ROI",            value: `${roi.roi10yr}%`,                   icon: Award,       color: "text-violet-700"  },
                 ].map(stat => (
-                  <div key={stat.label} className="bg-white/[0.04] border border-white/10 rounded-xl p-4">
+                  <div key={stat.label} className="bg-secondary border border-border rounded-xl p-4">
                     <stat.icon className={`w-4 h-4 ${stat.color} mb-2`} />
                     <div className={`text-base font-bold ${stat.color}`}>{stat.value}</div>
-                    <div className="text-[10px] text-white/40 mt-0.5">{stat.label}</div>
+                    <div className="text-[10px] text-muted-foreground mt-0.5">{stat.label}</div>
                   </div>
                 ))}
               </div>
 
               {/* Salary timeline chart */}
-              <div className="bg-white/[0.04] border border-white/10 rounded-2xl p-5">
-                <h3 className="text-sm font-semibold text-white mb-1">Salary trajectory over 10 years</h3>
-                <p className="text-xs text-white/40 mb-4">
+              <div className="bg-secondary border border-border rounded-2xl p-5">
+                <h3 className="text-sm font-semibold text-foreground mb-1">Salary trajectory over 10 years</h3>
+                <p className="text-xs text-muted-foreground mb-4">
                   Degree path vs TVET alternative — {roi.breakEvenYear ? `degree overtakes TVET route at year ${roi.breakEvenYear}` : "degree stays ahead throughout"}
                 </p>
                 <ResponsiveContainer width="100%" height={220}>
@@ -385,43 +377,43 @@ export default function DegreeROIPage() {
                     <Area type="monotone" dataKey="tvet"   name="TVET"   stroke="#10b981" fill="url(#tvetGrad)" strokeWidth={2} dot={false} strokeDasharray="4 2" />
                   </AreaChart>
                 </ResponsiveContainer>
-                <div className="flex items-center gap-4 mt-2 justify-center text-xs text-white/40">
+                <div className="flex items-center gap-4 mt-2 justify-center text-xs text-muted-foreground">
                   <div className="flex items-center gap-1.5"><div className="w-3 h-0.5 bg-violet-500 rounded" /> Degree path</div>
                   <div className="flex items-center gap-1.5"><div className="w-3 h-0.5 bg-emerald-500 rounded border-dashed" /> TVET / trade path</div>
                 </div>
               </div>
 
               {/* TVET comparison */}
-              <div className="bg-white/[0.04] border border-white/10 rounded-2xl p-5">
-                <h3 className="text-sm font-semibold text-white mb-3 flex items-center gap-2">
-                  <Zap className="w-4 h-4 text-amber-400" />
+              <div className="bg-secondary border border-border rounded-2xl p-5">
+                <h3 className="text-sm font-semibold text-foreground mb-3 flex items-center gap-2">
+                  <Zap className="w-4 h-4 text-amber-700" />
                   TVET / Trade Alternative: {selectedField.tvet.name}
                 </h3>
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center">
                   {[
-                    { label: "Duration",      value: `${selectedField.tvet.duration} years`,             color: "text-white" },
-                    { label: "Total cost",    value: fmt(selectedField.tvet.costPerYear * selectedField.tvet.duration), color: "text-emerald-400" },
-                    { label: "Starting",      value: `${fmt(selectedField.tvet.startingSalary)}/mo`,     color: "text-white" },
-                    { label: "At 5 years",    value: `${fmt(selectedField.tvet.salary5yr)}/mo`,          color: "text-indigo-300" },
+                    { label: "Duration",      value: `${selectedField.tvet.duration} years`,             color: "text-foreground" },
+                    { label: "Total cost",    value: fmt(selectedField.tvet.costPerYear * selectedField.tvet.duration), color: "text-emerald-700" },
+                    { label: "Starting",      value: `${fmt(selectedField.tvet.startingSalary)}/mo`,     color: "text-foreground" },
+                    { label: "At 5 years",    value: `${fmt(selectedField.tvet.salary5yr)}/mo`,          color: "text-indigo-700" },
                   ].map(s => (
-                    <div key={s.label} className="bg-white/5 rounded-xl py-3">
+                    <div key={s.label} className="bg-secondary rounded-xl py-3">
                       <div className={`text-sm font-bold ${s.color}`}>{s.value}</div>
-                      <div className="text-[10px] text-white/30 mt-0.5">{s.label}</div>
+                      <div className="text-[10px] text-muted-foreground mt-0.5">{s.label}</div>
                     </div>
                   ))}
                 </div>
-                <p className="text-xs text-white/40 mt-3 text-center">
-                  Cost saving vs degree: <strong className="text-emerald-400">{fmt(roi.totalCost - selectedField.tvet.costPerYear * selectedField.tvet.duration)}</strong>
+                <p className="text-xs text-muted-foreground mt-3 text-center">
+                  Cost saving vs degree: <strong className="text-emerald-700">{fmt(roi.totalCost - selectedField.tvet.costPerYear * selectedField.tvet.duration)}</strong>
                   {roi.breakEvenYear ? ` — degree earns more from year ${roi.breakEvenYear} onwards` : " — both paths have similar long-term earnings"}
                 </p>
               </div>
 
               {/* Verdict */}
               <div className="bg-violet-500/5 border border-violet-500/15 rounded-2xl p-5">
-                <h3 className="font-semibold text-white mb-2 flex items-center gap-2">
-                  <Award className="w-4 h-4 text-violet-400" /> Verdict
+                <h3 className="font-semibold text-foreground mb-2 flex items-center gap-2">
+                  <Award className="w-4 h-4 text-violet-700" /> Verdict
                 </h3>
-                <p className="text-sm text-white/60 leading-relaxed">
+                <p className="text-sm text-muted-foreground leading-relaxed">
                   {roi.roi10yr > 300
                     ? `${selectedField.field} has an exceptional ROI of ${roi.roi10yr}% over 10 years. The degree cost is fully recovered and then some — this is one of SA's highest-return qualifications.`
                     : roi.roi10yr > 100
@@ -432,10 +424,10 @@ export default function DegreeROIPage() {
 
               {/* CTA */}
               <div className="bg-indigo-500/5 border border-indigo-500/15 rounded-2xl p-6 text-center">
-                <p className="text-sm text-white/60 mb-4">
-                  <strong className="text-white">Get a personalised career plan</strong> — bursary matches, skills gaps, and a step-by-step roadmap to your target role. Free on CareerIntel SA.
+                <p className="text-sm text-muted-foreground mb-4">
+                  <strong className="text-foreground">Get a personalised career plan</strong> — bursary matches, skills gaps, and a step-by-step roadmap to your target role. Free on CareerIntel SA.
                 </p>
-                <Link href="/sign-up" className="inline-flex items-center gap-2 bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 text-white text-sm font-semibold px-6 py-3 rounded-xl transition-all">
+                <Link href="/sign-up" className="inline-flex items-center gap-2 bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 text-primary-foreground text-sm font-semibold px-6 py-3 rounded-xl transition-all">
                   Create free account <ArrowRight className="w-4 h-4" />
                 </Link>
               </div>

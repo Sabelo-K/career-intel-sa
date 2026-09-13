@@ -75,7 +75,7 @@ function renderContent(text: string) {
     const formatted = line
       .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>")
       .replace(/\*(.*?)\*/g, "<em>$1</em>")
-      .replace(/`(.*?)`/g, '<code class="bg-white/10 px-1 rounded text-xs font-mono">$1</code>');
+      .replace(/`(.*?)`/g, '<code class="bg-secondary px-1 rounded text-xs font-mono">$1</code>');
     return (
       <div
         key={i}
@@ -95,15 +95,15 @@ function MessageBubble({ message, onRetry }: { message: Message; onRetry?: (id: 
       className={`flex gap-3 ${isUser ? "flex-row-reverse" : ""}`}
     >
       <div className={`w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0 mt-0.5 ${isUser ? "bg-indigo-600" : "bg-gradient-to-br from-violet-600 to-indigo-600"}`}>
-        {isUser ? <User className="w-4 h-4 text-white" /> : <Bot className="w-4 h-4 text-white" />}
+        {isUser ? <User className="w-4 h-4 text-foreground" /> : <Bot className="w-4 h-4 text-foreground" />}
       </div>
       <div className={`max-w-[88%] sm:max-w-[78%] md:max-w-[75%] ${isUser ? "items-end" : "items-start"} flex flex-col gap-1`}>
         <div
           className={`px-4 py-3 rounded-2xl text-sm leading-relaxed ${
             message.error
-              ? "bg-red-500/10 border border-red-500/20 text-red-300 rounded-tl-sm"
+              ? "bg-red-500/10 border border-red-500/20 text-red-700 rounded-tl-sm"
               : isUser
-              ? "bg-indigo-600 text-white rounded-tr-sm"
+              ? "bg-indigo-600 text-primary-foreground rounded-tr-sm"
               : "bg-card border border-border text-foreground rounded-tl-sm"
           }`}
         >
@@ -115,7 +115,7 @@ function MessageBubble({ message, onRetry }: { message: Message; onRetry?: (id: 
                 {onRetry && (
                   <button
                     onClick={() => onRetry(message.id)}
-                    className="mt-2 flex items-center gap-1 text-xs text-red-300 hover:text-white underline underline-offset-2 transition-colors"
+                    className="mt-2 flex items-center gap-1 text-xs text-red-700 hover:text-foreground underline underline-offset-2 transition-colors"
                   >
                     <RotateCcw className="w-3 h-3" /> Try again
                   </button>
@@ -147,7 +147,7 @@ function TypingIndicator() {
   return (
     <div className="flex gap-3">
       <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-violet-600 to-indigo-600 flex items-center justify-center flex-shrink-0">
-        <Bot className="w-4 h-4 text-white" />
+        <Bot className="w-4 h-4 text-foreground" />
       </div>
       <div className="bg-card border border-border px-4 py-3 rounded-2xl rounded-tl-sm flex items-center gap-1.5">
         {[0, 1, 2].map((i) => (
@@ -427,13 +427,13 @@ export default function CareerCoachPage() {
         <div className="flex items-center gap-2 flex-shrink-0">
           {!isUnlimited && (
             <div className="text-xs text-muted-foreground hidden sm:block">
-              <span className={`font-medium ${remainingMessages <= 3 ? "text-amber-400" : "text-foreground"}`}>
+              <span className={`font-medium ${remainingMessages <= 3 ? "text-amber-700" : "text-foreground"}`}>
                 {remainingMessages}
               </span>/{messageLimit}
             </div>
           )}
           {isUnlimited && (
-            <div className="text-xs text-emerald-400 hidden sm:block font-medium">
+            <div className="text-xs text-emerald-700 hidden sm:block font-medium">
               ∞ Unlimited
             </div>
           )}
@@ -490,7 +490,7 @@ export default function CareerCoachPage() {
                     disabled={isLoading}
                     className="flex items-center gap-2 p-3 rounded-lg border border-border hover:border-indigo-500/30 hover:bg-indigo-500/5 text-left text-xs text-muted-foreground hover:text-foreground transition-all disabled:opacity-50 touch-manipulation"
                   >
-                    <q.icon className="w-3.5 h-3.5 text-indigo-400 flex-shrink-0" />
+                    <q.icon className="w-3.5 h-3.5 text-indigo-700 flex-shrink-0" />
                     <span className="line-clamp-2">{q.text}</span>
                   </button>
                 ))}
@@ -498,7 +498,7 @@ export default function CareerCoachPage() {
             )}
 
             {!isUnlimited && remainingMessages <= 3 && remainingMessages > 0 && (
-              <div className="flex items-center gap-2 text-xs text-amber-400 bg-amber-500/10 border border-amber-500/20 rounded-lg px-3 py-2 mb-3">
+              <div className="flex items-center gap-2 text-xs text-amber-700 bg-amber-500/10 border border-amber-500/20 rounded-lg px-3 py-2 mb-3">
                 <AlertCircle className="w-3.5 h-3.5 flex-shrink-0" />
                 Only {remainingMessages} message{remainingMessages !== 1 ? "s" : ""} remaining this month. Upgrade for unlimited coaching.
               </div>
@@ -506,7 +506,7 @@ export default function CareerCoachPage() {
 
             {!isUnlimited && remainingMessages === 0 ? (
               <div className="flex items-center justify-between bg-indigo-500/10 border border-indigo-500/20 rounded-xl px-4 py-3">
-                <p className="text-sm text-white/70">Monthly limit reached. Upgrade to keep chatting.</p>
+                <p className="text-sm text-muted-foreground">Monthly limit reached. Upgrade to keep chatting.</p>
                 <Button variant="indigo" size="sm" onClick={() => window.location.href = "/upgrade"}>Upgrade — from R24/mo</Button>
               </div>
             ) : (
@@ -542,7 +542,7 @@ export default function CareerCoachPage() {
               CareerIQ is AI-powered · Not a substitute for registered career counsellors
             </p>
             {language !== "en" && (
-              <p className="text-xs text-amber-400/70 mt-1 text-center">
+              <p className="text-xs text-amber-700/70 mt-1 text-center">
                 AI responses in indigenous languages may not be perfect — verify important information.
               </p>
             )}
@@ -571,7 +571,7 @@ export default function CareerCoachPage() {
                     className={`w-full text-left px-2 py-2 rounded-lg hover:bg-secondary transition-colors group ${sessionId === s.id ? "bg-secondary" : ""}`}
                   >
                     <div className="flex items-center gap-1.5 mb-0.5">
-                      <MessageSquare className="w-3 h-3 text-indigo-400 flex-shrink-0" />
+                      <MessageSquare className="w-3 h-3 text-indigo-700 flex-shrink-0" />
                       <span className="text-xs font-medium text-foreground truncate">{s.title}</span>
                     </div>
                     {s.lastMessage && (
@@ -605,10 +605,10 @@ export default function CareerCoachPage() {
           {/* Upgrade */}
           <div className="bg-gradient-to-br from-indigo-600/15 to-violet-600/10 border border-indigo-500/20 rounded-xl p-4">
             <div className="flex items-center gap-2 mb-2">
-              <Sparkles className="w-4 h-4 text-amber-400" />
-              <span className="text-sm font-semibold text-white">Go Professional</span>
+              <Sparkles className="w-4 h-4 text-amber-700" />
+              <span className="text-sm font-semibold text-foreground">Go Professional</span>
             </div>
-            <p className="text-xs text-white/50 mb-3">
+            <p className="text-xs text-muted-foreground mb-3">
               Unlimited coaching, career simulations & salary forecasting.
             </p>
             <Button variant="indigo" size="sm" className="w-full text-xs">

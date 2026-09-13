@@ -63,7 +63,7 @@ export default function FeedbackWidget({ feature, onClose }: Props) {
       {/* Header */}
       <div className="flex items-center justify-between px-4 py-3 border-b border-border bg-indigo-500/8">
         <div className="flex items-center gap-2">
-          <Sparkles className="w-3.5 h-3.5 text-indigo-400" />
+          <Sparkles className="w-3.5 h-3.5 text-indigo-700" />
           <span className="text-xs font-semibold text-foreground">Quick Feedback</span>
         </div>
         <button onClick={onClose} className="text-muted-foreground hover:text-foreground transition-colors">
@@ -80,14 +80,14 @@ export default function FeedbackWidget({ feature, onClose }: Props) {
               animate={{ opacity: 1, scale: 1   }}
               className="flex flex-col items-center py-4 gap-2"
             >
-              <CheckCircle2 className="w-8 h-8 text-emerald-400" />
+              <CheckCircle2 className="w-8 h-8 text-emerald-700" />
               <p className="text-sm font-medium text-foreground">Thanks for the feedback!</p>
               <p className="text-xs text-muted-foreground text-center">It helps us improve CareerIntel SA for everyone.</p>
             </motion.div>
           ) : (
             <motion.div key="form" className="space-y-3">
               <p className="text-sm text-foreground">
-                How was <span className="text-indigo-300 font-medium">{FEATURE_LABELS[feature]}</span>?
+                How was <span className="text-indigo-700 font-medium">{FEATURE_LABELS[feature]}</span>?
               </p>
 
               {/* Stars */}
@@ -103,7 +103,7 @@ export default function FeedbackWidget({ feature, onClose }: Props) {
                     <Star
                       className={`w-7 h-7 transition-colors ${
                         star <= active
-                          ? "fill-amber-400 text-amber-400"
+                          ? "fill-amber-400 text-amber-700"
                           : "text-muted-foreground/40"
                       }`}
                     />

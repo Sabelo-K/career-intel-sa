@@ -14,9 +14,9 @@ const buttonVariants = cva(
         secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/80",
         ghost: "hover:bg-secondary hover:text-foreground",
         link: "text-primary underline-offset-4 hover:underline",
-        indigo: "bg-indigo-600 text-white hover:bg-indigo-500 shadow-sm hover:shadow-indigo-500/25",
-        emerald: "bg-emerald-600 text-white hover:bg-emerald-500 shadow-sm",
-        gold: "bg-amber-500 text-white hover:bg-amber-400 shadow-sm",
+        indigo: "bg-indigo-600 text-primary-foreground hover:bg-indigo-500 shadow-sm hover:shadow-indigo-500/25",
+        emerald: "bg-emerald-600 text-primary-foreground hover:bg-emerald-500 shadow-sm",
+        gold: "bg-amber-500 text-primary-foreground hover:bg-amber-400 shadow-sm",
       },
       size: {
         default: "h-10 px-4 py-2",

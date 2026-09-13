@@ -1,3 +1,4 @@
+import { JourneyHeader } from "@/components/journey/chrome";
 import Link from "next/link";
 import {
   Brain, Coins, MessageCircle, Target, GitBranch, CheckCircle2,
@@ -13,7 +14,7 @@ import { SA_CAREER_COUNT } from "@/lib/data/career-count";
 const CREDIT_ACTIONS = [
   {
     icon: MessageCircle,
-    colour: "text-violet-400",
+    colour: "text-violet-700",
     name: "AI Career Coach message",
     cost: CREDIT_COSTS["chat-message"],
     freePerMonth: FREE_LIMITS.chatMessages,
@@ -21,7 +22,7 @@ const CREDIT_ACTIONS = [
   },
   {
     icon: Target,
-    colour: "text-emerald-400",
+    colour: "text-emerald-700",
     name: "Skills Gap analysis",
     cost: CREDIT_COSTS["skills-gap"],
     freePerMonth: FREE_LIMITS.skillsGapAnalyses,
@@ -29,7 +30,7 @@ const CREDIT_ACTIONS = [
   },
   {
     icon: GitBranch,
-    colour: "text-amber-400",
+    colour: "text-amber-700",
     name: "Career Path simulation",
     cost: CREDIT_COSTS["career-path"],
     freePerMonth: FREE_LIMITS.careerSimulations,
@@ -50,30 +51,14 @@ export default function HowCreditsWorkPage() {
   return (
     <div className="min-h-screen bg-background">
       {/* Nav */}
-      <nav className="border-b border-border px-4 py-4 flex items-center justify-between max-w-4xl mx-auto">
-        <Link href="/" className="flex items-center gap-2">
-          <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center">
-            <Brain className="w-4 h-4 text-white" />
-          </div>
-          <span className="font-bold text-sm text-foreground">
-            Career<span className="text-indigo-400">Intel</span>
-            <span className="text-amber-400 text-xs ml-1">SA</span>
-          </span>
-        </Link>
-        <Link
-          href="/buy-credits"
-          className="text-xs px-3 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white font-medium transition-colors"
-        >
-          Buy Credits
-        </Link>
-      </nav>
+      <JourneyHeader />
 
       <div className="max-w-2xl mx-auto px-4 py-12 space-y-10">
 
         {/* Header */}
         <header className="text-center space-y-3">
           <div className="w-14 h-14 rounded-2xl bg-amber-500/15 flex items-center justify-center mx-auto">
-            <Coins className="w-7 h-7 text-amber-400" />
+            <Coins className="w-7 h-7 text-amber-700" />
           </div>
           <h1 className="text-3xl font-bold text-foreground">How credits work</h1>
           <p className="text-muted-foreground text-sm max-w-md mx-auto leading-relaxed">
@@ -114,7 +99,7 @@ export default function HowCreditsWorkPage() {
                     <p className="text-sm font-bold text-foreground whitespace-nowrap">
                       {a.cost} credit{a.cost !== 1 ? "s" : ""}
                     </p>
-                    <p className="text-[11px] text-emerald-400 whitespace-nowrap mt-0.5">
+                    <p className="text-[11px] text-emerald-700 whitespace-nowrap mt-0.5">
                       {a.freePerMonth} free/month
                     </p>
                   </div>
@@ -124,20 +109,20 @@ export default function HowCreditsWorkPage() {
           </div>
           <p className="text-xs text-muted-foreground leading-relaxed">
             Free-plan allowances shown. Paid plans include higher or unlimited allowances —
-            see <Link href="/upgrade" className="text-indigo-400 hover:underline">plans</Link>.
+            see <Link href="/upgrade" className="text-indigo-700 hover:underline">plans</Link>.
           </p>
         </section>
 
         {/* Always free */}
         <section className="bg-card border border-border rounded-2xl p-5 space-y-3">
           <div className="flex items-center gap-2">
-            <InfinityIcon className="w-4 h-4 text-emerald-400" />
+            <InfinityIcon className="w-4 h-4 text-emerald-700" />
             <h2 className="text-sm font-semibold text-foreground">Always free — never costs credits</h2>
           </div>
           <ul className="space-y-2">
             {ALWAYS_FREE.map((item) => (
               <li key={item} className="flex items-start gap-2 text-xs text-muted-foreground leading-relaxed">
-                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 flex-shrink-0 mt-0.5" />
+                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-700 flex-shrink-0 mt-0.5" />
                 {item}
               </li>
             ))}
@@ -168,7 +153,7 @@ export default function HowCreditsWorkPage() {
         <section className="flex flex-col sm:flex-row gap-3">
           <Link
             href="/buy-credits"
-            className="flex-1 inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-semibold transition-colors"
+            className="flex-1 inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-primary-foreground text-sm font-semibold transition-colors"
           >
             Buy credits <ArrowRight className="w-4 h-4" />
           </Link>

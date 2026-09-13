@@ -1,7 +1,9 @@
 {
   "buildCommand": "prisma generate && tsx scripts/build-career-index.ts && next build",
   "framework": "nextjs",
-  "regions": ["iad1"],
+  "regions": [
+    "iad1"
+  ],
   "crons": [
     {
       "path": "/api/cron/daily-maintenance",
@@ -10,19 +12,45 @@
     {
       "path": "/api/cron/daily-email",
       "schedule": "0 8 * * *"
+    },
+    {
+      "path": "/api/cron/data-refresh",
+      "schedule": "0 5 * * *"
     }
   ],
   "functions": {
-    "app/api/chat/route.ts":             { "maxDuration": 30 },
-    "app/api/cv/analyze/route.ts":       { "maxDuration": 60 },
-    "app/api/career/paths/route.ts":     { "maxDuration": 30 },
-    "app/api/skills/gap/route.ts":       { "maxDuration": 30 },
-    "app/api/cron/job-alerts/route.ts":      { "maxDuration": 60 },
-    "app/api/cron/weekly-digest/route.ts":          { "maxDuration": 60 },
-    "app/api/cron/data-refresh-reminder/route.ts":  { "maxDuration": 30 },
-    "app/api/cron/expire-plans/route.ts":           { "maxDuration": 30 },
-    "app/api/cron/reconcile-payments/route.ts":     { "maxDuration": 60 },
-    "app/api/cron/daily-maintenance/route.ts":      { "maxDuration": 60 },
-    "app/api/cron/daily-email/route.ts":            { "maxDuration": 60 }
+    "app/api/chat/route.ts": {
+      "maxDuration": 30
+    },
+    "app/api/cv/analyze/route.ts": {
+      "maxDuration": 60
+    },
+    "app/api/career/paths/route.ts": {
+      "maxDuration": 30
+    },
+    "app/api/skills/gap/route.ts": {
+      "maxDuration": 30
+    },
+    "app/api/cron/job-alerts/route.ts": {
+      "maxDuration": 60
+    },
+    "app/api/cron/weekly-digest/route.ts": {
+      "maxDuration": 60
+    },
+    "app/api/cron/data-refresh-reminder/route.ts": {
+      "maxDuration": 30
+    },
+    "app/api/cron/expire-plans/route.ts": {
+      "maxDuration": 30
+    },
+    "app/api/cron/reconcile-payments/route.ts": {
+      "maxDuration": 60
+    },
+    "app/api/cron/daily-maintenance/route.ts": {
+      "maxDuration": 60
+    },
+    "app/api/cron/daily-email/route.ts": {
+      "maxDuration": 60
+    }
   }
 }

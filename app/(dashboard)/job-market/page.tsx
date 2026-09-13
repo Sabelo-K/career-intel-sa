@@ -1,5 +1,6 @@
 "use client";
 
+import { MarketSignals } from "@/components/journey/market-signals";
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import {
@@ -18,13 +19,6 @@ import { matchesQuery } from "@/lib/data/search-aliases";
 import { CAREER_SUBJECTS } from "@/lib/data/sa-subjects";
 import { SA_MARKET_STATS } from "@/lib/data/sa-provinces";
 import { formatSalaryRange, getDemandBadgeColor, getTrendLabel, getAutomationRiskLabel } from "@/lib/utils";
-
-// ── Data freshness ─────────────────────────────────────────────────────────────
-// Update this string each quarter when career data is refreshed.
-// Sources: National Minimum Wage Act (gazetted rates) · Stats SA QES · DHET Scarce
-// Skills List · Adzuna SA · Robert Walters SA Salary Guide
-const DATA_LAST_UPDATED = "August 2026";
-const NEXT_UPDATE_DUE   = "September 2026";
 
 // Shared tooltip style — white cards with readable ink for all charts
 const TOOLTIP_STYLE = {
@@ -607,47 +601,16 @@ export default function JobMarketPage() {
           <div className="flex items-center gap-1.5 bg-emerald-500/10 border border-emerald-500/20 rounded-full px-3 py-1">
             <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
             <span className="text-xs font-medium text-emerald-700">
-              Data updated: {DATA_LAST_UPDATED}
+              Curated career reference
             </span>
           </div>
           <span className="text-[10px] text-muted-foreground/60 pr-1">
-            Next refresh: {NEXT_UPDATE_DUE}
+            Live source checks shown below
           </span>
         </div>
       </div>
 
-      {/* Market overview stats */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        {[
-          { label: "National Unemployment", value: "32.1%", change: "Q4 2025 · Stats SA", icon: AlertTriangle, color: "amber" },
-          { label: "Youth Unemployment", value: "46.1%", change: "Ages 15-34 · Q4 2025", icon: TrendingDown, color: "red" },
-          { label: "Tech Jobs Growth", value: "+32%", change: "YoY 2026", icon: TrendingUp, color: "emerald" },
-          { label: "Remote Jobs Available", value: "22%", change: "of SA listings · 2026", icon: Globe, color: "indigo" },
-        ].map((stat) => (
-          <div key={stat.label} className="stat-card">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-xs text-muted-foreground">{stat.label}</span>
-              <div className={`w-7 h-7 rounded-lg flex items-center justify-center ${
-                stat.color === "amber" ? "bg-amber-500/15" :
-                stat.color === "red" ? "bg-red-500/15" :
-                stat.color === "emerald" ? "bg-emerald-500/15" : "bg-indigo-500/15"
-              }`}>
-                <stat.icon className={`w-3.5 h-3.5 ${
-                  stat.color === "amber" ? "text-amber-700" :
-                  stat.color === "red" ? "text-red-700" :
-                  stat.color === "emerald" ? "text-emerald-700" : "text-indigo-700"
-                }`} />
-              </div>
-            </div>
-            <div className={`text-2xl font-bold ${
-              stat.color === "emerald" ? "text-emerald-700" :
-              stat.color === "red" ? "text-red-700" :
-              stat.color === "amber" ? "text-amber-700" : "text-foreground"
-            }`}>{stat.value}</div>
-            <div className="text-xs text-muted-foreground mt-0.5">{stat.change}</div>
-          </div>
-        ))}
-      </div>
+      <MarketSignals />
 
       <Tabs defaultValue="careers">
         <TabsList className="mb-5">
@@ -858,7 +821,7 @@ export default function JobMarketPage() {
                   <Zap className="w-4 h-4 text-amber-700" />
                   <h3 className="text-sm font-semibold text-foreground">DHET / SETA Scarce Skills</h3>
                 </div>
-                <span className="text-[10px] text-muted-foreground/60">Updated {DATA_LAST_UPDATED}</span>
+                <span className="text-[10px] text-muted-foreground/60">Curated estimate</span>
               </div>
               <p className="text-xs text-muted-foreground mb-4">
                 Skills identified as critically scarce in South Africa. Learning these can unlock bursaries, learnerships, and premium salaries.

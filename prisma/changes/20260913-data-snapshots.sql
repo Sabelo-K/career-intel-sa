@@ -1,0 +1,1 @@
+CREATE TABLE IF NOT EXISTS "data_snapshots" ("key" TEXT PRIMARY KEY, "payload" JSONB, "checkedAt" TIMESTAMP(3), "attemptedAt" TIMESTAMP(3), "leaseUntil" TIMESTAMP(3), "error" TEXT);

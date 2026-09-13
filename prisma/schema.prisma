@@ -366,3 +366,13 @@ enum FutureOutlook {
   EXCELLENT
   EXCEPTIONAL
 }
+
+model DataSnapshot {
+ key String @id
+ payload Json?
+ checkedAt DateTime?
+ attemptedAt DateTime?
+ leaseUntil DateTime?
+ error String?
+ @@map("data_snapshots")
+}

@@ -1,5 +1,6 @@
 "use client";
 
+import { MemberActionLink } from "@/components/journey/account-controls";
 import { JourneyHeader } from "@/components/journey/chrome";
 
 
@@ -368,9 +369,9 @@ export default function MatricPage() {
               <div className="bg-indigo-500/5 border border-indigo-500/15 rounded-2xl p-6 text-center">
                 <h3 className="font-bold text-foreground mb-2">Get your full career roadmap — free</h3>
                 <p className="text-sm text-muted-foreground mb-4">See salary projections, NQF pathways, bursaries you qualify for, and a step-by-step plan from matric to your target career.</p>
-                <Link href="/sign-up" className="inline-flex items-center gap-2 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-foreground text-sm font-semibold px-6 py-3 rounded-xl transition-all">
+                <MemberActionLink signedInHref="/high-school" signedInLabel="Open my school guidance" className="inline-flex items-center gap-2 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-foreground text-sm font-semibold px-6 py-3 rounded-xl transition-all">
                   Create free account <ArrowRight className="w-4 h-4" />
-                </Link>
+                </MemberActionLink>
               </div>
             </motion.div>
           )}

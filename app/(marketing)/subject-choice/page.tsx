@@ -1,5 +1,6 @@
 "use client";
 
+import { MemberActionLink } from "@/components/journey/account-controls";
 import { JourneyHeader } from "@/components/journey/chrome";
 
 
@@ -346,13 +347,12 @@ export default function SubjectChoicePage() {
                   {copied ? <CheckCircle2 className="w-4 h-4 text-emerald-700" /> : <Share2 className="w-4 h-4" />}
                   {copied ? "Copied!" : "Share my results"}
                 </button>
-                <Link
-                  href="/sign-up"
+                <MemberActionLink signedInHref="/dashboard" signedInLabel="Open my career plan"
                   onClick={() => track("tool_subject_choice_run", { subjects: chosen.length, opened: result.open.length })}
                   className="flex-1 inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-primary-foreground text-sm font-semibold transition-colors"
                 >
                   Get my full career plan <ArrowRight className="w-4 h-4" />
-                </Link>
+                </MemberActionLink>
               </div>
 
               <p className="text-[11px] text-muted-foreground/70 text-center leading-relaxed">

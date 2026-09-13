@@ -1,5 +1,6 @@
 "use client";
 
+import { MemberActionLink } from "@/components/journey/account-controls";
 import { JourneyHeader } from "@/components/journey/chrome";
 
 
@@ -427,9 +428,9 @@ export default function DegreeROIPage() {
                 <p className="text-sm text-muted-foreground mb-4">
                   <strong className="text-foreground">Get a personalised career plan</strong> — bursary matches, skills gaps, and a step-by-step roadmap to your target role. Free on CareerIntel SA.
                 </p>
-                <Link href="/sign-up" className="inline-flex items-center gap-2 bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 text-primary-foreground text-sm font-semibold px-6 py-3 rounded-xl transition-all">
+                <MemberActionLink signedInHref="/dashboard" signedInLabel="Open my career plan" className="inline-flex items-center gap-2 bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 text-primary-foreground text-sm font-semibold px-6 py-3 rounded-xl transition-all">
                   Create free account <ArrowRight className="w-4 h-4" />
-                </Link>
+                </MemberActionLink>
               </div>
             </motion.div>
           )}

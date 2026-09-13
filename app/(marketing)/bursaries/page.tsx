@@ -1,5 +1,6 @@
 "use client";
 
+import { MemberActionLink } from "@/components/journey/account-controls";
 import { JourneyHeader } from "@/components/journey/chrome";
 
 
@@ -282,9 +283,9 @@ export default function BursariesPage() {
         <div className="mt-8 p-6 rounded-xl bg-gradient-to-r from-emerald-500/10 to-indigo-500/10 border border-emerald-500/20 text-center">
           <h2 className="text-base font-semibold text-foreground mb-1">Preparing to apply? Stand out from the start.</h2>
           <p className="text-sm text-muted-foreground mb-4">Use CareerIntel SA to build your CV, identify your skills gaps, and practice mock interviews before your application.</p>
-          <Link href="/sign-up" className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-primary-foreground text-sm font-semibold transition-colors">
+          <MemberActionLink signedInHref="/cv-builder" signedInLabel="Prepare my CV" className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-primary-foreground text-sm font-semibold transition-colors">
             Get Started Free <ChevronRight className="w-4 h-4" />
-          </Link>
+          </MemberActionLink>
         </div>
       </div>
     </div>

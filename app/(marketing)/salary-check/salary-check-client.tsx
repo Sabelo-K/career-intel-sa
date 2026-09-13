@@ -1,5 +1,6 @@
 "use client";
 
+import { MemberActionLink } from "@/components/journey/account-controls";
 import { JourneyHeader } from "@/components/journey/chrome";
 
 
@@ -314,21 +315,21 @@ export default function SalaryCheckPage() {
                   <Share2 className="w-4 h-4" />
                   {copied ? "Copied!" : "Share result"}
                 </button>
-                <Link href="/sign-up"
-                  className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-sm font-semibold transition-all">
-                  Full salary report <ArrowRight className="w-4 h-4" />
-                </Link>
+                <MemberActionLink signedInHref="/career-coach" signedInLabel="Get salary guidance"
+                  className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-primary-foreground text-sm font-semibold transition-all">
+                  Get salary guidance <ArrowRight className="w-4 h-4" />
+                </MemberActionLink>
               </div>
 
               {/* Upsell teaser */}
               <div className="bg-indigo-500/5 border border-indigo-500/15 rounded-2xl p-5 text-center">
                 <p className="text-sm text-muted-foreground mb-3">
-                  <strong className="text-foreground">Sign up free</strong> to get your full Employability Score, personalised salary negotiation tips, CV analysis, and more.
+                  <strong className="text-foreground">Plan your next move</strong> with career guidance, CV tools and a personal action plan.
                 </p>
-                <Link href="/sign-up"
+                <MemberActionLink signedInHref="/dashboard" signedInLabel="Open my career plan"
                   className="inline-flex items-center gap-2 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-primary-foreground text-sm font-semibold px-6 py-3 rounded-xl transition-all">
                   Create free account <ArrowRight className="w-4 h-4" />
-                </Link>
+                </MemberActionLink>
               </div>
             </motion.div>
           )}

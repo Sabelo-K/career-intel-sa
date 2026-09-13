@@ -1,3 +1,4 @@
+import { MemberActionLink } from "@/components/journey/account-controls";
 import { JourneyHeader } from "@/components/journey/chrome";
 import Link from "next/link";
 import { Brain, ArrowRight } from "lucide-react";
@@ -77,13 +78,12 @@ export default function ExplorePage() {
             >
               Am I underpaid?
             </Link>
-            <Link
-              href="/sign-up"
-              className="group w-full sm:w-auto flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg bg-shweshwe hover:bg-shweshwe-light text-sm font-semibold transition-colors"
+            <MemberActionLink signedInHref="/dashboard" signedInLabel="Open my career plan"
+              className="group w-full sm:w-auto flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg bg-shweshwe hover:bg-shweshwe-light text-primary-foreground text-sm font-semibold transition-colors"
             >
               Get my career report
               <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
-            </Link>
+            </MemberActionLink>
           </div>
         </section>
       </main>
